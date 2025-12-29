@@ -1,120 +1,73 @@
-import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
-import { Form, Head } from '@inertiajs/react';
+import {
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import Logo from '/resources/images/svg/Logo Icon.svg';
 
-interface LoginProps {
-    status?: string;
-    canResetPassword: boolean;
-    canRegister: boolean;
-}
+export default function Welcome({
+    kannRegistrieren = true,
+}: {
+    kannRegistrieren?: boolean;
+}) {
+    const twitchAuthUrl = '/auth/twitch';
 
-export default function Login({
-    status,
-    canResetPassword,
-    canRegister,
-}: LoginProps) {
     return (
-        <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
-        >
-            <Head title="Log in" />
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-secondary to-black p-4">
+            <Card className="w-full max-w-md">
+                <CardHeader className="space-y-4 text-center">
+                    <div className="mb-6 flex justify-center">
+                        <img src={Logo} alt="Logo" className="h-16 w-16" />
+                    </div>
 
-            <Form
-                {...store.form()}
-                resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
-            >
-                {({ processing, errors }) => (
-                    <>
-                        <div className="grid gap-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="email">Email address</Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="email"
-                                    placeholder="email@example.com"
-                                />
-                                <InputError message={errors.email} />
-                            </div>
+                    <CardTitle className="text-3xl font-bold tracking-tight">
+                        Willkommen bei VHeart!
+                    </CardTitle>
+                </CardHeader>
 
-                            <div className="grid gap-2">
-                                <div className="flex items-center">
-                                    <Label htmlFor="password">Password</Label>
-                                    {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
-                                            Forgot password?
-                                        </TextLink>
-                                    )}
-                                </div>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    required
-                                    tabIndex={2}
-                                    autoComplete="current-password"
-                                    placeholder="Password"
-                                />
-                                <InputError message={errors.password} />
-                            </div>
+                <CardContent className="space-y-6">
+                    <p className="text-center leading-relaxed">
+                        Wir freuen uns, dich hier zu haben. Verbinde dein
+                        Twitch-Konto, um auf alle Funktionen zugreifen zu
+                        können.
+                    </p>
 
-                            <div className="flex items-center space-x-3">
-                                <Checkbox
-                                    id="remember"
-                                    name="remember"
-                                    tabIndex={3}
-                                />
-                                <Label htmlFor="remember">Remember me</Label>
-                            </div>
+                    <div className="flex justify-center">
+                        <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-secondary"></div>
+                    </div>
+                </CardContent>
 
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
-                                {processing && <Spinner />}
-                                Log in
+                <CardFooter className="flex flex-col space-y-4">
+                    {kannRegistrieren && (
+                        <a href={twitchAuthUrl} className="w-full">
+                            <Button className="w-full py-6 text-lg" size="lg">
+                                <svg
+                                    className="mr-3 h-6 w-6"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                >
+                                    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
+                                </svg>
+                                Mit Twitch verbinden
                             </Button>
-                        </div>
+                        </a>
+                    )}
 
-                        {canRegister && (
-                            <div className="text-center text-sm text-muted-foreground">
-                                Don't have an account?{' '}
-                                <TextLink href={register()} tabIndex={5}>
-                                    Sign up
-                                </TextLink>
-                            </div>
-                        )}
-                    </>
-                )}
-            </Form>
+                    <p className="border-t pt-4 text-center text-sm text-muted-foreground">
+                        Durch die Verbindung stimmst du unseren
+                        Nutzungsbedingungen und Datenschutzrichtlinien zu
+                    </p>
+                </CardFooter>
+            </Card>
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
-        </AuthLayout>
+            <div className="mt-8 text-center text-white/80">
+                <p className="text-sm">
+                    Unterstützt von unserer großartigen Community ❤️
+                </p>
+            </div>
+        </div>
     );
 }
