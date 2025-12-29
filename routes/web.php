@@ -16,4 +16,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
+
 require __DIR__.'/settings.php';
