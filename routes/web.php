@@ -20,13 +20,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/auth/twitch', function() {
-    return Socialite::driver('twitch')->scopes(['moderator:read:moderators'])->redirect();
+    return Socialite::driver('twitch')->redirect();
 });
 
 Route::get('/auth/twitch/callback', function() {
     $twitchUser = Socialite::driver('twitch')->user();
-
-    //dd($twitchUser);
 
     $user = User::updateOrCreate([
         'id' => $twitchUser->getId()
@@ -36,7 +34,6 @@ Route::get('/auth/twitch/callback', function() {
     ]);
 
     //TODO: token zwischenspeichern für später weiterbenutzung
-
     Auth::login($user);
 
     return to_route('dashboard');
