@@ -42,4 +42,6 @@ Route::get('/auth/twitch/callback', function() {
     return to_route('dashboard');
 });
 
+Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
+
 require __DIR__.'/settings.php';
