@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -184,5 +185,18 @@ Route::get('/auth/twitch/callback', function() {
 });
 
 Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
+
+Route::get('/locales/{lang}', static function (Request $request, $lang) {
+    if (!array_key_exists($lang, Config::get('app.locales'))) {
+        abort(422); // we understand it but its invalid
+    }
+
+    app()->setLocale($lang);
+    session()?->put('locale', $lang);
+
+    return new JsonResponse([
+        'message' => __('Ok!')
+    ], 200);
+});
 
 require __DIR__ . '/settings.php';
