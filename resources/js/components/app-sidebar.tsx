@@ -8,7 +8,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { about, dashboard, team } from '@/routes';
+import { about, dashboard, submitclip, team } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
@@ -18,6 +18,17 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: dashboard(),
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Clips einreichen',
+        href: submitclip(),
+        icon: LayoutGrid,
+    },
+
+    {
+        title: 'Clips bewerten',
+        href: submitclip(),
         icon: LayoutGrid,
     },
 ];

@@ -1,0 +1,491 @@
+import AppLayout from '@/layouts/app-layout';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { AlertCircle, Loader2, Tag as TagIcon } from 'lucide-react';
+
+interface Tag {
+    id: number;
+    name: string;
+}
+
+type PreviewResponse = {
+    ok: boolean;
+    message?: string | null;
+    errors?: string[];
+    can_submit?: boolean;
+    reasons?: string[];
+    clip?: {
+        clip_id: string;
+        embed_url: string;
+    };
+} | null;
+
+type InertiaBaseProps = Record<string, unknown>;
+
+interface PageProps extends InertiaBaseProps {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            submission_count_today: number;
+            daily_submission_limit: number;
+        };
+    };
+    tags: Tag[];
+    preview?: PreviewResponse;
+    flash?: {
+        submit_ok?: boolean;
+        submit_message?: string | null;
+    };
+}
+
+export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
+    const { t } = useTranslation('sendinclip');
+    const { props } = usePage<PageProps>();
+    const user = props.auth?.user || null;
+
+    const backendPreview = (props.preview ?? null) as PreviewResponse;
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [clipUrl, setClipUrl] = useState('');
+    const [selectedTags, setSelectedTags] = useState<number[]>([]);
+    const [isAnonymous, setIsAnonymous] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const [isChecking, setIsChecking] = useState(false);
+
+    const lastPreviewUrlRef = useRef<string>('');
+    const debounceRef = useRef<number | null>(null);
+
+    const breadcrumbs = useMemo(
+        () => [{ title: t('breadcrumb'), href: '/submit-clip' }],
+        [t],
+    );
+
+    const previewErrors: string[] = useMemo(() => {
+        if (!backendPreview) return [];
+        if (backendPreview.errors?.length) return backendPreview.errors;
+        if (backendPreview.reasons?.length) return backendPreview.reasons;
+        if (!backendPreview.ok && backendPreview.message)
+            return [backendPreview.message];
+        return [];
+    }, [backendPreview]);
+
+    const canSubmit =
+        !!backendPreview?.ok &&
+        backendPreview?.can_submit !== false &&
+        !!backendPreview?.clip?.embed_url;
+
+    const hasInput = clipUrl.trim().length > 0;
+
+    const showErrors = hasInput && !isChecking && previewErrors.length > 0;
+    const showLoading = hasInput && isChecking;
+
+    const toggleTag = (id: number) => {
+        setSelectedTags((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+        );
+    };
+
+    useEffect(() => {
+        const trimmed = clipUrl.trim();
+
+        if (debounceRef.current) window.clearTimeout(debounceRef.current);
+
+        if (!trimmed) {
+            lastPreviewUrlRef.current = '';
+            return;
+        }
+
+        debounceRef.current = window.setTimeout(() => {
+            if (trimmed === lastPreviewUrlRef.current) return;
+
+            setIsChecking(true);
+
+            router.get(
+                '/submit-clip',
+                { clip_url: trimmed },
+                {
+                    preserveScroll: true,
+                    preserveState: true,
+                    replace: true,
+                    only: ['preview'],
+                    onFinish: () => {
+                        lastPreviewUrlRef.current = trimmed;
+                        setIsChecking(false);
+                    },
+                },
+            );
+        }, 600);
+
+        return () => {
+            if (debounceRef.current) window.clearTimeout(debounceRef.current);
+        };
+    }, [clipUrl]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        const trimmed = clipUrl.trim();
+
+        if (!user) return setError(t('errors.login_required'));
+        if (!trimmed) return setError(t('errors.clip_url_required'));
+        if (!canSubmit) return setError(t('errors.cannot_submit'));
+
+        if (user.submission_count_today >= user.daily_submission_limit) {
+            return setError(
+                t('errors.daily_limit', { limit: user.daily_submission_limit }),
+            );
+        }
+
+        setIsSubmitting(true);
+
+        router.post(
+            '/clips',
+            {
+                clip_url: trimmed,
+                tag_ids: selectedTags,
+                is_anonymous: isAnonymous,
+            },
+            {
+                preserveScroll: true,
+                onFinish: () => setIsSubmitting(false),
+                onSuccess: () => {
+                    setClipUrl('');
+                    setSelectedTags([]);
+                    setIsAnonymous(false);
+                    setError(null);
+
+                    setIsChecking(false);
+                    lastPreviewUrlRef.current = '';
+
+                    router.reload({ only: ['preview', 'tags', 'flash'] });
+                },
+                onError: () => setError(t('errors.generic')),
+            },
+        );
+    };
+
+    if (!user) {
+        return (
+            <AppLayout breadcrumbs={breadcrumbs}>
+                <Head title={t('page_title')} />
+                <div className="container mx-auto px-4 py-8">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>{t('login.title')}</CardTitle>
+                            <CardDescription>
+                                {t('login.subtitle')}
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription>
+                                    {t('login.alert')}
+                                </AlertDescription>
+                            </Alert>
+                        </CardContent>
+                        <CardFooter>
+                            <Link href="/login" className="w-full">
+                                <Button className="w-full">
+                                    {t('login.cta')}
+                                </Button>
+                            </Link>
+                        </CardFooter>
+                    </Card>
+                </div>
+            </AppLayout>
+        );
+    }
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title={t('page_title')} />
+
+            <div className="container mx-auto px-4 py-8">
+                <div className="mx-auto max-w-4xl">
+                    <div className="mb-8 text-center">
+                        <h1 className="mb-2 text-3xl font-bold tracking-tight">
+                            {t('headline')}
+                        </h1>
+                    </div>
+
+                    {props.flash?.submit_ok && props.flash?.submit_message && (
+                        <div className="mb-6">
+                            <Alert>
+                                <AlertDescription>
+                                    {props.flash.submit_message}
+                                </AlertDescription>
+                            </Alert>
+                        </div>
+                    )}
+
+                    {error && (
+                        <div className="mb-6">
+                            <Alert variant="destructive">
+                                <AlertCircle className="h-4 w-4" />
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        </div>
+                    )}
+
+                    <div className="grid gap-8 lg:grid-cols-3">
+                        <div className="space-y-6 lg:col-span-2">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{t('preview.title')}</CardTitle>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <div className="space-y-4">
+                                        <div className="relative aspect-video overflow-hidden rounded-lg bg-black">
+                                            {backendPreview?.clip?.embed_url &&
+                                            canSubmit ? (
+                                                <iframe
+                                                    key={
+                                                        backendPreview.clip
+                                                            .clip_id
+                                                    }
+                                                    src={
+                                                        backendPreview.clip
+                                                            .embed_url
+                                                    }
+                                                    className="h-full w-full"
+                                                    style={{ border: 0 }}
+                                                    allow="fullscreen"
+                                                />
+                                            ) : (
+                                                <div className="flex h-full w-full items-center justify-center text-center text-muted-foreground">
+                                                    {showLoading ? (
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                                            <span>
+                                                                {t(
+                                                                    'preview.loading',
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <p className="text-sm font-medium">
+                                                            {t(
+                                                                'preview.placeholder',
+                                                            )}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {showErrors && (
+                                            <Alert variant="destructive">
+                                                <AlertCircle className="h-4 w-4" />
+                                                <AlertDescription>
+                                                    <ul className="list-inside list-disc space-y-1">
+                                                        {previewErrors.map(
+                                                            (m, idx) => (
+                                                                <li key={idx}>
+                                                                    {m}
+                                                                </li>
+                                                            ),
+                                                        )}
+                                                    </ul>
+                                                </AlertDescription>
+                                            </Alert>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>{t('submit.title')}</CardTitle>
+                                </CardHeader>
+
+                                <CardContent>
+                                    <form
+                                        onSubmit={handleSubmit}
+                                        className="space-y-6"
+                                        noValidate
+                                    >
+                                        <div className="space-y-2">
+                                            <Label htmlFor="clip_url">
+                                                {t('submit.clip_url_label')}
+                                            </Label>
+                                            <Input
+                                                id="clip_url"
+                                                placeholder={t(
+                                                    'submit.clip_url_placeholder',
+                                                )}
+                                                value={clipUrl}
+                                                onChange={(e) =>
+                                                    setClipUrl(e.target.value)
+                                                }
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter')
+                                                        e.preventDefault();
+                                                }}
+                                                disabled={isSubmitting}
+                                                autoComplete="off"
+                                                inputMode="url"
+                                            />
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <Label className="flex items-center gap-2">
+                                                <TagIcon className="h-4 w-4" />
+                                                {t('submit.tags_label')}
+                                            </Label>
+
+                                            <div className="flex flex-wrap gap-2">
+                                                {tags.map((tag) => (
+                                                    <Badge
+                                                        key={tag.id}
+                                                        variant={
+                                                            selectedTags.includes(
+                                                                tag.id,
+                                                            )
+                                                                ? 'default'
+                                                                : 'outline'
+                                                        }
+                                                        className="cursor-pointer hover:opacity-80"
+                                                        onClick={() =>
+                                                            toggleTag(tag.id)
+                                                        }
+                                                    >
+                                                        {tag.name}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <Separator />
+
+                                        <div className="flex items-center space-x-2">
+                                            <Checkbox
+                                                id="is_anonymous"
+                                                checked={isAnonymous}
+                                                onCheckedChange={(checked) =>
+                                                    setIsAnonymous(
+                                                        checked === true,
+                                                    )
+                                                }
+                                                disabled={isSubmitting}
+                                            />
+                                            <Label
+                                                htmlFor="is_anonymous"
+                                                className="cursor-pointer"
+                                            >
+                                                {t('submit.anonymous')}
+                                                <span className="ml-1 text-xs text-muted-foreground">
+                                                    {t('submit.anonymous_hint')}
+                                                </span>
+                                            </Label>
+                                        </div>
+
+                                        <Button
+                                            type="submit"
+                                            className="w-full"
+                                            disabled={
+                                                isSubmitting ||
+                                                !hasInput ||
+                                                !canSubmit
+                                            }
+                                        >
+                                            {isSubmitting && (
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            )}
+                                            {t('submit.cta')}
+                                        </Button>
+                                    </form>
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        <div className="space-y-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-sm">
+                                        {t('rules.title')}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-3">
+                                    <ul className="space-y-2 text-sm">
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <span>
+                                                {t('rules.items.registered')}
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <span>
+                                                {t('rules.items.consent')}
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <span>
+                                                {t('rules.items.no_explicit')}
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <span>
+                                                {t('rules.items.tags_match')}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </CardContent>
+                            </Card>
+
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="text-sm">
+                                        {t('tips.title')}
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <ul className="space-y-2 text-sm">
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                            <span>{t('tips.items.short')}</span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                            <span>
+                                                {t('tips.items.quality')}
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-2">
+                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                            <span>{t('tips.items.funny')}</span>
+                                        </li>
+                                    </ul>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </AppLayout>
+    );
+}
