@@ -19,6 +19,7 @@ return [
     */
 
     'default' => env('LOG_CHANNEL', 'stack'),
+    'slow-queries-channel' => env('LOG_SLOW_QUERIES_CHANNEL', 'slow-queries'),
 
     /*
     |--------------------------------------------------------------------------
@@ -125,6 +126,13 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        // We can send these to somewhere else later, for now a single file is enough
+        'slow-queries' => [
+            'driver' => 'single',
+            'path'   => storage_path('logs/slow-queries.log'),
+            'level'  => 'warning',
         ],
 
     ],

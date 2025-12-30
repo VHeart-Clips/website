@@ -4,6 +4,11 @@ use Illuminate\Support\Str;
 
 return [
 
+    'warn-threshold' => [
+        'slow-query' => env('DB_SLOW_QUERY_THRESHOLD', 350),
+        'slow-queries' => env('DB_SLOW_QUERIES_THRESHOLD', 5000),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
