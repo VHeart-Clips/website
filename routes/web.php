@@ -99,7 +99,8 @@ Route::get('/auth/twitch/callback', function() {
         'id' => $twitchUser->getId()
     ],
     [
-        'name' => $twitchUser->getName()
+        'name' => $twitchUser->getName(),
+        'avatar_url' => $twitchUser->getAvatar()
     ]);
 
     //TODO: token zwischenspeichern für später weiterbenutzung
