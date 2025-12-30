@@ -29,10 +29,6 @@ return new class extends Migration
             $table->timestamp('date');
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('broadcaster_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('creator_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('submitter_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
