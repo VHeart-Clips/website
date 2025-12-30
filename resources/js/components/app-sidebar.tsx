@@ -1,5 +1,3 @@
-import { NavFooter } from '@/components/nav-footer';
-import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
@@ -10,7 +8,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { about, dashboard, team } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
@@ -27,12 +25,12 @@ const mainNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
     {
         title: 'Team',
-        href: 'https://github.com/laravel/react-starter-kit',
+        href: team(),
         icon: Folder,
     },
     {
         title: 'About us',
-        href: 'https://laravel.com/docs/starter-kits#react',
+        href: about(),
         icon: BookOpen,
     },
 ];
@@ -44,7 +42,11 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link
+                                href={dashboard()}
+                                preserveScroll
+                                preserveState
+                            >
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -53,11 +55,48 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <SidebarMenu>
+                    {mainNavItems.map((item) => (
+                        <SidebarMenuItem key={`main-${item.title}`}>
+                            <SidebarMenuButton asChild>
+                                <Link
+                                    href={item.href}
+                                    preserveScroll
+                                    preserveState
+                                    className="flex items-center gap-2"
+                                >
+                                    {item.icon && (
+                                        <item.icon className="h-4 w-4" />
+                                    )}
+                                    <span>{item.title}</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    ))}
+                </SidebarMenu>
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <SidebarMenu className="mt-auto">
+                    {footerNavItems.map((item) => (
+                        <SidebarMenuItem key={`footer-${item.title}`}>
+                            <SidebarMenuButton asChild>
+                                <Link
+                                    href={item.href}
+                                    preserveScroll
+                                    preserveState
+                                    only={[]}
+                                    className="flex items-center gap-2"
+                                >
+                                    {item.icon && (
+                                        <item.icon className="h-4 w-4" />
+                                    )}
+                                    <span>{item.title}</span>
+                                </Link>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    ))}
+                </SidebarMenu>
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
