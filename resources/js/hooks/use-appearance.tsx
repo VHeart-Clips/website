@@ -15,6 +15,8 @@ const setCookie = (name: string, value: string, days = 365) => {
         return;
     }
 
+    // TODO: Check for cookie permission before actually setting it, in case it got revoked but exists it has to be cleared
+
     const maxAge = days * 24 * 60 * 60;
     document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
 };

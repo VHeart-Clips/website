@@ -23297,6 +23297,118 @@ namespace Laravel\Socialite\Facades {
             }
     }
 
+namespace Whitecube\LaravelCookieConsent\Facades {
+    /**
+     */
+    class Cookies {
+        /**
+         * Check if the current preference settings are sufficient. If not,
+         * the cookie preferences notice should be displayed again.
+         *
+         * @static
+         */
+        public static function shouldDisplayNotice()
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->shouldDisplayNotice();
+        }
+
+        /**
+         * Check if the user has given explicit consent for a specific cookie.
+         *
+         * @static
+         */
+        public static function hasConsentFor($key)
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->hasConsentFor($key);
+        }
+
+        /**
+         * Handle the incoming consent preferences accordingly.
+         *
+         * @static
+         */
+        public static function accept($categories = '*')
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->accept($categories);
+        }
+
+        /**
+         * Output all the scripts for current consent state.
+         *
+         * @static
+         */
+        public static function renderScripts($withDefault = true)
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->renderScripts($withDefault);
+        }
+
+        /**
+         * @static
+         */
+        public static function getNoticeScripts($withDefault)
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->getNoticeScripts($withDefault);
+        }
+
+        /**
+         * Output the consent alert/modal for current consent state.
+         *
+         * @static
+         */
+        public static function renderView()
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->renderView();
+        }
+
+        /**
+         * @static
+         */
+        public static function getNoticeMarkup()
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->getNoticeMarkup();
+        }
+
+        /**
+         * Output a single cookie consent action button.
+         *
+         * @static
+         */
+        public static function renderButton($action, $label = null, $attributes = [])
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->renderButton($action, $label, $attributes);
+        }
+
+        /**
+         * Output a table with all the cookies infos.
+         *
+         * @static
+         */
+        public static function renderInfo()
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->renderInfo();
+        }
+
+        /**
+         * @static
+         */
+        public static function replaceInfoTag($wysiwyg)
+        {
+            /** @var \Whitecube\LaravelCookieConsent\CookiesManager $instance */
+            return $instance->replaceInfoTag($wysiwyg);
+        }
+
+            }
+    }
+
 namespace Illuminate\Http {
     /**
      */
@@ -28307,6 +28419,7 @@ namespace  {
     class View extends \Illuminate\Support\Facades\View {}
     class Vite extends \Illuminate\Support\Facades\Vite {}
     class Socialite extends \Laravel\Socialite\Facades\Socialite {}
+    class Cookies extends \Whitecube\LaravelCookieConsent\Facades\Cookies {}
 }
 
 
