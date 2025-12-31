@@ -13,8 +13,6 @@ class Game extends Model
 
     public $incrementing = false;
 
-    protected $guarded = [];
-
     public function clips(): HasMany
     {
         return $this->hasMany(Clip::class,'game_id','id');

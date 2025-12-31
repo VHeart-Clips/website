@@ -13,8 +13,6 @@ class Clip extends Model
     /** @use HasFactory<\Database\Factories\ClipFactory> */
     use HasFactory;
 
-    protected $guarded = [];
-
     public function broadcaster(): BelongsTo
     {
         return $this->BelongsTo(User::class,'id','broadcaster_id')->withDefault(['name' => "Unknown"]);
