@@ -15,20 +15,56 @@ class RoleSeeder extends Seeder
     {
         Role::firstOrCreate(
             [
-                'name' => 'Admin'
+                'name' => 'Administrator'
             ],
             [
-                'desc' => 'Projekt Admins',
-                'weight' => 100
+                'weight' => 100,
+                'public' => true
             ]
-        );       
+        );
         Role::firstOrCreate(
             [
-                'name' => 'Mod'
+                'name' => 'Community Manager'
             ],
             [
-                'desc' => 'Projekt Mods',
-                'weight' => 80
+                'weight' => 90,
+                'public' => true
+            ]
+        );
+        Role::firstOrCreate(
+            [
+                'name' => 'Moderator'
+            ],
+            [
+                'weight' => 80,
+                'public' => true
+            ]
+        );
+        Role::firstOrCreate(
+            [
+                'name' => 'Cutter'
+            ],
+            [
+                'weight' => 70,
+                'public' => true
+            ]
+        );
+        Role::firstOrCreate(
+            [
+                'name' => 'IT'
+            ],
+            [
+                'weight' => 60,
+                'public' => true
+            ]
+        );
+        Role::firstOrCreate(
+            [
+                'name' => 'Jury'
+            ],
+            [
+                'weight' => 50,
+                'public' => true
             ]
         );
     }
