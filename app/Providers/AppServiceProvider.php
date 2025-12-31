@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class AppServiceProvider extends ServiceProvider
@@ -102,5 +103,7 @@ class AppServiceProvider extends ServiceProvider
         if (app()->isProduction() || str_starts_with(config('app.url'), 'https://')) {
             URL::forceHttps();
         }
+
+        Inertia::encryptHistory();
     }
 }
