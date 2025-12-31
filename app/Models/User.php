@@ -46,6 +46,8 @@ class User extends Authenticatable
         ];
     }
 
+    protected $rememberTokenName = null;
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class,'user_roles');
