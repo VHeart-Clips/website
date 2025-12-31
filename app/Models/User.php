@@ -28,6 +28,7 @@ class User extends Authenticatable
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
+        'twitch_refresh_token',
     ];
 
     /**
@@ -41,11 +42,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'twitch_refresh_token' => 'encrypted',
         ];
     }
 
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class,'user_roles');
-    } 
+    }
 }
