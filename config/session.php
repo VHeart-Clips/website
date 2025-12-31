@@ -47,7 +47,7 @@ return [
     |
     */
 
-    'encrypt' => env('SESSION_ENCRYPT', false),
+    'encrypt' => env('SESSION_ENCRYPT',  env('APP_ENV', 'local') !== 'local'),
 
     /*
     |--------------------------------------------------------------------------
