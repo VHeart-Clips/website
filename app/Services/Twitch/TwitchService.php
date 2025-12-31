@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class TwitchService
 {
@@ -114,13 +115,9 @@ class TwitchService
     public function getAppAccessToken(): string
     {
         if (Cache::has('twitch_access_token')) {
-            $token = Crypt::decryptString(Cache::get('twitch_access_token'));
-
-            // because we could fail the decryption we just continue as if it would not have been cached
-            // if we cannot decrypt it for some reason (modified or corrupted?)
-            if($token) {
-                return $token;
-            }
+            try {
+                return Crypt::decryptString(Cache::get('twitch_access_token'));
+            } catch (Throwable $e) {}
         }
 
         $response = Http::post($this->authUrl, [
@@ -146,7 +143,7 @@ class TwitchService
      * GET From Twitch
      * @throws ConnectionException|TwitchApiException
      */
-    public function get(string $endpoint, array $params = []): array
+    public function get(string|TwitchEndpoints $endpoint, array $params = []): array
     {
         return $this->request('GET', $endpoint, $params);
     }
@@ -154,16 +151,21 @@ class TwitchService
     /**
      * @throws ConnectionException|TwitchApiException
      */
-    protected function request(string $method, string $endpoint, array $params = [], bool $allowRetry = true): array
+    protected function request(string $method, string|TwitchEndpoints $endpoint, array $params = [], bool $allowRetry = true): array
     {
         if ($this->forceUserTokenRefresh) {
             $this->tokenRefresh();
+        }
+
+        if(!is_string($endpoint)) {
+            $endpoint = $endpoint->value;
         }
 
         Log::debug("[Twitch Service] {$method} {$endpoint}",
             ['isUserToken' => (bool) $this->userAccessToken, 'params' => $params]);
 
         $client = Http::withHeaders($this->getHeaders());
+
 
         $url = $this->baseUrl.'/'.ltrim($endpoint, '/');
 
@@ -232,7 +234,7 @@ class TwitchService
      * POST to Twitch
      * @throws ConnectionException|TwitchApiException
      */
-    public function post(string $endpoint, array $data = []): array
+    public function post(string|TwitchEndpoints $endpoint, array $data = []): array
     {
         return $this->request('POST', $endpoint, $data);
     }
