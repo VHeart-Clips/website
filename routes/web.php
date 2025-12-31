@@ -164,24 +164,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/auth/twitch', function() {
     return Socialite::driver('twitch')->redirect();
-});
+})->name('auth.twitch');
 
 Route::get('/auth/twitch/callback', function() {
-    $twitchUser = Socialite::driver('twitch')->user();
+    try {
+        $twitchUser = Socialite::driver('twitch')->user();
+    } catch (\Exception $e) {
+        return to_route('login')->with('error', __('auth.oauth_error_try_again'));
+    }
 
     $user = User::updateOrCreate([
         'id' => $twitchUser->getId()
     ],
     [
         'name' => $twitchUser->getName(),
-        'avatar_url' => $twitchUser->getAvatar()
+        'avatar_url' => $twitchUser->getAvatar(),
+        'twitch_refresh_token' => $twitchUser->refreshToken,
     ]);
 
-    //TODO: token zwischenspeichern für später weiterbenutzung
+    session()?->regenerate();
     Auth::login($user);
+    session()->put('twitch_access_token', $twitchUser->token);
 
     return to_route('dashboard');
-});
+})->name('auth.callback');
 
 Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
 
