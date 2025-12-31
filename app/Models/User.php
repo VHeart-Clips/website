@@ -3,12 +3,15 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Permission;
 use App\Policies\UserPolicy;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 // We tell laravel where to find the policy class
@@ -16,7 +19,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 #[UsePolicy(UserPolicy::class)]
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     public $incrementing = false;
@@ -33,6 +36,76 @@ class User extends Authenticatable
         'remember_token',
         'twitch_refresh_token',
     ];
+    protected $rememberTokenName = null;
+
+    /** @var array<int,Permission>|null  */
+    protected ?array $permissionCache = null;
+
+    /**
+     * @return array<int, Permission>
+     */
+    public function permissions(): array
+    {
+        // We only want to fetch it once per instance
+        // this cache will be cleared if we change anything though
+        if ($this->permissionCache !== null) {
+            return $this->permissionCache;
+        }
+
+        // aggregate all permissions based on our roles
+        $rawPermissions = DB::table('role_permissions')
+            ->join('user_roles', 'role_permissions.role_id', '=', 'user_roles.role_id')
+            ->where('user_roles.user_id', $this->id)
+            ->distinct()
+            ->pluck('role_permissions.permission');
+
+        return $this->permissionCache = $rawPermissions
+            ->map(fn($perm) => Permission::tryFrom($perm))
+            ->filter()
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * Assign a single Role to the user
+     */
+    public function assignRole(int|string|Role $role): void
+    {
+        $this->roles()->attach($role);
+        $this->permissionCache = null;
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    /**
+     * Sync Roles to the user
+     */
+    public function syncRoles(array $roles): void
+    {
+        $this->roles()->sync($roles);
+        $this->permissionCache = null;
+    }
+
+    public function refresh(): User
+    {
+        $this->permissionCache = null;
+        return parent::refresh();
+    }
+
+    /*
+     * Hook into some relationship logic to clear our cache
+     */
+    public function setRelation($relation, $value): User
+    {
+        if ($relation === 'roles') {
+            $this->permissionCache = null;
+        }
+
+        return parent::setRelation($relation, $value);
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -47,12 +120,5 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'twitch_refresh_token' => 'encrypted',
         ];
-    }
-
-    protected $rememberTokenName = null;
-
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class,'user_roles');
     }
 }

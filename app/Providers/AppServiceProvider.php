@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\Permission;
 use App\Models\Clip;
 use App\Models\Game;
 use App\Models\Role;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
@@ -39,11 +41,28 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('twitch', TwitchProvider::class);
         });
 
+        $this->configureGates();
         $this->configureVite();
         $this->configureModels();
         $this->configureCarbon();
         $this->configureEloquent();
         $this->configureOther();
+    }
+
+    private function configureGates(): void
+    {
+        // Check if $user has $ability in any of their roles
+        Gate::before(static function (User $user, $ability) {
+            $requestedPermission = $ability instanceof Permission
+                ? $ability
+                : Permission::tryFrom($ability);
+
+            if (!$requestedPermission) {
+                return null;
+            }
+
+            return in_array($requestedPermission, $user->permissions());
+        });
     }
 
     private function configureVite(): void
