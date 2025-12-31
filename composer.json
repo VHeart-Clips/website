@@ -15,7 +15,8 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
-        "socialiteproviders/twitch": "^5.4"
+        "socialiteproviders/twitch": "^5.4",
+        "whitecube/laravel-cookie-consent": "^1.3"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",

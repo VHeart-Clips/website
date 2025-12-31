@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Europe/Berlin',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +78,20 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'de'),
+
+    'locales' => [
+        'de' => [
+            'name' => 'Deutsch',
+            'flag' => 'de',
+            'locale' => 'de',
+        ],
+        'en' => [
+            'name' => 'English',
+            'flag' => 'gb',
+            'locale' => 'en',
+        ]
+    ],
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
