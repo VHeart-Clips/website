@@ -53,6 +53,9 @@ class User extends Authenticatable
         }
 
         // aggregate all permissions based on our roles
+        // join role_permissions with user_roles where role_id = role_id
+        // where user_id = X
+        // only return unique/distinct 'role_permissions.permission' values, if 2 roles have the same permission we only need it once
         $rawPermissions = DB::table('role_permissions')
             ->join('user_roles', 'role_permissions.role_id', '=', 'user_roles.role_id')
             ->where('user_roles.user_id', $this->id)
