@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Clip\Tag;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Clip extends Model
 {
@@ -31,5 +33,10 @@ class Clip extends Model
     public function game(): BelongsTo
     {
         return $this->belongsTo(Game::class, 'id', 'game_id')->withDefault(['title' => 'Unknown']);
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class,'clip_tags');
     }
 }

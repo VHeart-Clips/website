@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { AlertCircle, Loader2, Tag as TagIcon } from 'lucide-react';
+import InputError from '@/components/input-error';
 
 interface Tag {
     id: number;
@@ -59,6 +60,7 @@ interface PageProps extends InertiaBaseProps {
 export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
     const { t } = useTranslation('sendinclip');
     const { props } = usePage<PageProps>();
+    const { errors } = props;
     const user = props.auth?.user || null;
 
     const backendPreview = (props.preview ?? null) as PreviewResponse;
@@ -159,7 +161,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
         setIsSubmitting(true);
 
         router.post(
-            '/clips',
+            'submit-clip',
             {
                 clip_url: trimmed,
                 tag_ids: selectedTags,
@@ -346,6 +348,10 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                                 disabled={isSubmitting}
                                                 autoComplete="off"
                                                 inputMode="url"
+                                            />                                    
+                                            <InputError
+                                                className="mt-2"
+                                                message={errors.clip_url}
                                             />
                                         </div>
 
