@@ -102,7 +102,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/auth/twitch', function() {
-    return Socialite::driver('twitch')->redirect();
+    return Socialite::driver('twitch')->scopes(['channel:read:vips', 'user:read:moderated_channels'])->redirect();
 })->name('auth.twitch');
 
 Route::get('/auth/twitch/callback', function() {
