@@ -23,9 +23,14 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $id = fake()->unique()->numberBetween();
         return [
-            'id' => fake()->numberBetween(),
+            'id' => $id,
             'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'clip_permission' => false,
+            'avatar_url' => 'https://api.dicebear.com/9.x/pixel-art/svg?seed=' . $id,
+            'email_verified_at' => fake()->dateTime(),
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
             'two_factor_confirmed_at' => now(),

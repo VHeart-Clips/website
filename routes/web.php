@@ -8,13 +8,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 use Laravel\Socialite\Socialite;
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return Inertia::render('welcome');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -33,8 +30,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/auth/twitch', function () {
-    return Socialite::driver('twitch')->redirect();
+Route::get('/auth/twitch', function() {
+    return Socialite::driver('twitch')->scopes(['channel:read:vips', 'user:read:moderated_channels'])->redirect();
 })->name('auth.twitch');
 
 Route::get('/auth/twitch/callback', function () {

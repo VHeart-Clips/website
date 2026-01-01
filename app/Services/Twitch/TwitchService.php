@@ -22,6 +22,7 @@ class TwitchService
     protected ?string $userRefreshToken = null;
     protected mixed $tokenUpdateCallback = null;
     protected bool $forceUserTokenRefresh = false;
+    protected ?User $user = null;
 
     /**
      * @throws TwitchApiException
@@ -44,6 +45,7 @@ class TwitchService
     public function asUser(?User $user = null, ?string $access_token = null): self
     {
         if ($user === null) {
+            $this->user = null;
             $this->userRefreshToken = null;
             $this->userAccessToken = null;
             $this->forceUserTokenRefresh = false;
@@ -51,6 +53,7 @@ class TwitchService
             return $this;
         }
 
+        $this->user = $user;
         $this->userRefreshToken = $user->twitch_refresh_token;
         $this->userAccessToken = $access_token;
 
@@ -117,7 +120,8 @@ class TwitchService
         if (Cache::has('twitch_access_token')) {
             try {
                 return Crypt::decryptString(Cache::get('twitch_access_token'));
-            } catch (Throwable $e) {}
+            } catch (Throwable $e) {
+            }
         }
 
         $response = Http::post($this->authUrl, [
@@ -151,13 +155,17 @@ class TwitchService
     /**
      * @throws ConnectionException|TwitchApiException
      */
-    protected function request(string $method, string|TwitchEndpoints $endpoint, array $params = [], bool $allowRetry = true): array
-    {
+    protected function request(
+        string $method,
+        string|TwitchEndpoints $endpoint,
+        array $params = [],
+        bool $allowRetry = true
+    ): array {
         if ($this->forceUserTokenRefresh) {
             $this->tokenRefresh();
         }
 
-        if(!is_string($endpoint)) {
+        if (!is_string($endpoint)) {
             $endpoint = $endpoint->value;
         }
 
@@ -237,5 +245,34 @@ class TwitchService
     public function post(string|TwitchEndpoints $endpoint, array $data = []): array
     {
         return $this->request('POST', $endpoint, $data);
+    }
+
+    /**
+     * Returns true if the given user is moderator for the given broadcaster.
+     *
+     * This will always return false if no user was given.
+     */
+    public function isModeratorFor(?User $broadCaster = null): bool
+    {
+        if (!$this->user || !$broadCaster) {
+            return false;
+        }
+
+        return in_array($broadCaster->id, array_column($this->getModeratedChannels(), 'broadcaster_id'), true);
+    }
+
+    /**
+     * Returns the list of Channels the current user has moderator permissions for.
+     * @return array<int, int>
+     */
+    public function getModeratedChannels(): array
+    {
+        if (!$this->user) {
+            return [];
+        }
+
+        return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id),300, function () {
+            return $this->get(TwitchEndpoints::GetModeratedChannels, ['user_id' => $this->user->id, 'first' => 100])['data'];
+        });
     }
 }
