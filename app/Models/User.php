@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Enums\Permission;
 use App\Policies\UserPolicy;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,7 +18,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 // We tell laravel where to find the policy class
 // While the name convention should allow auto-detection, we want to stay explicit to make it clear.
 #[UsePolicy(UserPolicy::class)]
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
@@ -123,5 +124,15 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
             'twitch_refresh_token' => 'encrypted',
         ];
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        if(is_null($this->email_verified_at)) {
+            // since emails are optional we have to classify null as verified
+            return true;
+        }
+
+        return parent::hasVerifiedEmail();
     }
 }
