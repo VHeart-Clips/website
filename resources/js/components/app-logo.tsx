@@ -1,4 +1,4 @@
-import Logo from '/resources/images/svg/Logo Icon.svg';
+import Logo from '/resources/images/svg/logo-light.svg';
 
 export default function AppLogo() {
     return (

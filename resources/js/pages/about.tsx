@@ -3,7 +3,7 @@ import { about } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import Logo from '/resources/images/svg/full_title.svg';
+import Logo from '/resources/images/svg/logo-full-title.svg';
 
 export default function About() {
     const { t } = useTranslation('about');

@@ -21,12 +21,4 @@ return [
     'terms_notice' => 'Durch die Verbindung stimmst du unseren Nutzungsbedingungen und Datenschutzrichtlinien zu',
     'community_support' => 'Unterstützt von unserer großartigen Community',
     'logo_alt' => 'VHeart Logo',
-
-    'privacy' => 'Datenschutz',
-    'imprint' => 'Impressum',
-    'terms' => 'Nutzungsbedingungen',
-    'all_rights_reserved' => 'Alle Rechte vorbehalten.',
-    'footer_navigation' => 'Fußzeilen-Navigation',
-    'github_aria' => 'GitHub',
-    'discord_aria' => 'Discord',
 ];

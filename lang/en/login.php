@@ -20,12 +20,4 @@ return [
     'terms_notice' => 'By connecting, you agree to our Terms of Service and Privacy Policy',
     'community_support' => 'Powered by our amazing community',
     'logo_alt' => 'VHeart Logo',
-    'privacy' => 'Privacy Policy',
-    'imprint' => 'Imprint',
-    'terms' => 'Terms of Service',
-    'all_rights_reserved' => 'All rights reserved.',
-    'footer_navigation' => 'Footer navigation',
-    'twitter_aria' => 'Twitter',
-    'github_aria' => 'GitHub',
-    'discord_aria' => 'Discord',
 ];

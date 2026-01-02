@@ -1,3 +1,4 @@
+import Footer from '@/components/footer/footer';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -6,9 +7,39 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Link } from '@inertiajs/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Logo from '/resources/images/svg/Logo Icon.svg';
+import Logo from '/resources/images/svg/logo-dark.svg';
+import LogoLight from '/resources/images/svg/logo-light.svg';
+
+type Star = {
+    x: number;
+    y: number;
+    size: number;
+    speed: number;
+    brightness: number;
+    pulseSpeed: number;
+    twinkle: number;
+};
+
+type Nebula = {
+    x: number;
+    y: number;
+    radius: number;
+    color: string;
+    speedX: number;
+    speedY: number;
+};
+
+type ShootingStar = {
+    active: boolean;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    life: number;
+    trail: { x: number; y: number; life: number }[];
+};
 
 export default function Welcome({
     kannRegistrieren = true,
@@ -18,63 +49,637 @@ export default function Welcome({
     const { t } = useTranslation('login');
     const twitchAuthUrl = '/auth/twitch';
 
+    const [isDarkMode, setIsDarkMode] = useState(true);
+
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    const animationRef = useRef<number>();
+
+    const starsRef = useRef<Star[]>([]);
+    const nebulasRef = useRef<Nebula[]>([]);
+    const shootingPoolRef = useRef<ShootingStar[]>([]);
+    const timeRef = useRef(0);
+    const lastSpawnRef = useRef(0);
+
+    const dprRef = useRef(1);
+    const sizeRef = useRef({ w: 0, h: 0 });
+    const isVisibleRef = useRef(true);
+    const lastFrameTimeRef = useRef(0);
+
+    useEffect(() => {
+        const checkTheme = () => {
+            const theme = localStorage.getItem('appearance');
+            setIsDarkMode(theme !== 'light');
+        };
+
+        checkTheme();
+
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'appearance') {
+                checkTheme();
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+
+        const interval = setInterval(checkTheme, 1000);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            clearInterval(interval);
+        };
+    }, []);
+
+    const initStars = useCallback((w: number, h: number, darkMode: boolean) => {
+        const stars: Star[] = [];
+        const starCount = Math.min(200, w / 8);
+
+        for (let i = 0; i < starCount; i++) {
+            stars.push({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                size: Math.random() * 2 + 0.5,
+                speed: darkMode
+                    ? Math.random() * 0.3 + 0.1
+                    : Math.random() * 0.18 + 0.05,
+                brightness: Math.random() * 0.6 + 0.4,
+                pulseSpeed: Math.random() * 0.01 + 0.005,
+                twinkle: Math.random() * Math.PI * 2,
+            });
+        }
+        return stars;
+    }, []);
+
+    const initNebulas = useCallback(
+        (w: number, h: number, darkMode: boolean) => {
+            const nebulas: Nebula[] = [];
+            const colors = darkMode
+                ? [
+                      'rgba(145, 70, 255, 0.1)',
+                      'rgba(0, 174, 255, 0.07)',
+                      'rgba(255, 70, 145, 0.05)',
+                  ]
+                : [
+                      'rgba(145, 70, 255, 0.06)',
+                      'rgba(0, 174, 255, 0.05)',
+                      'rgba(255, 70, 145, 0.04)',
+                  ];
+
+            for (let i = 0; i < 4; i++) {
+                nebulas.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    radius: Math.random() * 150 + 100,
+                    speedX: Math.random() * 0.08 - 0.04,
+                    speedY: Math.random() * 0.08 - 0.04,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                });
+            }
+            return nebulas;
+        },
+        [],
+    );
+
+    const ensureShootingPool = useCallback(() => {
+        if (shootingPoolRef.current.length) return;
+        const pool: ShootingStar[] = Array.from({ length: 4 }, () => ({
+            active: false,
+            x: 0,
+            y: 0,
+            vx: 0,
+            vy: 0,
+            life: 0,
+            trail: [],
+        }));
+        shootingPoolRef.current = pool;
+    }, []);
+
+    const spawnShootingStar = useCallback(
+        (w: number, h: number, darkMode: boolean) => {
+            const pool = shootingPoolRef.current;
+            const s = pool.find((p) => !p.active);
+            if (!s) return;
+
+            s.active = true;
+            s.x = Math.random() * w;
+            s.y = 0;
+            const speed = darkMode ? 15 : 10;
+            s.vx = -speed * 0.7;
+            s.vy = speed;
+            s.life = 1;
+            s.trail = [];
+        },
+        [],
+    );
+
+    const setCanvasSize = useCallback(
+        (
+            canvas: HTMLCanvasElement,
+            ctx: CanvasRenderingContext2D,
+            darkMode: boolean,
+        ) => {
+            const dpr = Math.max(1, window.devicePixelRatio || 1);
+            dprRef.current = dpr;
+
+            const cssW = window.innerWidth;
+            const cssH = window.innerHeight;
+            sizeRef.current = { w: cssW, h: cssH };
+
+            canvas.width = Math.floor(cssW * dpr);
+            canvas.height = Math.floor(cssH * dpr);
+            canvas.style.width = `${cssW}px`;
+            canvas.style.height = `${cssH}px`;
+
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            starsRef.current = initStars(cssW, cssH, darkMode);
+            nebulasRef.current = initNebulas(cssW, cssH, darkMode);
+        },
+        [initStars, initNebulas],
+    );
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ensureShootingPool();
+
+        let resizeRaf = 0;
+        const onResize = () => {
+            if (resizeRaf) return;
+            resizeRaf = requestAnimationFrame(() => {
+                resizeRaf = 0;
+                setCanvasSize(canvas, ctx, isDarkMode);
+            });
+        };
+
+        const handleVisibilityChange = () => {
+            isVisibleRef.current = document.visibilityState === 'visible';
+        };
+
+        setCanvasSize(canvas, ctx, isDarkMode);
+        window.addEventListener('resize', onResize, { passive: true });
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        const drawPlanet = (
+            x: number,
+            y: number,
+            radius: number,
+            time: number,
+            darkMode: boolean,
+        ) => {
+            ctx.save();
+            ctx.translate(x, y);
+
+            const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
+            if (darkMode) {
+                gradient.addColorStop(0, 'rgba(100, 65, 165, 0.8)');
+                gradient.addColorStop(0.6, 'rgba(70, 35, 135, 0.6)');
+                gradient.addColorStop(1, 'rgba(40, 20, 80, 0.4)');
+            } else {
+                gradient.addColorStop(0, 'rgba(155, 120, 220, 0.75)');
+                gradient.addColorStop(0.6, 'rgba(130, 95, 200, 0.55)');
+                gradient.addColorStop(1, 'rgba(110, 80, 180, 0.35)');
+            }
+
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(0, 0, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.rotate(time * 0.1);
+
+            const ringGradient = ctx.createLinearGradient(
+                -radius * 1.5,
+                0,
+                radius * 1.5,
+                0,
+            );
+            if (darkMode) {
+                ringGradient.addColorStop(0, 'rgba(145, 70, 255, 0)');
+                ringGradient.addColorStop(0.3, 'rgba(145, 70, 255, 0.3)');
+                ringGradient.addColorStop(0.7, 'rgba(145, 70, 255, 0.3)');
+                ringGradient.addColorStop(1, 'rgba(145, 70, 255, 0)');
+            } else {
+                ringGradient.addColorStop(0, 'rgba(145, 70, 255, 0)');
+                ringGradient.addColorStop(0.3, 'rgba(145, 70, 255, 0.18)');
+                ringGradient.addColorStop(0.7, 'rgba(145, 70, 255, 0.18)');
+                ringGradient.addColorStop(1, 'rgba(145, 70, 255, 0)');
+            }
+
+            ctx.strokeStyle = ringGradient;
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.ellipse(0, 0, radius * 1.5, radius * 0.3, 0, 0, Math.PI * 2);
+            ctx.stroke();
+
+            ctx.restore();
+        };
+
+        lastFrameTimeRef.current = performance.now();
+
+        const animate = (ts: number) => {
+            if (!isVisibleRef.current) {
+                animationRef.current = requestAnimationFrame(animate);
+                return;
+            }
+
+            const { w, h } = sizeRef.current;
+            const darkMode = isDarkMode;
+
+            const dt = Math.min(32, ts - lastFrameTimeRef.current);
+            lastFrameTimeRef.current = ts;
+            timeRef.current += dt * 0.001;
+
+            ctx.fillStyle = darkMode ? '#0a0a1a' : '#EEF2F8';
+            ctx.fillRect(0, 0, w, h);
+
+            const nebulas = nebulasRef.current;
+            for (let i = 0; i < nebulas.length; i++) {
+                const n = nebulas[i];
+                n.x += n.speedX * (dt / 16.67);
+                n.y += n.speedY * (dt / 16.67);
+
+                if (n.x > w + 200) n.x = -200;
+                if (n.x < -200) n.x = w + 200;
+                if (n.y > h + 200) n.y = -200;
+                if (n.y < -200) n.y = h + 200;
+
+                const gradient = ctx.createRadialGradient(
+                    n.x,
+                    n.y,
+                    0,
+                    n.x,
+                    n.y,
+                    n.radius,
+                );
+                gradient.addColorStop(0, n.color);
+                gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            if (w > 768) {
+                drawPlanet(w * 0.8, h * 0.2, 60, timeRef.current, darkMode);
+                drawPlanet(
+                    w * 0.2,
+                    h * 0.7,
+                    40,
+                    timeRef.current * 1.2,
+                    darkMode,
+                );
+            }
+
+            const stars = starsRef.current;
+            for (let i = 0; i < stars.length; i++) {
+                const s = stars[i];
+                s.y += s.speed * (dt / 16.67);
+                if (s.y > h) {
+                    s.y = 0;
+                    s.x = Math.random() * w;
+                }
+                s.twinkle += s.pulseSpeed * (dt / 16.67);
+                s.brightness = 0.5 + Math.sin(s.twinkle) * 0.3;
+
+                ctx.save();
+                const gradient = ctx.createRadialGradient(
+                    s.x,
+                    s.y,
+                    0,
+                    s.x,
+                    s.y,
+                    s.size * 3,
+                );
+
+                const starAlpha = darkMode ? s.brightness : s.brightness * 0.35;
+                const starColor = darkMode ? 255 : 80;
+
+                gradient.addColorStop(
+                    0,
+                    `rgba(${starColor}, ${starColor}, ${starColor}, ${starAlpha})`,
+                );
+                gradient.addColorStop(
+                    0.5,
+                    `rgba(${starColor}, ${starColor}, ${starColor}, ${starAlpha * 0.3})`,
+                );
+                gradient.addColorStop(
+                    1,
+                    `rgba(${starColor}, ${starColor}, ${starColor}, 0)`,
+                );
+
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            if (timeRef.current - lastSpawnRef.current > 2) {
+                lastSpawnRef.current = timeRef.current;
+                if (Math.random() < 0.02) spawnShootingStar(w, h, darkMode);
+            }
+
+            const pool = shootingPoolRef.current;
+            for (let i = 0; i < pool.length; i++) {
+                const s = pool[i];
+                if (!s.active) continue;
+
+                s.life -= 0.05 * (dt / 16.67);
+                s.x += s.vx * (dt / 16.67);
+                s.y += s.vy * (dt / 16.67);
+
+                s.trail.push({ x: s.x, y: s.y, life: s.life });
+                if (s.trail.length > 5) s.trail.shift();
+
+                if (s.life <= 0 || s.y > h + 50) {
+                    s.active = false;
+                    continue;
+                }
+
+                for (let j = 0; j < s.trail.length; j++) {
+                    const point = s.trail[j];
+                    const alpha = point.life * (j / s.trail.length) * 0.8;
+                    const trailColor = darkMode ? 255 : 90;
+
+                    ctx.beginPath();
+                    if (j === 0) {
+                        ctx.moveTo(point.x, point.y);
+                    } else {
+                        const prev = s.trail[j - 1];
+                        ctx.moveTo(prev.x, prev.y);
+                        ctx.lineTo(point.x, point.y);
+                    }
+
+                    const grad = ctx.createLinearGradient(
+                        point.x,
+                        point.y,
+                        point.x - s.vx * 0.5,
+                        point.y - s.vy * 0.5,
+                    );
+                    grad.addColorStop(
+                        0,
+                        `rgba(${trailColor}, ${trailColor}, ${trailColor}, ${alpha})`,
+                    );
+                    grad.addColorStop(
+                        1,
+                        darkMode
+                            ? `rgba(180, 220, 255, ${alpha * 0.5})`
+                            : `rgba(120, 150, 180, ${alpha * 0.45})`,
+                    );
+
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 2 * (1 - j / s.trail.length);
+                    ctx.lineCap = 'round';
+                    ctx.stroke();
+                }
+
+                const headColor = darkMode ? 255 : 90;
+                const headGradient = ctx.createRadialGradient(
+                    s.x,
+                    s.y,
+                    0,
+                    s.x,
+                    s.y,
+                    6,
+                );
+                headGradient.addColorStop(
+                    0,
+                    `rgba(${headColor}, ${headColor}, ${headColor}, 0.9)`,
+                );
+                headGradient.addColorStop(
+                    1,
+                    darkMode
+                        ? 'rgba(180, 220, 255, 0)'
+                        : 'rgba(120, 150, 180, 0)',
+                );
+                ctx.fillStyle = headGradient;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            animationRef.current = requestAnimationFrame(animate);
+        };
+
+        animationRef.current = requestAnimationFrame(animate);
+
+        return () => {
+            window.removeEventListener('resize', onResize);
+            document.removeEventListener(
+                'visibilitychange',
+                handleVisibilityChange,
+            );
+            if (resizeRaf) cancelAnimationFrame(resizeRaf);
+            if (animationRef.current)
+                cancelAnimationFrame(animationRef.current);
+        };
+    }, [ensureShootingPool, setCanvasSize, spawnShootingStar, isDarkMode]);
+
+    const getBackgroundGradients = () => {
+        if (isDarkMode) {
+            return {
+                background: 'bg-[#0a0a1a]',
+                overlay: 'from-[#0a0a1a]/90 via-transparent to-[#0a0a1a]/80',
+                radialGradients: `radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.15) 0%, transparent 50%),
+                                  radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.1) 0%, transparent 50%)`,
+            };
+        } else {
+            return {
+                background: 'bg-[#F5F7FB]',
+                overlay: 'from-[#F5F7FB]/85 via-[#F5F7FB]/60 to-[#E3E8F2]',
+                radialGradients: ` radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.1) 0%, transparent 55%),
+                                   radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.08) 0%, transparent 55%)`,
+            };
+        }
+    };
+
+    const gradients = getBackgroundGradients();
+
     return (
-        <div className="flex min-h-screen flex-col bg-gradient-to-b from-secondary to-black">
-            <main className="flex flex-1 flex-col items-center justify-center p-4">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="space-y-4 text-center">
-                        <div className="mb-6 flex justify-center">
-                            <img
-                                src={Logo}
-                                alt={t('logo_alt')}
-                                className="h-16 w-16"
-                            />
+        <div
+            className={`relative flex min-h-screen flex-col overflow-hidden ${gradients.background}`}
+        >
+            <canvas ref={canvasRef} className="absolute inset-0" />
+
+            <div
+                className={`absolute inset-0 bg-gradient-to-t ${gradients.overlay}`}
+            />
+
+            <div
+                className="absolute inset-0"
+                style={{
+                    backgroundImage: gradients.radialGradients,
+                }}
+            />
+
+            <main className="relative z-20 flex flex-1 flex-col items-center justify-center p-4 pb-16">
+                <Card
+                    className={`w-full max-w-md ${
+                        isDarkMode
+                            ? 'border-white/20 bg-gradient-to-br from-black/40 via-black/30 to-black/40 shadow-2xl shadow-purple-900/30'
+                            : 'border-black/10 bg-gradient-to-br from-white/80 via-white/90 to-white/80 shadow-2xl ring-1 shadow-black/10 ring-black/5'
+                    } backdrop-blur-xl`}
+                >
+                    <CardHeader className="space-y-6 text-center">
+                        <div className="flex justify-center">
+                            <div className="relative">
+                                <img
+                                    src={isDarkMode ? Logo : LogoLight}
+                                    alt={t('logo_alt')}
+                                    className={`h-24 w-24 ${
+                                        isDarkMode
+                                            ? 'drop-shadow-[0_0_40px_rgba(145,70,255,0.7)]'
+                                            : 'drop-shadow-[0_0_30px_rgba(145,70,255,0.25)]'
+                                    }`}
+                                />
+                                <div
+                                    className={`absolute inset-0 rounded-full ${
+                                        isDarkMode
+                                            ? 'bg-purple-500/30'
+                                            : 'bg-purple-400/12'
+                                    } blur-2xl`}
+                                />
+                                <div
+                                    className={`absolute -inset-4 animate-pulse rounded-full border-2 ${
+                                        isDarkMode
+                                            ? 'border-purple-500/20'
+                                            : 'border-purple-400/15'
+                                    }`}
+                                />
+                            </div>
                         </div>
 
-                        <CardTitle className="text-3xl font-bold tracking-tight">
-                            {t('title')}
+                        <CardTitle className="text-4xl font-bold tracking-tight">
+                            <span
+                                className={`bg-gradient-to-r ${
+                                    isDarkMode
+                                        ? 'from-purple-300 via-white to-cyan-300'
+                                        : 'from-purple-700 via-gray-900 to-cyan-700'
+                                } bg-clip-text text-transparent`}
+                            >
+                                {t('title')}
+                            </span>
                         </CardTitle>
                     </CardHeader>
 
                     <CardContent className="space-y-6">
-                        <p className="text-center leading-relaxed text-muted-foreground">
+                        <p
+                            className={`text-center text-lg leading-relaxed ${
+                                isDarkMode ? 'text-white/90' : 'text-gray-800'
+                            }`}
+                        >
                             {t('description')}
                         </p>
 
                         <div className="flex justify-center">
-                            <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-secondary"></div>
+                            <div
+                                className={`h-[1px] w-32 bg-gradient-to-r from-transparent ${
+                                    isDarkMode
+                                        ? 'via-white/50'
+                                        : 'via-gray-700/40'
+                                } to-transparent`}
+                            />
                         </div>
                     </CardContent>
 
-                    <CardFooter className="flex flex-col space-y-4">
+                    <CardFooter className="flex flex-col space-y-6">
                         {kannRegistrieren && (
                             <a
                                 href={twitchAuthUrl}
-                                className="w-full"
+                                className="group relative w-full"
                                 aria-label={t('connect_button_aria')}
                             >
+                                <div
+                                    className={`absolute -inset-1 rounded-lg bg-gradient-to-r ${
+                                        isDarkMode
+                                            ? 'from-purple-600 to-cyan-500 opacity-60'
+                                            : 'from-purple-600 to-cyan-500 opacity-35'
+                                    } blur-xl transition-opacity duration-300 group-hover:opacity-60`}
+                                />
                                 <Button
-                                    className="w-full py-6 text-lg"
+                                    className={`relative w-full border-0 bg-gradient-to-r py-7 text-lg shadow-2xl transition-all duration-300 ${
+                                        isDarkMode
+                                            ? 'from-purple-700 via-purple-600 to-cyan-600 group-hover:shadow-purple-500/30 hover:from-purple-800 hover:to-cyan-700'
+                                            : 'from-purple-600 via-purple-500 to-cyan-500 group-hover:shadow-black/10 hover:from-purple-700 hover:to-cyan-600'
+                                    }`}
                                     size="lg"
                                 >
-                                    <TwitchIcon className="mr-3 h-6 w-6" />
-                                    {t('connect_button')}
+                                    <div className="flex items-center justify-center space-x-3">
+                                        <div className="relative">
+                                            <TwitchIcon className="h-7 w-7 text-white" />
+                                            <div
+                                                className={`absolute inset-0 ${
+                                                    isDarkMode
+                                                        ? 'bg-cyan-400/40'
+                                                        : 'bg-cyan-400/18'
+                                                } blur-md`}
+                                            />
+                                        </div>
+                                        <span className="font-bold text-white drop-shadow-lg">
+                                            {t('connect_button')}
+                                        </span>
+                                    </div>
                                 </Button>
                             </a>
                         )}
 
-                        <p className="border-t pt-4 text-center text-sm text-muted-foreground">
+                        <p
+                            className={`border-t ${
+                                isDarkMode
+                                    ? 'border-white/20 text-white/70'
+                                    : 'border-black/10 text-gray-700'
+                            } pt-4 text-center text-sm`}
+                        >
                             {t('terms_notice')}
                         </p>
                     </CardFooter>
                 </Card>
 
-                <div className="mt-8 text-center text-white/80">
-                    <p className="text-sm">{t('community_support')} ❤️</p>
+                <div className="mt-10 text-center">
+                    <p
+                        className={`rounded-2xl border ${
+                            isDarkMode
+                                ? 'border-white/20 bg-white/10 text-white/90'
+                                : 'border-black/10 bg-white/70 text-gray-800'
+                        } px-6 py-3 backdrop-blur-sm`}
+                    >
+                        {t('community_support')}
+                        <span
+                            className={`ml-2 animate-pulse ${
+                                isDarkMode ? 'text-cyan-300' : 'text-cyan-600'
+                            }`}
+                        >
+                            ✦
+                        </span>
+                    </p>
                 </div>
             </main>
 
-            <Footer />
+            <div className="relative z-50 mt-auto">
+                <div
+                    className={`border-t shadow-[0_-8px_30px_rgba(0,0,0,0.08)] backdrop-blur-md ${
+                        isDarkMode
+                            ? 'border-white/10 bg-black/35'
+                            : 'border-black/10 bg-white/85'
+                    }`}
+                >
+                    <div
+                        className={
+                            isDarkMode
+                                ? '!text-white/85 [&_*]:!text-white/85 [&_a:hover]:!text-white [&_svg]:!text-white/85'
+                                : '!text-gray-800 [&_*]:!text-gray-800 [&_a:hover]:!text-gray-950 [&_svg]:!text-gray-800'
+                        }
+                    >
+                        <Footer />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
@@ -89,77 +694,5 @@ function TwitchIcon({ className }: { className?: string }) {
         >
             <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
         </svg>
-    );
-}
-
-function Footer() {
-    const { t } = useTranslation('login');
-
-    const footerLinks = [
-        { href: '/privacy', label: t('privacy') },
-        { href: '/imprint', label: t('imprint') },
-        { href: '/terms', label: t('terms') },
-    ];
-
-    return (
-        <footer className="border-t border-white/10 py-6">
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-                    <div className="text-center text-sm text-white/60 md:text-left">
-                        © {new Date().getFullYear()} VHeart.{' '}
-                        {t('all_rights_reserved')}
-                    </div>
-
-                    <nav aria-label={t('footer_navigation')}>
-                        <ul className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-                            {footerLinks.map((link) => (
-                                <li key={link.href}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-sm text-white/70 transition-colors hover:text-white hover:underline"
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
-
-                    <div className="flex items-center gap-4">
-                        <a
-                            href="https://github.com/kattyterra/VHeart_Webseite"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={t('github_aria', 'GitHub')}
-                            className="text-white/70 hover:text-white"
-                        >
-                            <svg
-                                className="h-5 w-5"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                            </svg>
-                        </a>
-
-                        <a
-                            href="https://discord.gg/ThVZHqvXnD"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={t('discord_aria', 'Discord')}
-                            className="text-white/70 hover:text-white"
-                        >
-                            <svg
-                                className="h-5 w-5"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515a.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0a12.64 12.64 0 00-.617-1.25a.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057a19.9 19.9 0 005.993 3.03a.078.078 0 00.084-.028a14.09 14.09 0 001.226-1.994a.076.076 0 00-.041-.106a13.107 13.107 0 01-1.872-.892a.077.077 0 01-.008-.128c.125-.094.25-.188.372-.284a.076.076 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.076.076 0 01.078.01c.12.096.245.19.37.284a.077.077 0 01-.006.127a12.3 12.3 0 01-1.873.892a.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028a19.839 19.839 0 006.002-3.03a.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
     );
 }
