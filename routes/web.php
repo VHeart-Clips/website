@@ -30,7 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/auth/twitch', function() {
+Route::get('/auth/twitch', function () {
     return Socialite::driver('twitch')->scopes(['channel:read:vips', 'user:read:moderated_channels'])->redirect();
 })->name('auth.twitch');
 
@@ -49,6 +49,10 @@ Route::get('/auth/twitch/callback', function () {
             'avatar_url' => $twitchUser->getAvatar(),
             'twitch_refresh_token' => $twitchUser->refreshToken,
         ]);
+
+    if ($user->deleted_at) {
+        return to_route('login')->withErrors(['login' => 'banned']);
+    }
 
     session()?->regenerate();
     Auth::login($user);

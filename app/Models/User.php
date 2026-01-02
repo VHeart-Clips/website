@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -111,6 +112,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return parent::setRelation($relation, $value);
     }
 
+    public function broadcasterFilter(): HasMany
+    {
+        return $this->hasMany(BroadcasterFilter::class, 'broadcaster_id');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -123,6 +129,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'twitch_refresh_token' => 'encrypted',
+            'rules' => 'array',
         ];
     }
 

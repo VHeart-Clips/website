@@ -348,7 +348,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                                 disabled={isSubmitting}
                                                 autoComplete="off"
                                                 inputMode="url"
-                                            />                                    
+                                            />
                                             <InputError
                                                 className="mt-2"
                                                 message={errors.clip_url}
