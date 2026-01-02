@@ -523,8 +523,6 @@ export default function Welcome() {
         },
     ];
 
-    const year = new Date().getFullYear();
-
     return (
         <>
             <Head title={t('meta.title')} />
