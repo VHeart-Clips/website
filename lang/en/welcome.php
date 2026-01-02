@@ -1,18 +1,6 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Welcome Page Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used on the welcome page.
-    | You are free to modify these language lines according to your
-    | application's requirements.
-    |
-    */
-
     'meta' => [
         'title' => 'Welcome to',
     ],
