@@ -25,7 +25,7 @@ export default function Footer() {
                                     variant="ghost"
                                     className="h-auto px-2 py-1 text-sm text-white/70 hover:text-white"
                                 >
-                                    <a href="https://www.youtube.com/watch?v=qHnLR5W7BfE">
+                                    <a href="/privacy">
                                         {t('privacy.footer')}
                                     </a>
                                 </Button>

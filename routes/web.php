@@ -13,6 +13,18 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
+Route::get('/imprint', function () {
+    return Inertia::render('footer/imprint');
+})->name('imprint');
+
+Route::get('/terms', function () {
+    return Inertia::render('footer/terms');
+})->name('terms');
+
+Route::get('/privacy', function () {
+    return Inertia::render('footer/privacy');
+})->name('privacy');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
