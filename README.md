@@ -45,6 +45,9 @@ docker run --rm --user $(id -u):$(id -g) -v $(pwd):/app composer install --ignor
 
 # to share the app with others run
 ./vendor/bin/sail share
+
+# If you want to run browser based tests you also have to setup playwright (will take a while and some space):
+./vendor/bin/sail npx playwright install
 ```
 
 To make working with sail easier you can add the following aliases to your `.bashrc` or `.zshrc`:
@@ -63,6 +66,9 @@ If you work with WSL on Windows you may have to add this to your ~/.gitconfig in
 
 this allows the git inside WSL to use your window's git credentials.
 
+## Testing
+
+For full 
 
 ## Resources
 
@@ -73,3 +79,4 @@ this allows the git inside WSL to use your window's git credentials.
 - [React Documentation](https://react.dev/reference/react)
   - [shadcn UI Stuff](https://ui.shadcn.com/)
 - [FrankenPHP (if we use it)](https://frankenphp.dev/)
+- https://pestphp.com/docs/editor-setup
