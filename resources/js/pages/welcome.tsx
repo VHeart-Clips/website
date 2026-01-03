@@ -2,7 +2,18 @@ import Footer from '@/components/footer/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Head, Link } from '@inertiajs/react';
-import { CheckCircle, Heart, LogIn, Shield, Sparkles, Users, Video, Vote } from 'lucide-react';
+import PartnerIcon from '/resources/images/svg/logo-dark.svg';
+
+import {
+    CheckCircle,
+    Heart,
+    LogIn,
+    Shield,
+    Sparkles,
+    Users,
+    Video,
+    Vote,
+} from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -38,7 +49,7 @@ type ShootingStar = {
 export default function Welcome() {
     const { t } = useTranslation('welcome');
 
-    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+    const [theme] = useState<'dark' | 'light'>('dark');
     const [isMobile, setIsMobile] = useState(false);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -56,61 +67,14 @@ export default function Welcome() {
     const sizeRef = useRef({ w: 0, h: 0 });
     const isVisibleRef = useRef(true);
     const lastFrameTimeRef = useRef(0);
-
+    // TODO: Hier muss der richtig link für den button hin
     const youtubeUrl = 'https://youtu.be/7Z_M_YhxjOM';
-    const videoId =
-        youtubeUrl.match(
-            /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/,
-        )?.[1] || '';
-    const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
         checkMobile();
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
-    useEffect(() => {
-        const getTheme = (): 'dark' | 'light' => {
-            if (typeof window !== 'undefined') {
-                const saved = localStorage.getItem('appearance');
-                if (saved === 'light') return 'light';
-                if (saved === 'dark') return 'dark';
-            }
-
-            const root = document.documentElement;
-            if (root.classList.contains('dark')) return 'dark';
-            if (root.classList.contains('light')) return 'light';
-
-            return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches
-                ? 'dark'
-                : 'light';
-        };
-
-        const applyTheme = () => setTheme(getTheme());
-        applyTheme();
-
-        const mql = window.matchMedia?.('(prefers-color-scheme: dark)');
-        const onMql = () => applyTheme();
-        mql?.addEventListener?.('change', onMql);
-
-        const mo = new MutationObserver(() => applyTheme());
-        mo.observe(document.documentElement, {
-            attributes: true,
-            attributeFilter: ['class'],
-        });
-
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'appearance') applyTheme();
-        };
-        window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            mql?.removeEventListener?.('change', onMql);
-            mo.disconnect();
-            window.removeEventListener('storage', handleStorageChange);
-        };
     }, []);
 
     const initStars = useCallback(
@@ -477,7 +441,7 @@ export default function Welcome() {
                   innerCard: 'border-white/15 bg-black/20',
                   infoCard: 'border-white/10 bg-black/25',
                   donateButton:
-                      'bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 hover:from-purple-700 hover:via-pink-600 hover:to-red-600 text-white shadow-lg hover:shadow-purple-500/25',
+                      'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 hover:from-emerald-600 hover:via-teal-500 hover:to-cyan-500 text-white shadow-lg hover:shadow-emerald-500/25',
                   tag: 'border-white/15 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white/85',
               }
             : {
@@ -493,7 +457,7 @@ export default function Welcome() {
                   innerCard: 'border-black/10 bg-white/60',
                   infoCard: 'border-black/10 bg-white/70',
                   donateButton:
-                      'bg-gradient-to-r from-purple-500 via-pink-400 to-red-400 hover:from-purple-600 hover:via-pink-500 hover:to-red-500 text-white shadow-lg hover:shadow-purple-400/25',
+                      'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 hover:from-emerald-600 hover:via-teal-500 hover:to-cyan-500 text-white shadow-lg hover:shadow-emerald-400/25',
                   tag: 'border-black/10 bg-gradient-to-r from-purple-100 to-cyan-100 text-gray-800',
               };
 
@@ -643,7 +607,11 @@ export default function Welcome() {
                                                 <div
                                                     className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${ui.iconBox}`}
                                                 >
-                                                    <Heart className="h-6 w-6" />
+                                                    <img
+                                                        src={PartnerIcon}
+                                                        alt="logo"
+                                                        className="h-12 w-12 object-contain"
+                                                    />
                                                 </div>
 
                                                 <div>
@@ -662,7 +630,11 @@ export default function Welcome() {
 
                                             <div className="mb-6 space-y-4">
                                                 <div
-                                                    className={`rounded-lg p-4 ${theme === 'dark' ? 'bg-purple-900/20' : 'bg-purple-50'}`}
+                                                    className={`rounded-lg p-4 ${
+                                                        theme === 'dark'
+                                                            ? 'bg-purple-900/20'
+                                                            : 'bg-purple-50'
+                                                    }`}
                                                 >
                                                     <p
                                                         className={`text-sm leading-relaxed ${ui.cardText}`}
@@ -692,7 +664,11 @@ export default function Welcome() {
                                                 </p>
 
                                                 <div
-                                                    className={`rounded-lg p-4 ${theme === 'dark' ? 'bg-cyan-900/20' : 'bg-cyan-50'} mt-4`}
+                                                    className={`rounded-lg p-4 ${
+                                                        theme === 'dark'
+                                                            ? 'bg-cyan-900/20'
+                                                            : 'bg-cyan-50'
+                                                    } mt-4`}
                                                 >
                                                     <p
                                                         className={`text-sm leading-relaxed ${ui.cardText} text-center font-bold`}
@@ -784,11 +760,19 @@ export default function Welcome() {
                                         </div>
 
                                         <div
-                                            className={`rounded-xl border p-5 ${theme === 'dark' ? 'border-red-400/30 bg-red-900/10' : 'border-red-300 bg-red-50'}`}
+                                            className={`rounded-xl border p-5 ${
+                                                theme === 'dark'
+                                                    ? 'border-red-400/30 bg-red-900/10'
+                                                    : 'border-red-300 bg-red-50'
+                                            }`}
                                         >
                                             <div className="flex items-start gap-3">
                                                 <Shield
-                                                    className={`mt-0.5 h-5 w-5 flex-shrink-0 ${theme === 'dark' ? 'text-red-300' : 'text-red-600'}`}
+                                                    className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
+                                                        theme === 'dark'
+                                                            ? 'text-red-300'
+                                                            : 'text-red-600'
+                                                    }`}
                                                 />
                                                 <p
                                                     className={`text-sm leading-relaxed ${ui.cardText}`}
@@ -830,12 +814,14 @@ export default function Welcome() {
                                     className={`relative aspect-video overflow-hidden rounded-xl border ${ui.videoBorder}`}
                                 >
                                     <iframe
-                                        src={embedUrl}
-                                        title={t('video.iframe_title')}
-                                        allow="autoplay; encrypted-media; picture-in-picture"
+                                        width="100%"
+                                        height="100%"
+                                        src="https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&amp;list=UUgZpwegd4AdDlZNrIamIgRw"
+                                        title="YouTube video player"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        referrerPolicy="strict-origin-when-cross-origin"
                                         allowFullScreen
-                                        className="absolute inset-0 h-full w-full"
-                                    />
+                                    ></iframe>
                                 </div>
                             </CardContent>
                         </Card>

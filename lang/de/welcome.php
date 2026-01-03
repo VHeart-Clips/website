@@ -23,7 +23,7 @@ return [
 
     'about' => [
         'title' => 'Wer steckt dahinter?',
-        'p1' => 'Die vier Köpfe hinter diesem Projekt sind wir: YuraYami, DasOnkeelchen, Silentpanda und Meyn.',
+        'p1' => 'Die vier Köpfe hinter diesem Projekt sind wir: YuraYami, DasOnkeelchen, SilentPanda und Meyn.',
         'p2' => 'Wir möchten mit diesem Projekt euch eine lustige Unterhaltung eurer Lieblingsstreamer bieten und zusätzlich etwas Gutes tun.',
         'hashtag' => '#fürdiesüßmäuse',
     ],

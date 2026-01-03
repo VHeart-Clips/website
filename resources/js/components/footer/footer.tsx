@@ -41,7 +41,7 @@ export default function Footer() {
                                     </a>
                                 </Button>
                             </li>
-                            <li>
+{/*                            <li>
                                 <Button
                                     asChild
                                     variant="ghost"
@@ -51,7 +51,7 @@ export default function Footer() {
                                         {t('terms.footer')}
                                     </a>
                                 </Button>
-                            </li>
+                            </li>*/}
                         </ul>
                     </nav>
 

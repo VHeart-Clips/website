@@ -23,7 +23,7 @@ return [
 
     'about' => [
         'title' => 'Who is behind it?',
-        'p1' => 'The four minds behind this project are: YuraYami, DasOnkeelchen, Silentpanda and Meyn.',
+        'p1' => 'The four minds behind this project are: YuraYami, DasOnkeelchen, SilentPanda and Meyn.',
         'p2' => 'With this project we want to entertain you with funny moments from your favorite streamers and also do something good.',
         'hashtag' => '#forthesweeties',
     ],
