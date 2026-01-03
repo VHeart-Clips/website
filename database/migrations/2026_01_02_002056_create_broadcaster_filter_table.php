@@ -13,13 +13,10 @@ return new class extends Migration
     {
         Schema::create('broadcaster_filter', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('broadcaster_id');
-            $table->unsignedBigInteger('user_id');
+            $table->foreignId('broadcaster_id')->index()->references('id')->on('users')->constrained()->cascadeOnDelete();
+            $table->morphs('filter');
             $table->boolean('allowed');
             $table->timestamps();
-
-            $table->foreign('broadcaster_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -10,7 +10,6 @@ use App\Services\Twitch\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -86,21 +85,21 @@ class ClipSubmitController extends Controller
 
         $clipUrl = $data['clip_url'];
         $clipId = $this->getClipIdFromUrl($clipUrl);
-        $tagIds = $data['tag_ids'] ?? [];
-        $isAnonymous = (bool) ($data['is_anonymous'] ?? false);
+        $tagIds = $data['tag_ids'];
+        $isAnonymous = $data['is_anonymous'];
 
-        $user = Auth::user();
+        $user = $request->user();
 
-        $clipModel = Clip::where('twitch_id', '=', $clipId)->get();
+        $clipModel = Clip::where('twitch_id', $clipId)->get();
 
         if ($clipModel->isNotEmpty()) {
-            throw ValidationException::withMessages(['clip_url' => 'Clip bereits bekannt']);
+            throw ValidationException::withMessages(['clip_url' => __('sendinclip.erros.clip_already_known')]);
         }
 
         $clipInfos = $this->twitchService->asUser($user, $this->getUserToken())->get(TwitchEndpoints::GetClips, ['id' => $clipId]);
 
         if (empty($clipInfos['data'])) {
-            throw ValidationException::withMessages(['clip_url' => 'Clip nicht gefunden']);
+            throw ValidationException::withMessages(['clip_url' => __('sendinclip.erros.clip_not_found')]);
         }
 
         $clipInfo = $clipInfos['data'][0];
@@ -115,34 +114,34 @@ class ClipSubmitController extends Controller
 
         $twitchClipperId = $clipInfo['creator_id'];
 
-        $isUserBlackedListed = $broadcasterUser->broadcasterFilter()->where('user_id', '=', $twitchClipperId)
+        $isUserBlackedListed = $broadcasterUser->broadcasterUserFilter()->where(column: 'filter_id', operator: $user->id)
             ->where('allowed', false)
             ->first();
 
         if (! empty($isUserBlackedListed)) {
-            throw ValidationException::withMessages(['clip_url' => 'Du darfts keine Clips einsenden für den Streamer']);
+            throw ValidationException::withMessages(['clip_url' => __('sendinclip.erros.user_not_allowed_for_broadcaster')]);
         }
 
-        $userRules = $broadcasterUser->rules ?? [];
-        $userAllowed = empty($userRules); // || $broadcasterId === $user->id;
+        $broadcasterRules = $broadcasterUser->rules ?? [];
+        $userIsAllowed = empty($broadcasterRules) || $broadcasterId === $user->id;
 
-        if (! $userAllowed && in_array('userAllowList', haystack: $userRules)) {
-            $isUserWhiteListed = $broadcasterUser->broadcasterFilter()->where('user_id', '=', $twitchClipperId)
+        if (! $userIsAllowed && in_array('userAllowList', haystack: $broadcasterRules)) {
+            $isUserWhiteListed = $broadcasterUser->broadcasterUserFilter()->where('user_id', $twitchClipperId)
                 ->where('allowed', true)
                 ->first();
 
             if ($isUserWhiteListed) {
-                $userAllowed = true;
+                $userIsAllowed = true;
             }
         }
 
-        if (! $userAllowed && in_array('userAllowMods', $userRules)) {
+        if (! $userIsAllowed && in_array('userAllowMods', $broadcasterRules)) {
             if ($this->twitchService->asUser($user, $this->getUserToken())->isModeratorFor($broadcasterUser)) {
-                $userAllowed = true;
+                $userIsAllowed = true;
             }
         }
 
-        if (! $userAllowed && in_array('userAllowVips', $userRules)) {
+        if (! $userIsAllowed && in_array('userAllowVips', $broadcasterRules)) {
             try {
                 $vipInfos = $this->twitchService->asUser($broadcasterUser)->onUserTokenRefresh()->get(TwitchEndpoints::GetVIPs, [
                     'user_id' => $user->id,
@@ -150,19 +149,19 @@ class ClipSubmitController extends Controller
                 ]);
 
                 if (! empty($vipInfos['data'])) {
-                    $userAllowed = true;
+                    $userIsAllowed = true;
                 }
 
             } catch (\App\Services\Twitch\Exceptions\TwitchApiException $th) {
-                throw ValidationException::withMessages(['clip_url' => 'errro getting vip'.$th->getMessage()]);
+                throw ValidationException::withMessages(['clip_url' => __('sendinclip.erros.getting_vip')]);
             }
         }
 
-        if (! $userAllowed) {
-            throw ValidationException::withMessages(['clip_url' => 'Du darfts keine Clips einsenden für den Streamer']);
+        if (! $userIsAllowed) {
+            throw ValidationException::withMessages(['clip_url' => __('sendinclip.erros.user_not_allowed_for_broadcaster')]);
         }
 
-        $twitchClipper = User::updateOrCreate([
+        User::updateOrCreate([
             'id' => $twitchClipperId,
         ], [
             'name' => $clipInfo['creator_name'],
@@ -170,25 +169,43 @@ class ClipSubmitController extends Controller
 
         $gameId = $clipInfo['game_id'];
 
+        $isGameBlackListed = $broadcasterUser->broadcasterGameFilter()->where('filter_id', $gameId)
+            ->where('allowed', false)
+            ->first();
+
+        if (! empty($isGameBlackListed)) {
+            throw ValidationException::withMessages(['clip_url' => __('sendinclip.errors.game_blocked')]);
+        }
+
+        $hasOneGameWhiteListed = $broadcasterUser->broadcasterGameFilter()->where('allowed', true)->exists();
+        $isGameWhiteListed = $broadcasterUser->broadcasterGameFilter()->where('filter_id', $gameId)
+            ->where('allowed', true)
+            ->first();
+
+        if ($hasOneGameWhiteListed && ! $isGameWhiteListed) {
+            throw ValidationException::withMessages(['clip_url' => __('sendinclip.errors.game_blocked')]);
+        }
+
         $game = Game::find($gameId);
 
         if (empty($game)) {
             $gameInfos = $this->twitchService->asUser($user, $this->getUserToken())->get(TwitchEndpoints::GetGames, ['id' => $gameId]);
 
             if (empty($gameInfos['data'])) {
-                throw ValidationException::withMessages(['clip_url' => 'Game vom Clip nicht gefunden']);
+                throw ValidationException::withMessages(['clip_url' => __('sendinclip.errors.game_not_found')]);
             }
 
             $gameInfo = $gameInfos['data'][0];
 
-            $game = Game::create([
+            $game = Game::updateOrCreate([
                 'id' => $gameId,
+            ], [
                 'title' => $gameInfo['name'],
                 'box_art' => $gameInfo['box_art_url'],
             ]);
         }
 
-        Clip::create([
+        $clip = Clip::create([
             'twitch_id' => $clipId,
             'title' => $clipInfo['title'],
             'url' => $clipInfo['url'],
@@ -202,7 +219,13 @@ class ClipSubmitController extends Controller
             'duration' => $clipInfo['duration'],
             'language' => $clipInfo['language'],
             'date' => $clipInfo['created_at'],
+            'isAnonymous' => $isAnonymous,
         ]);
+
+        if (! empty($tagIds)) {
+            $modelTags = Tag::whereIn('id', $tagIds)->get();
+            $clip->tags()->sync($modelTags);
+        }
 
         return to_route('submitclip')->with('submit_ok', true)
             ->with('submit_message', __('sendinclip.flash.submitted'));
@@ -210,7 +233,7 @@ class ClipSubmitController extends Controller
 
     private function getClipIdFromUrl(string $clipUrl): ?string
     {
-        if (preg_match('/https:\/\/(?:www.twitch.tv\/\w*\/clip|clips.twitch.tv)\/([\w_-]*)?.*/', $clipUrl, $m)) {
+        if (preg_match('/https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/', $clipUrl, $m)) {
             return $m[1];
         }
 
