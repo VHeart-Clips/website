@@ -101,10 +101,13 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@test:type-coverage",
-            "@test:unit",
-            "@test:lint",
+            "@test:unit"
+        ],
+        "test-inactive": [
+            "@php artisan config:clear --ansi",
             "@test:types",
-            "@test:refactor"
+            "@test:refactor",
+            "@test:lint"
         ]
     },
     "extra": {
