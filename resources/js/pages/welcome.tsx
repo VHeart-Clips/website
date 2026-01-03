@@ -46,11 +46,68 @@ type ShootingStar = {
     trail: { x: number; y: number; life: number }[];
 };
 
+const CANVAS_THEMES = {
+    dark: {
+        background: '#0a0a1a',
+        planetGradientStops: [
+            { offset: 0, color: 'rgba(100, 65, 165, 0.8)' },
+            { offset: 0.6, color: 'rgba(70, 35, 135, 0.6)' },
+            { offset: 1, color: 'rgba(40, 20, 80, 0.4)' },
+        ],
+        ringGradientStops: [
+            { offset: 0, color: 'rgba(145, 70, 255, 0)' },
+            { offset: 0.3, color: 'rgba(145, 70, 255, 0.3)' },
+            { offset: 0.7, color: 'rgba(145, 70, 255, 0.3)' },
+            { offset: 1, color: 'rgba(145, 70, 255, 0)' },
+        ],
+        nebulaColors: [
+            'rgba(145, 70, 255, 0.1)',
+            'rgba(0, 174, 255, 0.07)',
+            'rgba(255, 70, 145, 0.05)',
+        ],
+        starColor: 255,
+        starAlphaMultiplier: 1,
+        shootingStarColor: 'rgba(255,255,255,0.9)',
+        starSpeedMin: 0.1,
+        starSpeedMax: 0.4,
+        shootingStarSpeed: 15,
+    },
+    light: {
+        background: '#EEF2F8',
+        planetGradientStops: [
+            { offset: 0, color: 'rgba(155, 120, 220, 0.75)' },
+            { offset: 0.6, color: 'rgba(130, 95, 200, 0.55)' },
+            { offset: 1, color: 'rgba(110, 80, 180, 0.35)' },
+        ],
+        ringGradientStops: [
+            { offset: 0, color: 'rgba(145, 70, 255, 0)' },
+            { offset: 0.3, color: 'rgba(145, 70, 255, 0.18)' },
+            { offset: 0.7, color: 'rgba(145, 70, 255, 0.18)' },
+            { offset: 1, color: 'rgba(145, 70, 255, 0)' },
+        ],
+        nebulaColors: [
+            'rgba(145, 70, 255, 0.06)',
+            'rgba(0, 174, 255, 0.05)',
+            'rgba(255, 70, 145, 0.04)',
+        ],
+        starColor: 80,
+        starAlphaMultiplier: 0.35,
+        shootingStarColor: 'rgba(90,90,90,0.9)',
+        starSpeedMin: 0.05,
+        starSpeedMax: 0.23,
+        shootingStarSpeed: 10,
+    },
+};
+
 export default function Welcome() {
     const { t } = useTranslation('welcome');
 
-    const [theme] = useState<'dark' | 'light'>('dark');
     const [isMobile, setIsMobile] = useState(false);
+
+    const [isDarkMode, setIsDarkMode] = useState(() => {
+        if (typeof document === 'undefined') return false;
+        return document.documentElement.classList.contains('dark');
+    });
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -67,7 +124,7 @@ export default function Welcome() {
     const sizeRef = useRef({ w: 0, h: 0 });
     const isVisibleRef = useRef(true);
     const lastFrameTimeRef = useRef(0);
-    // TODO: Hier muss der richtig link für den button hin
+
     const youtubeUrl = 'https://youtu.be/7Z_M_YhxjOM';
 
     useEffect(() => {
@@ -77,8 +134,33 @@ export default function Welcome() {
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
+    useEffect(() => {
+        const checkTheme = () => {
+            setIsDarkMode(document.documentElement.classList.contains('dark'));
+        };
+
+        checkTheme();
+
+        const observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                if (mutation.attributeName === 'class') checkTheme();
+            }
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class'],
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
     const initStars = useCallback(
         (w: number, h: number) => {
+            const canvasTheme = isDarkMode
+                ? CANVAS_THEMES.dark
+                : CANVAS_THEMES.light;
+
             const stars: Star[] = [];
             const starCount = isMobile
                 ? Math.min(150, w / 10)
@@ -90,9 +172,10 @@ export default function Welcome() {
                     y: Math.random() * h,
                     size: Math.random() * 2 + 0.5,
                     speed:
-                        theme === 'dark'
-                            ? Math.random() * 0.3 + 0.1
-                            : Math.random() * 0.18 + 0.05,
+                        Math.random() *
+                            (canvasTheme.starSpeedMax -
+                                canvasTheme.starSpeedMin) +
+                        canvasTheme.starSpeedMin,
                     brightness: Math.random() * 0.6 + 0.4,
                     pulseSpeed: Math.random() * 0.01 + 0.005,
                     twinkle: Math.random() * Math.PI * 2,
@@ -100,23 +183,14 @@ export default function Welcome() {
             }
             return stars;
         },
-        [theme, isMobile],
+        [isDarkMode, isMobile],
     );
 
     const initNebulas = useCallback(
         (w: number, h: number) => {
-            const colors =
-                theme === 'dark'
-                    ? [
-                          'rgba(145, 70, 255, 0.1)',
-                          'rgba(0, 174, 255, 0.07)',
-                          'rgba(255, 70, 145, 0.05)',
-                      ]
-                    : [
-                          'rgba(145, 70, 255, 0.06)',
-                          'rgba(0, 174, 255, 0.05)',
-                          'rgba(255, 70, 145, 0.04)',
-                      ];
+            const canvasTheme = isDarkMode
+                ? CANVAS_THEMES.dark
+                : CANVAS_THEMES.light;
 
             return Array.from({ length: 4 }).map(() => ({
                 x: Math.random() * w,
@@ -124,10 +198,12 @@ export default function Welcome() {
                 radius: Math.random() * 150 + 100,
                 speedX: Math.random() * 0.08 - 0.04,
                 speedY: Math.random() * 0.08 - 0.04,
-                color: colors[Math.floor(Math.random() * colors.length)],
+                color: canvasTheme.nebulaColors[
+                    Math.floor(Math.random() * canvasTheme.nebulaColors.length)
+                ],
             }));
         },
-        [theme],
+        [isDarkMode],
     );
 
     const ensureShootingPool = useCallback(() => {
@@ -145,7 +221,10 @@ export default function Welcome() {
 
     const spawnShootingStar = useCallback(
         (w: number) => {
-            const darkMode = theme === 'dark';
+            const canvasTheme = isDarkMode
+                ? CANVAS_THEMES.dark
+                : CANVAS_THEMES.light;
+
             const pool = shootingPoolRef.current;
             const s = pool.find((p) => !p.active);
             if (!s) return;
@@ -153,13 +232,13 @@ export default function Welcome() {
             s.active = true;
             s.x = Math.random() * w;
             s.y = 0;
-            const speed = darkMode ? 15 : 10;
+            const speed = canvasTheme.shootingStarSpeed;
             s.vx = -speed * 0.7;
             s.vy = speed;
             s.life = 1;
             s.trail = [];
         },
-        [theme],
+        [isDarkMode],
     );
 
     const setCanvasSize = useCallback(
@@ -215,21 +294,18 @@ export default function Welcome() {
             y: number,
             radius: number,
             time: number,
-            darkMode: boolean,
         ) => {
+            const canvasTheme = isDarkMode
+                ? CANVAS_THEMES.dark
+                : CANVAS_THEMES.light;
+
             ctx.save();
             ctx.translate(x, y);
 
             const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-            if (darkMode) {
-                gradient.addColorStop(0, 'rgba(100, 65, 165, 0.8)');
-                gradient.addColorStop(0.6, 'rgba(70, 35, 135, 0.6)');
-                gradient.addColorStop(1, 'rgba(40, 20, 80, 0.4)');
-            } else {
-                gradient.addColorStop(0, 'rgba(155, 120, 220, 0.75)');
-                gradient.addColorStop(0.6, 'rgba(130, 95, 200, 0.55)');
-                gradient.addColorStop(1, 'rgba(110, 80, 180, 0.35)');
-            }
+            canvasTheme.planetGradientStops.forEach(({ offset, color }) => {
+                gradient.addColorStop(offset, color);
+            });
 
             ctx.fillStyle = gradient;
             ctx.beginPath();
@@ -244,17 +320,9 @@ export default function Welcome() {
                 radius * 1.5,
                 0,
             );
-            if (darkMode) {
-                ringGradient.addColorStop(0, 'rgba(145, 70, 255, 0)');
-                ringGradient.addColorStop(0.3, 'rgba(145, 70, 255, 0.3)');
-                ringGradient.addColorStop(0.7, 'rgba(145, 70, 255, 0.3)');
-                ringGradient.addColorStop(1, 'rgba(145, 70, 255, 0)');
-            } else {
-                ringGradient.addColorStop(0, 'rgba(145, 70, 255, 0)');
-                ringGradient.addColorStop(0.3, 'rgba(145, 70, 255, 0.18)');
-                ringGradient.addColorStop(0.7, 'rgba(145, 70, 255, 0.18)');
-                ringGradient.addColorStop(1, 'rgba(145, 70, 255, 0)');
-            }
+            canvasTheme.ringGradientStops.forEach(({ offset, color }) => {
+                ringGradient.addColorStop(offset, color);
+            });
 
             ctx.strokeStyle = ringGradient;
             ctx.lineWidth = 4;
@@ -274,13 +342,15 @@ export default function Welcome() {
             }
 
             const { w, h } = sizeRef.current;
-            const darkMode = theme === 'dark';
+            const canvasTheme = isDarkMode
+                ? CANVAS_THEMES.dark
+                : CANVAS_THEMES.light;
 
             const dt = Math.min(32, ts - lastFrameTimeRef.current);
             lastFrameTimeRef.current = ts;
             timeRef.current += dt * 0.001;
 
-            ctx.fillStyle = darkMode ? '#0a0a1a' : '#EEF2F8';
+            ctx.fillStyle = canvasTheme.background;
             ctx.fillRect(0, 0, w, h);
 
             const nebulas = nebulasRef.current;
@@ -311,14 +381,8 @@ export default function Welcome() {
             }
 
             if (w > 768) {
-                drawPlanet(w * 0.8, h * 0.2, 60, timeRef.current, darkMode);
-                drawPlanet(
-                    w * 0.2,
-                    h * 0.7,
-                    40,
-                    timeRef.current * 1.2,
-                    darkMode,
-                );
+                drawPlanet(w * 0.8, h * 0.2, 60, timeRef.current);
+                drawPlanet(w * 0.2, h * 0.7, 40, timeRef.current * 1.2);
             }
 
             const stars = starsRef.current;
@@ -343,8 +407,9 @@ export default function Welcome() {
                     s.size * 3,
                 );
 
-                const starAlpha = darkMode ? s.brightness : s.brightness * 0.35;
-                const starColor = darkMode ? 255 : 80;
+                const starAlpha =
+                    s.brightness * canvasTheme.starAlphaMultiplier;
+                const starColor = canvasTheme.starColor;
 
                 gradient.addColorStop(
                     0,
@@ -386,9 +451,7 @@ export default function Welcome() {
                     continue;
                 }
 
-                ctx.fillStyle = darkMode
-                    ? 'rgba(255,255,255,0.9)'
-                    : 'rgba(90,90,90,0.9)';
+                ctx.fillStyle = canvasTheme.shootingStarColor;
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
                 ctx.fill();
@@ -409,60 +472,7 @@ export default function Welcome() {
             if (animationRef.current)
                 cancelAnimationFrame(animationRef.current);
         };
-    }, [ensureShootingPool, setCanvasSize, spawnShootingStar, theme]);
-
-    const gradients =
-        theme === 'dark'
-            ? {
-                  background: 'bg-[#0a0a1a]',
-                  overlay: 'from-[#0a0a1a]/90 via-transparent to-[#0a0a1a]/80',
-                  radial: `radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.15) 0%, transparent 50%),
-                           radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.1) 0%, transparent 50%)`,
-              }
-            : {
-                  background: 'bg-[#F5F7FB]',
-                  overlay: 'from-[#F5F7FB]/85 via-[#F5F7FB]/60 to-[#E3E8F2]',
-                  radial: `radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.1) 0%, transparent 55%),
-                           radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.08) 0%, transparent 55%)`,
-              };
-
-    const ui =
-        theme === 'dark'
-            ? {
-                  cardShell:
-                      'border border-white/20 bg-black/30 backdrop-blur-xl',
-                  cardText: 'text-white/90',
-                  muted: 'text-white/70',
-                  titleGrad: 'from-purple-300 via-white to-cyan-300',
-                  login: 'bg-gradient-to-r from-purple-500/20 via-transparent to-cyan-500/20 border border-purple-400/30 text-white/90 hover:from-purple-500/30 hover:to-cyan-500/30 hover:border-purple-400/50',
-                  videoBorder: 'border-white/15 bg-black/40',
-                  divider: 'border-white/10',
-                  iconBox: 'border-white/20 bg-black/20',
-                  innerCard: 'border-white/15 bg-black/20',
-                  infoCard: 'border-white/10 bg-black/25',
-                  donateButton:
-                      'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 hover:from-emerald-600 hover:via-teal-500 hover:to-cyan-500 text-white shadow-lg hover:shadow-emerald-500/25',
-                  tag: 'border-white/15 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-white/85',
-              }
-            : {
-                  cardShell:
-                      'border border-black/10 bg-gradient-to-br from-white/80 via-white/90 to-white/80 ring-1 ring-black/5 backdrop-blur-xl',
-                  cardText: 'text-gray-800',
-                  muted: 'text-gray-700',
-                  titleGrad: 'from-purple-700 via-gray-900 to-cyan-700',
-                  login: 'bg-gradient-to-r from-purple-100 to-cyan-100 border border-purple-300/50 text-purple-700 hover:from-purple-200 hover:to-cyan-200 hover:border-purple-400/70 hover:text-purple-800',
-                  videoBorder: 'border-black/10 bg-white/85',
-                  divider: 'border-black/10',
-                  iconBox: 'border-black/10 bg-white/60',
-                  innerCard: 'border-black/10 bg-white/60',
-                  infoCard: 'border-black/10 bg-white/70',
-                  donateButton:
-                      'bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 hover:from-emerald-600 hover:via-teal-500 hover:to-cyan-500 text-white shadow-lg hover:shadow-emerald-400/25',
-                  tag: 'border-black/10 bg-gradient-to-r from-purple-100 to-cyan-100 text-gray-800',
-              };
-
-    const titleGrad = `bg-gradient-to-r ${ui.titleGrad} bg-clip-text text-transparent`;
-    const muted = `text-xs tracking-widest uppercase ${ui.muted}`;
+    }, [ensureShootingPool, setCanvasSize, spawnShootingStar, isDarkMode]);
 
     const clipProcess = [
         {
@@ -491,54 +501,50 @@ export default function Welcome() {
         <>
             <Head title={t('meta.title')} />
 
-            <div
-                className={`relative flex min-h-screen flex-col overflow-hidden ${gradients.background}`}
-            >
+            <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
                 <canvas
                     ref={canvasRef}
                     className="pointer-events-none fixed inset-0"
                     style={{ zIndex: 0 }}
                 />
-
                 <div
-                    className={`fixed inset-0 bg-gradient-to-t ${gradients.overlay}`}
+                    className="fixed inset-0 bg-gradient-to-t from-blue-200/55 via-blue-100/30 to-blue-200/45 dark:from-[#0a0a1a]/90 dark:via-transparent dark:to-[#0a0a1a]/80"
                     style={{ zIndex: 1 }}
                 />
-
                 <div
-                    className="fixed inset-0"
-                    style={{ backgroundImage: gradients.radial, zIndex: 1 }}
+                    className="fixed inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(145,70,255,0.12)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(0,174,255,0.10)_0%,transparent_55%)] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(145,70,255,0.15)_0%,transparent_50%),radial-gradient(circle_at_80%_70%,rgba(0,174,255,0.10)_0%,transparent_50%)]"
+                    style={{ zIndex: 1 }}
                 />
-
                 <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
                     <div className="w-full max-w-[1200px] space-y-8">
                         <div className="flex justify-end px-2">
                             <Link
                                 href="/login"
-                                className={`group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-300 ${ui.login} hover:scale-105 hover:shadow-lg`}
+                                className="group relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:scale-105"
                             >
-                                <div className="relative">
-                                    <LogIn className="h-4 w-4" />
-                                    <Sparkles className="absolute -top-1 -right-1 h-2 w-2 text-cyan-300 opacity-0 transition-opacity group-hover:opacity-100" />
-                                </div>
-                                {t('login.members')}
+                                <span className="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-600/25 to-cyan-500/20 opacity-60 blur-lg transition-opacity group-hover:opacity-90 dark:from-purple-600/35 dark:to-cyan-500/30" />
+                                <span className="relative inline-flex items-center gap-2 rounded-full border border-purple-300/60 bg-gradient-to-r from-purple-100/90 to-cyan-100/80 px-5 py-2.5 text-purple-800 shadow-lg shadow-black/5 backdrop-blur-sm transition-all duration-300 group-hover:border-purple-400/70 group-hover:shadow-xl dark:border-purple-400/30 dark:bg-gradient-to-r dark:from-purple-500/20 dark:via-transparent dark:to-cyan-500/20 dark:text-white/90 dark:shadow-black/30 dark:group-hover:border-purple-400/50">
+                                    <span className="relative">
+                                        <LogIn className="h-4 w-4" />
+                                        <Sparkles className="absolute -top-1 -right-1 h-2 w-2 text-cyan-500 opacity-0 transition-opacity group-hover:opacity-100 dark:text-cyan-300" />
+                                    </span>
+                                    {t('login.members')}
+                                </span>
                             </Link>
                         </div>
 
-                        <Card className={`rounded-2xl ${ui.cardShell}`}>
+                        <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 shadow-2xl ring-1 shadow-black/10 ring-black/5 backdrop-blur-xl dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
                             <div className="px-6 py-8 sm:px-10 sm:py-12">
                                 <div className="mx-auto max-w-5xl">
                                     <div className="mb-10 text-center">
-                                        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
+                                        <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
                                             {t('hero.title_prefix')}{' '}
-                                            <span className={titleGrad}>
+                                            <span className="bg-gradient-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-transparent dark:from-purple-300 dark:via-white dark:to-cyan-300">
                                                 {t('hero.brand')}
                                             </span>
                                         </h1>
 
-                                        <p
-                                            className={`mx-auto mt-6 max-w-3xl text-base leading-relaxed sm:text-lg ${ui.cardText}`}
-                                        >
+                                        <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-gray-800 sm:text-lg dark:text-white/90">
                                             {t('hero.description')}
                                         </p>
 
@@ -550,7 +556,7 @@ export default function Welcome() {
                                             ].map((tag, idx) => (
                                                 <span
                                                     key={idx}
-                                                    className={`rounded-full border px-3 py-1.5 text-sm font-medium ${ui.tag}`}
+                                                    className="rounded-full border border-gray-300/80 bg-gradient-to-r from-purple-100/80 to-cyan-100/70 px-3 py-1.5 text-sm font-medium text-gray-900/90 dark:border-white/15 dark:bg-gradient-to-r dark:from-purple-500/20 dark:to-cyan-500/20 dark:text-white/85"
                                                 >
                                                     {tag}
                                                 </span>
@@ -558,55 +564,37 @@ export default function Welcome() {
                                         </div>
                                     </div>
 
-                                    <div
-                                        className={`border-t ${ui.divider} my-8`}
-                                    />
+                                    <div className="my-8 border-t border-gray-300/80 dark:border-white/10" />
 
                                     <div className="mb-10 grid gap-8 lg:grid-cols-2">
                                         <div className="space-y-6">
                                             <div className="flex items-center gap-3">
-                                                <div
-                                                    className={`rounded-xl p-2.5 ${ui.iconBox}`}
-                                                >
-                                                    <Users className="h-6 w-6" />
+                                                <div className="rounded-xl border border-gray-300/80 bg-white/60 p-2.5 dark:border-white/20 dark:bg-black/20">
+                                                    <Users className="h-6 w-6 text-gray-900/90 dark:text-white" />
                                                 </div>
-                                                <h2
-                                                    className={`text-2xl font-bold ${titleGrad}`}
-                                                >
+                                                <h2 className="bg-gradient-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-2xl font-bold text-transparent dark:from-purple-300 dark:via-white dark:to-cyan-300">
                                                     {t('about.title')}
                                                 </h2>
                                             </div>
 
-                                            <p
-                                                className={`text-base leading-relaxed ${ui.cardText}`}
-                                            >
+                                            <p className="text-base leading-relaxed text-gray-800 dark:text-white/90">
                                                 {t('about.p1')}
                                             </p>
 
-                                            <p
-                                                className={`text-base leading-relaxed ${ui.cardText}`}
-                                            >
+                                            <p className="text-base leading-relaxed text-gray-800 dark:text-white/90">
                                                 {t('about.p2')}
                                             </p>
 
-                                            <div
-                                                className={`rounded-xl p-4 ${ui.innerCard} mt-4`}
-                                            >
-                                                <p
-                                                    className={`text-sm ${ui.cardText} font-bold`}
-                                                >
+                                            <div className="mt-4 rounded-xl border border-gray-300/80 bg-white/60 p-4 dark:border-white/15 dark:bg-black/20">
+                                                <p className="text-sm font-bold text-gray-900/90 dark:text-white/90">
                                                     {t('about.hashtag')}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div
-                                            className={`rounded-xl border p-6 ${ui.innerCard}`}
-                                        >
+                                        <div className="rounded-xl border border-gray-300/80 bg-white/60 p-6 dark:border-white/15 dark:bg-black/20">
                                             <div className="mb-4 flex items-start gap-4">
-                                                <div
-                                                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${ui.iconBox}`}
-                                                >
+                                                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-gray-300/80 bg-white/60 dark:border-white/20 dark:bg-black/20">
                                                     <img
                                                         src={PartnerIcon}
                                                         alt="logo"
@@ -615,30 +603,18 @@ export default function Welcome() {
                                                 </div>
 
                                                 <div>
-                                                    <h3
-                                                        className={`text-2xl font-bold ${titleGrad} mb-2`}
-                                                    >
+                                                    <h3 className="mb-2 bg-gradient-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-2xl font-bold text-transparent dark:from-purple-300 dark:via-white dark:to-cyan-300">
                                                         {t('donation.title')}
                                                     </h3>
-                                                    <p
-                                                        className={`text-base leading-relaxed ${ui.cardText}`}
-                                                    >
+                                                    <p className="text-base leading-relaxed text-gray-800 dark:text-white/90">
                                                         {t('donation.intro')}
                                                     </p>
                                                 </div>
                                             </div>
 
                                             <div className="mb-6 space-y-4">
-                                                <div
-                                                    className={`rounded-lg p-4 ${
-                                                        theme === 'dark'
-                                                            ? 'bg-purple-900/20'
-                                                            : 'bg-purple-50'
-                                                    }`}
-                                                >
-                                                    <p
-                                                        className={`text-sm leading-relaxed ${ui.cardText}`}
-                                                    >
+                                                <div className="rounded-lg bg-purple-50/80 p-4 dark:bg-purple-900/20">
+                                                    <p className="text-sm leading-relaxed text-gray-800 dark:text-white/90">
                                                         <span className="font-bold">
                                                             {t(
                                                                 'donation.hashtag',
@@ -647,9 +623,7 @@ export default function Welcome() {
                                                     </p>
                                                 </div>
 
-                                                <p
-                                                    className={`text-sm leading-relaxed ${ui.cardText}`}
-                                                >
+                                                <p className="text-sm leading-relaxed text-gray-800 dark:text-white/90">
                                                     {t('donation.partner_p1', {
                                                         partner: t(
                                                             'donation.partner_placeholder',
@@ -657,31 +631,19 @@ export default function Welcome() {
                                                     })}
                                                 </p>
 
-                                                <p
-                                                    className={`text-sm leading-relaxed ${ui.cardText}`}
-                                                >
+                                                <p className="text-sm leading-relaxed text-gray-800 dark:text-white/90">
                                                     {t('donation.partner_p2')}
                                                 </p>
 
-                                                <div
-                                                    className={`rounded-lg p-4 ${
-                                                        theme === 'dark'
-                                                            ? 'bg-cyan-900/20'
-                                                            : 'bg-cyan-50'
-                                                    } mt-4`}
-                                                >
-                                                    <p
-                                                        className={`text-sm leading-relaxed ${ui.cardText} text-center font-bold`}
-                                                    >
+                                                <div className="mt-4 rounded-lg bg-cyan-50/80 p-4 dark:bg-cyan-900/20">
+                                                    <p className="text-center text-sm leading-relaxed font-bold text-gray-800 dark:text-white/90">
                                                         {t('donation.banner')}
                                                     </p>
                                                 </div>
                                             </div>
 
                                             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                                <div
-                                                    className={`text-xs ${ui.muted} flex items-center gap-2`}
-                                                >
+                                                <div className="flex items-center gap-2 text-xs text-gray-700 dark:text-white/70">
                                                     <Shield className="h-3 w-3" />
                                                     <span>
                                                         {t(
@@ -692,7 +654,7 @@ export default function Welcome() {
 
                                                 <Button
                                                     size="lg"
-                                                    className={`rounded-full border-0 px-8 py-5 font-bold transition-all duration-300 hover:scale-105 hover:shadow-xl ${ui.donateButton}`}
+                                                    className="rounded-full border-0 bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 px-8 py-5 font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:from-emerald-600 hover:via-teal-500 hover:to-cyan-500 hover:shadow-xl hover:shadow-emerald-500/25"
                                                 >
                                                     <Heart className="mr-2 h-5 w-5" />
                                                     {t('donation.cta')}
@@ -701,23 +663,17 @@ export default function Welcome() {
                                         </div>
                                     </div>
 
-                                    <div
-                                        className={`border-t ${ui.divider} my-8`}
-                                    />
+                                    <div className="my-8 border-t border-gray-300/80 dark:border-white/10" />
 
                                     <div className="mb-8">
                                         <div className="mb-8 text-center">
                                             <div className="mb-3 flex items-center justify-center gap-3">
-                                                <Video className="h-6 w-6" />
-                                                <h2
-                                                    className={`text-3xl font-bold ${titleGrad}`}
-                                                >
+                                                <Video className="h-6 w-6 text-gray-900/90 dark:text-white" />
+                                                <h2 className="bg-gradient-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-3xl font-bold text-transparent dark:from-purple-300 dark:via-white dark:to-cyan-300">
                                                     {t('clip_process.title')}
                                                 </h2>
                                             </div>
-                                            <p
-                                                className={`mx-auto max-w-3xl text-base ${ui.cardText}`}
-                                            >
+                                            <p className="mx-auto max-w-3xl text-base text-gray-800 dark:text-white/90">
                                                 {t('clip_process.intro')}
                                             </p>
                                         </div>
@@ -726,57 +682,33 @@ export default function Welcome() {
                                             {clipProcess.map((step, idx) => (
                                                 <div
                                                     key={idx}
-                                                    className={`rounded-xl border p-5 ${ui.infoCard} transition-transform duration-200 hover:scale-[1.02]`}
+                                                    className="rounded-xl border border-gray-300/80 bg-white/65 p-5 transition-transform duration-200 hover:scale-[1.02] dark:border-white/10 dark:bg-black/25"
                                                 >
                                                     <div className="mb-3 flex items-center gap-3">
-                                                        <div
-                                                            className={`flex h-10 w-10 items-center justify-center rounded-full ${ui.iconBox}`}
-                                                        >
-                                                            <step.icon className="h-5 w-5" />
+                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300/80 bg-white/60 dark:border-white/20 dark:bg-black/20">
+                                                            <step.icon className="h-5 w-5 text-gray-900/90 dark:text-white" />
                                                         </div>
-                                                        <h3
-                                                            className={`text-lg font-bold ${ui.cardText}`}
-                                                        >
+                                                        <h3 className="text-lg font-bold text-gray-900/90 dark:text-white/90">
                                                             {step.title}
                                                         </h3>
                                                     </div>
-                                                    <p
-                                                        className={`text-sm ${ui.cardText}`}
-                                                    >
+                                                    <p className="text-sm text-gray-800 dark:text-white/90">
                                                         {step.description}
                                                     </p>
                                                 </div>
                                             ))}
                                         </div>
 
-                                        <div
-                                            className={`rounded-xl border p-5 ${ui.infoCard} mb-6`}
-                                        >
-                                            <p
-                                                className={`text-base leading-relaxed ${ui.cardText}`}
-                                            >
+                                        <div className="mb-6 rounded-xl border border-gray-300/80 bg-white/65 p-5 dark:border-white/10 dark:bg-black/25">
+                                            <p className="text-base leading-relaxed text-gray-800 dark:text-white/90">
                                                 {t('clip_process.neutrality')}
                                             </p>
                                         </div>
 
-                                        <div
-                                            className={`rounded-xl border p-5 ${
-                                                theme === 'dark'
-                                                    ? 'border-red-400/30 bg-red-900/10'
-                                                    : 'border-red-300 bg-red-50'
-                                            }`}
-                                        >
+                                        <div className="rounded-xl border border-red-300 bg-red-50/80 p-5 dark:border-red-400/30 dark:bg-red-900/10">
                                             <div className="flex items-start gap-3">
-                                                <Shield
-                                                    className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
-                                                        theme === 'dark'
-                                                            ? 'text-red-300'
-                                                            : 'text-red-600'
-                                                    }`}
-                                                />
-                                                <p
-                                                    className={`text-sm leading-relaxed ${ui.cardText}`}
-                                                >
+                                                <Shield className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-300" />
+                                                <p className="text-sm leading-relaxed text-gray-800 dark:text-white/90">
                                                     {t(
                                                         'clip_process.blacklist',
                                                     )}
@@ -788,11 +720,11 @@ export default function Welcome() {
                             </div>
                         </Card>
 
-                        <Card className={`rounded-2xl ${ui.cardShell}`}>
+                        <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 shadow-2xl ring-1 shadow-black/10 ring-black/5 backdrop-blur-xl dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
                             <CardContent className="p-6">
                                 <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                                     <div>
-                                        <span className={muted}>
+                                        <span className="text-xs tracking-widest text-gray-700 uppercase dark:text-white/70">
                                             {t('video.latest_label')}
                                         </span>
                                     </div>
@@ -803,16 +735,14 @@ export default function Welcome() {
                                     >
                                         <Button
                                             size="sm"
-                                            className={`rounded-full border px-4 py-2 ${ui.login}`}
+                                            className="rounded-full border border-purple-300/60 bg-gradient-to-r from-purple-100/90 to-cyan-100/80 px-4 py-2 text-purple-800 hover:border-purple-400/70 hover:from-purple-200 hover:to-cyan-200 hover:text-purple-900 dark:border-purple-400/30 dark:bg-gradient-to-r dark:from-purple-500/20 dark:via-transparent dark:to-cyan-500/20 dark:text-white/90 dark:hover:border-purple-400/50 dark:hover:from-purple-500/30 dark:hover:to-cyan-500/30"
                                         >
                                             {t('video.watch')}
                                         </Button>
                                     </a>
                                 </div>
 
-                                <div
-                                    className={`relative aspect-video overflow-hidden rounded-xl border ${ui.videoBorder}`}
-                                >
+                                <div className="relative aspect-video overflow-hidden rounded-xl border border-gray-300/80 bg-white/85 dark:border-white/15 dark:bg-black/40">
                                     <iframe
                                         width="100%"
                                         height="100%"
@@ -827,20 +757,19 @@ export default function Welcome() {
                         </Card>
                     </div>
                 </main>
-
                 <div className="relative z-50 mt-auto">
                     <div
-                        className={`border-t backdrop-blur-md ${
-                            theme === 'dark'
+                        className={`border-t shadow-[0_-8px_30px_rgba(0,0,0,0.08)] backdrop-blur-md ${
+                            isDarkMode
                                 ? 'border-white/10 bg-black/35'
-                                : 'border-black/10 bg-white/85'
+                                : 'border-black/10 bg-white/75'
                         }`}
                     >
                         <div
                             className={
-                                theme === 'dark'
+                                isDarkMode
                                     ? '!text-white/85 [&_*]:!text-white/85 [&_a:hover]:!text-white [&_svg]:!text-white/85'
-                                    : '!text-gray-800 [&_*]:!text-gray-800 [&_a:hover]:!text-gray-950 [&_svg]:!text-gray-800'
+                                    : '!text-gray-900/85 [&_*]:!text-gray-900/85 [&_a:hover]:!text-gray-950 [&_svg]:!text-gray-900/85'
                             }
                         >
                             <Footer />

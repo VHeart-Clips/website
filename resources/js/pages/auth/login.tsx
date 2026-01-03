@@ -12,6 +12,67 @@ import { useTranslation } from 'react-i18next';
 import Logo from '/resources/images/svg/logo-dark.svg';
 import LogoLight from '/resources/images/svg/logo-light.svg';
 
+const CANVAS_THEMES = {
+    dark: {
+        background: '#0a0a1a',
+        planetGradientStops: [
+            { offset: 0, color: 'rgba(100, 65, 165, 0.8)' },
+            { offset: 0.6, color: 'rgba(70, 35, 135, 0.6)' },
+            { offset: 1, color: 'rgba(40, 20, 80, 0.4)' },
+        ],
+        ringGradientStops: [
+            { offset: 0, color: 'rgba(145, 70, 255, 0)' },
+            { offset: 0.3, color: 'rgba(145, 70, 255, 0.3)' },
+            { offset: 0.7, color: 'rgba(145, 70, 255, 0.3)' },
+            { offset: 1, color: 'rgba(145, 70, 255, 0)' },
+        ],
+        nebulaColors: [
+            'rgba(145, 70, 255, 0.1)',
+            'rgba(0, 174, 255, 0.07)',
+            'rgba(255, 70, 145, 0.05)',
+        ],
+        starColor: 255,
+        starAlphaMultiplier: 1,
+        shootingStarColor: 'rgba(255,255,255,0.9)',
+        headColor: 255,
+        trailColor: 255,
+        starSpeedMin: 0.1,
+        starSpeedMax: 0.4,
+        shootingStarSpeed: 15,
+        headGradientEnd: 'rgba(180, 220, 255, 0)',
+        trailGradientEnd: 'rgba(180, 220, 255, 0.5)',
+    },
+    light: {
+        background: '#DDE4F1',
+        planetGradientStops: [
+            { offset: 0, color: 'rgba(155, 120, 220, 0.75)' },
+            { offset: 0.6, color: 'rgba(130, 95, 200, 0.55)' },
+            { offset: 1, color: 'rgba(110, 80, 180, 0.35)' },
+        ],
+        ringGradientStops: [
+            { offset: 0, color: 'rgba(145, 70, 255, 0)' },
+            { offset: 0.3, color: 'rgba(145, 70, 255, 0.18)' },
+            { offset: 0.7, color: 'rgba(145, 70, 255, 0.18)' },
+            { offset: 1, color: 'rgba(145, 70, 255, 0)' },
+        ],
+        nebulaColors: [
+            'rgba(145, 70, 255, 0.10)',
+            'rgba(0, 174, 255, 0.09)',
+            'rgba(255, 70, 145, 0.07)',
+        ],
+        starColor: 90,
+        starAlphaMultiplier: 0.4,
+        shootingStarColor: 'rgba(90,90,90,0.85)',
+        headColor: 95,
+        trailColor: 95,
+        starSpeedMin: 0.05,
+        starSpeedMax: 0.23,
+        shootingStarSpeed: 10,
+        headGradientEnd: 'rgba(120, 150, 180, 0)',
+        trailGradientEnd: 'rgba(120, 150, 180, 0.45)',
+    },
+};
+
 type Star = {
     x: number;
     y: number;
@@ -76,13 +137,10 @@ export default function Welcome({
         checkTheme();
 
         const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'appearance') {
-                checkTheme();
-            }
+            if (e.key === 'appearance') checkTheme();
         };
 
         window.addEventListener('storage', handleStorageChange);
-
         const interval = setInterval(checkTheme, 1000);
 
         return () => {
@@ -91,40 +149,36 @@ export default function Welcome({
         };
     }, []);
 
-    const initStars = useCallback((w: number, h: number, darkMode: boolean) => {
-        const stars: Star[] = [];
-        const starCount = Math.min(200, w / 8);
+    const initStars = useCallback(
+        (w: number, h: number) => {
+            const canvasTheme = CANVAS_THEMES[isDarkMode ? 'dark' : 'light'];
+            const stars: Star[] = [];
+            const starCount = Math.min(200, w / 8);
 
-        for (let i = 0; i < starCount; i++) {
-            stars.push({
-                x: Math.random() * w,
-                y: Math.random() * h,
-                size: Math.random() * 2 + 0.5,
-                speed: darkMode
-                    ? Math.random() * 0.3 + 0.1
-                    : Math.random() * 0.18 + 0.05,
-                brightness: Math.random() * 0.6 + 0.4,
-                pulseSpeed: Math.random() * 0.01 + 0.005,
-                twinkle: Math.random() * Math.PI * 2,
-            });
-        }
-        return stars;
-    }, []);
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    size: Math.random() * 2 + 0.5,
+                    speed:
+                        Math.random() *
+                            (canvasTheme.starSpeedMax -
+                                canvasTheme.starSpeedMin) +
+                        canvasTheme.starSpeedMin,
+                    brightness: Math.random() * 0.6 + 0.4,
+                    pulseSpeed: Math.random() * 0.01 + 0.005,
+                    twinkle: Math.random() * Math.PI * 2,
+                });
+            }
+            return stars;
+        },
+        [isDarkMode],
+    );
 
     const initNebulas = useCallback(
-        (w: number, h: number, darkMode: boolean) => {
+        (w: number, h: number) => {
+            const canvasTheme = CANVAS_THEMES[isDarkMode ? 'dark' : 'light'];
             const nebulas: Nebula[] = [];
-            const colors = darkMode
-                ? [
-                      'rgba(145, 70, 255, 0.1)',
-                      'rgba(0, 174, 255, 0.07)',
-                      'rgba(255, 70, 145, 0.05)',
-                  ]
-                : [
-                      'rgba(145, 70, 255, 0.06)',
-                      'rgba(0, 174, 255, 0.05)',
-                      'rgba(255, 70, 145, 0.04)',
-                  ];
 
             for (let i = 0; i < 4; i++) {
                 nebulas.push({
@@ -133,17 +187,22 @@ export default function Welcome({
                     radius: Math.random() * 150 + 100,
                     speedX: Math.random() * 0.08 - 0.04,
                     speedY: Math.random() * 0.08 - 0.04,
-                    color: colors[Math.floor(Math.random() * colors.length)],
+                    color: canvasTheme.nebulaColors[
+                        Math.floor(
+                            Math.random() * canvasTheme.nebulaColors.length,
+                        )
+                    ],
                 });
             }
             return nebulas;
         },
-        [],
+        [isDarkMode],
     );
 
     const ensureShootingPool = useCallback(() => {
         if (shootingPoolRef.current.length) return;
-        const pool: ShootingStar[] = Array.from({ length: 4 }, () => ({
+
+        shootingPoolRef.current = Array.from({ length: 4 }, () => ({
             active: false,
             x: 0,
             y: 0,
@@ -152,11 +211,11 @@ export default function Welcome({
             life: 0,
             trail: [],
         }));
-        shootingPoolRef.current = pool;
     }, []);
 
     const spawnShootingStar = useCallback(
-        (w: number, h: number, darkMode: boolean) => {
+        (w: number) => {
+            const canvasTheme = CANVAS_THEMES[isDarkMode ? 'dark' : 'light'];
             const pool = shootingPoolRef.current;
             const s = pool.find((p) => !p.active);
             if (!s) return;
@@ -164,21 +223,17 @@ export default function Welcome({
             s.active = true;
             s.x = Math.random() * w;
             s.y = 0;
-            const speed = darkMode ? 15 : 10;
+            const speed = canvasTheme.shootingStarSpeed;
             s.vx = -speed * 0.7;
             s.vy = speed;
             s.life = 1;
             s.trail = [];
         },
-        [],
+        [isDarkMode],
     );
 
     const setCanvasSize = useCallback(
-        (
-            canvas: HTMLCanvasElement,
-            ctx: CanvasRenderingContext2D,
-            darkMode: boolean,
-        ) => {
+        (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
             const dpr = Math.max(1, window.devicePixelRatio || 1);
             dprRef.current = dpr;
 
@@ -193,8 +248,8 @@ export default function Welcome({
 
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-            starsRef.current = initStars(cssW, cssH, darkMode);
-            nebulasRef.current = initNebulas(cssW, cssH, darkMode);
+            starsRef.current = initStars(cssW, cssH);
+            nebulasRef.current = initNebulas(cssW, cssH);
         },
         [initStars, initNebulas],
     );
@@ -213,7 +268,7 @@ export default function Welcome({
             if (resizeRaf) return;
             resizeRaf = requestAnimationFrame(() => {
                 resizeRaf = 0;
-                setCanvasSize(canvas, ctx, isDarkMode);
+                setCanvasSize(canvas, ctx);
             });
         };
 
@@ -221,7 +276,7 @@ export default function Welcome({
             isVisibleRef.current = document.visibilityState === 'visible';
         };
 
-        setCanvasSize(canvas, ctx, isDarkMode);
+        setCanvasSize(canvas, ctx);
         window.addEventListener('resize', onResize, { passive: true });
         document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -230,21 +285,16 @@ export default function Welcome({
             y: number,
             radius: number,
             time: number,
-            darkMode: boolean,
         ) => {
+            const canvasTheme = CANVAS_THEMES[isDarkMode ? 'dark' : 'light'];
+
             ctx.save();
             ctx.translate(x, y);
 
             const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-            if (darkMode) {
-                gradient.addColorStop(0, 'rgba(100, 65, 165, 0.8)');
-                gradient.addColorStop(0.6, 'rgba(70, 35, 135, 0.6)');
-                gradient.addColorStop(1, 'rgba(40, 20, 80, 0.4)');
-            } else {
-                gradient.addColorStop(0, 'rgba(155, 120, 220, 0.75)');
-                gradient.addColorStop(0.6, 'rgba(130, 95, 200, 0.55)');
-                gradient.addColorStop(1, 'rgba(110, 80, 180, 0.35)');
-            }
+            canvasTheme.planetGradientStops.forEach(({ offset, color }) => {
+                gradient.addColorStop(offset, color);
+            });
 
             ctx.fillStyle = gradient;
             ctx.beginPath();
@@ -259,17 +309,9 @@ export default function Welcome({
                 radius * 1.5,
                 0,
             );
-            if (darkMode) {
-                ringGradient.addColorStop(0, 'rgba(145, 70, 255, 0)');
-                ringGradient.addColorStop(0.3, 'rgba(145, 70, 255, 0.3)');
-                ringGradient.addColorStop(0.7, 'rgba(145, 70, 255, 0.3)');
-                ringGradient.addColorStop(1, 'rgba(145, 70, 255, 0)');
-            } else {
-                ringGradient.addColorStop(0, 'rgba(145, 70, 255, 0)');
-                ringGradient.addColorStop(0.3, 'rgba(145, 70, 255, 0.18)');
-                ringGradient.addColorStop(0.7, 'rgba(145, 70, 255, 0.18)');
-                ringGradient.addColorStop(1, 'rgba(145, 70, 255, 0)');
-            }
+            canvasTheme.ringGradientStops.forEach(({ offset, color }) => {
+                ringGradient.addColorStop(offset, color);
+            });
 
             ctx.strokeStyle = ringGradient;
             ctx.lineWidth = 4;
@@ -289,13 +331,13 @@ export default function Welcome({
             }
 
             const { w, h } = sizeRef.current;
-            const darkMode = isDarkMode;
+            const canvasTheme = CANVAS_THEMES[isDarkMode ? 'dark' : 'light'];
 
             const dt = Math.min(32, ts - lastFrameTimeRef.current);
             lastFrameTimeRef.current = ts;
             timeRef.current += dt * 0.001;
 
-            ctx.fillStyle = darkMode ? '#0a0a1a' : '#EEF2F8';
+            ctx.fillStyle = canvasTheme.background;
             ctx.fillRect(0, 0, w, h);
 
             const nebulas = nebulasRef.current;
@@ -326,14 +368,8 @@ export default function Welcome({
             }
 
             if (w > 768) {
-                drawPlanet(w * 0.8, h * 0.2, 60, timeRef.current, darkMode);
-                drawPlanet(
-                    w * 0.2,
-                    h * 0.7,
-                    40,
-                    timeRef.current * 1.2,
-                    darkMode,
-                );
+                drawPlanet(w * 0.8, h * 0.2, 60, timeRef.current);
+                drawPlanet(w * 0.2, h * 0.7, 40, timeRef.current * 1.2);
             }
 
             const stars = starsRef.current;
@@ -357,8 +393,9 @@ export default function Welcome({
                     s.size * 3,
                 );
 
-                const starAlpha = darkMode ? s.brightness : s.brightness * 0.35;
-                const starColor = darkMode ? 255 : 80;
+                const starAlpha =
+                    s.brightness * canvasTheme.starAlphaMultiplier;
+                const starColor = canvasTheme.starColor;
 
                 gradient.addColorStop(
                     0,
@@ -382,7 +419,7 @@ export default function Welcome({
 
             if (timeRef.current - lastSpawnRef.current > 2) {
                 lastSpawnRef.current = timeRef.current;
-                if (Math.random() < 0.02) spawnShootingStar(w, h, darkMode);
+                if (Math.random() < 0.02) spawnShootingStar(w);
             }
 
             const pool = shootingPoolRef.current;
@@ -405,7 +442,7 @@ export default function Welcome({
                 for (let j = 0; j < s.trail.length; j++) {
                     const point = s.trail[j];
                     const alpha = point.life * (j / s.trail.length) * 0.8;
-                    const trailColor = darkMode ? 255 : 90;
+                    const trailColor = canvasTheme.trailColor;
 
                     ctx.beginPath();
                     if (j === 0) {
@@ -426,12 +463,7 @@ export default function Welcome({
                         0,
                         `rgba(${trailColor}, ${trailColor}, ${trailColor}, ${alpha})`,
                     );
-                    grad.addColorStop(
-                        1,
-                        darkMode
-                            ? `rgba(180, 220, 255, ${alpha * 0.5})`
-                            : `rgba(120, 150, 180, ${alpha * 0.45})`,
-                    );
+                    grad.addColorStop(1, canvasTheme.trailGradientEnd);
 
                     ctx.strokeStyle = grad;
                     ctx.lineWidth = 2 * (1 - j / s.trail.length);
@@ -439,7 +471,7 @@ export default function Welcome({
                     ctx.stroke();
                 }
 
-                const headColor = darkMode ? 255 : 90;
+                const headColor = canvasTheme.headColor;
                 const headGradient = ctx.createRadialGradient(
                     s.x,
                     s.y,
@@ -452,12 +484,7 @@ export default function Welcome({
                     0,
                     `rgba(${headColor}, ${headColor}, ${headColor}, 0.9)`,
                 );
-                headGradient.addColorStop(
-                    1,
-                    darkMode
-                        ? 'rgba(180, 220, 255, 0)'
-                        : 'rgba(120, 150, 180, 0)',
-                );
+                headGradient.addColorStop(1, canvasTheme.headGradientEnd);
                 ctx.fillStyle = headGradient;
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, 3, 0, Math.PI * 2);
@@ -481,50 +508,37 @@ export default function Welcome({
         };
     }, [ensureShootingPool, setCanvasSize, spawnShootingStar, isDarkMode]);
 
-    const getBackgroundGradients = () => {
-        if (isDarkMode) {
-            return {
-                background: 'bg-[#0a0a1a]',
-                overlay: 'from-[#0a0a1a]/90 via-transparent to-[#0a0a1a]/80',
-                radialGradients: `radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.15) 0%, transparent 50%),
-                                  radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.1) 0%, transparent 50%)`,
-            };
-        } else {
-            return {
-                background: 'bg-[#F5F7FB]',
-                overlay: 'from-[#F5F7FB]/85 via-[#F5F7FB]/60 to-[#E3E8F2]',
-                radialGradients: ` radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.1) 0%, transparent 55%),
-                                   radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.08) 0%, transparent 55%)`,
-            };
-        }
-    };
-
-    const gradients = getBackgroundGradients();
-
     return (
         <div
-            className={`relative flex min-h-screen flex-col overflow-hidden ${gradients.background}`}
+            className={`relative flex min-h-screen flex-col overflow-hidden ${
+                isDarkMode ? 'bg-[#0a0a1a]' : 'bg-[#DDE4F1]'
+            }`}
         >
             <canvas ref={canvasRef} className="absolute inset-0" />
 
             <div
-                className={`absolute inset-0 bg-gradient-to-t ${gradients.overlay}`}
+                className={`absolute inset-0 bg-gradient-to-t ${
+                    isDarkMode
+                        ? 'from-[#0a0a1a]/90 via-transparent to-[#0a0a1a]/80'
+                        : 'from-[#C9D3E7]/65 via-[#DDE4F1]/40 to-[#C9D3E7]/55'
+                }`}
             />
 
             <div
-                className="absolute inset-0"
-                style={{
-                    backgroundImage: gradients.radialGradients,
-                }}
+                className={`absolute inset-0 ${
+                    isDarkMode
+                        ? 'bg-[radial-gradient(circle_at_20%_30%,rgba(145,70,255,0.15)_0%,transparent_50%),radial-gradient(circle_at_80%_70%,rgba(0,174,255,0.1)_0%,transparent_50%)]'
+                        : 'bg-[radial-gradient(circle_at_20%_30%,rgba(145,70,255,0.16)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(0,174,255,0.14)_0%,transparent_55%)]'
+                }`}
             />
 
             <main className="relative z-20 flex flex-1 flex-col items-center justify-center p-4 pb-16">
                 <Card
-                    className={`w-full max-w-md ${
+                    className={`w-full max-w-md backdrop-blur-xl ${
                         isDarkMode
                             ? 'border-white/20 bg-gradient-to-br from-black/40 via-black/30 to-black/40 shadow-2xl shadow-purple-900/30'
-                            : 'border-black/10 bg-gradient-to-br from-white/80 via-white/90 to-white/80 shadow-2xl ring-1 shadow-black/10 ring-black/5'
-                    } backdrop-blur-xl`}
+                            : 'border-black/10 bg-gradient-to-br from-white/55 via-white/70 to-white/55 shadow-2xl ring-1 shadow-black/10 ring-black/5'
+                    }`}
                 >
                     <CardHeader className="space-y-6 text-center">
                         <div className="flex justify-center">
@@ -535,21 +549,21 @@ export default function Welcome({
                                     className={`h-24 w-24 ${
                                         isDarkMode
                                             ? 'drop-shadow-[0_0_40px_rgba(145,70,255,0.7)]'
-                                            : 'drop-shadow-[0_0_30px_rgba(145,70,255,0.25)]'
+                                            : 'drop-shadow-[0_0_30px_rgba(145,70,255,0.22)]'
                                     }`}
                                 />
                                 <div
-                                    className={`absolute inset-0 rounded-full ${
+                                    className={`absolute inset-0 rounded-full blur-2xl ${
                                         isDarkMode
                                             ? 'bg-purple-500/30'
-                                            : 'bg-purple-400/12'
-                                    } blur-2xl`}
+                                            : 'bg-purple-500/14'
+                                    }`}
                                 />
                                 <div
                                     className={`absolute -inset-4 animate-pulse rounded-full border-2 ${
                                         isDarkMode
                                             ? 'border-purple-500/20'
-                                            : 'border-purple-400/15'
+                                            : 'border-purple-500/14'
                                     }`}
                                 />
                             </div>
@@ -557,11 +571,11 @@ export default function Welcome({
 
                         <CardTitle className="text-4xl font-bold tracking-tight">
                             <span
-                                className={`bg-gradient-to-r ${
+                                className={`bg-gradient-to-r bg-clip-text text-transparent ${
                                     isDarkMode
                                         ? 'from-purple-300 via-white to-cyan-300'
                                         : 'from-purple-700 via-gray-900 to-cyan-700'
-                                } bg-clip-text text-transparent`}
+                                }`}
                             >
                                 {t('title')}
                             </span>
@@ -571,7 +585,9 @@ export default function Welcome({
                     <CardContent className="space-y-6">
                         <p
                             className={`text-center text-lg leading-relaxed ${
-                                isDarkMode ? 'text-white/90' : 'text-gray-800'
+                                isDarkMode
+                                    ? 'text-white/90'
+                                    : 'text-gray-900/85'
                             }`}
                         >
                             {t('description')}
@@ -582,7 +598,7 @@ export default function Welcome({
                                 className={`h-[1px] w-32 bg-gradient-to-r from-transparent ${
                                     isDarkMode
                                         ? 'via-white/50'
-                                        : 'via-gray-700/40'
+                                        : 'via-gray-900/35'
                                 } to-transparent`}
                             />
                         </div>
@@ -596,17 +612,15 @@ export default function Welcome({
                                 aria-label={t('connect_button_aria')}
                             >
                                 <div
-                                    className={`absolute -inset-1 rounded-lg bg-gradient-to-r ${
-                                        isDarkMode
-                                            ? 'from-purple-600 to-cyan-500 opacity-60'
-                                            : 'from-purple-600 to-cyan-500 opacity-35'
-                                    } blur-xl transition-opacity duration-300 group-hover:opacity-60`}
+                                    className={`absolute -inset-1 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 blur-xl transition-opacity duration-300 group-hover:opacity-60 ${
+                                        isDarkMode ? 'opacity-60' : 'opacity-40'
+                                    }`}
                                 />
                                 <Button
                                     className={`relative w-full border-0 bg-gradient-to-r py-7 text-lg shadow-2xl transition-all duration-300 ${
                                         isDarkMode
                                             ? 'from-purple-700 via-purple-600 to-cyan-600 group-hover:shadow-purple-500/30 hover:from-purple-800 hover:to-cyan-700'
-                                            : 'from-purple-600 via-purple-500 to-cyan-500 group-hover:shadow-black/10 hover:from-purple-700 hover:to-cyan-600'
+                                            : 'from-purple-600 via-purple-500 to-cyan-500 group-hover:shadow-black/15 hover:from-purple-700 hover:to-cyan-600'
                                     }`}
                                     size="lg"
                                 >
@@ -614,11 +628,11 @@ export default function Welcome({
                                         <div className="relative">
                                             <TwitchIcon className="h-7 w-7 text-white" />
                                             <div
-                                                className={`absolute inset-0 ${
+                                                className={`absolute inset-0 blur-md ${
                                                     isDarkMode
                                                         ? 'bg-cyan-400/40'
-                                                        : 'bg-cyan-400/18'
-                                                } blur-md`}
+                                                        : 'bg-cyan-500/22'
+                                                }`}
                                             />
                                         </div>
                                         <span className="font-bold text-white drop-shadow-lg">
@@ -630,11 +644,11 @@ export default function Welcome({
                         )}
 
                         <p
-                            className={`border-t ${
+                            className={`border-t pt-4 text-center text-sm ${
                                 isDarkMode
                                     ? 'border-white/20 text-white/70'
-                                    : 'border-black/10 text-gray-700'
-                            } pt-4 text-center text-sm`}
+                                    : 'border-black/10 text-gray-800/70'
+                            }`}
                         >
                             {t('terms_notice')}
                         </p>
@@ -643,16 +657,16 @@ export default function Welcome({
 
                 <div className="mt-10 text-center">
                     <p
-                        className={`rounded-2xl border ${
+                        className={`rounded-2xl border px-6 py-3 backdrop-blur-sm ${
                             isDarkMode
                                 ? 'border-white/20 bg-white/10 text-white/90'
-                                : 'border-black/10 bg-white/70 text-gray-800'
-                        } px-6 py-3 backdrop-blur-sm`}
+                                : 'border-black/10 bg-white/55 text-gray-900/85'
+                        }`}
                     >
                         {t('community_support')}
                         <span
                             className={`ml-2 animate-pulse ${
-                                isDarkMode ? 'text-cyan-300' : 'text-cyan-600'
+                                isDarkMode ? 'text-cyan-300' : 'text-cyan-700'
                             }`}
                         >
                             ✦
@@ -666,14 +680,14 @@ export default function Welcome({
                     className={`border-t shadow-[0_-8px_30px_rgba(0,0,0,0.08)] backdrop-blur-md ${
                         isDarkMode
                             ? 'border-white/10 bg-black/35'
-                            : 'border-black/10 bg-white/85'
+                            : 'border-black/10 bg-white/75'
                     }`}
                 >
                     <div
                         className={
                             isDarkMode
                                 ? '!text-white/85 [&_*]:!text-white/85 [&_a:hover]:!text-white [&_svg]:!text-white/85'
-                                : '!text-gray-800 [&_*]:!text-gray-800 [&_a:hover]:!text-gray-950 [&_svg]:!text-gray-800'
+                                : '!text-gray-900/85 [&_*]:!text-gray-900/85 [&_a:hover]:!text-gray-950 [&_svg]:!text-gray-900/85'
                         }
                     >
                         <Footer />

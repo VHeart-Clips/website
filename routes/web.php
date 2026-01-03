@@ -13,8 +13,8 @@ Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
 
-Route::view('/imprint', 'legal.impressum')->name('impressum');
-Route::view('/privacy', 'legal.datenschutz')->name('datenschutz');
+Route::view('/imprint', 'legal.imprint')->name('impressum');
+Route::view('/privacy', 'legal.privacy')->name('datenschutz');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
