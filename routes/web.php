@@ -19,9 +19,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('/submit-clip', [ClipSubmitController::class, 'create'])->name('submitclip');
+    Route::get('/submit', [ClipSubmitController::class, 'create'])->name('submitclip.create');
 
-    Route::post('/submit-clip', [ClipSubmitController::class, 'store'])->name('submitclip.store');
+    Route::post('/submit', [ClipSubmitController::class, 'store'])->name('submitclip.store');
 
     Route::get('/team', TeamController::class)->name('team');
 
@@ -51,7 +51,7 @@ Route::get('/auth/twitch/callback', function () {
         ]);
 
     if ($user->deleted_at) {
-        return to_route('login')->withErrors(['login' => 'banned']);
+        return to_route('login')->withErrors(['login' => __('user.disabled')]);
     }
 
     session()?->regenerate();

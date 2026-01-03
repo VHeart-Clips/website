@@ -8,7 +8,6 @@ use App\Models\Game;
 use App\Models\User;
 use App\Services\Twitch\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
@@ -72,21 +71,21 @@ class ClipSubmitController extends Controller
     /**
      * Store the newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         Gate::authorize('submit', Clip::class);
 
         $data = $request->validate(rules: [
             'clip_url' => ['required', 'string', 'url'],
-            'tag_ids' => ['sometimes', 'array'],
-            'tag_ids.*' => ['integer'],
-            'is_anonymous' => ['sometimes', 'boolean'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['integer', 'exists:tags,id'],
+            'is_anonymous' => ['sometimes', 'accepted'],
         ]);
 
         $clipUrl = $data['clip_url'];
         $clipId = $this->getClipIdFromUrl($clipUrl);
-        $tagIds = $data['tag_ids'];
-        $isAnonymous = $data['is_anonymous'];
+        $tagIds = $data['tags'] ?? [];
+        $isAnonymous = $data['is_anonymous'] ?? false;
 
         $user = $request->user();
 
@@ -223,8 +222,7 @@ class ClipSubmitController extends Controller
         ]);
 
         if (! empty($tagIds)) {
-            $modelTags = Tag::whereIn('id', $tagIds)->get();
-            $clip->tags()->sync($modelTags);
+            $clip->tags()->sync($tagIds);
         }
 
         return to_route('submitclip')->with('submit_ok', true)
