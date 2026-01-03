@@ -45,6 +45,9 @@ docker run --rm --user $(id -u):$(id -g) -v $(pwd):/app composer install --ignor
 
 # to share the app with others run
 ./vendor/bin/sail share
+
+# If you want to run browser based tests you also have to setup playwright (will take a while and some space):
+./vendor/bin/sail npx playwright install
 ```
 
 To make working with sail easier you can add the following aliases to your `.bashrc` or `.zshrc`:
@@ -63,6 +66,25 @@ If you work with WSL on Windows you may have to add this to your ~/.gitconfig in
 
 this allows the git inside WSL to use your window's git credentials.
 
+## Testing
+
+You can run `sail composer test` to run all tests required for CI/CD compliance.
+
+For now, only the following tests are active:
+
+| Command                     | Description                    | Status   |
+|-----------------------------|--------------------------------|----------|
+| composer test:unit          | Unit & Feature Tests (Pest)    | Active   |
+| composer test:type-coverage | Type Coverage Test (Pest)      | Active   |
+| composer test:types         | PHPStan Static Analysis        | Inactive |
+| composer test:refactor      | Refactoring Checks (Rector)    | Inactive |
+| composer test:lint          | Pint and NPM Formatting Checks | Inactive |
+
+Some tests are inactive for now for CI checks because they will fail currently.
+
+They will get added to the `composer test` command as soon as possible.
+
+These tests will ensure the Quality and Stability of this project.
 
 ## Resources
 
@@ -73,3 +95,4 @@ this allows the git inside WSL to use your window's git credentials.
 - [React Documentation](https://react.dev/reference/react)
   - [shadcn UI Stuff](https://ui.shadcn.com/)
 - [FrankenPHP (if we use it)](https://frankenphp.dev/)
+- https://pestphp.com/docs/editor-setup
