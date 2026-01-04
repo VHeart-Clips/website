@@ -27,6 +27,7 @@ yarn-error.log
 /.vscode
 /.zed
 tests/Browser/Screenshots
+data/
 
 **/caddy
 frankenphp

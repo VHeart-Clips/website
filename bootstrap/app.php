@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -21,9 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ], prepend: [
-            \App\Http\Middleware\Localization::class,
+            App\Http\Middleware\Localization::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        Sentry\Laravel\Integration::handles($exceptions);
     })->create();
