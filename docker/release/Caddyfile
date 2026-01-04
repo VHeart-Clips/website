@@ -10,7 +10,7 @@
 
     # Trust incoming headers from Nginx/Docker network
     servers {
-        trusted_proxies static private_ranges
+        import trusted_proxies.caddy
     }
 }
 

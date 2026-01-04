@@ -52,6 +52,8 @@ COPY docker/release/php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY docker/release/init.sh /app/init-app.sh
 COPY docker/release/entrypoint.sh /app/entrypoint.sh
 
+RUN echo "trusted_proxies static private_ranges" > /etc/caddy/trusted_proxies.caddy
+
 # Make scripts executable
 RUN chmod +x /app/init-app.sh /app/entrypoint.sh
 

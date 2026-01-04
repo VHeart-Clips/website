@@ -16,6 +16,15 @@ if getent hosts redis > /dev/null; then
     echo "   -> Mapped 'redis' to $(getent hosts redis | awk '{ print $1 }')"
 fi
 
+echo "[Entrypoint] Updating Cloudflare IP ranges..."
+if CF_IPS=$( { curl -s https://www.cloudflare.com/ips-v4; echo; curl -s https://www.cloudflare.com/ips-v6; } | tr '\n' ' ' ); then
+    echo "trusted_proxies static private_ranges $CF_IPS" > /etc/caddy/trusted_proxies.caddy
+    echo "   -> Cloudflare IPs updated."
+else
+    echo "   -> [WARNING] Failed to fetch Cloudflare IPs. Using default private ranges."
+    echo "trusted_proxies static private_ranges" > /etc/caddy/trusted_proxies.caddy
+fi
+
 # Run your existing initialization script
 if [ -f /app/init-app.sh ]; then
     /bin/sh /app/init-app.sh
