@@ -1,6 +1,6 @@
 # VHeart Website
 
-## Sail Setup (fürs erste)
+## Sail Setup
 
 > Please note that you have to run this in a linux environment. If you are on Windows you can use the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) to run this project.
 
@@ -94,5 +94,5 @@ These tests will ensure the Quality and Stability of this project.
 - [Twitch API Documentation](https://dev.twitch.tv/docs/api/reference)
 - [React Documentation](https://react.dev/reference/react)
   - [shadcn UI Stuff](https://ui.shadcn.com/)
-- [FrankenPHP (if we use it)](https://frankenphp.dev/)
+- [FrankenPHP](https://frankenphp.dev/)
 - https://pestphp.com/docs/editor-setup
