@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('broadcaster_id')->index()->references('id')->on('users')->constrained()->cascadeOnDelete();
             $table->morphs('filter');
             $table->boolean('allowed');
-            $table->timestamps();
         });
     }
 

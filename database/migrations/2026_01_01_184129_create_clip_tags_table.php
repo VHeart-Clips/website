@@ -15,7 +15,6 @@ return new class extends Migration
 
             $table->foreignId('clip_id')->index()->constrained()->cascadeOnDelete();
             $table->foreignId('tag_id')->index()->constrained()->cascadeOnDelete();
-            $table->timestamps();
         });
     }
 

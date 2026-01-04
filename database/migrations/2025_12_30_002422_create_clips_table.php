@@ -26,7 +26,7 @@ return new class extends Migration
             $table->float('duration');
             $table->string('status')->nullable(); // für flag feature
             $table->string('language')->nullable();
-            $table->boolean('isAnonymous');
+            $table->boolean('is_anonymous');
             $table->timestamp('date');
             $table->timestamps();
             $table->softDeletes();
