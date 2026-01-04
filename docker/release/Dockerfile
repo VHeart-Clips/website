@@ -8,7 +8,7 @@ RUN install-php-extensions \
     gd \
     intl \
     opcache \
-    pdo_mysql \
+    pdo_pgsql \
     redis \
     zip
 
