@@ -43,7 +43,6 @@
 </head>
 <body class="font-inter antialiased">
 @inertia
-
 @cookieconsentview
 </body>
 </html>
