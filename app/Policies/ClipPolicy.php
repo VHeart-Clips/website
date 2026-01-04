@@ -63,4 +63,9 @@ class ClipPolicy
     {
         return true;
     }
+
+    public function submit(User $user, ?Clip $clip = null): bool
+    {
+        return empty($user->deleted_at); 
+    }
 }

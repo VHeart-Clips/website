@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -37,9 +38,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
         'twitch_refresh_token',
     ];
+
     protected $rememberTokenName = null;
 
-    /** @var array<int,Permission>|null  */
+    /** @var array<int,Permission>|null */
     protected ?array $permissionCache = null;
 
     /**
@@ -64,7 +66,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->pluck('role_permissions.permission');
 
         return $this->permissionCache = $rawPermissions
-            ->map(fn($perm) => Permission::tryFrom($perm))
+            ->map(fn ($perm) => Permission::tryFrom($perm))
             ->filter()
             ->values()
             ->toArray();
@@ -96,6 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function refresh(): User
     {
         $this->permissionCache = null;
+
         return parent::refresh();
     }
 
@@ -111,6 +114,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return parent::setRelation($relation, $value);
     }
 
+    public function broadcasterUserFilter(): MorphToMany
+    {
+        return $this->morphedByMany(User::class, 'filter', 'broadcaster_filter', 'broadcaster_id')->withTimestamps();
+    }
+
+    public function broadcasterGameFilter(): MorphToMany
+    {
+        return $this->morphedByMany(Game::class, 'filter', 'broadcaster_filter', 'broadcaster_id')->withTimestamps();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -123,12 +136,13 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'twitch_refresh_token' => 'encrypted',
+            'rules' => 'array',
         ];
     }
 
     public function hasVerifiedEmail(): bool
     {
-        if(is_null($this->email_verified_at)) {
+        if (is_null($this->email_verified_at)) {
             // since emails are optional we have to classify null as verified
             return true;
         }

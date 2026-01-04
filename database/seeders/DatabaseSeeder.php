@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Clip\Tag;
+use App\Models\User;
 use App\Enums\Permission;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
