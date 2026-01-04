@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -95,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $this->permissionCache = null;
     }
 
-    public function refresh(): User
+    public function refresh(): self
     {
         $this->permissionCache = null;
 
@@ -105,7 +107,7 @@ class User extends Authenticatable implements MustVerifyEmail
     /*
      * Hook into some relationship logic to clear our cache
      */
-    public function setRelation($relation, $value): User
+    public function setRelation($relation, $value): self
     {
         if ($relation === 'roles') {
             $this->permissionCache = null;
@@ -116,12 +118,22 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function broadcasterUserFilter(): MorphToMany
     {
-        return $this->morphedByMany(User::class, 'filter', 'broadcaster_filter', 'broadcaster_id')->withTimestamps();
+        return $this->morphedByMany(self::class, 'filter', 'broadcaster_filter', 'broadcaster_id');
     }
 
     public function broadcasterGameFilter(): MorphToMany
     {
-        return $this->morphedByMany(Game::class, 'filter', 'broadcaster_filter', 'broadcaster_id')->withTimestamps();
+        return $this->morphedByMany(Game::class, 'filter', 'broadcaster_filter', 'broadcaster_id');
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        if (is_null($this->email_verified_at)) {
+            // since emails are optional we have to classify null as verified
+            return true;
+        }
+
+        return parent::hasVerifiedEmail();
     }
 
     /**
@@ -138,15 +150,5 @@ class User extends Authenticatable implements MustVerifyEmail
             'twitch_refresh_token' => 'encrypted',
             'rules' => 'array',
         ];
-    }
-
-    public function hasVerifiedEmail(): bool
-    {
-        if (is_null($this->email_verified_at)) {
-            // since emails are optional we have to classify null as verified
-            return true;
-        }
-
-        return parent::hasVerifiedEmail();
     }
 }

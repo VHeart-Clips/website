@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Form, Head, Link, router, usePage } from '@inertiajs/react';
+import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -19,6 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import submitclip from '@/routes/submitclip';
 import { AlertCircle, Loader2, Tag as TagIcon } from 'lucide-react';
 
 interface Tag {
@@ -26,22 +27,16 @@ interface Tag {
     name: string;
 }
 
-type PreviewResponse = {
-    ok: boolean;
-    message?: string | null;
-    errors?: string[];
-    can_submit?: boolean;
-    reasons?: string[];
-    clip?: {
-        clip_id: string;
-        embed_url: string;
-    };
+type ClipPreview = {
+    clip_id: string;
+    embed_url: string;
 } | null;
 
 type InertiaBaseProps = Record<string, unknown>;
 
 interface PageProps extends InertiaBaseProps {
     auth: {
+        permissions: Array<String>;
         user: {
             id: number;
             name: string;
@@ -50,25 +45,18 @@ interface PageProps extends InertiaBaseProps {
         };
     };
     tags: Tag[];
-    preview?: PreviewResponse;
-    flash?: {
-        submit_ok?: boolean;
-        submit_message?: string | null;
-    };
 }
 
 export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
     const { t } = useTranslation('sendinclip');
-    const { props } = usePage<PageProps>();
+    const { props, flash } = usePage<PageProps>();
     const { errors } = props;
     const user = props.auth?.user || null;
 
-    const backendPreview = (props.preview ?? null) as PreviewResponse;
+    const [clipPreview, setClipPreview] = useState<ClipPreview>(null);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [clipUrl, setClipUrl] = useState('');
-    const [selectedTags, setSelectedTags] = useState<number[]>([]);
-    const [isAnonymous, setIsAnonymous] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const [isChecking, setIsChecking] = useState(false);
@@ -77,34 +65,18 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
     const debounceRef = useRef<number | null>(null);
 
     const breadcrumbs = useMemo(
-        () => [{ title: t('breadcrumb'), href: '/submit-clip' }],
+        () => [{ title: t('breadcrumb'), href: submitclip.create().url }],
         [t],
     );
 
     const previewErrors: string[] = useMemo(() => {
-        if (!backendPreview) return [];
-        if (backendPreview.errors?.length) return backendPreview.errors;
-        if (backendPreview.reasons?.length) return backendPreview.reasons;
-        if (!backendPreview.ok && backendPreview.message)
-            return [backendPreview.message];
         return [];
-    }, [backendPreview]);
-
-    const canSubmit =
-        !!backendPreview?.ok &&
-        backendPreview?.can_submit !== false &&
-        !!backendPreview?.clip?.embed_url;
+    }, [clipPreview]);
 
     const hasInput = clipUrl.trim().length > 0;
 
-    const showErrors = hasInput && !isChecking && previewErrors.length > 0;
+    const showErrors = false; //hasInput && !isChecking && previewErrors.length > 0;
     const showLoading = hasInput && isChecking;
-
-    const toggleTag = (id: number) => {
-        setSelectedTags((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-        );
-    };
 
     useEffect(() => {
         const trimmed = clipUrl.trim();
@@ -120,56 +92,30 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
             if (trimmed === lastPreviewUrlRef.current) return;
 
             setIsChecking(true);
-        }, 600);
+            const host = document.location.hostname;
+
+            const clipMatch = clipUrl.match(
+                /https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/,
+            );
+
+            if (clipMatch) {
+                const clipId = clipMatch[1];
+
+                setClipPreview({
+                    clip_id: clipId,
+                    embed_url: `https://clips.twitch.tv/embed?clip=${clipId}&parent=${host}`,
+                } as ClipPreview);
+            } else {
+                setClipPreview(null);
+            }
+
+            setIsChecking(false);
+        }, 200);
 
         return () => {
             if (debounceRef.current) window.clearTimeout(debounceRef.current);
         };
     }, [clipUrl]);
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
-
-        const trimmed = clipUrl.trim();
-
-        if (!user) return setError(t('errors.login_required'));
-        if (!trimmed) return setError(t('errors.clip_url_required'));
-        if (!canSubmit) return setError(t('errors.cannot_submit'));
-
-        if (user.submission_count_today >= user.daily_submission_limit) {
-            return setError(
-                t('errors.daily_limit', { limit: user.daily_submission_limit }),
-            );
-        }
-
-        setIsSubmitting(true);
-
-        router.post(
-            'submit-clip',
-            {
-                clip_url: trimmed,
-                tag_ids: selectedTags,
-                is_anonymous: isAnonymous,
-            },
-            {
-                preserveScroll: true,
-                onFinish: () => setIsSubmitting(false),
-                onSuccess: () => {
-                    setClipUrl('');
-                    setSelectedTags([]);
-                    setIsAnonymous(false);
-                    setError(null);
-
-                    setIsChecking(false);
-                    lastPreviewUrlRef.current = '';
-
-                    router.reload({ only: ['preview', 'tags', 'flash'] });
-                },
-                onError: () => setError(t('errors.generic')),
-            },
-        );
-    };
 
     if (!user) {
         return (
@@ -216,11 +162,11 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                         </h1>
                     </div>
 
-                    {props.flash?.submit_ok && props.flash?.submit_message && (
+                    {flash?.submit_ok && flash?.submit_message && (
                         <div className="mb-6">
                             <Alert>
                                 <AlertDescription>
-                                    {props.flash.submit_message}
+                                    {flash.submit_message}
                                 </AlertDescription>
                             </Alert>
                         </div>
@@ -245,17 +191,10 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                 <CardContent>
                                     <div className="space-y-4">
                                         <div className="relative aspect-video overflow-hidden rounded-lg bg-black">
-                                            {backendPreview?.clip?.embed_url &&
-                                            canSubmit ? (
+                                            {clipPreview ? (
                                                 <iframe
-                                                    key={
-                                                        backendPreview.clip
-                                                            .clip_id
-                                                    }
-                                                    src={
-                                                        backendPreview.clip
-                                                            .embed_url
-                                                    }
+                                                    key={clipPreview.clip_id}
+                                                    src={clipPreview.embed_url}
                                                     className="h-full w-full"
                                                     style={{ border: 0 }}
                                                     allow="fullscreen"
@@ -350,14 +289,11 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
 
                                             <div className="flex flex-wrap gap-2">
                                                 {tags.map((tag, index) => (
-                                                    <>
+                                                    <div key={'tag-' + tag.id}>
                                                         <Checkbox
                                                             id={'tag-' + tag.id}
                                                             name="tags[]"
                                                             value={tag.id}
-                                                            key={
-                                                                'tag-' + tag.id
-                                                            }
                                                         />
                                                         <Label
                                                             htmlFor={
@@ -367,7 +303,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                                         >
                                                             {tag.name}
                                                         </Label>{' '}
-                                                    </>
+                                                    </div>
                                                 ))}
                                                 <InputError
                                                     className="mt-2"
@@ -401,6 +337,11 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                         <Button
                                             type="submit"
                                             className="w-full"
+                                            disabled={
+                                                clipUrl.match(
+                                                    /https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/,
+                                                ) === null
+                                            }
                                         >
                                             {t('submit.cta')}
                                         </Button>
