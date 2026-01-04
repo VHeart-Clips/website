@@ -8,11 +8,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { about, dashboard, submitclip, team } from '@/routes';
+import { about, dashboard, team } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
+import submitclip from '@/routes/submitclip';
 
 const mainNavItems: NavItem[] = [
     {
@@ -22,13 +23,13 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Clips einreichen',
-        href: submitclip(),
+        href: submitclip.create(),
         icon: LayoutGrid,
     },
 
     {
         title: 'Clips bewerten',
-        href: submitclip(),
+        href: submitclip.create(),
         icon: LayoutGrid,
     },
 ];

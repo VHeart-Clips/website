@@ -1,0 +1,35 @@
+{
+    frankenphp
+    order php_server before file_server
+
+    # [PROXY & SECURITY OPTIMIZATION]
+    # Disable Admin API (saves resources, prevents binding timeouts)
+    admin off
+    # Disable Auto HTTPS (Nginx handles SSL)
+    auto_https off
+
+    # Trust incoming headers from Nginx/Docker network
+    servers {
+        import trusted_proxies.caddy
+    }
+}
+
+# Force IPv4 binding to prevent IPv6 lookup timeouts
+:80 {
+    root * /app/public
+
+    # [DISABLED] Compression (Nginx handles this)
+    # encode zstd gzip
+
+    # Execute PHP
+    php_server
+
+    # Serve static files with aggressive caching
+    @static {
+        file
+        path *.ico *.css *.js *.gif *.jpg *.jpeg *.png *.svg *.woff *.woff2
+    }
+    header @static Cache-Control "max-age=2592000"
+
+    file_server
+}

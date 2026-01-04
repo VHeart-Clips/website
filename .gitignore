@@ -28,3 +28,7 @@ yarn-error.log
 /.zed
 tests/Browser/Screenshots
 data/
+
+**/caddy
+frankenphp
+frankenphp-worker.php
