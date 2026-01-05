@@ -33,7 +33,7 @@ class ClipSubmitController extends Controller
      */
     public function create(): Response
     {
-        $tags = Tag::all()->toArray();
+        $tags = Tag::all();
 
         return Inertia::render('submitclip', [
             'tags' => $tags,
