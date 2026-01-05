@@ -75,7 +75,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
 
     const hasInput = clipUrl.trim().length > 0;
 
-    const showErrors = false; //hasInput && !isChecking && previewErrors.length > 0;
+    const showErrors = false;
     const showLoading = hasInput && isChecking;
 
     useEffect(() => {
