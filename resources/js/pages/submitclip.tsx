@@ -1,10 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { store } from '@/actions/App/Http/Controllers/ClipSubmitController';
+import InputError from '@/components/input-error';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -59,6 +60,7 @@ interface PageProps extends InertiaBaseProps {
 export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
     const { t } = useTranslation('sendinclip');
     const { props } = usePage<PageProps>();
+    const { errors } = props;
     const user = props.auth?.user || null;
 
     const backendPreview = (props.preview ?? null) as PreviewResponse;
@@ -118,21 +120,6 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
             if (trimmed === lastPreviewUrlRef.current) return;
 
             setIsChecking(true);
-
-            router.get(
-                '/submit-clip',
-                { clip_url: trimmed },
-                {
-                    preserveScroll: true,
-                    preserveState: true,
-                    replace: true,
-                    only: ['preview'],
-                    onFinish: () => {
-                        lastPreviewUrlRef.current = trimmed;
-                        setIsChecking(false);
-                    },
-                },
-            );
         }, 600);
 
         return () => {
@@ -159,7 +146,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
         setIsSubmitting(true);
 
         router.post(
-            '/clips',
+            'submit-clip',
             {
                 clip_url: trimmed,
                 tag_ids: selectedTags,
@@ -321,8 +308,8 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                 </CardHeader>
 
                                 <CardContent>
-                                    <form
-                                        onSubmit={handleSubmit}
+                                    <Form
+                                        action={store()}
                                         className="space-y-6"
                                         noValidate
                                     >
@@ -332,6 +319,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                             </Label>
                                             <Input
                                                 id="clip_url"
+                                                name="clip_url"
                                                 placeholder={t(
                                                     'submit.clip_url_placeholder',
                                                 )}
@@ -346,6 +334,11 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                                 disabled={isSubmitting}
                                                 autoComplete="off"
                                                 inputMode="url"
+                                                type="url"
+                                            />
+                                            <InputError
+                                                className="mt-2"
+                                                message={errors.clip_url}
                                             />
                                         </div>
 
@@ -356,24 +349,30 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                             </Label>
 
                                             <div className="flex flex-wrap gap-2">
-                                                {tags.map((tag) => (
-                                                    <Badge
-                                                        key={tag.id}
-                                                        variant={
-                                                            selectedTags.includes(
-                                                                tag.id,
-                                                            )
-                                                                ? 'default'
-                                                                : 'outline'
-                                                        }
-                                                        className="cursor-pointer hover:opacity-80"
-                                                        onClick={() =>
-                                                            toggleTag(tag.id)
-                                                        }
-                                                    >
-                                                        {tag.name}
-                                                    </Badge>
+                                                {tags.map((tag, index) => (
+                                                    <>
+                                                        <Checkbox
+                                                            id={'tag-' + tag.id}
+                                                            name="tags[]"
+                                                            value={tag.id}
+                                                            key={
+                                                                'tag-' + tag.id
+                                                            }
+                                                        />
+                                                        <Label
+                                                            htmlFor={
+                                                                'tag-' + tag.id
+                                                            }
+                                                            className="cursor-pointer"
+                                                        >
+                                                            {tag.name}
+                                                        </Label>{' '}
+                                                    </>
                                                 ))}
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.tags}
+                                                />
                                             </div>
                                         </div>
 
@@ -382,13 +381,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                         <div className="flex items-center space-x-2">
                                             <Checkbox
                                                 id="is_anonymous"
-                                                checked={isAnonymous}
-                                                onCheckedChange={(checked) =>
-                                                    setIsAnonymous(
-                                                        checked === true,
-                                                    )
-                                                }
-                                                disabled={isSubmitting}
+                                                name="is_anonymous"
                                             />
                                             <Label
                                                 htmlFor="is_anonymous"
@@ -399,23 +392,19 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                                     {t('submit.anonymous_hint')}
                                                 </span>
                                             </Label>
+                                            <InputError
+                                                className="mt-2"
+                                                message={errors.is_anonymous}
+                                            />
                                         </div>
 
                                         <Button
                                             type="submit"
                                             className="w-full"
-                                            disabled={
-                                                isSubmitting ||
-                                                !hasInput ||
-                                                !canSubmit
-                                            }
                                         >
-                                            {isSubmitting && (
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            )}
                                             {t('submit.cta')}
                                         </Button>
-                                    </form>
+                                    </Form>
                                 </CardContent>
                             </Card>
                         </div>

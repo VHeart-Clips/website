@@ -15,13 +15,21 @@ use Throwable;
 class TwitchService
 {
     protected string $baseUrl = 'https://api.twitch.tv/helix';
+
     protected string $authUrl = 'https://id.twitch.tv/oauth2/token';
+
     protected string $clientId;
+
     protected string $clientSecret;
+
     protected ?string $userAccessToken = null;
+
     protected ?string $userRefreshToken = null;
+
     protected mixed $tokenUpdateCallback = null;
+
     protected bool $forceUserTokenRefresh = false;
+
     protected ?User $user = null;
 
     /**
@@ -44,28 +52,31 @@ class TwitchService
      */
     public function asUser(?User $user = null, ?string $access_token = null): self
     {
-        if ($user === null) {
-            $this->user = null;
-            $this->userRefreshToken = null;
-            $this->userAccessToken = null;
-            $this->forceUserTokenRefresh = false;
+        $newSelf = clone $this;
 
-            return $this;
+        if ($user === null) {
+            $newSelf->user = null;
+            $newSelf->userRefreshToken = null;
+            $newSelf->userAccessToken = null;
+            $newSelf->forceUserTokenRefresh = false;
+
+            return $newSelf;
         }
 
-        $this->user = $user;
-        $this->userRefreshToken = $user->twitch_refresh_token;
-        $this->userAccessToken = $access_token;
+        $newSelf->user = $user;
+        $newSelf->userRefreshToken = $user->twitch_refresh_token;
+        $newSelf->userAccessToken = $access_token;
 
         if ($access_token === null) {
-            $this->forceUserTokenRefresh = true;
+            $newSelf->forceUserTokenRefresh = true;
         }
 
-        return $this;
+        return $newSelf;
     }
 
     /**
      * Uses specified user access tokens from a specific user
+     *
      * @link https://dev.twitch.tv/docs/authentication/#user-access-tokens User access tokens
      */
     public function withUserToken(string $accessToken, ?string $refreshToken = null): self
@@ -78,11 +89,14 @@ class TwitchService
 
     /**
      * Uses specified user access tokens
+     *
      * @link https://dev.twitch.tv/docs/authentication/#user-access-tokens User access tokens
      */
-    public function onUserTokenRefresh(callable $onRefresh): void
+    public function onUserTokenRefresh(?callable $onRefresh = null): self
     {
-        $this->userRefreshToken = $onRefresh;
+        $this->tokenUpdateCallback = $onRefresh;
+
+        return $this;
     }
 
     /**
@@ -91,6 +105,7 @@ class TwitchService
      * In case we really need it for requests outside this service for some reason
      *
      * @throws ConnectionException
+     *
      * @link https://dev.twitch.tv/docs/authentication/#passing-the-access-token-to-the-api Passing the access token to the API
      */
     public function getHeaders(?string $token = null): array
@@ -98,10 +113,10 @@ class TwitchService
         return [
             'Client-ID' => $this->clientId,
             'Authorization' => 'Bearer '.(
-                    $token
-                    ?? $this->userAccessToken
-                    ?? $this->getAppAccessToken()
-                ),
+                $token
+                ?? $this->userAccessToken
+                ?? $this->getAppAccessToken()
+            ),
             'Content-Type' => 'application/json',
         ];
     }
@@ -113,6 +128,7 @@ class TwitchService
      * We Cache the access token (encrypted) for its lifetime. Validity can only be checked when used.
      *
      * @throws ConnectionException|TwitchApiException
+     *
      * @link https://dev.twitch.tv/docs/authentication/#app-access-tokens App access tokens
      */
     public function getAppAccessToken(): string
@@ -145,6 +161,7 @@ class TwitchService
 
     /**
      * GET From Twitch
+     *
      * @throws ConnectionException|TwitchApiException
      */
     public function get(string|TwitchEndpoints $endpoint, array $params = []): array
@@ -165,7 +182,7 @@ class TwitchService
             $this->tokenRefresh();
         }
 
-        if (!is_string($endpoint)) {
+        if (! is_string($endpoint)) {
             $endpoint = $endpoint->value;
         }
 
@@ -173,7 +190,6 @@ class TwitchService
             ['isUserToken' => (bool) $this->userAccessToken, 'params' => $params]);
 
         $client = Http::withHeaders($this->getHeaders());
-
 
         $url = $this->baseUrl.'/'.ltrim($endpoint, '/');
 
@@ -200,7 +216,7 @@ class TwitchService
     protected function tokenRefresh(): bool
     {
         if ($this->userAccessToken || $this->forceUserTokenRefresh) {
-            if (!$this->userRefreshToken) {
+            if (! $this->userRefreshToken) {
                 return false;
             }
 
@@ -222,10 +238,11 @@ class TwitchService
                     call_user_func($this->tokenUpdateCallback, $this->userAccessToken, $this->userRefreshToken,
                         $expiresIn);
                 }
+
                 return true;
             }
 
-            Log::error("Failed to refresh user token", [
+            Log::error('Failed to refresh user token', [
                 'response' => $response->status(),
                 'body' => Str::limit($response->body(), 255),
             ]);
@@ -235,11 +252,13 @@ class TwitchService
 
         // We forget the cache key so the next getAccessToken() call fetches a fresh one.
         Cache::forget('twitch_access_token');
+
         return true;
     }
 
     /**
      * POST to Twitch
+     *
      * @throws ConnectionException|TwitchApiException
      */
     public function post(string|TwitchEndpoints $endpoint, array $data = []): array
@@ -254,24 +273,25 @@ class TwitchService
      */
     public function isModeratorFor(?User $broadCaster = null): bool
     {
-        if (!$this->user || !$broadCaster) {
+        if (! $this->user || ! $broadCaster) {
             return false;
         }
 
-        return in_array($broadCaster->id, array_column($this->getModeratedChannels(), 'broadcaster_id'), true);
+        return in_array($broadCaster->id, array_column($this->getModeratedChannels(), 'broadcaster_id'), false);
     }
 
     /**
      * Returns the list of Channels the current user has moderator permissions for.
+     *
      * @return array<int, int>
      */
     public function getModeratedChannels(): array
     {
-        if (!$this->user) {
+        if (! $this->user) {
             return [];
         }
 
-        return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id),300, function () {
+        return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id), 300, function () {
             return $this->get(TwitchEndpoints::GetModeratedChannels, ['user_id' => $this->user->id, 'first' => 100])['data'];
         });
     }
