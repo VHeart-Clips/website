@@ -8,6 +8,8 @@ namespace App\Models;
 use App\Enums\Permission;
 use App\Policies\UserPolicy;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,7 +23,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 // We tell laravel where to find the policy class
 // While the name convention should allow auto-detection, we want to stay explicit to make it clear.
 #[UsePolicy(UserPolicy::class)]
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
@@ -134,6 +136,20 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return parent::hasVerifiedEmail();
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // TODO: Implement canAccessPanel() method.
+        return true;
+    }
+
+    /**
+     * Tell Filament we dont have a password
+     */
+    public function getPasswordAttribute(): ?string
+    {
+        return null;
     }
 
     /**
