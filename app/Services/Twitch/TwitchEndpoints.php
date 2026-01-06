@@ -6,6 +6,7 @@ namespace App\Services\Twitch;
 
 use App\Services\Twitch\Data\CategoryDto;
 use App\Services\Twitch\Data\ClipDto;
+use App\Services\Twitch\Data\GameDto;
 use App\Services\Twitch\Data\TwitchDtoInterface;
 
 enum TwitchEndpoints: string
@@ -110,6 +111,7 @@ enum TwitchEndpoints: string
         return match ($this) {
             self::GetClips => ClipDto::class,
             self::SearchCategories => CategoryDto::class,
+            self::GetGames => GameDto::class,
             default => null
         };
     }
