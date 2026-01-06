@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Actions\ImportClipAction;
 use App\Models\Clip;
 use App\Models\Clip\Tag;
 use App\Models\Game;
@@ -44,7 +45,7 @@ class ClipSubmitController extends Controller
     /**
      * Store the newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, ImportClipAction $importClipAction)
     {
         Gate::authorize('submit', Clip::class);
 
@@ -62,7 +63,7 @@ class ClipSubmitController extends Controller
         }
 
         $tagIds = $data['tags'] ?? [];
-        $isAnonymous = $data['is_anonymous'] ?? false;
+        $isAnonymous = ($data['is_anonymous'] ?? "off") === "on";
 
         $user = $request->user();
 
@@ -174,14 +175,12 @@ class ClipSubmitController extends Controller
             ]);
         }
 
-        $clip = Clip::create($clipInfo->toModel([
-            'submitter_id' => $user->id,
-            'is_anonymous' => $isAnonymous,
-        ]));
-
-        if (! empty($tagIds)) {
-            $clip->tags()->sync($tagIds);
-        }
+        $importClipAction->execute(
+            $clipInfo,
+            $request->user(),
+            $isAnonymous,
+            $tagIds
+        );
 
         return back()->with('submit_ok', true)->with('submit_message', __('sendinclip.flash.submitted'));
     }
