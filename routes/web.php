@@ -11,7 +11,12 @@ use Inertia\Inertia;
 use Laravel\Socialite\Socialite;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    $settings = [
+        'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+        'partnerIcon' => null,
+        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
+    ];
+    return Inertia::render('welcome', $settings);
 })->name('home');
 
 Route::view('/imprint', 'legal.imprint')->name('impressum');
