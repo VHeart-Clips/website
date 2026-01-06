@@ -40,7 +40,7 @@ class Clip extends Model
     public function game(): BelongsTo
     {
         return $this->belongsTo(Game::class)
-            ->withDefault(['title' => 'N/A']);
+            ->withDefault(['title' => 'Pending']);
     }
 
     public function tags(): BelongsToMany
