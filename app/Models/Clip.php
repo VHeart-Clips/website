@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Models\Clip\Tag;
@@ -43,6 +45,6 @@ class Clip extends Model
 
     public function tags(): BelongsToMany
     {
-        return $this->belongsToMany(Tag::class, 'clip_tags')->withTimestamps();
+        return $this->belongsToMany(Tag::class, 'clip_tags');
     }
 }
