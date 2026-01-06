@@ -16,7 +16,7 @@ class ImportClipAction
 {
     public function execute(ClipDto $clip, ?User $user = null, ?bool $isAnonymous = false, ?array $tags = null): Clip
     {
-        $clipModel = Clip::updateOrCreate([
+        $clipModel = Clip::firstOrCreate([
             'twitch_id' => $clip->id,
         ], $clip->toModel([
             'submitter_id' => $user?->id,
