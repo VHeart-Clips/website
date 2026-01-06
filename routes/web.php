@@ -23,6 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/submit', [ClipSubmitController::class, 'store'])->name('submitclip.store');
 
+    Route::get('/evaluateclips', function () {
+        return Inertia::render('evaluateclips');
+    })->name('evaluateclips');
+
     Route::get('/team', TeamController::class)->name('team');
 
     Route::get('/about-us', function () {
