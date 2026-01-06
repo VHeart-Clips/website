@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Twitch;
 
 use App\Models\User;
+use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\TwitchDtoInterface;
 use App\Services\Twitch\Exceptions\TwitchApiException;
 use Illuminate\Http\Client\ConnectionException;
@@ -309,5 +310,20 @@ class TwitchService
         return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id), 300, function () {
             return $this->get(TwitchEndpoints::GetModeratedChannels, ['user_id' => $this->user->id, 'first' => 100])['data'];
         });
+    }
+
+    /**
+     * Returns the Clip for this Twitch Clip id if it exists
+     *
+     * @param  string|null  $clipId
+     * @return ClipDto|null
+     */
+    public function getClipByID(?string $clipId): ?ClipDto
+    {
+        try {
+            return array_first($this->get(TwitchEndpoints::GetClips, ['id' => $clipId]) ?? []);
+        } catch (Throwable $e) {
+            return null;
+        }
     }
 }
