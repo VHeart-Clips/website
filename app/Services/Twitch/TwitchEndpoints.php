@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Twitch;
 
+use App\Services\Twitch\Data\CategoryDto;
 use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\TwitchDtoInterface;
 
@@ -89,13 +90,26 @@ enum TwitchEndpoints: string
     case GetVIPs = 'channels/vips';
 
     /**
+     * Gets the games or categories that match the specified query.
+     *
+     * To match, the category’s name must contain all parts of the query string. For example, if the query string is 42, the response includes any category name that contains 42 in the title. If the query string is a phrase like love computer, the response includes any category name that contains the words love and computer anywhere in the name. The comparison is case insensitive.
+     *
+     * Requires an **app access token** or **user access token**.
+     *
+     * @link https://dev.twitch.tv/docs/api/reference#search-categories
+     */
+    case SearchCategories = 'search/categories';
+
+    /**
      * Returns the DTO for this Endpoint
+     *
      * @return class-string<TwitchDtoInterface>|null
      */
     public function getDataTransferObject(): ?string
     {
         return match ($this) {
             self::GetClips => ClipDto::class,
+            self::SearchCategories => CategoryDto::class,
             default => null
         };
     }
