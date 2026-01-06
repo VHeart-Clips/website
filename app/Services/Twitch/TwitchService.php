@@ -326,4 +326,16 @@ class TwitchService
             return null;
         }
     }
+
+    /**
+     * Parses the Clip ID from a given Url
+     */
+    public function parseClipId(string $clipUrl): ?string
+    {
+        if (preg_match('/https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/', $clipUrl, $m)) {
+            return $m[1];
+        }
+
+        return null;
+    }
 }
