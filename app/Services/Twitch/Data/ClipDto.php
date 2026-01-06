@@ -33,30 +33,30 @@ readonly class ClipDto implements TwitchDtoInterface
         public bool $is_featured
     ) {}
 
-    public static function from(array $clip): static
+    public static function from(array $data): static
     {
         // Twitch returns an empty string "" for video_id if unavailable
-        $video_id = ! empty($clip['video_id']) ? (int) $clip['video_id'] : null;
-        $created_at = Carbon::parse($clip['created_at']);
+        $video_id = ! empty($data['video_id']) ? (int) $data['video_id'] : null;
+        $created_at = Carbon::parse($data['created_at']);
 
         return new static(
-            (string) $clip['id'],
-            $clip['url'],
-            $clip['embed_url'],
-            (int) $clip['broadcaster_id'],
-            $clip['broadcaster_name'],
-            (int) $clip['creator_id'],
-            $clip['creator_name'],
+            (string) $data['id'],
+            $data['url'],
+            $data['embed_url'],
+            (int) $data['broadcaster_id'],
+            $data['broadcaster_name'],
+            (int) $data['creator_id'],
+            $data['creator_name'],
             $video_id,
-            (int) $clip['game_id'],
-            $clip['language'],
-            $clip['title'],
-            $clip['view_count'],
+            (int) $data['game_id'],
+            $data['language'],
+            $data['title'],
+            $data['view_count'],
             $created_at,
-            $clip['thumbnail_url'],
-            $clip['duration'],
-            $clip['vod_offset'],
-            $clip['is_featured']
+            $data['thumbnail_url'],
+            $data['duration'],
+            $data['vod_offset'],
+            $data['is_featured']
         );
     }
 
@@ -82,12 +82,12 @@ readonly class ClipDto implements TwitchDtoInterface
     }
 
     /**
-     * @param  array<int, ClipDto>  $clips
+     * @return  array<int, ClipDto>
      */
-    public static function fromArray(array $clips): array
+    public static function fromArray(array $dataList): array
     {
         $result = [];
-        foreach ($clips['data'] as $clip) {
+        foreach ($dataList['data'] as $clip) {
             $result[] = self::from($clip);
         }
 
