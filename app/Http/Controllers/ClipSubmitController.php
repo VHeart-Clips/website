@@ -156,25 +156,6 @@ class ClipSubmitController extends Controller
             $this->returnError('sendinclip.erros.game_blocked');
         }
 
-        $game = Game::find($clipInfo->game_id);
-
-        if (empty($game)) {
-            $gameInfos = $this->twitchService->asUser($user, $this->getUserToken())->get(TwitchEndpoints::GetGames, ['id' => $clipInfo->game_id]);
-
-            if (empty($gameInfos['data'])) {
-                $this->returnError('sendinclip.erros.game_not_found');
-            }
-
-            $gameInfo = $gameInfos['data'][0];
-
-            $game = Game::updateOrCreate([
-                'id' => $clipInfo->game_id,
-            ], [
-                'title' => $gameInfo['name'],
-                'box_art' => $gameInfo['box_art_url'],
-            ]);
-        }
-
         $importClipAction->execute(
             $clipInfo,
             $request->user(),
