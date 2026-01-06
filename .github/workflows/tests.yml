@@ -5,12 +5,12 @@ on:
     branches:
       - develop
       - main
-      - master
+      #- master
   pull_request:
     branches:
       - develop
       - main
-      - master
+      #- master
 
 jobs:
   ci:
