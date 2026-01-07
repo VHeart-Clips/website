@@ -207,20 +207,19 @@
     <div class="no-script-container no-script-dark">
         <div class="no-script-content">
             <div class="no-script-logo-container">
-                <img src="{{ Vite::asset("resources/images/svg/logo-full-dark.svg") }}" alt="VHeart Logo"
+                <img src="{{ Vite::asset('resources/images/svg/logo-full-dark.svg') }}" alt="VHeart Logo"
                      class="no-script-logo">
             </div>
             <div class="no-script-inner">
                 <div>
-                    <h1 class="no-script-title">⚠️ JavaScript ist deaktiviert ⚠️</h1>
+                    <h1 class="no-script-title">{{ __('app-blade.title') }}</h1>
                     <p class="no-script-description">
-                        Diese Website benötigt JavaScript, um korrekt zu funktionieren. Du kannst die rechtlichen
-                        Seiten trotzdem öffnen:
+                        {{ __('app-blade.description') }}
                     </p>
                 </div>
                 <div class="no-script-buttons">
-                    <a href="/imprint" class="no-script-button">Impressum</a>
-                    <a href="/privacy" class="no-script-button">Datenschutz</a>
+                    <a href="/imprint" class="no-script-button">{{ __('app-blade.imprint') }}</a>
+                    <a href="/privacy" class="no-script-button">{{ __('app-blade.privacy') }}</a>
                 </div>
             </div>
         </div>
@@ -229,20 +228,19 @@
     <div class="no-script-container no-script-light">
         <div class="no-script-content">
             <div class="no-script-logo-container">
-                <img src="{{ Vite::asset("resources/images/svg/logo-full-title.svg") }}" alt="VHeart Logo"
+                <img src="{{ Vite::asset('resources/images/svg/logo-full-title.svg') }}" alt="VHeart Logo"
                      class="no-script-logo">
             </div>
             <div class="no-script-inner">
                 <div>
-                    <h1 class="no-script-title">⚠️ JavaScript ist deaktiviert ⚠️</h1>
+                    <h1 class="no-script-title">{{ __('app-blade.title') }}</h1>
                     <p class="no-script-description">
-                        Diese Website benötigt JavaScript, um korrekt zu funktionieren. Du kannst die rechtlichen
-                        Seiten trotzdem öffnen:
+                        {{ __('app-blade.description') }}
                     </p>
                 </div>
                 <div class="no-script-buttons">
-                    <a href="/imprint" class="no-script-button">Impressum</a>
-                    <a href="/privacy" class="no-script-button">Datenschutz</a>
+                    <a href="/imprint" class="no-script-button">{{ __('app-blade.imprint') }}</a>
+                    <a href="/privacy" class="no-script-button">{{ __('app-blade.privacy') }}</a>
                 </div>
             </div>
         </div>
