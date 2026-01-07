@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\Clip;
@@ -29,41 +31,11 @@ class ClipSubmitController extends Controller
     /**
      * Show the form for creating the resource.
      */
-    public function create(Request $request): Response
+    public function create(): Response
     {
-        $request->validate(['clip_url' => ['sometimes', 'string', 'url']]);
-        $clipUrl = $request->string('clip_url');
-        $preview = null;
-
-        if ($clipUrl !== '') {
-            $clipId = $this->getClipIdFromUrl($clipUrl);
-
-            if ($clipId) {
-                $parent = $request->getHost();
-
-                $preview = [
-                    'ok' => true,
-                    'can_submit' => true,
-                    'clip' => [
-                        'clip_id' => $clipId,
-                        'embed_url' => "https://clips.twitch.tv/embed?clip={$clipId}&parent={$parent}",
-                        'broadcaster_login' => null,
-                        'game_name' => null,
-                    ],
-                ];
-            } else {
-                $preview = [
-                    'ok' => false,
-                    'can_submit' => false,
-                    'errors' => [__('sendinclip.errors.invalid_clip_url')],
-                ];
-            }
-        }
-
-        $tags = Tag::all()->toArray();
+        $tags = Tag::all();
 
         return Inertia::render('submitclip', [
-            'preview' => $preview,
             'tags' => $tags,
         ]);
     }
@@ -107,7 +79,7 @@ class ClipSubmitController extends Controller
 
         $broadcasterUser = User::query()->find($broadcasterId);
 
-        if (empty($broadcasterUser) || $broadcasterUser->clip_permission == false) {
+        if (empty($broadcasterUser) || $broadcasterUser->clip_permission === false) {
             $this->returnError('sendinclip.erros.broadcaster_not_allowed');
         }
 

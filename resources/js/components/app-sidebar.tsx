@@ -8,7 +8,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { about, dashboard, team } from '@/routes';
+import { about, dashboard, team, evaluateclips } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
@@ -29,7 +29,7 @@ const mainNavItems: NavItem[] = [
 
     {
         title: 'Clips bewerten',
-        href: submitclip.create(),
+        href: evaluateclips(),
         icon: LayoutGrid,
     },
 ];
