@@ -14,7 +14,7 @@ export function AboutDonationCard({
     partnerIcon,
 }: AboutDonationCardProps) {
     return (
-        <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
+        <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-8 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
             <div className="px-6 py-8 sm:px-10 sm:py-12">
                 <div className="mx-auto max-w-5xl">
                     <div className="mb-10 grid gap-8 lg:grid-cols-2">

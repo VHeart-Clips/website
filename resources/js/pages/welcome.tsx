@@ -61,13 +61,7 @@ export default function Welcome({
                 </div>
             </main>
 
-            <div className="relative z-50 mt-auto">
-                <div className="border-t border-black/10 bg-white/75 shadow-[0_-8px_30px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-black/35">
-                    <div className="text-gray-900/85 dark:text-white/85 [&_a]:text-current [&_a:hover]:text-gray-950 dark:[&_a:hover]:text-white [&_svg]:text-current">
-                        <Footer />
-                    </div>
-                </div>
-            </div>
+            <Footer />
         </div>
     );
 }

@@ -1,5 +1,6 @@
 import { Card } from '@/components/ui/card';
-import VHeart from '/resources/images/svg/logo-full-dark.svg';
+import LogoDark from '/resources/images/svg/logo-full-dark.svg';
+import LogoLight from '/resources/images/svg/logo-full-title.svg';
 
 interface HeroCardProps {
     t: (key: string) => string;
@@ -7,10 +8,22 @@ interface HeroCardProps {
 
 export default function HeroCard({ t }: HeroCardProps) {
     return (
-        <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
-            <img src={VHeart} className="h-32 w-auto" alt="logo" />
+        <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-8 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
+            <div className="flex justify-center pt-10 pb-6">
+                <img
+                    src={LogoLight}
+                    alt="VHeart logo"
+                    className="block h-32 w-auto dark:hidden"
+                />
 
-            <div className="px-6 py-8 sm:px-10 sm:py-12">
+                <img
+                    src={LogoDark}
+                    alt="VHeart logo"
+                    className="hidden h-32 w-auto dark:block"
+                />
+            </div>
+
+            <div className="px-6 pb-8 sm:px-10 sm:pb-12">
                 <div className="mx-auto max-w-5xl">
                     <div className="mb-10 text-center">
                         <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl dark:text-white">
@@ -39,8 +52,6 @@ export default function HeroCard({ t }: HeroCardProps) {
                             ))}
                         </div>
                     </div>
-
-                    <div className="my-8 border-t border-gray-300/80 dark:border-white/10" />
                 </div>
             </div>
         </Card>

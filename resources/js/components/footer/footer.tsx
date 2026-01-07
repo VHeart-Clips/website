@@ -35,7 +35,7 @@ export default function Footer() {
         <>
             <footer
                 ref={footerRef}
-                className="fixed right-0 bottom-0 left-0 z-40 border-t border-white/10 bg-white/30 py-6 text-gray-900/85 shadow-lg backdrop-blur-xl dark:border-white/5 dark:bg-gray-900/30 dark:text-white/85"
+                className="fixed right-0 bottom-0 left-0 z-40 border-t border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 py-6 text-gray-900 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:text-white/85 dark:ring-0"
             >
                 <div className="container mx-auto px-4">
                     <div className="grid items-center gap-4 md:grid-cols-3">
