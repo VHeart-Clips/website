@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users;
 
+use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Filament\Resources\Users\Schemas\UserForm;
@@ -43,13 +44,14 @@ class UserResource extends Resource
             //
         ];
     }
+
     public static function getPages(): array
     {
         return [
             'index' => ListUsers::route('/'),
             // 'create' => CreateUser::route('/create'),
             'view' => ViewUser::route('/{record}'),
-            // 'edit' => EditUser::route('/{record}/edit'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

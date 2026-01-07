@@ -6,11 +6,12 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 
 class UserForm
 {
@@ -22,8 +23,15 @@ class UserForm
                     ->schema([
                         TextInput::make('name')
                             ->label('Name')
-                            ->prefixIcon('heroicon-m-user')
+                            ->prefixIcon(Heroicon::User)
                             ->disabled(),
+                        Select::make('roles')
+                            ->relationship('roles', 'name')
+                            ->label('Roles')
+                            ->multiple()
+                            ->prefixIcon(Heroicon::ShieldCheck)
+                            ->preload()
+                            ->searchable(),
                     ])
                     ->columnSpanFull(),
 
