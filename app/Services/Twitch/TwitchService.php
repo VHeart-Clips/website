@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Twitch;
 
 use App\Models\User;
+use App\Services\Twitch\Data\ClipDto;
+use App\Services\Twitch\Data\TwitchDtoInterface;
 use App\Services\Twitch\Exceptions\TwitchApiException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
@@ -164,7 +168,7 @@ class TwitchService
      *
      * @throws ConnectionException|TwitchApiException
      */
-    public function get(string|TwitchEndpoints $endpoint, array $params = []): array
+    public function get(string|TwitchEndpoints $endpoint, array $params = []): array|TwitchDtoInterface
     {
         return $this->request('GET', $endpoint, $params);
     }
@@ -177,9 +181,17 @@ class TwitchService
         string|TwitchEndpoints $endpoint,
         array $params = [],
         bool $allowRetry = true
-    ): array {
+    ): array|TwitchDtoInterface {
         if ($this->forceUserTokenRefresh) {
             $this->tokenRefresh();
+        }
+
+        $dataTransferObject = null;
+
+        if ($endpoint instanceof TwitchEndpoints) {
+            $dataTransferObject = $endpoint->getDataTransferObject();
+        } else {
+            $dataTransferObject = TwitchEndpoints::tryFrom($endpoint)?->getDataTransferObject();
         }
 
         if (! is_string($endpoint)) {
@@ -191,9 +203,9 @@ class TwitchService
 
         $client = Http::withHeaders($this->getHeaders());
 
-        $url = $this->baseUrl.'/'.ltrim($endpoint, '/');
+        $url = $this->baseUrl.'/'.mb_ltrim($endpoint, '/');
 
-        if (strtoupper($method) === 'GET') {
+        if (mb_strtoupper($method) === 'GET') {
             $response = $client->get($url, $params);
         } else {
             $response = $client->post($url, $params);
@@ -205,6 +217,10 @@ class TwitchService
 
         if ($response->failed()) {
             throw TwitchApiException::GenericApiResponseError($response);
+        }
+
+        if($dataTransferObject) {
+            return $dataTransferObject::fromArray($response->json());
         }
 
         return $response->json();
@@ -261,7 +277,7 @@ class TwitchService
      *
      * @throws ConnectionException|TwitchApiException
      */
-    public function post(string|TwitchEndpoints $endpoint, array $data = []): array
+    public function post(string|TwitchEndpoints $endpoint, array $data = []): array|TwitchDtoInterface
     {
         return $this->request('POST', $endpoint, $data);
     }
@@ -294,5 +310,32 @@ class TwitchService
         return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id), 300, function () {
             return $this->get(TwitchEndpoints::GetModeratedChannels, ['user_id' => $this->user->id, 'first' => 100])['data'];
         });
+    }
+
+    /**
+     * Returns the Clip for this Twitch Clip id if it exists
+     *
+     * @param  string|null  $clipId
+     * @return ClipDto|null
+     */
+    public function getClipByID(?string $clipId): ?ClipDto
+    {
+        try {
+            return array_first($this->get(TwitchEndpoints::GetClips, ['id' => $clipId]) ?? []);
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Parses the Clip ID from a given Url
+     */
+    public function parseClipId(string $clipUrl): ?string
+    {
+        if (preg_match('/https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/', $clipUrl, $m)) {
+            return $m[1];
+        }
+
+        return null;
     }
 }

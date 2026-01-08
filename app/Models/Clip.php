@@ -21,26 +21,26 @@ class Clip extends Model
 
     public function broadcaster(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'id', 'broadcaster_id')
-            ->withDefault(['name' => 'Unknown']);
+        return $this->BelongsTo(User::class)
+            ->withDefault(['name' => 'N/A']);
     }
 
     public function creator(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'id', 'creator_id')
-            ->withDefault(['name' => 'Unknown']);
+        return $this->BelongsTo(User::class)
+            ->withDefault(['name' => 'N/A']);
     }
 
     public function submitter(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'id', 'submitter_id')
-            ->withDefault(['name' => 'Unknown']);
+        return $this->BelongsTo(User::class)
+            ->withDefault(['name' => 'N/A']);
     }
 
     public function game(): BelongsTo
     {
-        return $this->belongsTo(Game::class, 'id', 'game_id')
-            ->withDefault(['title' => 'Unknown']);
+        return $this->belongsTo(Game::class)
+            ->withDefault(['title' => 'Pending']);
     }
 
     public function tags(): BelongsToMany
