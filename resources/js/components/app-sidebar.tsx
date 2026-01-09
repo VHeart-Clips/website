@@ -8,12 +8,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { about, dashboard, team, evaluateclips } from '@/routes';
+import { about, dashboard, evaluateclips, start, team } from '@/routes';
+import submitclip from '@/routes/submitclip';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
-import submitclip from '@/routes/submitclip';
 
 const mainNavItems: NavItem[] = [
     {
@@ -54,11 +54,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link
-                                href={dashboard()}
-                                preserveScroll
-                                preserveState
-                            >
+                            <Link href={start()}>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

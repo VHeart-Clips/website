@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\TeamController;
 use App\Models\User;
@@ -15,6 +17,10 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/start', function () {
+        return Inertia::render('start');
+    })->name('start');
+
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
@@ -41,7 +47,7 @@ Route::get('/auth/twitch', function () {
 Route::get('/auth/twitch/callback', function () {
     try {
         $twitchUser = Socialite::driver('twitch')->user();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return to_route('login')->with('error', __('auth.oauth_error_try_again'));
     }
 
@@ -65,7 +71,7 @@ Route::get('/auth/twitch/callback', function () {
     return to_route('dashboard');
 })->name('auth.callback');
 
-Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
+Route::get('/locales.json', App\Actions\Locales::class)->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
     if (! array_key_exists($lang, Config::get('app.locales'))) {
