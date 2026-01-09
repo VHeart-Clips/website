@@ -163,7 +163,7 @@ class ClipSubmitController extends Controller
             $tagIds
         );
 
-        return back()->with('submit_ok', true)->with('submit_message', __('sendinclip.flash.submitted'));
+        return $this->create()->with('submit_ok', true)->flash('submit_message', __('sendinclip.flash.submitted'));
     }
 
     private function getUserToken(): string
