@@ -47,9 +47,13 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
-export function AppSidebar() {
+interface AppSidebarProps {
+    className?: string;
+}
+
+export function AppSidebar({ className }: AppSidebarProps) {
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="inset" className={className}>
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
