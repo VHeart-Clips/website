@@ -1,4 +1,8 @@
-import { NavUser } from '@/components/nav-user';
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import {
     Sidebar,
     SidebarContent,
@@ -7,32 +11,13 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarTrigger,
+    useSidebar,
 } from '@/components/ui/sidebar';
-import { about, dashboard, team, vote } from '@/routes';
-import submitclip from '@/routes/submitclip';
+import { about, team } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
-import AppLogo from './app-logo';
-
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Clips einreichen',
-        href: submitclip.create(),
-        icon: LayoutGrid,
-    },
-
-    {
-        title: 'Clips bewerten',
-        href: vote(),
-        icon: LayoutGrid,
-    },
-];
+import { BookOpen, ChevronDown, Folder, Users } from 'lucide-react';
 
 const footerNavItems: NavItem[] = [
     {
@@ -52,46 +37,52 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ className }: AppSidebarProps) {
+    const { state } = useSidebar();
+    const isCollapsed = state === 'collapsed';
+
     return (
         <Sidebar collapsible="icon" variant="inset" className={className}>
+            {/* Streamer Accordion */}
             <SidebarHeader>
                 <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link
-                                href={dashboard()}
-                                preserveScroll
-                                preserveState
-                            >
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <Collapsible
+                        open={isCollapsed ? false : undefined}
+                        defaultOpen
+                        className="group/collapsible"
+                    >
+                        <SidebarMenuItem>
+                            <CollapsibleTrigger asChild disabled={isCollapsed}>
+                                <SidebarMenuButton className="hover:cursor-pointer hover:bg-transparent focus:bg-transparent active:bg-transparent data-[state=open]:bg-transparent data-[state=open]:hover:bg-transparent">
+                                    <Users className="size-4" />
+                                    <span className="font-medium">
+                                        Streamer
+                                    </span>
+                                    <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                                </SidebarMenuButton>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent>
+                                <SidebarMenu className="pt-1 pl-6">
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton
+                                            size="sm"
+                                            className="text-muted-foreground hover:bg-transparent active:bg-transparent"
+                                        >
+                                            <span className="text-xs italic">
+                                                No streamers yet
+                                            </span>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                </SidebarMenu>
+                            </CollapsibleContent>
+                        </SidebarMenuItem>
+                    </Collapsible>
                 </SidebarMenu>
             </SidebarHeader>
 
-            <SidebarContent>
-                <SidebarMenu>
-                    {mainNavItems.map((item) => (
-                        <SidebarMenuItem key={`main-${item.title}`}>
-                            <SidebarMenuButton asChild>
-                                <Link
-                                    href={item.href}
-                                    preserveScroll
-                                    preserveState
-                                    className="flex items-center gap-2"
-                                >
-                                    {item.icon && (
-                                        <item.icon className="h-4 w-4" />
-                                    )}
-                                    <span>{item.title}</span>
-                                </Link>
-                            </SidebarMenuButton>
-                        </SidebarMenuItem>
-                    ))}
-                </SidebarMenu>
-            </SidebarContent>
+            {/* Main content area - empty for now */}
+            <SidebarContent />
 
+            {/* Footer navigation */}
             <SidebarFooter>
                 <SidebarMenu className="mt-auto">
                     {footerNavItems.map((item) => (
@@ -113,7 +104,9 @@ export function AppSidebar({ className }: AppSidebarProps) {
                         </SidebarMenuItem>
                     ))}
                 </SidebarMenu>
-                <NavUser />
+
+                {/* Sidebar collapse toggle */}
+                <SidebarTrigger />
             </SidebarFooter>
         </Sidebar>
     );
