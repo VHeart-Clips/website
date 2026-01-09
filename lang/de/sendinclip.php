@@ -61,6 +61,7 @@ return [
         'clip_already_known' => 'Dieser Clip wurde bereits eingereicht',
         'broadcaster_not_allowed' => 'Der Broadcaster hat Clip-Einreichungen nicht erlaubt',
         'game_blocked' => 'Clips von diesem Spiel sind nicht erlaubt',
+        'user_not_allowed_for_broadcaster' => 'Du bist für Einreichungen bei diesem Broadcaster nicht zugelassen',
         'clip_url_required' => 'Bitte gib eine Clip-URL ein',
         'cannot_submit' => 'Clip kann nicht eingereicht werden.',
         'daily_limit' => 'Du hast dein tägliches Limit von :limit Einreichungen erreicht.',
