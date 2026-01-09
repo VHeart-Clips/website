@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@headlessui/react';
 
 export default function Footer() {
     const { t } = useTranslation('footer');
@@ -51,8 +51,6 @@ export default function Footer() {
                             <ul className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
                                 <li>
                                     <Button
-                                        asChild
-                                        variant="ghost"
                                         className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
                                     >
                                         <a href="/privacy">
@@ -62,8 +60,6 @@ export default function Footer() {
                                 </li>
                                 <li>
                                     <Button
-                                        asChild
-                                        variant="ghost"
                                         className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
                                     >
                                         <a href="/imprint">

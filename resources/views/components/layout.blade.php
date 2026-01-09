@@ -5,18 +5,31 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-        (function() {
-            const appearance = '{{ $appearance ?? "system" }}';
+        (function () {
+            const stored = '{{ $appearance ?? "system" }}';
+            const mql = window.matchMedia('(prefers-color-scheme: dark)');
 
-            if (appearance === 'system') {
-                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-                if (prefersDark) {
-                    document.documentElement.classList.add('dark');
-                }
+            function apply(mode) {
+                const isDark = mode === 'dark' || (mode === 'system' && mql.matches);
+                document.documentElement.classList.toggle('dark', isDark);
             }
+
+            apply(stored);
+
+            if (stored === 'system') {
+                const onChange = () => apply('system');
+                if (mql.addEventListener) mql.addEventListener('change', onChange);
+                else mql.addListener(onChange);
+            }
+
+            window.addEventListener('storage', (e) => {
+                if (e.key !== 'appearance') return;
+                const next = e.newValue || 'system';
+                apply(next);
+            });
         })();
     </script>
+
     <style>
         html {
             background-color: oklch(1 0 0);

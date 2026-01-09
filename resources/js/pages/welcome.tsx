@@ -6,8 +6,8 @@ import Footer from '@/components/footer/footer';
 import SpaceBackground from '@/components/spacebackground';
 import { Link } from '@inertiajs/react';
 import { LogIn, Sparkles } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { login } from '@/routes';
 
 export default function Welcome({
     donationUrl,
@@ -19,15 +19,6 @@ export default function Welcome({
     youtubeUrl?: string;
 }) {
     const { t } = useTranslation('welcome');
-    const [, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
-
     return (
         <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
             <SpaceBackground />

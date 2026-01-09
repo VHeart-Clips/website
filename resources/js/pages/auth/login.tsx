@@ -8,7 +8,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Logo from '/resources/images/svg/logo-dark.svg';
 import LogoLight from '/resources/images/svg/logo-light.svg';
@@ -19,32 +18,6 @@ export default function Welcome({
     kannRegistrieren?: boolean;
 }) {
     const { t } = useTranslation('login');
-    const twitchAuthUrl = '/auth/twitch';
-
-    useEffect(() => {
-        const setThemeClass = () => {
-            const theme = localStorage.getItem('appearance');
-            if (theme === 'light') {
-                document.documentElement.classList.remove('dark');
-            } else {
-                document.documentElement.classList.add('dark');
-            }
-        };
-
-        setThemeClass();
-
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'appearance') {
-                setThemeClass();
-            }
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-
-        return () => {
-            window.removeEventListener('storage', handleStorageChange);
-        };
-    }, []);
 
     return (
         <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
@@ -100,7 +73,7 @@ export default function Welcome({
                     <CardFooter className="flex flex-col space-y-6">
                         {kannRegistrieren && (
                             <a
-                                href={twitchAuthUrl}
+                                href='/auth/twitch'
                                 className="group relative w-full"
                                 aria-label={t('connect_button_aria')}
                             >
