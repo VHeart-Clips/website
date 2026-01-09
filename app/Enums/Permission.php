@@ -13,6 +13,15 @@ enum Permission: string
     case RestoreAnyUser = 'restore_any_user';
     case ForceDeleteAnyUser = 'force_delete_any_user';
 
+    // Compilation
+    case ViewAnyCompilation = 'view_any_compilation';
+    case ViewCompilation = 'view_compilation';
+    case CreateCompilation = 'create_compilation';
+    case UpdateAnyCompilation = 'update_any_compilation';
+    case DeleteAnyCompilation = 'delete_any_compilation';
+    case RestoreAnyCompilation = 'restore_any_compilation';
+    case ForceDeleteAnyCompilation = 'force_delete_any_compilation';
+
     // Non-Model stuff
     // empty for now
 }
