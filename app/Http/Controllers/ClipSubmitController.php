@@ -59,7 +59,7 @@ class ClipSubmitController extends Controller
         $clipId = $this->twitchService->parseClipId($data['clip_url']);
 
         if (!$clipId) {
-            $this->returnError('sendinclip.erros.clip_not_found');
+            $this->returnError('sendinclip.errors.clip_not_found');
         }
 
         $tagIds = $data['tags'] ?? [];
@@ -70,19 +70,19 @@ class ClipSubmitController extends Controller
         $clipModel = Clip::where('twitch_id', $clipId)->get();
 
         if ($clipModel->isNotEmpty()) {
-            $this->returnError('sendinclip.erros.clip_already_known');
+            $this->returnError('sendinclip.errors.clip_already_known');
         }
 
         $clipInfo = $this->twitchService->asUser($user, $this->getUserToken())->getClipByID($clipId);
 
         if (!$clipInfo) {
-            $this->returnError('sendinclip.erros.clip_not_found');
+            $this->returnError('sendinclip.errors.clip_not_found');
         }
 
         $broadcasterUser = User::query()->find($clipInfo->broadcaster_id);
 
         if (empty($broadcasterUser) || $broadcasterUser->clip_permission === false) {
-            $this->returnError('sendinclip.erros.broadcaster_not_allowed');
+            $this->returnError('sendinclip.errors.broadcaster_not_allowed');
         }
 
         $isUserBlackedListed = $broadcasterUser->broadcasterUserFilter()->where(column: 'filter_id', operator: $user->id)
@@ -90,7 +90,7 @@ class ClipSubmitController extends Controller
             ->first();
 
         if (! empty($isUserBlackedListed)) {
-            $this->returnError('sendinclip.erros.user_not_allowed_for_broadcaster');
+            $this->returnError('sendinclip.errors.user_not_allowed_for_broadcaster');
         }
 
         $broadcasterRules = $broadcasterUser->rules ?? [];
@@ -125,12 +125,11 @@ class ClipSubmitController extends Controller
 
             } catch (TwitchApiException $th) {
                 report($th);
-                $this->returnError('sendinclip.erros.getting_vip');
             }
         }
 
         if (! $userIsAllowed) {
-            $this->returnError('sendinclip.erros.user_not_allowed_for_broadcaster');
+            $this->returnError('sendinclip.errors.user_not_allowed_for_broadcaster');
         }
 
         User::updateOrCreate([
@@ -144,7 +143,7 @@ class ClipSubmitController extends Controller
             ->first();
 
         if (! empty($isGameBlackListed)) {
-            $this->returnError('sendinclip.erros.game_blocked');
+            $this->returnError('sendinclip.errors.game_blocked');
         }
 
         $hasOneGameWhiteListed = $broadcasterUser->broadcasterGameFilter()->where('allowed', true)->exists();
@@ -153,7 +152,7 @@ class ClipSubmitController extends Controller
             ->first();
 
         if ($hasOneGameWhiteListed && ! $isGameWhiteListed) {
-            $this->returnError('sendinclip.erros.game_blocked');
+            $this->returnError('sendinclip.errors.game_blocked');
         }
 
         $importClipAction->execute(
