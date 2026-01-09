@@ -57,6 +57,10 @@ return [
 
     'errors' => [
         'login_required' => 'Bitte melde dich an',
+        'clip_not_found' => 'Clip nicht gefunden',
+        'clip_already_known' => 'Dieser Clip wurde bereits eingereicht',
+        'broadcaster_not_allowed' => 'Der Broadcaster hat Clip-Einreichungen nicht erlaubt',
+        'game_blocked' => 'Clips von diesem Spiel sind nicht erlaubt',
         'clip_url_required' => 'Bitte gib eine Clip-URL ein',
         'cannot_submit' => 'Clip kann nicht eingereicht werden.',
         'daily_limit' => 'Du hast dein tägliches Limit von :limit Einreichungen erreicht.',
@@ -68,5 +72,9 @@ return [
         'subtitle' => 'Du musst angemeldet sein, um Clips einzureichen',
         'alert' => 'Nur angemeldete Benutzer können Clips einreichen, um Spam zu vermeiden.',
         'cta' => 'Jetzt anmelden',
+    ],
+
+    'flash' => [
+        'submitted' => 'Dein Clip wurde erfolgreich eingereicht!',
     ],
 ];

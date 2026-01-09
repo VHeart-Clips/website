@@ -57,6 +57,10 @@ return [
 
     'errors' => [
         'login_required' => 'Please log in',
+        'clip_not_found' => 'Clip not found',
+        'clip_already_known' => 'This clip has already been submitted',
+        'broadcaster_not_allowed' => 'The broadcaster has not allowed clip submissions',
+        'game_blocked' => 'Clips from this game are not allowed',
         'clip_url_required' => 'Please enter a clip URL',
         'cannot_submit' => 'This clip cannot be submitted.',
         'daily_limit' => 'You have reached your daily limit of :limit submissions.',
@@ -68,5 +72,9 @@ return [
         'subtitle' => 'You must be logged in to submit clips',
         'alert' => 'Only logged-in users can submit clips to prevent spam.',
         'cta' => 'Log in now',
+    ],
+
+    'flash' => [
+        'submitted' => 'Your clip has been submitted successfully!',
     ],
 ];
