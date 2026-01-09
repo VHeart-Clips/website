@@ -24,7 +24,7 @@ enum CollectionStatus: string implements HasLabel
     case Unlisted = 'unlisted';
 
     /** Collection is listed on the homepage */
-    case Public = 'public';
+    case Published = 'published';
 
     /** Collection is archived, same as public but maybe with label */
     case Archived = 'archived';
@@ -37,7 +37,7 @@ enum CollectionStatus: string implements HasLabel
     public static function getVisibleCases(): array
     {
         return [
-            self::Public,
+            self::Published,
             self::Archived,
         ];
     }
@@ -50,7 +50,7 @@ enum CollectionStatus: string implements HasLabel
     public static function getPublicCases(): array
     {
         return [
-            self::Public,
+            self::Published,
             self::Archived,
             self::Unlisted,
         ];
