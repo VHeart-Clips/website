@@ -7,7 +7,7 @@ namespace App\Enums\Clips;
 use App\Enums\Traits\HasHeadlineLabel;
 use Filament\Support\Contracts\HasLabel;
 
-enum CollectionStatus: string implements HasLabel
+enum CompilationStatus: string implements HasLabel
 {
     use HasHeadlineLabel;
 
@@ -32,7 +32,7 @@ enum CollectionStatus: string implements HasLabel
     /**
      * All Cases that are considered Public and Visible.
      *
-     * @return CollectionStatus[]
+     * @return CompilationStatus[]
      */
     public static function getVisibleCases(): array
     {
@@ -45,7 +45,7 @@ enum CollectionStatus: string implements HasLabel
     /**
      * All cases that are considered public but may not be visible.
      *
-     * @return CollectionStatus[]
+     * @return CompilationStatus[]
      */
     public static function getPublicCases(): array
     {

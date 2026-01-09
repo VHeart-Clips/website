@@ -10,7 +10,7 @@ use Filament\Support\Contracts\HasLabel;
 /**
  * Based on the Type we decide on how to handle the Collection in the backend and frontend
  */
-enum CollectionType: string implements HasLabel
+enum CompilationType: string implements HasLabel
 {
     use HasHeadlineLabel;
 

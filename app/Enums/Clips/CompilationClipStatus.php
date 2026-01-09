@@ -7,7 +7,7 @@ namespace App\Enums\Clips;
 use App\Enums\Traits\HasHeadlineLabel;
 use Filament\Support\Contracts\HasLabel;
 
-enum CollectionClipStatus: int implements HasLabel
+enum CompilationClipStatus: int implements HasLabel
 {
     use HasHeadlineLabel;
 
