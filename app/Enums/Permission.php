@@ -14,5 +14,7 @@ enum Permission: string
     case ForceDeleteAnyUser = 'force_delete_any_user';
 
     // Non-Model stuff
+
+    case JuryVote = 'jury_vote';
     // empty for now
 }

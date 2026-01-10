@@ -1,9 +1,16 @@
+import { store } from '@/actions/App/Http/Controllers/ClipVoteController';
 import AppLayout from '@/layouts/app-layout';
 import { vote } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, CircleX, Heart } from 'lucide-react';
+import {
+    ChevronLeft,
+    ChevronRight,
+    CircleX,
+    Heart,
+    Loader,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -34,7 +41,15 @@ export default function EvaluateClips() {
 
     const { props } = usePage<PageProps>();
 
+    const [liked, setLiked] = useState<Set<number>>(new Set());
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [skipped, setSkipped] = useState<Set<number>>(new Set());
+
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const itemRefs = useRef<(HTMLElement | null)[]>([]);
+
     const getClip = () => {
+        console.log('getClip');
         router.reload({ only: ['clip'] });
     };
 
@@ -46,19 +61,13 @@ export default function EvaluateClips() {
         } as Item);
     }
 
-    const [liked, setLiked] = useState<Set<number>>(new Set());
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [skipped, setSkipped] = useState<Set<number>>(new Set());
-
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const itemRefs = useRef<(HTMLElement | null)[]>([]);
-
     function toggleLike(id: number) {
         setLiked((prev) => {
             const next = new Set(prev);
             next.has(id) ? next.delete(id) : next.add(id);
             return next;
         });
+        console.log('like', props.clip);
     }
 
     function toggleSkip(id: number) {
@@ -67,6 +76,7 @@ export default function EvaluateClips() {
             next.has(id) ? next.delete(id) : next.add(id);
             return next;
         });
+        console.log('skip', props.clip);
     }
 
     function scrollToIndex(index: number) {
@@ -93,7 +103,9 @@ export default function EvaluateClips() {
             { root: containerRef.current, threshold: [0.6, 0.75, 0.9] },
         );
 
-        getClip();
+        if (!props.clip) {
+            getClip();
+        }
 
         itemRefs.current.forEach((el) => el && observer.observe(el));
         return () => observer.disconnect();
@@ -118,117 +130,146 @@ export default function EvaluateClips() {
                         ref={containerRef}
                         className="scrollbar-none h-[calc(100dvh-320px)] snap-y snap-mandatory overflow-y-auto overscroll-contain"
                     >
-                        {items.map((it, index) => {
-                            const isActive = index === activeIndex;
-                            const isSkipped = skipped.has(it.id);
-                            const isLiked = liked.has(it.id);
+                        {items.length == 0 ? (
+                            <div className="absolute inset-0 grid place-items-center text-sm text-white/40">
+                                <Loader></Loader>
+                            </div>
+                        ) : (
+                            items.map((it, index) => {
+                                const isActive = index === activeIndex;
+                                const isSkipped = skipped.has(it.id);
+                                const isLiked = liked.has(it.id);
 
-                            const disableLike = isSkipped;
-                            const disableSkip = isLiked;
+                                const disableLike = isSkipped;
+                                const disableSkip = isLiked;
 
-                            return (
-                                <section
-                                    ref={(el) => {
-                                        itemRefs.current[index] = el;
-                                    }}
-                                    data-index={index}
-                                    key={it.id}
-                                    className="flex h-[calc(100dvh-320px)] snap-start snap-always flex-col bg-black"
-                                >
-                                    {/* VIDEO */}
-                                    <div className="relative flex-1 overflow-hidden rounded-xl">
-                                        {isActive ? (
-                                            <iframe
-                                                src={`https://clips.twitch.tv/embed?clip=${it.clipSlug}&parent=localhost&autoplay=false&muted=false`}
-                                                className="absolute inset-0 h-full w-full"
-                                                allow="fullscreen"
-                                                allowFullScreen
-                                                title={it.title}
-                                            />
-                                        ) : (
-                                            <div className="absolute inset-0 grid place-items-center text-sm text-white/40">
-                                                Clip bereit
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* ACTION BAR */}
-                                    <div className="flex shrink-0 items-center justify-center gap-4 py-4">
-                                        {/* Previous */}
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                scrollToIndex(index - 1)
-                                            }
-                                            disabled={index === 0}
-                                            className="grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-14 sm:hover:scale-110"
-                                        >
-                                            <ChevronLeft className="h-6 w-6 text-white" />
-                                        </button>
-
-                                        {/* Like */}
-                                        <button
-                                            type="button"
-                                            aria-pressed={isLiked}
-                                            disabled={disableLike}
-                                            onClick={() => toggleLike(it.id)}
-                                            className={clsx(
-                                                'grid size-12 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-14',
-                                                'transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110',
-                                                disableLike && 'opacity-40',
+                                return (
+                                    <section
+                                        ref={(el) => {
+                                            itemRefs.current[index] = el;
+                                        }}
+                                        data-index={index}
+                                        key={it.id}
+                                        className="flex h-[calc(100dvh-320px)] snap-start snap-always flex-col bg-black"
+                                    >
+                                        {/* VIDEO */}
+                                        <div className="relative flex-1 overflow-hidden rounded-xl">
+                                            {isActive ? (
+                                                <iframe
+                                                    src={`https://clips.twitch.tv/embed?clip=${it.clipSlug}&parent=localhost&autoplay=false&muted=false`}
+                                                    className="absolute inset-0 h-full w-full"
+                                                    allow="fullscreen"
+                                                    allowFullScreen
+                                                    title={it.title}
+                                                />
+                                            ) : (
+                                                <div className="absolute inset-0 grid place-items-center text-sm text-white/40">
+                                                    Clip bereit
+                                                </div>
                                             )}
-                                        >
-                                            <Heart
-                                                className={clsx(
-                                                    'h-6 w-6 sm:h-7 sm:w-7',
-                                                    isLiked
-                                                        ? 'text-red-500'
-                                                        : 'text-white',
-                                                )}
-                                            />
-                                        </button>
+                                        </div>
 
-                                        {/* Skip */}
-                                        <button
-                                            type="button"
-                                            aria-pressed={isSkipped}
-                                            disabled={disableSkip}
-                                            onClick={() => {
-                                                toggleSkip(it.id);
-                                            }}
-                                            className={clsx(
-                                                'grid size-12 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-14',
-                                                'transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110',
-                                                disableSkip && 'opacity-40',
-                                            )}
-                                        >
-                                            <CircleX
-                                                className={clsx(
-                                                    'h-6 w-6 sm:h-7 sm:w-7',
-                                                    isSkipped
-                                                        ? 'text-red-500'
-                                                        : 'text-white',
-                                                )}
-                                            />
-                                        </button>
+                                        {/* ACTION BAR */}
+                                        <div className="flex shrink-0 items-center justify-center gap-4 py-4">
+                                            {/* Previous */}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    scrollToIndex(index - 1)
+                                                }
+                                                disabled={index === 0}
+                                                className="grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-14 sm:hover:scale-110"
+                                            >
+                                                <ChevronLeft className="h-6 w-6 text-white" />
+                                            </button>
 
-                                        {/* Next */}
-                                        <button
-                                            type="button"
-                                            onClick={() =>
-                                                scrollToIndex(index + 1)
-                                            }
-                                            disabled={
-                                                index === items.length - 1
-                                            }
-                                            className="grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-14 sm:hover:scale-110"
-                                        >
-                                            <ChevronRight className="h-6 w-6 text-white" />
-                                        </button>
-                                    </div>
-                                </section>
-                            );
-                        })}
+                                            {/* Like */}
+                                            <Link
+                                                as="button"
+                                                type="button"
+                                                aria-pressed={isLiked}
+                                                disabled={disableLike}
+                                                onClick={() =>
+                                                    toggleLike(it.id)
+                                                }
+                                                href={store()}
+                                                data={{
+                                                    clip: it.id,
+                                                    voted: true,
+                                                }}
+                                                className={clsx(
+                                                    'grid size-12 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-14',
+                                                    'transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110',
+                                                    disableLike && 'opacity-40',
+                                                )}
+                                                preserveState
+                                                onSuccess={() => {
+                                                    console.log('test Like');
+                                                    getClip();
+                                                }}
+                                            >
+                                                <Heart
+                                                    className={clsx(
+                                                        'h-6 w-6 sm:h-7 sm:w-7',
+                                                        isLiked
+                                                            ? 'text-red-500'
+                                                            : 'text-white',
+                                                    )}
+                                                />
+                                            </Link>
+
+                                            {/* Skip */}
+                                            <Link
+                                                type="button"
+                                                aria-pressed={isSkipped}
+                                                disabled={disableSkip}
+                                                onClick={() => {
+                                                    toggleSkip(it.id);
+                                                }}
+                                                href={store()}
+                                                data={{
+                                                    clip: it.id,
+                                                    voted: false,
+                                                }}
+                                                className={clsx(
+                                                    'grid size-12 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-14',
+                                                    'transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110',
+                                                    disableSkip && 'opacity-40',
+                                                )}
+                                                preserveState
+                                                onSuccess={() => {
+                                                    console.log('test Like');
+                                                    getClip();
+                                                }}
+                                            >
+                                                <CircleX
+                                                    className={clsx(
+                                                        'h-6 w-6 sm:h-7 sm:w-7',
+                                                        isSkipped
+                                                            ? 'text-red-500'
+                                                            : 'text-white',
+                                                    )}
+                                                />
+                                            </Link>
+
+                                            {/* Next */}
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    scrollToIndex(index + 1)
+                                                }
+                                                disabled={
+                                                    index === items.length - 1
+                                                }
+                                                className="grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-14 sm:hover:scale-110"
+                                            >
+                                                <ChevronRight className="h-6 w-6 text-white" />
+                                            </button>
+                                        </div>
+                                    </section>
+                                );
+                            })
+                        )}
                     </div>
                 </div>
             </div>

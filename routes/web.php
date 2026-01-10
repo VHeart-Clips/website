@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClipSubmitController;
+use App\Http\Controllers\ClipVoteController;
 use App\Http\Controllers\TeamController;
 use App\Models\Clip;
 use App\Models\User;
@@ -53,20 +54,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/submit', [ClipSubmitController::class, 'store'])->name('submitclip.store');
 
-    Route::get('/vote', function (Request $request) {
-        return Inertia::render('evaluateclips',[
-            'clip' => Inertia::lazy(function () use ($request) {
-                $user = $request->user();
+    Route::get('/vote', [ClipVoteController::class,'create'])->name('vote');
 
-                /** @var Clip $clip */
-                $clip = Clip::whereDoesntHave('votes',function(Builder $query) use ($user) {
-                    return $query->where('user_id',$user->id);
-                })->inRandomOrder()->first();
-
-                return $clip;
-            })
-        ]);
-    })->name('vote');
+    Route::post('vote', [ClipVoteController::class,'store'])->name('vote.submit');
 
     Route::get('/team', TeamController::class)->name('team');
 
