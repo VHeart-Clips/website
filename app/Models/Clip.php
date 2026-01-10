@@ -57,4 +57,9 @@ class Clip extends Model
             ->withPivot(CompilationClip::getPivotColumns())
             ->withTimestamps();
     }
+
+    public function claimer(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'claimed_by');
+    }
 }

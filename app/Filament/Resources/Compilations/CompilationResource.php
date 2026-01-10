@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Compilations;
 
 use App\Filament\Resources\Compilations\Pages\CreateCompilation;
 use App\Filament\Resources\Compilations\Pages\EditCompilation;
 use App\Filament\Resources\Compilations\Pages\ListCompilations;
+use App\Filament\Resources\Compilations\RelationManagers\ClipsRelationManager;
 use App\Filament\Resources\Compilations\Schemas\CompilationForm;
 use App\Filament\Resources\Compilations\Tables\CompilationsTable;
 use App\Models\Clip\Compilation;
@@ -37,7 +40,7 @@ class CompilationResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ClipsRelationManager::class,
         ];
     }
 
