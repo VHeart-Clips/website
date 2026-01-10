@@ -3,10 +3,7 @@
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\ClipVoteController;
 use App\Http\Controllers\TeamController;
-use App\Models\Clip;
 use App\Models\User;
-use App\Models\Vote;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/vote', [ClipVoteController::class,'create'])->name('vote');
 
-    Route::post('vote', [ClipVoteController::class,'store'])->name('vote.submit');
+    Route::post('/vote', [ClipVoteController::class,'store'])->name('vote.submit');
 
     Route::get('/team', TeamController::class)->name('team');
 

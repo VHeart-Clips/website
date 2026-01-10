@@ -28,6 +28,7 @@ type Clip = {
     id: number;
     twitch_id: string;
     title: string;
+    public_votes: number;
 };
 
 export default function EvaluateClips() {
