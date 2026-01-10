@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Laravel\Octane\Contracts\OperationTerminated;
 use Laravel\Octane\Events\RequestHandled;
 use Laravel\Octane\Events\RequestReceived;
@@ -135,7 +137,9 @@ return [
     ],
 
     'flush' => [
-        \Barryvdh\Debugbar\LaravelDebugbar::class,
+        Barryvdh\Debugbar\LaravelDebugbar::class,
+        Whitecube\LaravelCookieConsent\Consent::class,
+        'cookie.consent',
     ],
 
     /*
