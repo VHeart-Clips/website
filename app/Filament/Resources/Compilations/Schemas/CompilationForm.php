@@ -54,6 +54,7 @@ class CompilationForm
                     ->schema([
                         Select::make('user_id')
                             ->label('Created by')
+                            ->default(auth()->id())
                             ->relationship('user', 'name')
                             ->searchable(),
                         Select::make('status')
@@ -66,8 +67,7 @@ class CompilationForm
                         Select::make('type')
                             ->required()
                             ->options(CompilationType::class)
-                            ->default(CompilationType::Manual)
-                            ->hidden(),
+                            ->default(CompilationType::Manual),
                     ]),
             ])->columns(3);
     }
