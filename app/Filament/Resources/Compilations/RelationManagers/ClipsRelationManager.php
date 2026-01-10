@@ -7,6 +7,10 @@ namespace App\Filament\Resources\Compilations\RelationManagers;
 use App\Enums\Clips\CompilationClipStatus;
 use App\Filament\Resources\Clips\ClipResource;
 use App\Models\Clip;
+use App\Services\Twitch\Data\ClipDownloadDto;
+use App\Services\Twitch\Exceptions\TwitchApiException;
+use App\Services\Twitch\TwitchEndpoints;
+use App\Services\Twitch\TwitchService;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
@@ -23,7 +27,8 @@ use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Str;
+use Livewire\Component;
 class ClipsRelationManager extends RelationManager
 {
     protected static string $relationship = 'clips';
@@ -140,8 +145,72 @@ class ClipsRelationManager extends RelationManager
                     Action::make('download')
                         ->icon(Heroicon::ArrowDownTray)
                         ->disabled(fn (Clip $record) => $record->pivot->claimed_by !== auth()->id())
+                        ->action(function (Clip $clip, TwitchService $twitchService, Component $livewire) {
+                            $broadCaster = $clip->broadcaster;
 
-                        ->openUrlInNewTab(),
+                            if (! $broadCaster) {
+                                Notification::make()
+                                    ->title('Cannot download Clip')
+                                    ->body('Broadcaster is not available.')
+                                    ->danger()
+                                    ->send();
+
+                                return false;
+                            }
+
+                            try {
+                                $response = $twitchService->asUser($clip->broadcaster)->get(TwitchEndpoints::GetClipsDownload,
+                                    [
+                                        'editor_id' => $clip->broadcaster_id,
+                                        'broadcaster_id' => $clip->broadcaster_id,
+                                        'clip_id' => $clip->twitch_id,
+                                    ]);
+                                /** @var ClipDownloadDto $download */
+                                $download = array_first($response);
+
+                                if (! $download) {
+                                    Notification::make()
+                                        ->title('Cannot download Clip')
+                                        ->body('Clip was not found.')
+                                        ->danger()
+                                        ->send();
+
+                                    return false;
+                                }
+
+                                // thanks to cors we are very limited, user still has to download it manually
+                                // alternative would be downloading it to server and serving it as a proxy
+                                // that way we may have a permanent copy and cache, but also more traffic
+                                $livewire->js("window.open('{$download->landscape_download_url}', '_blank')");
+                            } catch (TwitchApiException $e) {
+                                Notification::make()
+                                    ->title('Can not download Clip')
+                                    ->body($e->getMessage())
+                                    ->danger()
+                                    ->send();
+
+                                return false;
+                            }
+
+                            return true;
+                        }),
+                    Action::make('copy_cutter_optimized_name')
+                        ->label('Copy Filename')
+                        ->icon('heroicon-o-clipboard-document-list')
+                        ->color('gray')
+                        ->tooltip('Copy standardized filename for editors')
+                        ->action(function (Clip $clip, $livewire) {
+                            $title = Str::limit($clip->title, 50, '');
+
+                            $filename = "[{$clip->id}] {$clip->broadcaster->name} - {$clip->game->title} - {$title}.mp4";
+                            $livewire->js("window.navigator.clipboard.writeText('{$filename}');");
+
+                            Notification::make()
+                                ->title('Filename Copied')
+                                ->body($filename)
+                                ->success()
+                                ->send();
+                        }),
 
                     DetachAction::make(),
                 ]),
