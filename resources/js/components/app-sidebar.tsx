@@ -1,9 +1,4 @@
 import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
@@ -12,11 +7,11 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarTrigger,
-    useSidebar,
 } from '@/components/ui/sidebar';
 import { about, team } from '@/routes';
 import { Link } from '@inertiajs/react';
-import { BookOpen, ChevronDown, Folder, Users } from 'lucide-react';
+import { BookOpen, Folder } from 'lucide-react';
+import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // Footer navigation item keys for translation lookup
@@ -35,53 +30,18 @@ const footerNavItemKeys = [
 
 interface AppSidebarProps {
     className?: string;
+    children?: ReactNode;
 }
 
-export function AppSidebar({ className }: AppSidebarProps) {
-    const { state } = useSidebar();
+export function AppSidebar({ className, children }: AppSidebarProps) {
     const { t } = useTranslation('navigation');
-    const isCollapsed = state === 'collapsed';
 
     return (
         <Sidebar collapsible="icon" variant="inset" className={className}>
-            {/* Streamer Accordion */}
-            <SidebarHeader>
-                <SidebarMenu>
-                    <Collapsible
-                        open={isCollapsed ? false : undefined}
-                        defaultOpen
-                        className="group/collapsible"
-                    >
-                        <SidebarMenuItem>
-                            <CollapsibleTrigger asChild disabled={isCollapsed}>
-                                <SidebarMenuButton className="hover:cursor-pointer hover:bg-transparent focus:bg-transparent active:bg-transparent data-[state=open]:bg-transparent data-[state=open]:hover:bg-transparent">
-                                    <Users className="size-4" />
-                                    <span className="font-medium">
-                                        {t('streamer')}
-                                    </span>
-                                    <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                                </SidebarMenuButton>
-                            </CollapsibleTrigger>
-                            <CollapsibleContent>
-                                <SidebarMenu className="pt-1 pl-6">
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton
-                                            size="sm"
-                                            className="text-muted-foreground hover:bg-transparent active:bg-transparent"
-                                        >
-                                            <span className="text-xs italic">
-                                                {t('no_streamers_yet')}
-                                            </span>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </CollapsibleContent>
-                        </SidebarMenuItem>
-                    </Collapsible>
-                </SidebarMenu>
-            </SidebarHeader>
+            {/* Sidebar Header - receives custom content via children */}
+            {children && <SidebarHeader>{children}</SidebarHeader>}
 
-            {/* Main content area - empty for now */}
+            {/* Main content area - empty for now, can be extended later */}
             <SidebarContent />
 
             {/* Footer navigation */}
