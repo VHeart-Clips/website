@@ -15,7 +15,7 @@ class ClipDownloadDto implements TwitchDtoInterface
     public static function from(array $data): self
     {
         return new static(
-            $data['id'],
+            $data['clip_id'],
             $data['landscape_download_url'],
             $data['portrait_download_url'],
         );
