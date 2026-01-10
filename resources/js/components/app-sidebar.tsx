@@ -8,12 +8,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { about, dashboard, team, evaluateclips } from '@/routes';
+import { about, dashboard, team, vote } from '@/routes';
+import submitclip from '@/routes/submitclip';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
-import submitclip from '@/routes/submitclip';
 
 const mainNavItems: NavItem[] = [
     {
@@ -29,7 +29,7 @@ const mainNavItems: NavItem[] = [
 
     {
         title: 'Clips bewerten',
-        href: evaluateclips(),
+        href: vote(),
         icon: LayoutGrid,
     },
 ];
