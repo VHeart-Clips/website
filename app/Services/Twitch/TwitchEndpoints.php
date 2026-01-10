@@ -41,7 +41,7 @@ enum TwitchEndpoints: string
      *
      * @link https://dev.twitch.tv/docs/api/reference#get-clips-download
      */
-    case GetClipsDownload = 'clips/download';
+    case GetClipsDownload = 'clips/downloads';
 
     /**
      * Gets information about specified categories or games.
