@@ -1,3 +1,5 @@
+import Footer from '@/components/footer/footer';
+import SpaceBackground from '@/components/spacebackground';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -6,9 +8,9 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { Link } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import Logo from '/resources/images/svg/Logo Icon.svg';
+import Logo from '/resources/images/svg/logo-dark.svg';
+import LogoLight from '/resources/images/svg/logo-light.svg';
 
 export default function Welcome({
     kannRegistrieren = true,
@@ -16,61 +18,96 @@ export default function Welcome({
     kannRegistrieren?: boolean;
 }) {
     const { t } = useTranslation('login');
-    const twitchAuthUrl = '/auth/twitch';
 
     return (
-        <div className="flex min-h-screen flex-col bg-gradient-to-b from-secondary to-black">
-            <main className="flex flex-1 flex-col items-center justify-center p-4">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="space-y-4 text-center">
-                        <div className="mb-6 flex justify-center">
-                            <img
-                                src={Logo}
-                                alt={t('logo_alt')}
-                                className="h-16 w-16"
-                            />
+        <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
+            <SpaceBackground />
+
+            <div
+                className="fixed inset-0 bg-gradient-to-t from-[#C9D3E7]/65 via-[#DDE4F1]/40 to-[#C9D3E7]/55 dark:from-[#0a0a1a]/90 dark:via-transparent dark:to-[#0a0a1a]/80"
+                style={{ zIndex: -40 }}
+            />
+
+            <div
+                className="fixed inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(145,70,255,0.16)_0%,transparent_55%),radial-gradient(circle_at_80%_70%,rgba(0,174,255,0.14)_0%,transparent_55%)] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(145,70,255,0.15)_0%,transparent_50%),radial-gradient(circle_at_80%_70%,rgba(0,174,255,0.1)_0%,transparent_50%)]"
+                style={{ zIndex: -39 }}
+            />
+
+            <main className="relative z-10 flex flex-1 flex-col items-center justify-center p-4 pb-16">
+                <Card className="w-full max-w-md border-black/10 bg-gradient-to-br from-white/55 via-white/70 to-white/55 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-gradient-to-br dark:from-black/40 dark:via-black/30 dark:to-black/40 dark:shadow-2xl dark:shadow-purple-900/30">
+                    <CardHeader className="space-y-6 text-center">
+                        <div className="flex justify-center">
+                            <div className="relative">
+                                <img
+                                    src={LogoLight}
+                                    alt={t('logo_alt')}
+                                    className="h-24 w-24 drop-shadow-[0_0_30px_rgba(145,70,255,0.22)] dark:hidden"
+                                />
+                                <img
+                                    src={Logo}
+                                    alt={t('logo_alt')}
+                                    className="hidden h-24 w-24 drop-shadow-[0_0_40px_rgba(145,70,255,0.7)] dark:block"
+                                />
+                                <div className="absolute inset-0 rounded-full bg-purple-500/14 blur-2xl dark:bg-purple-500/30" />
+                                <div className="absolute -inset-4 animate-pulse rounded-full border-2 border-purple-500/14 dark:border-purple-500/20" />
+                            </div>
                         </div>
 
-                        <CardTitle className="text-3xl font-bold tracking-tight">
-                            {t('title')}
+                        <CardTitle className="text-4xl font-bold tracking-tight">
+                            <span className="bg-gradient-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-transparent dark:from-purple-300 dark:via-white dark:to-cyan-300">
+                                {t('title')}
+                            </span>
                         </CardTitle>
                     </CardHeader>
 
                     <CardContent className="space-y-6">
-                        <p className="text-center leading-relaxed text-muted-foreground">
+                        <p className="text-center text-lg leading-relaxed text-gray-900/85 dark:text-white/90">
                             {t('description')}
                         </p>
 
                         <div className="flex justify-center">
-                            <div className="h-1 w-16 rounded-full bg-gradient-to-r from-primary to-secondary"></div>
+                            <div className="h-[1px] w-32 bg-gradient-to-r from-transparent via-gray-900/35 to-transparent dark:via-white/50" />
                         </div>
                     </CardContent>
 
-                    <CardFooter className="flex flex-col space-y-4">
+                    <CardFooter className="flex flex-col space-y-6">
                         {kannRegistrieren && (
                             <a
-                                href={twitchAuthUrl}
-                                className="w-full"
+                                href='/auth/twitch'
+                                className="group relative w-full"
                                 aria-label={t('connect_button_aria')}
                             >
+                                <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-500 opacity-40 blur-xl transition-opacity duration-300 group-hover:opacity-60 dark:opacity-60" />
                                 <Button
-                                    className="w-full py-6 text-lg"
+                                    className="relative w-full border-0 bg-gradient-to-r from-purple-600 via-purple-500 to-cyan-500 py-7 text-lg shadow-2xl transition-all duration-300 group-hover:shadow-black/15 hover:from-purple-700 hover:to-cyan-600 dark:from-purple-700 dark:via-purple-600 dark:to-cyan-600 dark:group-hover:shadow-purple-500/30 dark:hover:from-purple-800 dark:hover:to-cyan-700"
                                     size="lg"
                                 >
-                                    <TwitchIcon className="mr-3 h-6 w-6" />
-                                    {t('connect_button')}
+                                    <div className="flex items-center justify-center space-x-3">
+                                        <div className="relative">
+                                            <TwitchIcon className="h-7 w-7 text-white" />
+                                            <div className="absolute inset-0 bg-cyan-500/22 blur-md dark:bg-cyan-400/40" />
+                                        </div>
+                                        <span className="font-bold text-white drop-shadow-lg">
+                                            {t('connect_button')}
+                                        </span>
+                                    </div>
                                 </Button>
                             </a>
                         )}
 
-                        <p className="border-t pt-4 text-center text-sm text-muted-foreground">
+                        <p className="border-t border-black/10 pt-4 text-center text-sm text-gray-800/70 dark:border-white/20 dark:text-white/70">
                             {t('terms_notice')}
                         </p>
                     </CardFooter>
                 </Card>
 
-                <div className="mt-8 text-center text-white/80">
-                    <p className="text-sm">{t('community_support')} ❤️</p>
+                <div className="mt-10 text-center">
+                    <p className="rounded-2xl border border-black/10 bg-white/55 px-6 py-3 text-gray-900/85 dark:border-white/20 dark:bg-white/10 dark:text-white/90">
+                        {t('community_support')}
+                        <span className="ml-2 animate-pulse text-cyan-700 dark:text-cyan-300">
+                            ✦
+                        </span>
+                    </p>
                 </div>
             </main>
 
@@ -89,77 +126,5 @@ function TwitchIcon({ className }: { className?: string }) {
         >
             <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z" />
         </svg>
-    );
-}
-
-function Footer() {
-    const { t } = useTranslation('login');
-
-    const footerLinks = [
-        { href: '/privacy', label: t('privacy') },
-        { href: '/imprint', label: t('imprint') },
-        { href: '/terms', label: t('terms') },
-    ];
-
-    return (
-        <footer className="border-t border-white/10 py-6">
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-                    <div className="text-center text-sm text-white/60 md:text-left">
-                        © {new Date().getFullYear()} VHeart.{' '}
-                        {t('all_rights_reserved')}
-                    </div>
-
-                    <nav aria-label={t('footer_navigation')}>
-                        <ul className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
-                            {footerLinks.map((link) => (
-                                <li key={link.href}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-sm text-white/70 transition-colors hover:text-white hover:underline"
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </nav>
-
-                    <div className="flex items-center gap-4">
-                        <a
-                            href="https://github.com/kattyterra/VHeart_Webseite"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={t('github_aria', 'GitHub')}
-                            className="text-white/70 hover:text-white"
-                        >
-                            <svg
-                                className="h-5 w-5"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                            </svg>
-                        </a>
-
-                        <a
-                            href="https://discord.gg/ThVZHqvXnD"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={t('discord_aria', 'Discord')}
-                            className="text-white/70 hover:text-white"
-                        >
-                            <svg
-                                className="h-5 w-5"
-                                fill="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path d="M20.317 4.37a19.791 19.791 0 00-4.885-1.515a.074.074 0 00-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 00-5.487 0a12.64 12.64 0 00-.617-1.25a.077.077 0 00-.079-.037A19.736 19.736 0 003.677 4.37a.07.07 0 00-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 00.031.057a19.9 19.9 0 005.993 3.03a.078.078 0 00.084-.028a14.09 14.09 0 001.226-1.994a.076.076 0 00-.041-.106a13.107 13.107 0 01-1.872-.892a.077.077 0 01-.008-.128c.125-.094.25-.188.372-.284a.076.076 0 01.077-.01c3.928 1.793 8.18 1.793 12.062 0a.076.076 0 01.078.01c.12.096.245.19.37.284a.077.077 0 01-.006.127a12.3 12.3 0 01-1.873.892a.077.077 0 00-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 00.084.028a19.839 19.839 0 006.002-3.03a.077.077 0 00.032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 00-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </footer>
     );
 }

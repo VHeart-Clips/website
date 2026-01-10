@@ -162,7 +162,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                         </h1>
                     </div>
 
-                    {flash?.submit_ok && flash?.submit_message && (
+                    {props.submit_ok && flash?.submit_message && (
                         <div className="mb-6">
                             <Alert>
                                 <AlertDescription>

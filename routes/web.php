@@ -13,8 +13,35 @@ use Inertia\Inertia;
 use Laravel\Socialite\Socialite;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    $settings = [
+        'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+        'partnerIcon' => null,
+        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
+    ];
+    return Inertia::render('welcome', $settings);
 })->name('home');
+
+Route::get('/imprint', function () {
+    $locale = app()->getLocale();
+    $view = "legal.$locale.imprint";
+
+    if (!view()->exists($view)) {
+        abort(404);
+    }
+
+    return view($view);
+});
+
+Route::get('/privacy', function () {
+    $locale = app()->getLocale();
+    $view = "legal.$locale.privacy";
+
+    if (!view()->exists($view)) {
+        abort(404);
+    }
+
+    return view($view);
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/start', function () {
@@ -74,7 +101,7 @@ Route::get('/auth/twitch/callback', function () {
 Route::get('/locales.json', App\Actions\Locales::class)->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
-    if (! array_key_exists($lang, Config::get('app.locales'))) {
+    if (!array_key_exists($lang, Config::get('app.locales'))) {
         abort(422); // we understand it but its invalid
     }
 
@@ -86,4 +113,4 @@ Route::get('/locales/{lang}', static function (Request $request, $lang) {
     ], 200);
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';

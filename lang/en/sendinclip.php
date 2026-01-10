@@ -1,18 +1,6 @@
 <?php
 
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Authentication Language Lines
-    |--------------------------------------------------------------------------
-    |
-    | The following language lines are used during authentication for various
-    | messages that we need to display to the user. You are free to modify
-    | these language lines according to your application's requirements.
-    |
-    */
-
     'page_title' => 'Submit clip',
     'breadcrumb' => 'Submit clip',
     'headline' => 'Submit clip',
@@ -69,6 +57,11 @@ return [
 
     'errors' => [
         'login_required' => 'Please log in',
+        'clip_not_found' => 'Clip not found',
+        'clip_already_known' => 'This clip has already been submitted',
+        'broadcaster_not_allowed' => 'The broadcaster has not allowed clip submissions',
+        'game_blocked' => 'Clips from this game are not allowed',
+        'user_not_allowed_for_broadcaster' => 'You are not allowed to submit clips for this broadcaster',
         'clip_url_required' => 'Please enter a clip URL',
         'cannot_submit' => 'This clip cannot be submitted.',
         'daily_limit' => 'You have reached your daily limit of :limit submissions.',
@@ -80,5 +73,9 @@ return [
         'subtitle' => 'You must be logged in to submit clips',
         'alert' => 'Only logged-in users can submit clips to prevent spam.',
         'cta' => 'Log in now',
+    ],
+
+    'flash' => [
+        'submitted' => 'Your clip has been submitted successfully!',
     ],
 ];

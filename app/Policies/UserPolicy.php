@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Enums\Permission;
 use App\Models\User;
+use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 
 /*
@@ -13,6 +16,8 @@ use Illuminate\Auth\Access\Response;
  */
 class UserPolicy
 {
+    use HandlesAuthorization;
+
     /**
      * Determine whether the user can view any models.
      */
@@ -34,7 +39,8 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can(Permission::CreateUser);
+        // we get our supply of fresh users from twitch
+        return false;
     }
 
     /**
@@ -42,16 +48,23 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        // return $user->is($model); // only allow user to edit itself for example
         return $user->can(Permission::UpdateAnyUser);
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, User $model): Response
     {
-        return $user->can(Permission::DeleteAnyUser);
+        if ($user->is($model)) {
+            return $this->deny('Cannot delete own user');
+        }
+
+        if ($user->can(Permission::DeleteAnyUser)) {
+            return $this->allow();
+        }
+
+        return $this->deny();
     }
 
     /**

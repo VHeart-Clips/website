@@ -13,6 +13,8 @@ import.meta.glob([
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
+initializeTheme();
+
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>
@@ -33,6 +35,3 @@ createInertiaApp({
         color: '#4B5563',
     },
 });
-
-// This will set light / dark mode on load...
-initializeTheme();

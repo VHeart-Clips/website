@@ -24,10 +24,28 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
+        labels:
+            autoheal: "true"
         depends_on:
             - pgsql
             - redis
             - mailpit
+        healthcheck:
+            test: curl --fail http://laravel.test/up || exit 1
+            interval: 1s
+            timeout: 1s
+            retries: 3
+            start_period: 5s
+    autoheal:
+        image: willfarrell/autoheal
+        restart: unless-stopped
+        environment:
+            - AUTOHEAL_CONTAINER_LABEL=autoheal
+            - AUTOHEAL_DEFAULT_STOP_TIMEOUT=1
+        volumes:
+            - '/var/run/docker.sock:/var/run/docker.sock'
+        networks:
+            - sail
     pgsql:
         image: 'postgres:18-alpine'
         ports:
