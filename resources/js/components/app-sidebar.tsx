@@ -15,22 +15,23 @@ import {
     useSidebar,
 } from '@/components/ui/sidebar';
 import { about, team } from '@/routes';
-import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { BookOpen, ChevronDown, Folder, Users } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-const footerNavItems: NavItem[] = [
+// Footer navigation item keys for translation lookup
+const footerNavItemKeys = [
     {
-        title: 'Team',
+        key: 'team',
         href: team(),
         icon: Folder,
     },
     {
-        title: 'About us',
+        key: 'about',
         href: about(),
         icon: BookOpen,
     },
-];
+] as const;
 
 interface AppSidebarProps {
     className?: string;
@@ -38,6 +39,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ className }: AppSidebarProps) {
     const { state } = useSidebar();
+    const { t } = useTranslation('navigation');
     const isCollapsed = state === 'collapsed';
 
     return (
@@ -55,7 +57,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
                                 <SidebarMenuButton className="hover:cursor-pointer hover:bg-transparent focus:bg-transparent active:bg-transparent data-[state=open]:bg-transparent data-[state=open]:hover:bg-transparent">
                                     <Users className="size-4" />
                                     <span className="font-medium">
-                                        Streamer
+                                        {t('streamer')}
                                     </span>
                                     <ChevronDown className="ml-auto size-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
                                 </SidebarMenuButton>
@@ -68,7 +70,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
                                             className="text-muted-foreground hover:bg-transparent active:bg-transparent"
                                         >
                                             <span className="text-xs italic">
-                                                No streamers yet
+                                                {t('no_streamers_yet')}
                                             </span>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -85,8 +87,8 @@ export function AppSidebar({ className }: AppSidebarProps) {
             {/* Footer navigation */}
             <SidebarFooter>
                 <SidebarMenu className="mt-auto">
-                    {footerNavItems.map((item) => (
-                        <SidebarMenuItem key={`footer-${item.title}`}>
+                    {footerNavItemKeys.map((item) => (
+                        <SidebarMenuItem key={`footer-${item.key}`}>
                             <SidebarMenuButton asChild>
                                 <Link
                                     href={item.href}
@@ -98,7 +100,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
                                     {item.icon && (
                                         <item.icon className="h-4 w-4" />
                                     )}
-                                    <span>{item.title}</span>
+                                    <span>{t(item.key)}</span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>

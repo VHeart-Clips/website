@@ -10,32 +10,35 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { dashboard, evaluateclips } from '@/routes';
 import submitclip from '@/routes/submitclip';
-import { type NavItem, type SharedData } from '@/types';
+import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid, Search, ChevronDown, Send, ScanHeart } from 'lucide-react';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import LogoFullDark from '/resources/images/svg/logo-full-dark.svg';
 import LogoFullLight from '/resources/images/svg/logo-full-title.svg';
 
-const navItems: NavItem[] = [
+// Navigation item keys for translation lookup
+const navItemKeys = [
     {
-        title: 'Dashboard',
+        key: 'dashboard',
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Clips einreichen',
+        key: 'submit_clips',
         href: submitclip.create(),
         icon: Send,
     },
     {
-        title: 'Clips bewerten',
+        key: 'evaluate_clips',
         href: evaluateclips(),
         icon: ScanHeart,
     },
-];
+] as const;
 
 export function AppTopbar() {
+    const { t } = useTranslation('navigation');
     const page = usePage<SharedData>();
     const { auth } = page.props;
     const getInitials = useInitials();
@@ -55,7 +58,7 @@ export function AppTopbar() {
     }, []);
 
     // Check if current URL matches href
-    const isActive = (href: NavItem['href']) => {
+    const isActive = (href: string | { url: string }) => {
         const hrefString = typeof href === 'string' ? href : href.url;
         return page.url === hrefString || page.url.startsWith(hrefString + '/');
     };
@@ -72,12 +75,12 @@ export function AppTopbar() {
                     >
                         <img
                             src={LogoFullDark}
-                            alt="VHeart Logo"
+                            alt={t('logo_alt')}
                             className="hidden h-6 dark:block"
                         />
                         <img
                             src={LogoFullLight}
-                            alt="VHeart Logo"
+                            alt={t('logo_alt')}
                             className="block h-6 dark:hidden"
                         />
                     </Link>
@@ -90,20 +93,20 @@ export function AppTopbar() {
                         <input
                             ref={searchInputRef}
                             type="text"
-                            placeholder="Suchen..."
+                            placeholder={t('search_placeholder')}
                             className="h-9 w-full rounded-lg border border-sidebar-border bg-sidebar-accent/30 pl-9 pr-12 text-sm text-sidebar-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                         />
                         <kbd className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded border border-sidebar-border bg-sidebar-accent/50 px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
-                            STRG+K
+                            {t('search_shortcut')}
                         </kbd>
                     </div>
                 </div>
 
                 {/* Navigation Links */}
                 <nav className="flex items-center gap-1">
-                    {navItems.map((item) => (
+                    {navItemKeys.map((item) => (
                         <Link
-                            key={item.title}
+                            key={item.key}
                             href={item.href}
                             className={cn(
                                 'flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
@@ -113,7 +116,7 @@ export function AppTopbar() {
                             )}
                         >
                             {item.icon && <item.icon className="size-4" />}
-                            <span className="hidden lg:inline">{item.title}</span>
+                            <span className="hidden lg:inline">{t(item.key)}</span>
                         </Link>
                     ))}
                 </nav>
