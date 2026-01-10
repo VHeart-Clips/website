@@ -24,7 +24,7 @@ class ClipVoteController extends Controller
                 /** @var Clip $clip */
                 $clip = Clip::whereDoesntHave('votes',function(Builder $query) use ($user) {
                     return $query->where('user_id',$user->id);
-                })->inRandomOrder()->first(['id','twitch_id','title']);
+                })->whereNot('broadcaster_id',$user->id)->inRandomOrder()->first(['id','twitch_id','title']);
 
                 return $clip;
             })
