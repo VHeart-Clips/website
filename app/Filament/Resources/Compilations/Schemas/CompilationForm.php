@@ -66,7 +66,7 @@ class CompilationForm
                         Select::make('type')
                             ->required()
                             ->options(CompilationType::class)
-                            ->default(CompilationType::class)
+                            ->default(CompilationType::Manual)
                             ->hidden(),
                     ]),
             ])->columns(3);
