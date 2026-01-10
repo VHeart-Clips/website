@@ -65,7 +65,9 @@ class CompilationForm
                             ->belowLabel('Automatically fill the Compilation with Clips to reach the set Minimum amount of Seconds, does nothing if left empty.'),
                         Select::make('type')
                             ->required()
-                            ->options(CompilationType::class)->hidden(),
+                            ->options(CompilationType::class)
+                            ->default(CompilationType::class)
+                            ->hidden(),
                     ]),
             ])->columns(3);
     }
