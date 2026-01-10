@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/vote', [ClipVoteController::class,'create'])->name('vote');
 
-    Route::post('/vote', [ClipVoteController::class,'store'])->name('vote.submit');
+    Route::post('/vote', [ClipVoteController::class,'store'])->middleware('throttle:30,1')->name('vote.submit');
 
     Route::get('/team', TeamController::class)->name('team');
 
