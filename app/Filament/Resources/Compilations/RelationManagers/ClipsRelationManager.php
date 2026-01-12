@@ -72,6 +72,7 @@ class ClipsRelationManager extends RelationManager
                 SelectColumn::make('status')
                     ->options(CompilationClipStatus::class)
                     ->default(CompilationClipStatus::Pending)
+                    ->selectablePlaceholder(false)
                     ->updateStateUsing(function (Clip $record, $state) {
                         $record->pivot->update(['status' => $state]);
 
