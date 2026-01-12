@@ -72,6 +72,9 @@ class ClipsRelationManager extends RelationManager
                 SelectColumn::make('status')
                     ->options(CompilationClipStatus::class)
                     ->default(CompilationClipStatus::Pending)
+                    ->disabled(function ($record): bool {
+                        return $record->pivot->claimed_by !== auth()->id();
+                    })
                     ->selectablePlaceholder(false)
                     ->updateStateUsing(function (Clip $record, $state) {
                         $record->pivot->update(['status' => $state]);
