@@ -61,10 +61,12 @@ class CompilationForm
                             ->required()
                             ->options(CompilationStatus::class),
                         TextInput::make('auto_fill_seconds')
+                            ->disabled() // currently does nothing, low priority for now
                             ->label('Auto Fill Seconds')
                             ->integer()
                             ->belowLabel('Automatically fill the Compilation with Clips to reach the set Minimum amount of Seconds, does nothing if left empty.'),
                         Select::make('type')
+                            ->hiddenOn('edit')
                             ->required()
                             ->options(CompilationType::class)
                             ->default(CompilationType::Manual),
