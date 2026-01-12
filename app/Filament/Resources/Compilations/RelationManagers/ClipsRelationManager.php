@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Compilations\RelationManagers;
 use App\Enums\Clips\CompilationClipStatus;
 use App\Filament\Resources\Clips\ClipResource;
 use App\Models\Clip;
+use App\Models\User;
 use App\Services\Twitch\Data\ClipDownloadDto;
 use App\Services\Twitch\Exceptions\TwitchApiException;
 use App\Services\Twitch\TwitchEndpoints;
@@ -25,10 +26,13 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Livewire\Component;
+
 class ClipsRelationManager extends RelationManager
 {
     protected static string $relationship = 'clips';
@@ -52,18 +56,11 @@ class ClipsRelationManager extends RelationManager
                     ->wrap()
                     ->searchable(),
 
-                TextColumn::make('broadcaster.name')
-                    ->searchable(),
-
+                TextColumn::make('broadcaster.name'),
                 TextColumn::make('creator.name')
-                    ->label('Clipper')
-                    ->searchable(),
-
-                TextColumn::make('submitter.name')
-                    ->searchable(),
-
-                TextColumn::make('game.title')
-                    ->searchable(),
+                    ->label('Clipper'),
+                TextColumn::make('submitter.name'),
+                TextColumn::make('game.title'),
 
                 TextColumn::make('duration')
                     ->numeric()
@@ -90,10 +87,73 @@ class ClipsRelationManager extends RelationManager
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->filters([
+                SelectFilter::make('broadcaster')
+                    ->relationship('broadcaster', 'name', fn (Builder $query) => $query->whereIn('id',
+                        $this->getOwnerRecord()->clips()->pluck('broadcaster_id')))
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->label('Broadcaster'),
+                SelectFilter::make('creator')
+                    ->relationship('creator', 'name', fn (Builder $query) => $query->whereIn('id',
+                        $this->getOwnerRecord()->clips()->pluck('creator_id')))
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->label('Clipper'),
+                SelectFilter::make('submitter')
+                    ->relationship('submitter', 'name', fn (Builder $query) => $query->whereIn('id',
+                        $this->getOwnerRecord()->clips()->pluck('submitter_id')))
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->label('Submitter'),
+                SelectFilter::make('claimer')
+                    ->label('Claimer')
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->options(fn () => User::query()
+                        ->whereIn('id', $this->getOwnerRecord()->clips()->newPivotStatement()
+                            ->where('compilation_id', $this->getOwnerRecord()->getKey())
+                            ->pluck('claimed_by'))
+                        ->pluck('name', 'id')
+                        ->prepend('None / Unclaimed', 'null'))
+                    ->query(function (Builder $query, array $data) {
+                        $values = $data['values'] ?? [];
+                        if (empty($values)) {
+                            return;
+                        }
+
+                        $query->where(function (Builder $query) use ($values) {
+                            $ids = array_diff($values, ['null']);
+
+                            if (in_array('null', $values, true)) {
+                                $query->whereNull('clip_compilation.claimed_by');
+                            }
+
+                            if (! empty($ids)) {
+                                $query->orWhereIn('clip_compilation.claimed_by', $ids);
+                            }
+                        });
+                    }),
+                SelectFilter::make('game')
+                    ->relationship('game', 'title',
+                        fn (Builder $query) => $query->whereIn('id', $this->getOwnerRecord()->clips()->pluck('game_id')))
+                    ->searchable()
+                    ->preload()
+                    ->multiple()
+                    ->label('Game'),
+                SelectFilter::make('status')
+                    ->multiple()
+                    ->options(CompilationClipStatus::class),
+            ])
+            ->filtersFormColumns(2)
             ->headerActions([
                 AttachAction::make()
                     ->preloadRecordSelect()
-                    ->form(fn (AttachAction $action): array => [
+                    ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Select::make('status')
                             ->options(CompilationClipStatus::class)
@@ -106,7 +166,6 @@ class ClipsRelationManager extends RelationManager
                     Action::make('claim')
                         ->icon(Heroicon::LockClosed)
                         ->rateLimit(5)
-                        // Fixed: Access pivot data specifically
                         ->hidden(fn (Clip $record) => $record->pivot->claimed_by === auth()->id())
                         ->requiresConfirmation(fn (Clip $record) => ! is_null($record->pivot->claimed_by))
                         ->action(function (Clip $clip) {
