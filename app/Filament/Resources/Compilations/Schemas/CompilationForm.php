@@ -25,6 +25,8 @@ class CompilationForm
                 Section::make()
                     ->schema([
                         TextInput::make('title')
+                            ->label('admin/resources/compilations.form.title')
+                            ->translateLabel()
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
                                 $newSlug = Str::slug($old ?? '');
@@ -40,12 +42,18 @@ class CompilationForm
                             ->required()
                             ->maxLength(255),
                         TextInput::make('slug')
+                            ->label('admin/resources/compilations.form.slug')
+                            ->translateLabel()
                             ->required()
                             ->unique(Compilation::class, 'slug')
                             ->maxLength(255),
                         Textarea::make('description')
+                            ->label('admin/resources/compilations.form.description')
+                            ->translateLabel()
                             ->columnSpanFull(),
                         TextInput::make('youtube_url')
+                            ->label('admin/resources/compilations.form.youtube_url')
+                            ->translateLabel()
                             ->url()
                             ->columnSpanFull()
                             ->maxLength(255),
@@ -53,19 +61,25 @@ class CompilationForm
                 Section::make()
                     ->schema([
                         Select::make('user_id')
-                            ->label('Created by')
+                            ->label('admin/resources/compilations.form.created_by')
+                            ->translateLabel()
                             ->default(auth()->id())
                             ->relationship('user', 'name')
                             ->searchable(),
                         Select::make('status')
+                            ->label('admin/resources/compilations.form.status')
+                            ->translateLabel()
                             ->required()
                             ->options(CompilationStatus::class),
                         TextInput::make('auto_fill_seconds')
                             ->disabled() // currently does nothing, low priority for now
-                            ->label('Auto Fill Seconds')
+                            ->label('admin/resources/compilations.form.auto_fill_seconds')
+                            ->translateLabel()
                             ->integer()
-                            ->belowLabel('Automatically fill the Compilation with Clips to reach the set Minimum amount of Seconds, does nothing if left empty.'),
+                            ->belowLabel(__('admin/resources/compilations.form.auto_fill_seconds_helper')),
                         Select::make('type')
+                            ->label('admin/resources/compilations.form.type')
+                            ->translateLabel()
                             ->hiddenOn('edit')
                             ->required()
                             ->options(CompilationType::class)

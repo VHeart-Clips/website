@@ -45,31 +45,52 @@ class ClipsRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 TextColumn::make('twitch_id')
+                    ->label('admin/resources/clips.table.columns.twitch_id')
+                    ->translateLabel()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
 
                 ImageColumn::make('thumbnail_url')
-                    ->label('Thumbnail')
+                    ->label('admin/resources/clips.table.columns.thumbnail')
+                    ->translateLabel()
                     ->imageHeight(100),
 
                 TextColumn::make('title')
+                    ->label('admin/resources/clips.table.columns.title')
+                    ->translateLabel()
                     ->wrap()
                     ->searchable(),
 
-                TextColumn::make('broadcaster.name'),
+                TextColumn::make('broadcaster.name')
+                    ->label('admin/resources/clips.table.columns.broadcaster')
+                    ->translateLabel(),
+
                 TextColumn::make('creator.name')
-                    ->label('Clipper'),
-                TextColumn::make('submitter.name'),
-                TextColumn::make('game.title'),
+                    ->label('admin/resources/clips.table.columns.clipper')
+                    ->translateLabel(),
+
+                TextColumn::make('submitter.name')
+                    ->label('admin/resources/clips.table.columns.submitter')
+                    ->translateLabel(),
+
+                TextColumn::make('game.title')
+                    ->label('admin/resources/clips.table.columns.category')
+                    ->translateLabel(),
 
                 TextColumn::make('duration')
+                    ->label('admin/resources/clips.table.columns.duration')
+                    ->translateLabel()
                     ->numeric()
                     ->formatStateUsing(fn ($state) => gmdate('i:s', (int) round($state)))
                     ->sortable(),
 
-                TextColumn::make('claimer.name'),
+                TextColumn::make('claimer.name')
+                    ->label('admin/resources/compilations.relation_managers.clips.columns.claimer')
+                    ->translateLabel(),
 
                 SelectColumn::make('status')
+                    ->label('admin/resources/compilations.relation_managers.clips.columns.status')
+                    ->translateLabel()
                     ->options(CompilationClipStatus::class)
                     ->default(CompilationClipStatus::Pending)
                     ->disabled(function (Clip $record): bool {
@@ -83,10 +104,14 @@ class ClipsRelationManager extends RelationManager
                     }),
 
                 IconColumn::make('is_anonymous')
+                    ->label('admin/resources/clips.table.columns.is_anonymous')
+                    ->translateLabel()
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
+                    ->label('admin/resources/clips.table.columns.created_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -98,23 +123,27 @@ class ClipsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->multiple()
-                    ->label('Broadcaster'),
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.broadcaster')
+                    ->translateLabel(),
                 SelectFilter::make('creator')
                     ->relationship('creator', 'name', fn (Builder $query) => $query->whereIn('id',
                         $this->getOwnerRecord()->clips()->pluck('creator_id')))
                     ->searchable()
                     ->preload()
                     ->multiple()
-                    ->label('Clipper'),
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.clipper')
+                    ->translateLabel(),
                 SelectFilter::make('submitter')
                     ->relationship('submitter', 'name', fn (Builder $query) => $query->whereIn('id',
                         $this->getOwnerRecord()->clips()->pluck('submitter_id')))
                     ->searchable()
                     ->preload()
                     ->multiple()
-                    ->label('Submitter'),
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.submitter')
+                    ->translateLabel(),
                 SelectFilter::make('claimer')
-                    ->label('Claimer')
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.claimer')
+                    ->translateLabel()
                     ->multiple()
                     ->searchable()
                     ->preload()
@@ -123,7 +152,7 @@ class ClipsRelationManager extends RelationManager
                             ->where('compilation_id', $this->getOwnerRecord()->getKey())
                             ->pluck('claimed_by'))
                         ->pluck('name', 'id')
-                        ->prepend('None / Unclaimed', 'null'))
+                        ->prepend(__('admin/resources/compilations.relation_managers.clips.filters.claimer_option_none'), 'null'))
                     ->query(function (Builder $query, array $data) {
                         $values = $data['values'] ?? [];
                         if (empty($values)) {
@@ -148,8 +177,11 @@ class ClipsRelationManager extends RelationManager
                     ->searchable()
                     ->preload()
                     ->multiple()
-                    ->label('Game'),
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.game')
+                    ->translateLabel(),
                 SelectFilter::make('status')
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.status')
+                    ->translateLabel()
                     ->multiple()
                     ->options(CompilationClipStatus::class),
             ])
@@ -160,6 +192,8 @@ class ClipsRelationManager extends RelationManager
                     ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Select::make('status')
+                            ->label('admin/resources/compilations.relation_managers.clips.columns.status')
+                            ->translateLabel()
                             ->options(CompilationClipStatus::class)
                             ->default(CompilationClipStatus::Pending)
                             ->required(),
@@ -168,6 +202,8 @@ class ClipsRelationManager extends RelationManager
             ->recordActions([
                 ActionGroup::make([
                     Action::make('claim')
+                        ->label('admin/resources/compilations.relation_managers.clips.actions.claim')
+                        ->translateLabel()
                         ->icon(Heroicon::LockClosed)
                         ->rateLimit(5)
                         ->hidden(fn (Clip $record) => $record->pivot->claimed_by === auth()->id())
@@ -181,9 +217,9 @@ class ClipsRelationManager extends RelationManager
                                 ]);
 
                                 Notification::make()
-                                    ->title('Clip Claimed')
+                                    ->title(__('admin/resources/compilations.relation_managers.clips.notifications.claimed_title'))
                                     ->success()
-                                    ->body('You have successfully claimed this clip.')
+                                    ->body(__('admin/resources/compilations.relation_managers.clips.notifications.claimed_body'))
                                     ->send();
 
                                 return true;
@@ -191,6 +227,8 @@ class ClipsRelationManager extends RelationManager
                         }),
 
                     Action::make('unclaim')
+                        ->label('admin/resources/compilations.relation_managers.clips.actions.unclaim')
+                        ->translateLabel()
                         ->icon(Heroicon::LockOpen)
                         ->hidden(fn (Clip $record) => $record->pivot->claimed_by !== auth()->id())
                         ->requiresConfirmation()
@@ -200,12 +238,14 @@ class ClipsRelationManager extends RelationManager
                             ]);
 
                             Notification::make()
-                                ->title('Clip Unclaimed')
+                                ->title(__('admin/resources/compilations.relation_managers.clips.notifications.unclaimed_title'))
                                 ->success()
                                 ->send();
                         }),
 
                     Action::make('download')
+                        ->label('admin/resources/clips.actions.download')
+                        ->translateLabel()
                         ->icon(Heroicon::ArrowDownTray)
                         ->disabled(fn (Clip $record) => $record->pivot->claimed_by !== auth()->id())
                         ->action(function (Clip $clip, TwitchService $twitchService, Component $livewire) {
@@ -213,8 +253,8 @@ class ClipsRelationManager extends RelationManager
 
                             if (! $broadCaster) {
                                 Notification::make()
-                                    ->title('Cannot download Clip')
-                                    ->body('Broadcaster is not available.')
+                                    ->title(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_title'))
+                                    ->body(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_broadcaster'))
                                     ->danger()
                                     ->send();
 
@@ -233,8 +273,8 @@ class ClipsRelationManager extends RelationManager
 
                                 if (! $download) {
                                     Notification::make()
-                                        ->title('Cannot download Clip')
-                                        ->body('Clip was not found.')
+                                        ->title(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_title'))
+                                        ->body(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_not_found'))
                                         ->danger()
                                         ->send();
 
@@ -247,7 +287,7 @@ class ClipsRelationManager extends RelationManager
                                 $livewire->js("window.open('{$download->landscape_download_url}', '_blank')");
                             } catch (TwitchApiException $e) {
                                 Notification::make()
-                                    ->title('Can not download Clip')
+                                    ->title(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_title'))
                                     ->body($e->getMessage())
                                     ->danger()
                                     ->send();
@@ -258,10 +298,11 @@ class ClipsRelationManager extends RelationManager
                             return true;
                         }),
                     Action::make('copy_cutter_optimized_name')
-                        ->label('Copy Filename')
+                        ->label('admin/resources/compilations.relation_managers.clips.actions.copy_filename')
+                        ->translateLabel()
                         ->icon('heroicon-o-clipboard-document-list')
                         ->color('gray')
-                        ->tooltip('Copy standardized filename for editors')
+                        ->tooltip(__('admin/resources/compilations.relation_managers.clips.actions.copy_filename_tooltip'))
                         ->action(function (Clip $clip, $livewire) {
                             $title = Str::limit($clip->title, 50, '');
 
@@ -269,7 +310,7 @@ class ClipsRelationManager extends RelationManager
                             $livewire->js("window.navigator.clipboard.writeText('{$filename}');");
 
                             Notification::make()
-                                ->title('Filename Copied')
+                                ->title(__('admin/resources/compilations.relation_managers.clips.notifications.filename_copied'))
                                 ->body($filename)
                                 ->success()
                                 ->send();

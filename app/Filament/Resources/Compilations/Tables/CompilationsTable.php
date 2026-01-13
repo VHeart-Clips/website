@@ -28,10 +28,24 @@ class CompilationsTable
     {
         return $table
             ->columns([
-                TextColumn::make('title')->wrap()->label('Title')->searchable(),
-                TextColumn::make('user.name')->label('Created By'),
-                TextColumn::make('status')->label('Status')->badge(),
-                TextColumn::make('type')->label('Type')->badge()->toggleable()->toggledHiddenByDefault(),
+                TextColumn::make('title')
+                    ->label('admin/resources/compilations.table.columns.title')
+                    ->translateLabel()
+                    ->wrap()
+                    ->searchable(),
+                TextColumn::make('user.name')
+                    ->label('admin/resources/compilations.table.columns.created_by')
+                    ->translateLabel(),
+                TextColumn::make('status')
+                    ->label('admin/resources/compilations.table.columns.status')
+                    ->translateLabel()
+                    ->badge(),
+                TextColumn::make('type')
+                    ->label('admin/resources/compilations.table.columns.type')
+                    ->translateLabel()
+                    ->badge()
+                    ->toggleable()
+                    ->toggledHiddenByDefault(),
             ])
             ->filtersFormWidth(Width::Large)
             ->filtersFormColumns(2)
@@ -40,7 +54,8 @@ class CompilationsTable
                     ->relationship('user', 'name')
                     ->searchable()
                     ->preload()
-                    ->label('Created By')
+                    ->label('admin/resources/compilations.table.filters.created_by')
+                    ->translateLabel()
                     ->columnSpanFull(),
                 SelectFilter::make('status')
                     ->multiple()
@@ -51,10 +66,11 @@ class CompilationsTable
                 Filter::make('created_at')
                     ->columnSpanFull()
                     ->schema([
-                        Fieldset::make('Filter by Creation Date')->schema([
-                            DatePicker::make('created_from'),
-                            DatePicker::make('created_until'),
-                        ]),
+                        Fieldset::make(__('admin/resources/compilations.table.filters.creation_date'))
+                            ->schema([
+                                DatePicker::make('created_from'),
+                                DatePicker::make('created_until'),
+                            ]),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -68,22 +84,24 @@ class CompilationsTable
                             );
                     }),
                 TernaryFilter::make('has_youtube')
-                    ->label('Youtube Link')
+                    ->label('admin/resources/compilations.table.filters.youtube_link')
+                    ->translateLabel()
                     ->nullable()
-                    ->placeholder('All')
-                    ->trueLabel('With')
-                    ->falseLabel('Without')
+                    ->placeholder(__('admin/resources/compilations.table.filters.all'))
+                    ->trueLabel(__('admin/resources/compilations.table.filters.with'))
+                    ->falseLabel(__('admin/resources/compilations.table.filters.without'))
                     ->queries(
                         true: fn (Builder $query) => $query->whereNotNull('youtube_url'),
                         false: fn (Builder $query) => $query->whereNull('youtube_url'),
                         blank: fn (Builder $query) => $query,
                     ),
                 TernaryFilter::make('has_clips')
-                    ->label('Clips')
+                    ->label('admin/resources/compilations.table.filters.clips')
+                    ->translateLabel()
                     ->nullable()
-                    ->placeholder('All')
-                    ->trueLabel('With')
-                    ->falseLabel('Without')
+                    ->placeholder(__('admin/resources/compilations.table.filters.all'))
+                    ->trueLabel(__('admin/resources/compilations.table.filters.with'))
+                    ->falseLabel(__('admin/resources/compilations.table.filters.without'))
                     ->queries(
                         true: fn (Builder $query) => $query->whereHas('clips'),
                         false: fn (Builder $query) => $query->whereDoesntHave('clips'),
