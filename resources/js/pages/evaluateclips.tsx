@@ -35,7 +35,7 @@ export default function EvaluateClips() {
     const { t } = useTranslation('evaluateclips');
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: t('evaluateclips'), href: vote().url },
+        { title: t('breadcrumb'), href: vote().url },
     ];
 
     const items: Item[] = [];
