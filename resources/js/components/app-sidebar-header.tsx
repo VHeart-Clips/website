@@ -1,10 +1,10 @@
 import ClipVoteController from '@/actions/App/Http/Controllers/ClipVoteController';
 import { Breadcrumbs } from '@/components/breadcrumbs';
-import { dashboard } from '@/routes';
+import { dashboard, evaluateclips } from '@/routes';
 import submitclip from '@/routes/submitclip';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { usePage } from '@inertiajs/react';
-import { LayoutGrid, ScanHeart, Send, type LucideIcon } from 'lucide-react';
+import { LayoutGrid, Send, ScanHeart, type LucideIcon } from 'lucide-react';
 import { useMemo } from 'react';
 
 // Navigation items for icon lookup - defined outside component
@@ -18,7 +18,7 @@ const navItemIcons: { href: string | { url: string }; icon: LucideIcon }[] = [
         icon: Send,
     },
     {
-        href: ClipVoteController.create(),
+        href: evaluateclips(),
         icon: ScanHeart,
     },
 ];
@@ -33,11 +33,8 @@ export function AppSidebarHeader({
     // Find the current page's icon - memoized to avoid recreating during render
     const Icon = useMemo(() => {
         const currentNavItem = navItemIcons.find((item) => {
-            const hrefString =
-                typeof item.href === 'string' ? item.href : item.href.url;
-            return (
-                page.url === hrefString || page.url.startsWith(hrefString + '/')
-            );
+            const hrefString = typeof item.href === 'string' ? item.href : item.href.url;
+            return page.url === hrefString || page.url.startsWith(hrefString + '/');
         });
         return currentNavItem?.icon ?? LayoutGrid;
     }, [page.url]);
