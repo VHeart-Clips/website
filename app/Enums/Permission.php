@@ -2,8 +2,13 @@
 
 namespace App\Enums;
 
-enum Permission: string
+use App\Enums\Traits\HasHeadlineLabel;
+use Filament\Support\Contracts\HasLabel;
+
+enum Permission: string implements HasLabel
 {
+    use HasHeadlineLabel;
+
     // User
     case ViewAnyUser = 'view_any_user';
     case ViewUser = 'view_user';
