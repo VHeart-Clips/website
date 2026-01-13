@@ -19,7 +19,7 @@ class EditClip extends EditRecord
 
     public function getTitle(): string|Htmlable
     {
-        return __('Edit :label by :broadcaster', [
+        return __('admin/resources/clips.edit.title', [
             'label' => $this->getRecordTitle(),
             'broadcaster' => $this->getRecord()->broadcaster?->name,
         ]);
@@ -29,16 +29,18 @@ class EditClip extends EditRecord
     {
         return [
             Action::make('Claim')
+                ->label(__('admin/resources/clips.actions.claim'))
                 ->icon(Heroicon::LockClosed)
                 ->disabled(),
             Action::make('download')
+                ->label(__('admin/resources/clips.actions.download'))
                 ->color('info')
                 ->icon(Heroicon::ArrowDownTray)
                 ->disabled(),
 
             ActionGroup::make([
                 Action::make('open_twitch')
-                    ->label('View On Twitch')
+                    ->label(__('admin/resources/clips.actions.view_on_twitch'))
                     ->icon(Heroicon::Link)
                     ->url(function (Clip $clip) {
                         return $clip->url;
