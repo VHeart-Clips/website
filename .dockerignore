@@ -10,7 +10,6 @@
 .editorconfig
 .styleci.yml
 node_modules
-vendor
 tests
 phpunit.xml
 README.md
