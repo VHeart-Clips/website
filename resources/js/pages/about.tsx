@@ -2,10 +2,6 @@ import ClipProcessCard from '@/components/aboutcard/clip-process-card';
 import { AboutDonationCard as DonationCard } from '@/components/aboutcard/donation-card';
 import HeroCard from '@/components/aboutcard/hero-card';
 import SpaceBackground from '@/components/spacebackground';
-import AppLayout from '@/layouts/app-layout';
-import { about } from '@/routes';
-import type { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
 export default function About({
@@ -17,17 +13,7 @@ export default function About({
 }) {
     const { t } = useTranslation('about');
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: t('breadcrumb'),
-            href: about().url,
-        },
-    ];
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('page_title')}/>
-
             <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
                 <SpaceBackground />
 
@@ -43,6 +29,5 @@ export default function About({
                     </div>
                 </main>
             </div>
-        </AppLayout>
     );
 }

@@ -61,7 +61,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
             'partnerIcon' => null,
         ];
-        return Inertia::render('welcome', $settings);
+        return Inertia::render('about', $settings);
     })->name('about');
 });
 
