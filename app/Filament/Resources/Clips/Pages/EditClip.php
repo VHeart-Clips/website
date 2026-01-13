@@ -28,25 +28,15 @@ class EditClip extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('Claim')
-                ->label(__('admin/resources/clips.actions.claim'))
-                ->icon(Heroicon::LockClosed)
-                ->disabled(),
-            Action::make('download')
-                ->label(__('admin/resources/clips.actions.download'))
-                ->color('info')
-                ->icon(Heroicon::ArrowDownTray)
-                ->disabled(),
+            Action::make('open_twitch')
+                ->label(__('admin/resources/clips.actions.view_on_twitch'))
+                ->icon(Heroicon::Link)
+                ->url(function (Clip $clip) {
+                    return $clip->url;
+                })
+                ->openUrlInNewTab(),
 
             ActionGroup::make([
-                Action::make('open_twitch')
-                    ->label(__('admin/resources/clips.actions.view_on_twitch'))
-                    ->icon(Heroicon::Link)
-                    ->url(function (Clip $clip) {
-                        return $clip->url;
-                    })
-                    ->openUrlInNewTab(),
-
                 DeleteAction::make(),
             ]),
         ];
