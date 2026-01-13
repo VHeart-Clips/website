@@ -15,10 +15,7 @@ export function AppContent({
     }
 
     return (
-        <main
-            className="mx-auto flex h-full w-full max-w-7xl flex-1 flex-col gap-4 rounded-xl"
-            {...props}
-        >
+        <main className="relative flex min-h-screen flex-col" {...props}>
             {children}
         </main>
     );

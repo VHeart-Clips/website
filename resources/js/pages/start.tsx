@@ -1,4 +1,3 @@
-import SpaceBackground from '@/components/spacebackground';
 import { Card, CardContent } from '@/components/ui/card';
 import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { start } from '@/routes';
@@ -11,7 +10,9 @@ import {
     BestRatedSlider,
     type BestRatedItem,
 } from '@/components/bestRatedSlider';
+import { ClipPreview } from '@/components/clip-preview';
 import { ClipModal } from '@/components/clipModal';
+import SpaceBackground from '@/components/spacebackground';
 
 export default function Start() {
     const { t } = useTranslation('homepage');
@@ -26,38 +27,53 @@ export default function Start() {
         {
             id: 1,
             clipSlug: 'StupidProtectiveScorpionTheRinger-rgF-JZJ3vPS2KKin',
-            title: 'Clip 1',
+            title: 'Gutes Angebot!',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2025/12/07/16/31/carnation-10000623_1280.jpg',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/StupidProtectiveScorpionTheRinger-rgF-JZJ3vPS2KKin/be6e56b1-76fe-4953-a68a-f3011d82db7b/preview.jpg',
+            likes: 135,
+            lengthSeconds: 27,
+            broadcasterName: 'JaxOffTV',
         },
         {
             id: 2,
             clipSlug: 'SparklingCrunchyChoughNerfBlueBlaster-0eTNXxe7OLJpnyj_',
-            title: 'Clip 2',
+            title: 'HAHA GOT EM!',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2017/05/08/13/15/spring-bird-2295434_1280.jpg',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/SparklingCrunchyChoughNerfBlueBlaster-0eTNXxe7OLJpnyj_/902004d7-09bd-4512-89b7-f84fa7b09b3a/preview.jpg',
+            likes: 186,
+            lengthSeconds: 60,
+            broadcasterName: 'JaxOffTV',
         },
         {
             id: 3,
             clipSlug: 'CourageousLazyBubbleteaStoneLightning-L4YWt7IyzpGD7wt7',
-            title: 'Clip 3',
+            title: 'Es gibt wirklich nichts besseres!',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2024/03/09/06/52/flowers-8622033_1280.jpg',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/CourageousLazyBubbleteaStoneLightning-L4YWt7IyzpGD7wt7/cb751787-75e4-430d-9375-99157987d20b/preview.jpg',
+            likes: 174,
+            lengthSeconds: 6,
+            broadcasterName: 'JaxOffTV',
         },
         {
             id: 4,
             clipSlug: 'TacitImpartialWoodpeckerPRChase-NL8ZBxuZsia9_pLl',
-            title: 'Clip 4',
+            title: 'Traumfrau right here!',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2021/08/17/10/23/flowers-6552611_1280.jpg',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/TacitImpartialWoodpeckerPRChase-NL8ZBxuZsia9_pLl/ac1d090c-bbce-4b5f-b0a9-fb5922fb4cca/preview.jpg',
+            likes: 250,
+            lengthSeconds: 10,
+            broadcasterName: 'JaxOffTV',
         },
         {
             id: 5,
             clipSlug:
                 'TemperedHedonisticStingrayCharlietheUnicorn-hpb9Rc1YOv-7xNQy',
-            title: 'Clip 5',
+            title: 'ICH LIEBE FRAUEN MIT SCHWANZ',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2023/03/09/07/04/bird-7839371_960_720.jpg',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/TemperedHedonisticStingrayCharlietheUnicorn-hpb9Rc1YOv-7xNQy/bf267526-2ce6-4d6d-a037-0cfda6d1d315/preview.jpg',
+            likes: 999,
+            lengthSeconds: 7,
+            broadcasterName: 'JaxOffTV',
         },
     ];
 
@@ -96,63 +112,83 @@ export default function Start() {
     const discover_items: BestRatedItem[] = [
         {
             id: 1,
-            title: 'BENIS CLIP',
+            title: 'Warum glaubt ihr mir das nicht..',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2014/10/26/14/36/light-bulb-503881_1280.jpg',
-            clipSlug: 'StupidProtectiveScorpionTheRinger-rgF-JZJ3vPS2KKin',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/PunchyPeppyGoatDoritosChip-bP9qRVBqcGZwRgvS/8a763c18-18ab-4e5c-8e03-f9981b33c9e6/preview.jpg',
+            clipSlug: 'PunchyPeppyGoatDoritosChip-bP9qRVBqcGZwRgvS',
+            likes: 93,
+            lengthSeconds: 54,
+            broadcasterName: 'YuraYami',
         },
         {
             id: 2,
-            title: 'TAWI HASST UNS',
+            title: 'doch nicht vain aber vain >:c',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2018/01/16/07/42/time-3085468_1280.jpg',
-            clipSlug: 'SparklingCrunchyChoughNerfBlueBlaster-0eTNXxe7OLJpnyj_',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/LazyWittyPicklesBleedPurple-jbBQkK6TuheD79NF/4bfa3bf8-c02f-4ac6-b26f-b77ed00ba348/preview.jpg',
+            clipSlug: 'LazyWittyPicklesBleedPurple-jbBQkK6TuheD79NF',
+            likes: 82,
+            lengthSeconds: 30,
+            broadcasterName: 'SleepyTawi',
         },
         {
             id: 3,
-            title: 'SPEIDYS VERZWEIFLUNG',
+            title: 'LKW müde LKW Schlafen',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2021/11/30/13/21/vintage-camera-6835351_1280.jpg',
-            clipSlug: 'CourageousLazyBubbleteaStoneLightning-L4YWt7IyzpGD7wt7',
+                'https://static-cdn.jtvnw.net/twitch-clips/PnsL2BswvFhK4SXteh-rmg/AT-cm%7CPnsL2BswvFhK4SXteh-rmg-preview-260x147.jpg',
+            clipSlug: 'ObliqueBeautifulCookieKappaRoss-GzC8WErhJe16H6ua',
+            likes: 56,
+            lengthSeconds: 29,
+            broadcasterName: 'Speidy674',
         },
         {
             id: 4,
-            title: 'KATTY AM ENDE',
+            title: 'Yura macht komische geräusche beim Ersschrecken',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2015/10/22/17/28/stack-of-books-1001655_1280.jpg',
-            clipSlug: 'TacitImpartialWoodpeckerPRChase-NL8ZBxuZsia9_pLl',
+                'https://static-cdn.jtvnw.net/twitch-clips/m_eyKBEReJdVFHTRnYxWVQ/AT-cm%7Cm_eyKBEReJdVFHTRnYxWVQ-preview-260x147.jpg',
+            clipSlug: 'IntelligentExpensiveAppleKappaWealth-ERF4l1UUdNGdjFZV',
+            likes: 219,
+            lengthSeconds: 18,
+            broadcasterName: 'YuraYami',
         },
         {
             id: 5,
-            title: 'CHAOS ABSOLUT BEWEGBILD',
+            title: 'Warum bin ich tot?',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2018/01/18/20/43/literature-3091212_1280.jpg',
-            clipSlug:
-                'TemperedHedonisticStingrayCharlietheUnicorn-hpb9Rc1YOv-7xNQy',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/FlirtyBillowingBaguetteFeelsBadMan-bxCYVssRKWe6wDYy/27663e35-b3a4-4856-9e7e-92c54d65b0f2/preview.jpg',
+            clipSlug: 'FlirtyBillowingBaguetteFeelsBadMan-bxCYVssRKWe6wDYy',
+            likes: 41,
+            lengthSeconds: 40,
+            broadcasterName: 'YuraYami',
         },
         {
             id: 6,
-            title: 'Justin hält es nicht mehr aus',
+            title: 'SkillOffTV OwO',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2015/07/17/22/42/library-849797_1280.jpg',
-            clipSlug:
-                'TemperedHedonisticStingrayCharlietheUnicorn-hpb9Rc1YOv-7xNQy',
+                'https://static-cdn.jtvnw.net/twitch-clips-thumbnails-prod/InexpensiveSaltyLegWoofer-ZSa1SKMF7rrQqdLG/e0f73986-504a-4963-9119-22e41b1684f5/preview.jpg',
+            clipSlug: 'InexpensiveSaltyLegWoofer-ZSa1SKMF7rrQqdLG',
+            likes: 18,
+            lengthSeconds: 23,
+            broadcasterName: 'JaxOffTV',
         },
         {
             id: 7,
-            title: 'Meyn hat das Wort Component gehört',
+            title: 'Schaf aus dem Ofen?',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2022/03/06/10/23/books-7051311_1280.jpg',
-            clipSlug:
-                'TemperedHedonisticStingrayCharlietheUnicorn-hpb9Rc1YOv-7xNQy',
+                'https://static-cdn.jtvnw.net/twitch-clips/YliMyLUpVdjUqvKBb3MloQ/AT-cm%7CYliMyLUpVdjUqvKBb3MloQ-preview-260x147.jpg',
+            clipSlug: 'CoweringCuriousWoodcockStoneLightning-tSlV2NSq8oFvcyWh',
+            likes: 69,
+            lengthSeconds: 18,
+            broadcasterName: 'Speidy674',
         },
         {
             id: 8,
-            title: 'Mir fällt nix ein',
+            title: 'Der Kjekel hat keine Bremesen',
             thumbUrl:
-                'https://cdn.pixabay.com/photo/2016/01/27/04/32/books-1163695_1280.jpg',
-            clipSlug:
-                'TemperedHedonisticStingrayCharlietheUnicorn-hpb9Rc1YOv-7xNQy',
+                'https://static-cdn.jtvnw.net/twitch-clips/LPOsLW36_bX95H5QLzYXIQ/AT-cm%7CLPOsLW36_bX95H5QLzYXIQ-preview-260x147.jpg',
+            clipSlug: 'NiceMildPeanutRedCoat-bfr9tf3kflAvNhch',
+            likes: 61,
+            lengthSeconds: 22,
+            broadcasterName: 'Speidy674',
         },
     ];
 
@@ -160,9 +196,8 @@ export default function Start() {
         <AppHeaderLayout breadcrumbs={breadcrumbs}>
             <Head title={t('page_title')} />
             <SpaceBackground />
-
             <div className="relative z-10 mx-auto w-11/12 max-w-6xl py-5">
-                <Card className="rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-8 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:ring-0 dark:shadow-purple-900/30">
+                <Card className="rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-8 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent! dark:ring-0 dark:shadow-purple-900/30">
                     <CardContent>
                         <div className="flex flex-col gap-14">
                             <section>
@@ -170,7 +205,7 @@ export default function Start() {
                                     AKTUELLSTES YOUTUBE VIDEO
                                 </h2>
 
-                                <div className="mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-xl shadow-md dark:bg-gradient-to-b dark:from-white/10 dark:to-black/40 dark:ring-1 dark:ring-white/10">
+                                <div className="mx-auto aspect-video w-full max-w-4xl overflow-hidden rounded-xl dark:bg-linear-to-b dark:from-white/10 dark:to-black/40 dark:ring-1 dark:ring-white/10">
                                     <iframe
                                         src={`https://www.youtube.com/embed/${latestVideoId}`}
                                         title="Aktuellstes YouTube Video"
@@ -192,32 +227,34 @@ export default function Start() {
                                     EINGEREICHTE CLIPS
                                 </h2>
 
-                                <div className="grid grid-cols-2 gap-4 pb-10 md:grid-cols-4">
+                                <div className="grid grid-cols-2 gap-4 pb-0 md:grid-cols-4">
                                     {discover_items.map((it) => (
                                         <div
                                             key={it.id}
-                                            className="flex flex-col overflow-hidden rounded-md pb-10 transition-transform hover:scale-105"
+                                            className="overflow-hidden rounded-md transition-transform hover:scale-105"
                                         >
-                                            <button
-                                                type="button"
+                                            <ClipPreview
+                                                thumbUrl={it.thumbUrl}
+                                                title={it.title}
+                                                likes={it.likes}
+                                                lengthSeconds={it.lengthSeconds}
+                                                broadcasterName={
+                                                    it.broadcasterName
+                                                }
                                                 onClick={() => setOpenClip(it)}
-                                                aria-label={`Clip öffnen: ${it.title}`}
-                                                className="aspect-video h-full w-full overflow-hidden rounded-md bg-gray-400 shadow-md"
-                                            >
-                                                <img
-                                                    src={it.thumbUrl}
-                                                    alt={it.title}
-                                                    className="h-full w-full object-cover"
-                                                    loading="lazy"
-                                                />
-                                            </button>
-
-                                            <span className="mt-2 text-center text-sm">
-                                                {it.title}
-                                            </span>
+                                            />
                                         </div>
                                     ))}
                                 </div>
+                            </section>
+
+                            <section className="mt-0 flex justify-center pb-5">
+                                <button
+                                    type="button"
+                                    className="rounded-full bg-primary/85 px-6 py-2 text-sm font-medium text-white shadow-md transition hover:scale-105 hover:bg-primary active:scale-105"
+                                >
+                                    Mehr entdecken
+                                </button>
                             </section>
                         </div>
                     </CardContent>

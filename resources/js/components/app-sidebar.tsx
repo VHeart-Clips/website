@@ -8,20 +8,11 @@ import {
     SidebarMenuItem,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
-<<<<<<< HEAD
-import { about, dashboard, evaluateclips, start, team } from '@/routes';
-import submitclip from '@/routes/submitclip';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
-import AppLogo from './app-logo';
-=======
 import { about, team } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
->>>>>>> origin/master
 
 // Footer navigation item keys for translation lookup
 const footerNavItemKeys = [
@@ -46,24 +37,9 @@ export function AppSidebar({ className, children }: AppSidebarProps) {
     const { t } = useTranslation('navigation');
 
     return (
-<<<<<<< HEAD
-        <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={start()}>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
-=======
         <Sidebar collapsible="icon" variant="inset" className={className}>
             {/* Sidebar Header - receives custom content via children */}
             {children && <SidebarHeader>{children}</SidebarHeader>}
->>>>>>> origin/master
 
             {/* Main content area - empty for now, can be extended later */}
             <SidebarContent />
