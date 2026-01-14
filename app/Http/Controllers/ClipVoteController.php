@@ -24,7 +24,7 @@ class ClipVoteController extends Controller
                 /** @var Clip $clip */
                 $clip = Clip::whereDoesntHave('votes',function(Builder $query) use ($user) {
                     return $query->where('user_id',$user->id);
-                })->whereNot('broadcaster_id',operator: $user->id)
+                })->whereNot('broadcaster_id',$user->id)
                 ->select(['id','twitch_id','title'])
                 ->withCount(['votes as public_votes' => function (Builder $query) {
                     $query->where('type', ClipVoteType::Public);
