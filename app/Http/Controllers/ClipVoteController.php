@@ -62,12 +62,4 @@ class ClipVoteController extends Controller
 
         return $this->create($request)->with('voted_ok',true);
     }
-
-    /**
-     * Remove the resource from storage.
-     */
-    public function destroy(): never
-    {
-        abort(404);
-    }
 }
