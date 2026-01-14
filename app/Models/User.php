@@ -131,7 +131,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function hasVerifiedEmail(): bool
     {
-        if (is_null($this->email_verified_at)) {
+        if (is_null($this->email)) {
             // since emails are optional we have to classify null as verified
             return true;
         }

@@ -32,7 +32,7 @@ test('profile information can be updated', function () {
 });
 
 test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->withVerifiedEmail()->create();
 
     $response = $this
         ->actingAs($user)

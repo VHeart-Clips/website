@@ -1,4 +1,5 @@
 FROM dunglas/frankenphp:php8.5-alpine AS base
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 ENV TZ=Europe/Berlin
@@ -14,8 +15,12 @@ RUN install-php-extensions \
     redis \
     zip
 
+RUN apk add --no-cache \
+    supervisor \
+    && rm -rf /var/cache/apk/*
+
 # Dependencies
-FROM base AS deps
+FROM base AS build
 
 COPY composer.json composer.lock ./
 
@@ -26,30 +31,17 @@ RUN composer install \
     --no-autoloader \
     --no-scripts
 
-FROM base AS runner
-
-LABEL maintainer="VHeart IT Team" version="1.0" description="VHeart Website"
-
-ENV APP_ENV=production
-
-# Install Runtime Dependencies
-RUN apk add --no-cache \
-    supervisor \
-    ffmpeg \
-    bash \
-    curl \
-    && rm -rf /var/cache/apk/*
-
-# Copy dependencies from the build stage
-COPY --from=deps /app/vendor /app/vendor
-COPY --from=deps /app/composer.json /app/composer.lock /app/
-COPY ./public/build /app/public/build
-
-# Copy Application
 COPY . /app
 
 # Generate Optimized Autoloader
-RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+RUN composer dump-autoload --optimize --no-dev --classmap-authoritative && rm /usr/bin/composer
+
+FROM base AS runner
+
+LABEL maintainer="VHeart IT Team" description="VHeart Website"
+
+ENV APP_ENV=production
+COPY --from=build /app /app
 
 # Setup Permissions
 RUN mkdir -p /var/log/supervisor storage/framework/sessions storage/framework/views storage/framework/cache \

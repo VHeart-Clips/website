@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\Notification;
 test('sends verification notification', function () {
     Notification::fake();
 
-    $user = User::factory()->create([
-        'email_verified_at' => null,
-    ]);
+    $user = User::factory()->withUnverifiedEmail()->create();
 
     $this->actingAs($user)
         ->post(route('verification.send'))
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('home'));
 
     Notification::assertSentTo($user, VerifyEmail::class);
 });
@@ -21,9 +19,7 @@ test('sends verification notification', function () {
 test('does not send verification notification if email is verified', function () {
     Notification::fake();
 
-    $user = User::factory()->create([
-        'email_verified_at' => now(),
-    ]);
+    $user = User::factory()->withVerifiedEmail()->create();
 
     $this->actingAs($user)
         ->post(route('verification.send'))
