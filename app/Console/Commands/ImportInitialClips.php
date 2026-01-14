@@ -8,21 +8,21 @@ use App\Services\Twitch\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
 use Illuminate\Console\Command;
 
-class ImportFolge1 extends Command
+class ImportInitialClips extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'app:import-folge1';
+    protected $signature = 'app:import-initial-clips';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Import Clips of episode 1';
+    protected $description = 'Import Initinal Clips';
 
 
     private $clips = [
