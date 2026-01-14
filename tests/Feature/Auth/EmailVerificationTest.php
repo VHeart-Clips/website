@@ -51,7 +51,7 @@ test('email is not verified with invalid user id', function () {
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
         now()->addMinutes(60),
-        ['id' => 123, 'hash' => sha1($user->email)]
+        ['id' => $user->id + 1, 'hash' => sha1($user->email)]
     );
 
     $this->actingAs($user)->get($verificationUrl);
