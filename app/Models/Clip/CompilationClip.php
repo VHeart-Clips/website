@@ -25,23 +25,22 @@ class CompilationClip extends Pivot
         return [
             'claimed_by',
             'status',
-            'removed',
-            'removed',
+            'claimed_at',
+            'removed_at',
         ];
     }
 
     public function claimer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'claimed_by')
-            ->withDefault([
-                'name' => 'Unknown',
-            ]);
+        return $this->belongsTo(User::class, 'claimed_by');
     }
 
     protected function casts(): array
     {
         return [
             'status' => CompilationClipStatus::class,
+            'claimed_at' => 'datetime',
+            'removed_at' => 'datetime',
         ];
     }
 }

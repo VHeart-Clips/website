@@ -44,6 +44,8 @@ class Compilation extends Model
         return [
             'status' => CompilationStatus::class,
             'type' => CompilationType::class,
+            'claimed_at' => 'datetime',
+            'removed_at' => 'datetime',
         ];
     }
 }

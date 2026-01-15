@@ -35,20 +35,20 @@ return new class extends Migration
 
         Schema::create('clip_compilation', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('clip_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('clip_id')->constrained();
             $table->foreignId('compilation_id')->constrained()->cascadeOnDelete();
 
             // Cutter that claimed this Clip in the compilation, only the current claimer can change the status
-            $table->unsignedBigInteger('claimed_by')->nullable();
-            $table->foreign('claimed_by')->references('id')->on('users');
+            $table->foreignId('claimed_by')->nullable()->references('id')->on('users');
+            $table->timestamp('claimed_at')->nullable();
+
 
             $table->unsignedInteger('status')->index(); // CompilationClipStatus
 
             // This Clip has been removed after publishing the video, we still need to keep track of it.
-            $table->boolean('removed')->default(false);
+            $table->timestamp('removed_at')->nullable();
 
             $table->timestamps();
-
             $table->unique(['compilation_id', 'clip_id']);
             $table->index(['compilation_id', 'clip_id']);
         });
