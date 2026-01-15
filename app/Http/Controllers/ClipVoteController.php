@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\ClipVoteType;
 use App\Enums\Permission;
 use App\Models\Clip;
+use App\Models\Vote;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,10 +19,19 @@ class ClipVoteController extends Controller
      */
     public function create(Request $request)
     {
-        return Inertia::render('evaluateclips',[
-            'clip' => Inertia::lazy(function () use ($request) {
-                $user = $request->user();
+        $user = $request->user();
 
+        return Inertia::render('evaluateclips',[
+            'history' => Inertia::lazy(function () use ($user) {
+                $lastVotes = Vote::where('user_id', $user->id)->limit(5)
+                ->with(['clip' => function(BelongsTo $query) {
+                    $query->select(['id','twitch_id','title']);
+                }])
+                ->select(['id','clip_id','voted'])
+                ->orderBy('id','desc')->get();
+                return $lastVotes;
+            }),
+            'clip' => Inertia::lazy(function () use ($user) {
                 /** @var Clip $clip */
                 $clip = Clip::whereDoesntHave('votes',function(Builder $query) use ($user) {
                     return $query->where('user_id',$user->id);

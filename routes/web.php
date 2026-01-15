@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\ClipVoteController;
 use App\Http\Controllers\TeamController;
@@ -17,6 +19,7 @@ Route::get('/', function () {
         'partnerIcon' => null,
         'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
     ];
+
     return Inertia::render('welcome', $settings);
 })->name('home');
 
@@ -24,7 +27,7 @@ Route::get('/imprint', function () {
     $locale = app()->getLocale();
     $view = "legal.$locale.imprint";
 
-    if (!view()->exists($view)) {
+    if (! view()->exists($view)) {
         abort(404);
     }
 
@@ -35,7 +38,7 @@ Route::get('/privacy', function () {
     $locale = app()->getLocale();
     $view = "legal.$locale.privacy";
 
-    if (!view()->exists($view)) {
+    if (! view()->exists($view)) {
         abort(404);
     }
 
@@ -51,9 +54,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/submit', [ClipSubmitController::class, 'store'])->name('submitclip.store');
 
-    Route::get('/vote', [ClipVoteController::class,'create'])->name('vote');
+    Route::get('/vote', [ClipVoteController::class, 'create'])->name('vote');
 
-    Route::post('/vote', [ClipVoteController::class,'store'])->middleware('throttle:10,1')->name('vote.submit');
+    Route::post('/vote', [ClipVoteController::class, 'store'])->middleware('throttle:10,1')->name('vote.submit');
 
     Route::get('/team', TeamController::class)->name('team');
 
@@ -69,7 +72,7 @@ Route::get('/auth/twitch', function () {
 Route::get('/auth/twitch/callback', function () {
     try {
         $twitchUser = Socialite::driver('twitch')->user();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         return to_route('login')->with('error', __('auth.oauth_error_try_again'));
     }
 
@@ -93,10 +96,10 @@ Route::get('/auth/twitch/callback', function () {
     return to_route('dashboard');
 })->name('auth.callback');
 
-Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
+Route::get('/locales.json', App\Actions\Locales::class)->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
-    if (!array_key_exists($lang, Config::get('app.locales'))) {
+    if (! array_key_exists($lang, Config::get('app.locales'))) {
         abort(422); // we understand it but its invalid
     }
 
@@ -108,4 +111,4 @@ Route::get('/locales/{lang}', static function (Request $request, $lang) {
     ], 200);
 });
 
-require __DIR__ . '/settings.php';
+require __DIR__.'/settings.php';

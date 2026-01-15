@@ -22,6 +22,7 @@ type Item = {
 
 type PageProps = {
     clip: Clip;
+    history: Vote[];
 };
 
 type Clip = {
@@ -29,6 +30,13 @@ type Clip = {
     twitch_id: string;
     title: string;
     public_votes: number;
+};
+
+type Vote = {
+    id: number;
+    clip_id: number;
+    voted: boolean;
+    clip: Clip;
 };
 
 export default function EvaluateClips() {
@@ -50,9 +58,18 @@ export default function EvaluateClips() {
     const itemRefs = useRef<(HTMLElement | null)[]>([]);
 
     const getClip = () => {
-        console.log('getClip');
-        router.reload({ only: ['clip'] });
+        router.reload({ only: ['clip', 'history'] });
     };
+
+    if (props.history) {
+        props.history.forEach((vote) => {
+            items.push({
+                id: vote.clip.id,
+                clipSlug: vote.clip.twitch_id,
+                title: vote.clip.title,
+            } as Item);
+        });
+    }
 
     if (props.clip) {
         items.push({
@@ -61,6 +78,8 @@ export default function EvaluateClips() {
             title: props.clip.title,
         } as Item);
     }
+
+    console.log(props);
 
     function toggleLike(id: number) {
         setLiked((prev) => {
