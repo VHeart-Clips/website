@@ -6,6 +6,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Permission;
+use App\Models\Traits\Reportable;
 use App\Policies\UserPolicy;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
@@ -27,7 +28,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes;
+    use HasFactory, Notifiable, Reportable, SoftDeletes, TwoFactorAuthenticatable;
 
     public $incrementing = false;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Models\Clip\Tag;
+use App\Models\Traits\Reportable;
 use App\Policies\ClipPolicy;
 use Database\Factories\ClipFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -17,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Clip extends Model
 {
     /** @use HasFactory<ClipFactory> */
-    use HasFactory;
+    use HasFactory, Reportable;
 
     public function broadcaster(): BelongsTo
     {
