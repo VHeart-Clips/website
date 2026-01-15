@@ -1,39 +1,33 @@
-import AppLayout from '@/layouts/app-layout';
-import { about } from '@/routes';
-import type { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import ClipProcessCard from '@/components/aboutcard/clip-process-card';
+import { AboutDonationCard as DonationCard } from '@/components/aboutcard/donation-card';
+import HeroCard from '@/components/aboutcard/hero-card';
+import SpaceBackground from '@/components/spacebackground';
 import { useTranslation } from 'react-i18next';
-import Logo from '/resources/images/svg/logo-full-title.svg';
 
-export default function About() {
+export default function About({
+    donationUrl,
+    partnerIcon,
+}: {
+    donationUrl?: string;
+    partnerIcon?: string;
+}) {
     const { t } = useTranslation('about');
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: t('breadcrumb'),
-            href: about().url,
-        },
-    ];
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={t('page_title')} />
+            <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
+                <SpaceBackground />
 
-            <div className="container mx-auto max-w-2xl px-4 py-12 sm:px-6">
-                <div className="mb-8 flex justify-center">
-                    <img src={Logo} alt="Logo" className="h-32 w-auto" />
-                </div>
-
-                <div className="text-center">
-                    <p className="mb-6 text-lg text-muted-foreground">
-                        {t('hero.subtitle')}
-                    </p>
-
-                    <div className="space-y-4 text-foreground">
-                        <p>{t('hero.description')}</p>
+                <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
+                    <div className="w-full max-w-[1200px] space-y-8">
+                        <HeroCard t={t} />
+                        <DonationCard
+                            t={t}
+                            donationUrl={donationUrl}
+                            partnerIcon={partnerIcon}
+                        />
+                        <ClipProcessCard t={t} />
                     </div>
-                </div>
+                </main>
             </div>
-        </AppLayout>
     );
 }
