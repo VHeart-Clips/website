@@ -12,7 +12,7 @@ use Laravel\Socialite\Socialite;
 
 Route::get('/', function () {
     $settings = [
-        'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+        'donationUrl' => 'https://secure.betterplace.org/de/donate/platform/fundraising-events/55712',
         'partnerIcon' => null,
         'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
     ];
@@ -58,7 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/about-us', function () {
         $settings = [
-            'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+            'donationUrl' => 'https://secure.betterplace.org/de/donate/platform/fundraising-events/55712',
             'partnerIcon' => null,
         ];
         return Inertia::render('about', $settings);

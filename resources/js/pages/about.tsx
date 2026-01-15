@@ -3,6 +3,7 @@ import { AboutDonationCard as DonationCard } from '@/components/aboutcard/donati
 import HeroCard from '@/components/aboutcard/hero-card';
 import SpaceBackground from '@/components/spacebackground';
 import { useTranslation } from 'react-i18next';
+import { BetterplaceDonationCard } from '@/components/aboutcard/betterplace-donation-card';
 
 export default function About({
     donationUrl,
@@ -17,13 +18,19 @@ export default function About({
             <div className="relative flex min-h-screen flex-col overflow-hidden bg-blue-50 dark:bg-[#0a0a1a]">
                 <SpaceBackground />
 
-                <main className="relative z-10 flex flex-1 items-center justify-center px-4 py-12">
+                <main className="relative z-10 flex flex-1 items-center justify-center pwepx-4 py-12">
                     <div className="w-full max-w-[1200px] space-y-8">
                         <HeroCard t={t} />
                         <DonationCard
                             t={t}
                             donationUrl={donationUrl}
                             partnerIcon={partnerIcon}
+                        />
+                        <BetterplaceDonationCard
+                            eventId={55712}
+                            maxVisibleDonations={8}
+                            refreshInterval={300000}
+                            projectId={0}
                         />
                         <ClipProcessCard t={t} />
                     </div>
