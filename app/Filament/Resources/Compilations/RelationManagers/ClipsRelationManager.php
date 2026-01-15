@@ -252,7 +252,7 @@ class ClipsRelationManager extends RelationManager
                         ->action(function (Clip $clip, TwitchService $twitchService, Component $livewire) {
                             $broadCaster = $clip->broadcaster;
 
-                            if (! $broadCaster) {
+                            if (! $broadCaster || empty($broadCaster->twitch_refresh_token) || $broadCaster->clip_permission === false) {
                                 Notification::make()
                                     ->title(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_title'))
                                     ->body(__('admin/resources/compilations.relation_managers.clips.notifications.download_error_broadcaster'))
