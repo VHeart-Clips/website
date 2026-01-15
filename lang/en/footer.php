@@ -5,6 +5,9 @@ return [
     'imprint.footer' => 'Imprint',
     'terms.footer' => 'Terms',
 
+    'team' => 'Our team',
+    'about' => 'About us',
+
     'all_rights_reserved' => 'All rights reserved.',
     'footer_navigation' => 'Footer navigation',
 
