@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Enums\ClipVoteType;
 use App\Models\Clip;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -21,8 +24,8 @@ class VoteFactory extends Factory
         return [
             'clip_id' => Clip::factory(),
             'user_id' => User::factory(),
-            'type' => 0,
-            'voted' => false,
+            'type' => ClipVoteType::Public,
+            'voted' => fake()->boolean(),
         ];
     }
 }
