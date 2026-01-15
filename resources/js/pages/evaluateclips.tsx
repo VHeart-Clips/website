@@ -176,7 +176,7 @@ export default function EvaluateClips() {
                                         <div className="relative flex-1 overflow-hidden rounded-xl">
                                             {isActive ? (
                                                 <iframe
-                                                    src={`https://clips.twitch.tv/embed?clip=${it.clipSlug}&parent=localhost&autoplay=false&muted=false`}
+                                                    src={`https://clips.twitch.tv/embed?clip=${it.clipSlug}&parent=${document.location.hostname}&autoplay=false&muted=false`}
                                                     className="absolute inset-0 h-full w-full"
                                                     allow="fullscreen"
                                                     allowFullScreen
