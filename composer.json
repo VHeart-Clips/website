@@ -3,8 +3,11 @@
     "name": "laravel/react-starter-kit",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
+    "license": "AGPL-3.0-or-later",
     "require": {
         "php": "^8.2",
         "filament/filament": "^4.0",
@@ -73,8 +76,7 @@
         "post-update-cmd": [
             "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
-            "@php artisan ide-helper:generate",
-            "@php artisan ide-helper:meta"
+            "@helper"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -86,6 +88,10 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "helper": [
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta"
         ],
         "lint": [
             "pint",

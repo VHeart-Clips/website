@@ -57,8 +57,6 @@ export default function Welcome({
                     <ClipProcessCard t={t} />
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 }

@@ -11,10 +11,9 @@ import {
 import { about, team } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Folder } from 'lucide-react';
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-// Footer navigation item keys for translation lookup
 const footerNavItemKeys = [
     {
         key: 'team',
@@ -36,8 +35,40 @@ interface AppSidebarProps {
 export function AppSidebar({ className, children }: AppSidebarProps) {
     const { t } = useTranslation('navigation');
 
+    useEffect(() => {
+        const updateSidebarPadding = () => {
+            const footerHeight = getComputedStyle(document.documentElement)
+                .getPropertyValue('--footer-height')
+                .trim();
+
+            if (footerHeight) {
+                const sidebar = document.querySelector('[data-sidebar]');
+                if (sidebar) {
+                    (sidebar as HTMLElement).style.paddingBottom = footerHeight;
+                }
+            }
+        };
+
+        updateSidebarPadding();
+        const interval = setInterval(updateSidebarPadding, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
-        <Sidebar collapsible="icon" variant="inset" className={className}>
+        <Sidebar
+            collapsible="icon"
+            variant="inset"
+            className={className}
+            style={{
+                zIndex: 50,
+                position: 'fixed',
+                bottom: 'var(--footer-height, 0px)',
+                top: 0,
+                left: 0,
+            }}
+            data-sidebar="true"
+        >
             {/* Sidebar Header - receives custom content via children */}
             {children && <SidebarHeader>{children}</SidebarHeader>}
 

@@ -17,3 +17,7 @@ If you want to help developing VHeart, check out the following resources:
 * [Development Setup](./docs/development/setup.md)
 * [Testing](./docs/development/testing.md)
 * [Laravel Resources](./docs/development/laravel.md)
+
+## License
+
+This project is licensed under the [GNU Affero General Public License v3.0](./LICENSE).

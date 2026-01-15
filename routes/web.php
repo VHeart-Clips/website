@@ -57,7 +57,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/team', TeamController::class)->name('team');
 
     Route::get('/about-us', function () {
-        return Inertia::render('about');
+        $settings = [
+            'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+            'partnerIcon' => null,
+        ];
+        return Inertia::render('about', $settings);
     })->name('about');
 });
 

@@ -191,7 +191,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=master,enable=${{ github.ref == 'refs/heads/master' }}
+            type=ref,event=branch
             type=semver,pattern={{version}},enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
 
