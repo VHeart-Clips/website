@@ -88,10 +88,11 @@ class ClipsRelationManager extends RelationManager
                     ->label('admin/resources/compilations.relation_managers.clips.columns.claimer')
                     ->translateLabel(),
 
-                SelectColumn::make('status')
+                SelectColumn::make('pivot.status')
                     ->label('admin/resources/compilations.relation_managers.clips.columns.status')
                     ->translateLabel()
                     ->options(CompilationClipStatus::class)
+                    ->native(false)
                     ->default(CompilationClipStatus::Pending)
                     ->disabled(function (Clip $record): bool {
                         return $record->pivot->claimed_by !== auth()->id();
