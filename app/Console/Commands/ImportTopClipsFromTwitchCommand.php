@@ -10,7 +10,7 @@ use App\Services\Twitch\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
 use Illuminate\Console\Command;
 
-class ImportTopClipsFromTwitch extends Command
+class ImportTopClipsFromTwitchCommand extends Command
 {
     public const GameCategory = 509658;
 
