@@ -7,7 +7,7 @@ import SpaceBackground from '@/components/spacebackground';
 import { Link } from '@inertiajs/react';
 import { LogIn, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { login } from '@/routes';
+import { BetterplaceDonationCard } from '@/components/aboutcard/betterplace-donation-card';
 
 export default function Welcome({
     donationUrl,
@@ -46,6 +46,12 @@ export default function Welcome({
                         t={t}
                         donationUrl={donationUrl}
                         partnerIcon={partnerIcon}
+                    />
+                    <BetterplaceDonationCard
+                        eventId={55712}
+                        maxVisibleDonations={8}
+                        refreshInterval={300000}
+                        projectId={0}
                     />
                     <VideoCard t={t} youtubeUrl={youtubeUrl} />
                     <ClipProcessCard t={t} />
