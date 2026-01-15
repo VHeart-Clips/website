@@ -7,6 +7,7 @@ use App\Models\Clip;
 use App\Models\Game;
 use App\Models\Role;
 use App\Models\User;
+use App\Providers\Socialite\TwitchSocialiteProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
@@ -38,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(static function (SocialiteWasCalled $event) {
-            $event->extendSocialite('twitch', TwitchProvider::class);
+            $event->extendSocialite('twitch', TwitchSocialiteProvider::class);
         });
 
         $this->configureGates();
