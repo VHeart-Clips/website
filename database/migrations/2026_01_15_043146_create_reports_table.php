@@ -37,7 +37,8 @@ return new class extends Migration
             $table->timestamp('resolved_at')->nullable();
             $table->softDeletes();
             $table->timestamps();
-            $table->unique(['user_id', 'reportable_id', 'reportable_type']);
+
+            $table->index(['reportable_id', 'reportable_type']);
         });
     }
 };
