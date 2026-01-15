@@ -14,7 +14,7 @@ Route::get('/', function () {
     $settings = [
         'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
         'partnerIcon' => null,
-        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
+        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?list=UUUefW5IjMaQS_ZFaG4VZi9A',
     ];
     return Inertia::render('welcome', $settings);
 })->name('home');
