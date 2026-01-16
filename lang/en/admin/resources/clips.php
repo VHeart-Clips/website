@@ -43,6 +43,7 @@ return [
         'title' => 'Edit :label by :broadcaster',
     ],
     'actions' => [
+        'download' => 'Open Downloadable Clip',
         'view_on_twitch' => 'View On Twitch',
     ],
 ];
