@@ -23,6 +23,7 @@ class CompilationClip extends Pivot
     public static function getPivotColumns(): array
     {
         return [
+            'id',
             'claimed_by',
             'status',
             'claimed_at',
