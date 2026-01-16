@@ -180,7 +180,8 @@ class ClipsRelationManager extends RelationManager
                     ->multiple()
                     ->label('admin/resources/compilations.relation_managers.clips.filters.game')
                     ->translateLabel(),
-                SelectFilter::make('status')
+
+                SelectFilter::make('pivot.status')
                     ->label('admin/resources/compilations.relation_managers.clips.filters.status')
                     ->translateLabel()
                     ->multiple()
