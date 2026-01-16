@@ -140,6 +140,7 @@ return [
         Barryvdh\Debugbar\LaravelDebugbar::class,
         Whitecube\LaravelCookieConsent\Consent::class,
         'cookie.consent',
+        Filament\FilamentManager::class,
     ],
 
     /*
