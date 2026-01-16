@@ -12,9 +12,9 @@ use Laravel\Socialite\Socialite;
 
 Route::get('/', function () {
     $settings = [
-        'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+        'donationUrl' => 'https://www.betterplace.org/de/fundraising-events/55712-vheart-fuerdiesuessmaeuse',
         'partnerIcon' => null,
-        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
+        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?list=UUUefW5IjMaQS_ZFaG4VZi9A',
     ];
     return Inertia::render('welcome', $settings);
 })->name('home');
@@ -57,7 +57,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/team', TeamController::class)->name('team');
 
     Route::get('/about-us', function () {
-        return Inertia::render('about');
+        $settings = [
+            'donationUrl' => 'https://www.betterplace.org/de/fundraising-events/55712-vheart-fuerdiesuessmaeuse',
+            'partnerIcon' => null,
+        ];
+        return Inertia::render('about', $settings);
     })->name('about');
 });
 
