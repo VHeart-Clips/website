@@ -178,12 +178,15 @@ class ClipsRelationManager extends RelationManager
                     ->preload()
                     ->multiple()
                     ->label('admin/resources/compilations.relation_managers.clips.filters.game')
+                    ->columnSpanFull()
                     ->translateLabel(),
 
+                // TODO: either remove this or check why it just doesnt want to work, needs more attention
                 SelectFilter::make('pivot.status')
                     ->label('admin/resources/compilations.relation_managers.clips.filters.status')
                     ->translateLabel()
                     ->multiple()
+                    ->hidden()
                     ->options(CompilationClipStatus::class),
             ])
             ->filtersFormColumns(2)
