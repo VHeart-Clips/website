@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 // pivot data, this is usually accessible via $model->pivot->stuff()
 class CompilationClip extends Pivot
 {
+    public $incrementing = true;
+
     /**
      * Get the list of columns for this pivot
      *
