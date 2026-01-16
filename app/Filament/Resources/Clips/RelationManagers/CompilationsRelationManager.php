@@ -39,7 +39,6 @@ class CompilationsRelationManager extends RelationManager
                     ->label('admin/resources/compilations.relation_managers.clips.columns.claimer')
                     ->translateLabel(),
 
-
                 TextColumn::make('pivot.status')
                     ->label('admin/resources/compilations.relation_managers.clips.columns.status')
                     ->translateLabel()
