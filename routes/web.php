@@ -88,6 +88,9 @@ Route::get('/auth/twitch/callback', function () {
     session()?->regenerate();
     Auth::login($user);
     session()->put('twitch_access_token', $twitchUser->token);
+    if ($user->wasRecentlyCreated) {
+        session()->flash('show_twitch_permissions_prompt', true);
+    }
 
     return to_route('dashboard');
 })->name('auth.callback');

@@ -5,6 +5,7 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import TwitchPermissionsBanner from '@/components/twitch-permissions-banner';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
@@ -64,8 +65,10 @@ export function AppTopbar() {
     };
 
     return (
-        <header className="sticky top-0 z-50 w-full px-2 py-2">
-            <div className="flex h-14 items-center gap-4 px-4 rounded-xl bg-background shadow-xl">
+        <div className="sticky top-0 z-50 w-full">
+            <TwitchPermissionsBanner />
+            <header className="w-full px-2 py-2">
+                <div className="flex h-14 items-center gap-4 rounded-xl bg-background px-4 shadow-xl">
                 {/* Logo */}
                 <div className="flex w-auto md:w-[calc(var(--sidebar-width)-3.5rem)] shrink-0 items-center">
                     <Link
@@ -149,7 +152,8 @@ export function AppTopbar() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-            </div>
-        </header>
+                </div>
+            </header>
+        </div>
     );
 }
