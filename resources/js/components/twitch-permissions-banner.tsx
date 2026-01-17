@@ -7,6 +7,7 @@ import { InfoIcon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AppBanner from '@/components/app-banner';
+import { edit as editPermissions } from '@/routes/permissions';
 
 export default function TwitchPermissionsBanner() {
     const { t } = useTranslation('twitch');
@@ -25,7 +26,10 @@ export default function TwitchPermissionsBanner() {
                             <AlertTitle className="text-white">{t('permissions_prompt.title')}</AlertTitle>
                             <AlertDescription className="text-white/90">
                                 <p>{t('permissions_prompt.description')}</p>
-                                <TextLink href="/settings/profile" className="mt-1 text-white underline decoration-white/60">
+                                <TextLink
+                                    href={editPermissions().url}
+                                    className="mt-1 text-white underline decoration-white/60"
+                                >
                                     {t('permissions_prompt.settings_link')}
                                 </TextLink>
                             </AlertDescription>
