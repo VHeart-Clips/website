@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Socialite\Socialite;
+use Illuminate\Support\Facades\Date;
 
 Route::get('/', function () {
     $settings = [
@@ -76,6 +77,13 @@ Route::get('/auth/twitch/callback', function () {
         return to_route('login')->with('error', __('auth.oauth_error_try_again'));
     }
 
+    $userCreatedAt = Date::parse($twitchUser->user['created_at']);
+
+    if($userCreatedAt->addDays(config('auth.required_account_age'))->isFuture())
+    {
+        return to_route('login')->withErrors(['login' => __('auth.account_created_too_early')]);
+    }
+
     $user = User::updateOrCreate([
         'id' => $twitchUser->getId(),
     ],
@@ -86,7 +94,7 @@ Route::get('/auth/twitch/callback', function () {
         ]);
 
     if ($user->deleted_at) {
-        return to_route('login')->withErrors(['login' => __('user.disabled')]);
+        return to_route('login')->withErrors(['login' => __('auth.account_disabled')]);
     }
 
     session()?->regenerate();
