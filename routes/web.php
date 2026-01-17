@@ -3,6 +3,7 @@
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\TeamController;
 use App\Models\User;
+use Carbon\CarbonInterval;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -78,8 +79,9 @@ Route::get('/auth/twitch/callback', function () {
     }
 
     $userCreatedAt = Date::parse($twitchUser->user['created_at']);
+    $userAgeMinimum = CarbonInterval::fromString(config('auth.required_account_age'));
 
-    if($userCreatedAt->addDays(config('auth.required_account_age'))->isFuture())
+    if($userCreatedAt->add($userAgeMinimum)->isFuture())
     {
         return to_route('login')->withErrors(['login' => __('auth.account_created_too_early')]);
     }

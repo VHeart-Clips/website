@@ -2,7 +2,7 @@
 
 return [
 
-    'required_account_age' => env('MINIMUM_REQUIRED_ACCOUNT_AGE', 1),
+    'required_account_age' => env('MINIMUM_REQUIRED_ACCOUNT_AGE', '1 day'),
 
     /*
     |--------------------------------------------------------------------------
