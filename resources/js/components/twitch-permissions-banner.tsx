@@ -11,10 +11,10 @@ import { edit as editPermissions } from '@/routes/permissions';
 
 export default function TwitchPermissionsBanner() {
     const { t } = useTranslation('twitch');
-    const page = usePage<SharedData>();
+    const { flash } = usePage<SharedData>();
     const [dismissed, setDismissed] = useState(false);
 
-    const shouldShow = Boolean(page.props.flash?.showTwitchPermissionsPrompt);
+    const shouldShow = Boolean(flash?.showTwitchPermissionsPrompt);
 
     return (
         <AppBanner visible={shouldShow && !dismissed} offsetVariable="--app-banner-height">

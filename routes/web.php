@@ -93,7 +93,7 @@ Route::get('/auth/twitch/callback', function () {
     Auth::login($user);
     session()->put('twitch_access_token', $twitchUser->token);
     if ($user->wasRecentlyCreated) {
-        session()->flash('show_twitch_permissions_prompt', true);
+        Inertia::flash('showTwitchPermissionsPrompt', true);
     }
 
     return to_route('dashboard');
