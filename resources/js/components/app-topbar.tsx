@@ -5,7 +5,6 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import TwitchPermissionsBanner from '@/components/twitch-permissions-banner';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
@@ -14,10 +13,14 @@ import submitclip from '@/routes/submitclip';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { LayoutGrid, Search, ChevronDown, Send, ScanHeart } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LogoFullDark from '/resources/images/svg/logo-full-dark.svg';
 import LogoFullLight from '/resources/images/svg/logo-full-title.svg';
+
+const TwitchPermissionsBanner = lazy(
+    () => import('@/components/twitch-permissions-banner'),
+);
 
 // Navigation item keys for translation lookup
 const navItemKeys = [
@@ -64,9 +67,17 @@ export function AppTopbar() {
         return page.url === hrefString || page.url.startsWith(hrefString + '/');
     };
 
+    const showTwitchPermissionsBanner = Boolean(
+        page.flash?.showTwitchPermissionsPrompt,
+    );
+
     return (
         <div className="sticky top-0 z-50 w-full">
-            <TwitchPermissionsBanner />
+            {showTwitchPermissionsBanner && (
+                <Suspense fallback={null}>
+                    <TwitchPermissionsBanner />
+                </Suspense>
+            )}
             <header className="w-full px-2 py-2">
                 <div className="flex h-14 items-center gap-4 rounded-xl bg-background px-4 shadow-xl">
                 {/* Logo */}
