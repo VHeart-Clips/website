@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -11,37 +13,62 @@
 |
 */
 
+use Filament\PanelProvider as AbstractFilamentPanelProvider;
+use SocialiteProviders\Manager\OAuth2\AbstractProvider as AbstractSocialiteProvider;
+
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
     ->in('Feature');
 
 /*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
+ * Architecture Tests to enforce a certain level of consistency (and quality)
+ */
+arch('only traits in traits folder')
+    ->expect('App\*\Traits')
+    ->toBeTraits();
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+// It avoids the usage of die, var_dump, and similar functions, and ensures we are not using deprecated PHP functions.
+// https://github.com/pestphp/pest/blob/4.x/src/ArchPresets/Php.php
+arch()->preset()->php();
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
+// It ensures we are not using code that could lead to security vulnerabilities.
+// We may use sha1 for cache keys though
+// https://github.com/pestphp/pest/blob/4.x/src/ArchPresets/Security.php
+arch()->preset()->security()->ignoring('sha1');
 
-function something()
-{
-    // ..
-}
+// It ensures the projects structure is following the well-known Laravel conventions
+// https://github.com/pestphp/pest/blob/4.x/src/ArchPresets/Laravel.php
+arch()->preset()->laravel()
+    ->ignoring([
+        "App\Providers\Filament", // Filament has different base class
+        "App\Providers\Socialite", // Custom Socialite Providers
+        "App\Services", // Services may not follow the strict laravel conventions (yet)
+    ]);
+
+// Filament
+arch('filament specifics')->expect('App\Providers\Filament')
+    ->toHaveSuffix('PanelProvider')
+    ->toExtend(AbstractFilamentPanelProvider::class);
+
+// Socialite Providers
+arch('socialite specifics')->expect('App\Providers\Socialite')
+    ->toHaveSuffix('SocialiteProvider')
+    ->toExtend(AbstractSocialiteProvider::class);
+
+// Services
+arch()
+    ->expect('App\Services')
+    ->not->toUse('App\Http\Controllers')
+    ->not->toUse('App\Http\Requests')
+    ->not->toUse(['dd', 'dump', 'ray', 'var_dump']);
+arch()
+    ->expect('App\Services\*\Data')
+    ->classes()
+    ->toHaveSuffix('Dto')
+    ->toBeReadonly()
+    ->toExtendNothing();
+arch()
+    ->expect('App\Services\*\Exceptions')
+    ->classes()
+    ->toHaveSuffix('Exception')
+    ->toExtend(Exception::class);
