@@ -2,19 +2,16 @@
 
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\TeamController;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Socialite\Socialite;
 
 Route::get('/', function () {
     $settings = [
-        'donationUrl' => 'https://youtu.be/dQw4w9WgXcQ?si=PI___TYHwzuqOnXS',
+        'donationUrl' => 'https://www.betterplace.org/de/fundraising-events/55712-vheart-fuerdiesuessmaeuse',
         'partnerIcon' => null,
-        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?si=RE61OJQKY5oqgog4&list=UUgZpwegd4AdDlZNrIamIgRw',
+        'youtubeUrl' => 'https://www.youtube-nocookie.com/embed/videoseries?list=UUUefW5IjMaQS_ZFaG4VZi9A',
     ];
     return Inertia::render('welcome', $settings);
 })->name('home');
@@ -57,40 +54,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/team', TeamController::class)->name('team');
 
     Route::get('/about-us', function () {
-        return Inertia::render('about');
+        $settings = [
+            'donationUrl' => 'https://www.betterplace.org/de/fundraising-events/55712-vheart-fuerdiesuessmaeuse',
+            'partnerIcon' => null,
+        ];
+        return Inertia::render('about', $settings);
     })->name('about');
 });
-
-Route::get('/auth/twitch', function () {
-    return Socialite::driver('twitch')->scopes(['channel:read:vips', 'user:read:moderated_channels'])->redirect();
-})->name('auth.twitch');
-
-Route::get('/auth/twitch/callback', function () {
-    try {
-        $twitchUser = Socialite::driver('twitch')->user();
-    } catch (\Exception $e) {
-        return to_route('login')->with('error', __('auth.oauth_error_try_again'));
-    }
-
-    $user = User::updateOrCreate([
-        'id' => $twitchUser->getId(),
-    ],
-        [
-            'name' => $twitchUser->getName(),
-            'avatar_url' => $twitchUser->getAvatar(),
-            'twitch_refresh_token' => $twitchUser->refreshToken,
-        ]);
-
-    if ($user->deleted_at) {
-        return to_route('login')->withErrors(['login' => __('user.disabled')]);
-    }
-
-    session()?->regenerate();
-    Auth::login($user);
-    session()->put('twitch_access_token', $twitchUser->token);
-
-    return to_route('dashboard');
-})->name('auth.callback');
 
 Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
 
@@ -108,3 +78,4 @@ Route::get('/locales/{lang}', static function (Request $request, $lang) {
 });
 
 require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
