@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   release:
     types: [ published ]
-  pull_request:
-    types: [ opened, synchronize, reopened, ready_for_review ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -85,7 +83,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:18
         env:
           POSTGRES_DB: laravel
           POSTGRES_USER: postgres
@@ -163,7 +161,6 @@ jobs:
 
   docker-build:
     needs: [ prepare, tests ]
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
