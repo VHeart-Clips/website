@@ -34,6 +34,7 @@ return [
             'columns' => [
                 'claimer' => 'Claimer',
                 'status' => 'Status',
+                'removed_at' => 'Removed At',
             ],
             'filters' => [
                 'broadcaster' => 'Broadcaster',
@@ -43,6 +44,12 @@ return [
                 'claimer_option_none' => 'None / Unclaimed',
                 'game' => 'Game',
                 'status' => 'Status',
+                'was_removed' => [
+                    'label' => 'Removed',
+                    'placeholder' => 'All',
+                    'true' => 'Yes',
+                    'false' => 'No',
+                ],
             ],
             'actions' => [
                 'claim' => 'Claim',

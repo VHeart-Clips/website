@@ -27,6 +27,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -109,6 +110,13 @@ class ClipsRelationManager extends RelationManager
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
 
+                TextColumn::make('pivot.removed_at')
+                    ->label('admin/resources/compilations.relation_managers.clips.columns.removed_at')
+                    ->translateLabel()
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('created_at')
                     ->label('admin/resources/clips.table.columns.created_at')
                     ->translateLabel()
@@ -178,8 +186,20 @@ class ClipsRelationManager extends RelationManager
                     ->preload()
                     ->multiple()
                     ->label('admin/resources/compilations.relation_managers.clips.filters.game')
-                    ->columnSpanFull()
                     ->translateLabel(),
+
+                TernaryFilter::make('was_removed')
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.was_removed.label')
+                    ->translateLabel()
+                    ->nullable()
+                    ->placeholder(__('admin/resources/compilations.relation_managers.clips.filters.was_removed.placeholder'))
+                    ->trueLabel(__('admin/resources/compilations.relation_managers.clips.filters.was_removed.true'))
+                    ->falseLabel(__('admin/resources/compilations.relation_managers.clips.filters.was_removed.false'))
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereNotNull('removed_at'),
+                        false: fn (Builder $query) => $query->whereNull('removed_at'),
+                        blank: fn (Builder $query) => $query,
+                    ),
 
                 // TODO: either remove this or check why it just doesnt want to work, needs more attention
                 SelectFilter::make('pivot.status')
