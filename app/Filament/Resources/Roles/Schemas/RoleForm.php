@@ -18,19 +18,28 @@ class RoleForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('admin/resources/roles.form.name')
+                    ->translateLabel()
                     ->required(),
-                TextInput::make('desc'),
+                TextInput::make('desc')
+                    ->label('admin/resources/roles.form.desc')
+                    ->translateLabel(),
                 TextInput::make('weight')
+                    ->label('admin/resources/roles.form.weight')
+                    ->translateLabel()
                     ->required()
                     ->numeric()
                     ->default(0),
                 Toggle::make('public')
+                    ->label('admin/resources/roles.form.public')
+                    ->translateLabel()
                     ->required(),
                 Section::make()
                     ->compact()
                     ->schema([
                         CheckboxList::make('permissions')
-                            ->label('Assigned Permissions')
+                            ->label('admin/resources/roles.form.permissions')
+                            ->translateLabel()
                             ->dehydrated(false)
                             ->options(Permission::class)
                             ->formatStateUsing(function ($record) {
