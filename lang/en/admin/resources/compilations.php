@@ -8,8 +8,6 @@ return [
         'youtube_url' => 'Youtube URL',
         'created_by' => 'Created By',
         'status' => 'Status',
-        'auto_fill_seconds' => 'Auto Fill Seconds',
-        'auto_fill_seconds_helper' => 'Automatically fill the Compilation with Clips to reach the set Minimum amount of Seconds, does nothing if left empty.',
         'type' => 'Type',
     ],
     'table' => [

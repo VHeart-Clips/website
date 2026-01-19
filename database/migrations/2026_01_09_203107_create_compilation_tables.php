@@ -25,10 +25,6 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('youtube_url')->nullable();
 
-            // If set, it will try to fill the compilation with enough clips to reach X seconds total duration
-            // If any clip get removed it and this is still set, it will try to fill it again
-            $table->unsignedInteger('auto_fill_seconds')->nullable();
-
             $table->softDeletes();
             $table->timestamps();
         });

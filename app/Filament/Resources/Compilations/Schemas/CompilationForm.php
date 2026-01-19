@@ -74,12 +74,6 @@ class CompilationForm
                             ->translateLabel()
                             ->required()
                             ->options(CompilationStatus::class),
-                        TextInput::make('auto_fill_seconds')
-                            ->disabled() // currently does nothing, low priority for now
-                            ->label('admin/resources/compilations.form.auto_fill_seconds')
-                            ->translateLabel()
-                            ->integer()
-                            ->belowLabel(__('admin/resources/compilations.form.auto_fill_seconds_helper')),
                         Select::make('type')
                             ->label('admin/resources/compilations.form.type')
                             ->translateLabel()
