@@ -7,6 +7,7 @@ namespace App\Filament\Resources\Compilations\Schemas;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Clips\CompilationType;
 use App\Models\Clip\Compilation;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,7 +15,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Str;
+use Filament\Support\Icons\Heroicon;
 
 class CompilationForm
 {
@@ -27,26 +28,28 @@ class CompilationForm
                         TextInput::make('title')
                             ->label('admin/resources/compilations.form.title')
                             ->translateLabel()
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
-                                $newSlug = Str::slug($old ?? '');
-                                $currentSlug = $get('slug') ?? '';
-
-                                if (! empty($currentSlug) && $currentSlug !== $newSlug) {
-                                    return;
-                                }
-
-                                $set('slug', $newSlug);
-                            })
-                            ->live(onBlur: true)
                             ->required()
                             ->maxLength(255),
                         TextInput::make('slug')
                             ->label('admin/resources/compilations.form.slug')
                             ->translateLabel()
                             ->required()
+                            ->alphaDash()
                             ->unique(Compilation::class, 'slug')
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->afterContent(
+                                Action::make('generateSlug')
+                                    ->tooltip(__('admin/resources/compilations.action.generate-slug'))
+                                    ->icon(Heroicon::Link)
+                                    ->iconButton()
+                                    ->action(function (Get $schemaGet, Set $schemaSet) {
+                                        $schemaSet('slug', str($schemaGet('title'))->trim()->slug()->toString());
+                                    })
+                                // TODO: we should have the correct filament version but jsAction does not exist yet lol
+                                // Action::make('generateSlug')->jsAction(<<<'JS'
+                                //    $set('slug', $get('title').toLowerCase().replaceAll(' ', '-'))
+                                // JS)
+                            ),
                         Textarea::make('description')
                             ->label('admin/resources/compilations.form.description')
                             ->translateLabel()

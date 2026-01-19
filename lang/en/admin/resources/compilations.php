@@ -68,4 +68,7 @@ return [
             ],
         ],
     ],
+    'action' => [
+        'generate-slug' => 'Generate Slug from Title',
+    ],
 ];
