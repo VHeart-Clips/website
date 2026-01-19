@@ -6,6 +6,7 @@ use App\Filament\Resources\Clips\Pages\CreateClip;
 use App\Filament\Resources\Clips\Pages\EditClip;
 use App\Filament\Resources\Clips\Pages\ListClips;
 use App\Filament\Resources\Clips\Pages\ViewClip;
+use App\Filament\Resources\Clips\RelationManagers\CompilationsRelationManager;
 use App\Filament\Resources\Clips\Schemas\ClipForm;
 use App\Filament\Resources\Clips\Schemas\ClipInfolist;
 use App\Filament\Resources\Clips\Tables\ClipsTable;
@@ -42,7 +43,7 @@ class ClipResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            CompilationsRelationManager::class
         ];
     }
 

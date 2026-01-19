@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Twitch\Data;
 
-class GameDto implements TwitchDtoInterface
+readonly class GameDto implements TwitchDtoInterface
 {
     public function __construct(
         public int $id,

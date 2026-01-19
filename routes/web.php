@@ -2,15 +2,10 @@
 
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\TeamController;
-use App\Models\User;
-use Carbon\CarbonInterval;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Socialite\Socialite;
-use Illuminate\Support\Facades\Date;
 
 Route::get('/', function () {
     $settings = [
@@ -67,45 +62,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/auth/twitch', function () {
-    return Socialite::driver('twitch')->scopes(['channel:read:vips', 'user:read:moderated_channels'])->redirect();
-})->name('auth.twitch');
-
-Route::get('/auth/twitch/callback', function () {
-    try {
-        $twitchUser = Socialite::driver('twitch')->user();
-    } catch (\Exception $e) {
-        return to_route('login')->with('error', __('auth.oauth_error_try_again'));
-    }
-
-    $userCreatedAt = Date::parse($twitchUser->user['created_at']);
-    $userAgeMinimum = CarbonInterval::fromString(config('auth.required_account_age'));
-
-    if($userCreatedAt->add($userAgeMinimum)->isFuture())
-    {
-        return to_route('login')->withErrors(['login' => __('auth.account_created_too_early')]);
-    }
-
-    $user = User::updateOrCreate([
-        'id' => $twitchUser->getId(),
-    ],
-        [
-            'name' => $twitchUser->getName(),
-            'avatar_url' => $twitchUser->getAvatar(),
-            'twitch_refresh_token' => $twitchUser->refreshToken,
-        ]);
-
-    if ($user->deleted_at) {
-        return to_route('login')->withErrors(['login' => __('auth.account_disabled')]);
-    }
-
-    session()?->regenerate();
-    Auth::login($user);
-    session()->put('twitch_access_token', $twitchUser->token);
-
-    return to_route('dashboard');
-})->name('auth.callback');
-
 Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
@@ -122,3 +78,4 @@ Route::get('/locales/{lang}', static function (Request $request, $lang) {
 });
 
 require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

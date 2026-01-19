@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Clip\Compilation;
+use App\Models\Clip\CompilationClip;
 use App\Models\Clip\Tag;
 use App\Policies\ClipPolicy;
 use Database\Factories\ClipFactory;
@@ -46,5 +48,18 @@ class Clip extends Model
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'clip_tags');
+    }
+
+    public function compilations(): BelongsToMany
+    {
+        return $this->belongsToMany(Compilation::class)
+            ->using(CompilationClip::class)
+            ->withPivot(CompilationClip::getPivotColumns())
+            ->withTimestamps();
+    }
+
+    public function claimer(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'claimed_by');
     }
 }
