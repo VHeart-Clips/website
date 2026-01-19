@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services\Twitch\Data;
 
+use App\Services\Twitch\Contracts\TwitchDtoInterface;
+
 readonly class GameDto implements TwitchDtoInterface
 {
     public function __construct(

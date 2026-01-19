@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Twitch;
 
+use App\Services\Twitch\Contracts\TwitchDtoInterface;
 use App\Services\Twitch\Data\CategoryDto;
 use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\GameDto;
-use App\Services\Twitch\Data\TwitchDtoInterface;
 
 enum TwitchEndpoints: string
 {
