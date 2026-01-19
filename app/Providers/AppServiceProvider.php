@@ -9,17 +9,21 @@ use App\Models\Role;
 use App\Models\User;
 use App\Providers\Socialite\TwitchSocialiteProvider;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
@@ -42,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('twitch', TwitchSocialiteProvider::class);
         });
 
+        $this->configureRateLimiting();
         $this->configureGates();
         $this->configureVite();
         $this->configureModels();
@@ -125,5 +130,18 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Inertia::encryptHistory();
+    }
+
+    private function configureRateLimiting(): void
+    {
+        RateLimiter::for('two-factor', static function (Request $request) {
+            return Limit::perMinute(5)->by($request->user()?->id ?? sha1($request->ip()));
+        });
+
+        RateLimiter::for('login', static function (Request $request) {
+            $throttleKey = sha1($request->ip());
+
+            return Limit::perMinute(5)->by($throttleKey);
+        });
     }
 }
