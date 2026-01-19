@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Date;
 
 Route::middleware(['guest'])->group(function () {
     Route::get('login', static function (Request $request) {
