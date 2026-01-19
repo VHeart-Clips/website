@@ -17,7 +17,7 @@ if getent hosts redis > /dev/null; then
 fi
 
 echo "[Entrypoint] Updating Cloudflare IP ranges..."
-if CF_IPS=$( { curl -s https://www.cloudflare.com/ips-v4; echo; curl -s https://www.cloudflare.com/ips-v6; } | tr '\n' ' ' ); then
+if CF_IPS=$( { wget -qO- https://www.cloudflare.com/ips-v4; echo; wget -qO- https://www.cloudflare.com/ips-v6; } | tr '\n' ' ' ); then
     echo "trusted_proxies static private_ranges $CF_IPS" > /etc/caddy/trusted_proxies.caddy
     echo "   -> Cloudflare IPs updated."
 else

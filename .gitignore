@@ -35,3 +35,10 @@ data/
 **/caddy
 frankenphp
 frankenphp-worker.php
+
+config/psysh
+config/composer
+config/caddy
+
+_ide_helper.php
+.phpstorm.meta.php

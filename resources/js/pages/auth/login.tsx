@@ -110,8 +110,6 @@ export default function Welcome({
                     </p>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 }

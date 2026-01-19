@@ -18,22 +18,38 @@ class ClipsTable
         return $table
             ->columns([
                 TextColumn::make('twitch_id')
+                    ->label('admin/resources/clips.table.columns.twitch_id')
+                    ->translateLabel()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                ImageColumn::make('thumbnail_url')->label('Thumbnail')->height(100),
+                ImageColumn::make('thumbnail_url')
+                    ->label('admin/resources/clips.table.columns.thumbnail')
+                    ->translateLabel()
+                    ->height(100),
                 TextColumn::make('title')
+                    ->label('admin/resources/clips.table.columns.title')
+                    ->translateLabel()
                     ->wrap()
                     ->searchable(),
                 TextColumn::make('broadcaster.name')
+                    ->label('admin/resources/clips.table.columns.broadcaster')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('creator.name')
-                    ->label('Clipper')
+                    ->label('admin/resources/clips.table.columns.clipper')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('submitter.name')
+                    ->label('admin/resources/clips.table.columns.submitter')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('game.title')
+                    ->label('admin/resources/clips.table.columns.category')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('duration')
+                    ->label('admin/resources/clips.table.columns.duration')
+                    ->translateLabel()
                     ->numeric()
                     ->formatStateUsing(function ($state) {
                         $totalSeconds = (int) round($state);
@@ -45,18 +61,29 @@ class ClipsTable
                     })
                     ->sortable(),
                 TextColumn::make('status')
+                    ->label('admin/resources/clips.table.columns.status')
+                    ->translateLabel()
                     ->searchable(),
                 IconColumn::make('is_anonymous')
-                    ->boolean(),
+                    ->label('admin/resources/clips.table.columns.is_anonymous')
+                    ->translateLabel()
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
+                    ->label('admin/resources/clips.table.columns.created_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('admin/resources/clips.table.columns.updated_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
+                    ->label('admin/resources/clips.table.columns.deleted_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

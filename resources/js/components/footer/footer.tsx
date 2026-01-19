@@ -50,20 +50,29 @@ export default function Footer() {
                         >
                             <ul className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
                                 <li>
-                                    <Button
-                                        className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
-                                    >
+                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
                                         <a href="/privacy">
                                             {t('privacy.footer')}
                                         </a>
                                     </Button>
                                 </li>
                                 <li>
-                                    <Button
-                                        className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
-                                    >
+                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
                                         <a href="/imprint">
                                             {t('imprint.footer')}
+                                        </a>
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
+                                        <a href="/team">
+                                            {t('team')}</a>
+                                    </Button>
+                                </li>
+                                <li>
+                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
+                                        <a href="/about-us">
+                                            {t('about')}
                                         </a>
                                     </Button>
                                 </li>
@@ -73,7 +82,7 @@ export default function Footer() {
                         <div className="min-w-0">
                             <div className="flex items-center justify-center gap-3 md:justify-end">
                                 <a
-                                    href="https://github.com/kattyterra/VHeart_Webseite"
+                                    href="https://github.com/VHeart-Clips/VHeart_Webseite"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     aria-label={t('github_aria', 'GitHub')}
@@ -171,6 +180,26 @@ export default function Footer() {
                                         aria-hidden="true"
                                     >
                                         <path d="M14.238 15.348c.085.084.085.221 0 .306-.465.462-1.194.687-2.231.687l-.008-.002-.008.002c-1.036 0-1.766-.225-2.231-.688-.085-.084-.085-.221 0-.305.084-.084.222-.084.307 0 .379.377 1.008.561 1.924.561l.008.002.008-.002c.915 0 1.544-.184 1.924-.561.085-.084.223-.084.307 0zm-3.44-2.418c0-.507-.414-.919-.922-.919-.509 0-.923.412-.923.919 0 .506.414.918.923.918.508.001.922-.411.922-.918zm13.202-.93c0 6.627-5.373 12-12 12s-12-5.373-12-12 5.373-12 12-12 12 5.373 12 12zm-5-.129c0-.851-.695-1.543-1.55-1.543-.417 0-.795.167-1.074.435-1.056-.695-2.485-1.137-4.066-1.194l.865-2.724 2.343.549-.003.034c0 .696.569 1.262 1.268 1.262.699 0 1.267-.566 1.267-1.262s-.568-1.262-1.267-1.262c-.537 0-.994.335-1.179.804l-2.525-.592c-.11-.027-.223.037-.257.145l-.965 3.038c-1.656.02-3.155.466-4.258 1.181-.277-.255-.644-.415-1.05-.415-.854.001-1.549.693-1.549 1.544 0 .566.311 1.056.768 1.325-.03.164-.05.331-.05.5 0 2.281 2.805 4.137 6.253 4.137s6.253-1.856 6.253-4.137c0-.16-.017-.317-.044-.472.486-.261.82-.766.82-1.353zm-4.872.141c-.509 0-.922.412-.922.919 0 .506.414.918.922.918s.922-.412.922-.918c0-.507-.413-.919-.922-.919z" />
+                                    </svg>
+                                </a>
+
+                                <a
+                                    href="https://bsky.app/profile/vheart.net"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Bluesky"
+                                    className="text-gray-600 transition-colors hover:text-[#0085FF] dark:text-white/70 dark:hover:text-[#0085FF]"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        className="h-5 w-5"
+                                        viewBox="0 0 16 16"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M3.468 1.948C5.303 3.325 7.276 6.118 8 7.616c.725-1.498 2.698-4.29 4.532-5.668C13.855.955 16 .186 16 2.632c0 .489-.28 4.105-.444 4.692-.572 2.04-2.653 2.561-4.504 2.246 3.236.551 4.06 2.375 2.281 4.2-3.376 3.464-4.852-.87-5.23-1.98-.07-.204-.103-.3-.103-.218 0-.081-.033.014-.102.218-.379 1.11-1.855 5.444-5.231 1.98-1.778-1.825-.955-3.65 2.28-4.2-1.85.315-3.932-.205-4.503-2.246C.28 6.737 0 3.12 0 2.632 0 .186 2.145.955 3.468 1.948" />
                                     </svg>
                                 </a>
                             </div>
