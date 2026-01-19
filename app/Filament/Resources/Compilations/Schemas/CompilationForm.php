@@ -77,10 +77,10 @@ class CompilationForm
                         Select::make('type')
                             ->label('admin/resources/compilations.form.type')
                             ->translateLabel()
-                            ->hiddenOn('edit')
+                            ->disabledOn('edit')
                             ->required()
                             ->options(CompilationType::class)
-                            ->default(CompilationType::Manual),
+                            ->default(CompilationType::LongVideo),
                     ]),
             ])->columns(3);
     }

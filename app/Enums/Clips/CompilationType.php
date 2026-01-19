@@ -14,5 +14,6 @@ enum CompilationType: string implements HasLabel
 {
     use HasHeadlineLabel;
 
-    case Manual = 'manual';
+    case LongVideo = 'video';
+    case ShortVideo = 'short';
 }
