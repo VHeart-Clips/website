@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
 
 class RoleForm
 {
@@ -43,7 +44,15 @@ class RoleForm
                             ->dehydrated(false)
                             ->options(Permission::class)
                             ->formatStateUsing(function ($record) {
-                                return $record?->permissions->pluck('permission')->toArray() ?? [];
+                                $rawPermissions = DB::table('role_permissions')
+                                    ->where('role_id', $record->id)
+                                    ->pluck('permission');
+
+                                return $rawPermissions
+                                    ->map(fn ($perm) => Permission::tryFrom($perm))
+                                    ->filter()
+                                    ->values()
+                                    ->toArray();
                             })
                             ->saveRelationshipsUsing(function ($record, $state) {
                                 $rows = collect($state)->map(fn ($permission) => [
