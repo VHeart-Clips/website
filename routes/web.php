@@ -62,40 +62,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/auth/twitch', function () {
-    return Socialite::driver('twitch')->scopes(['channel:read:vips', 'user:read:moderated_channels'])->redirect();
-})->name('auth.twitch');
-
-Route::get('/auth/twitch/callback', function () {
-    try {
-        $twitchUser = Socialite::driver('twitch')->user();
-    } catch (\Exception $e) {
-        return to_route('login')->with('error', __('auth.oauth_error_try_again'));
-    }
-
-    $user = User::updateOrCreate([
-        'id' => $twitchUser->getId(),
-    ],
-        [
-            'name' => $twitchUser->getName(),
-            'avatar_url' => $twitchUser->getAvatar(),
-            'twitch_refresh_token' => $twitchUser->refreshToken,
-        ]);
-
-    if ($user->deleted_at) {
-        return to_route('login')->withErrors(['login' => __('user.disabled')]);
-    }
-
-    session()?->regenerate();
-    Auth::login($user);
-    session()->put('twitch_access_token', $twitchUser->token);
-    if ($user->wasRecentlyCreated) {
-        Inertia::flash('showTwitchPermissionsPrompt', true);
-    }
-
-    return to_route('dashboard');
-})->name('auth.callback');
-
 Route::get('/locales.json', \App\Actions\Locales::class)->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
