@@ -51,7 +51,7 @@ class ClipSubmitController extends Controller
 
         $data = $request->validate(rules: [
             'clip_url' => ['required', 'string', 'url'],
-            'tags' => ['sometimes', 'array'],
+            'tags' => ['required', 'array', 'min:1', 'max:3'],
             'tags.*' => ['integer', 'exists:tags,id'],
             'is_anonymous' => ['sometimes', 'accepted'],
         ]);
@@ -162,7 +162,9 @@ class ClipSubmitController extends Controller
             $tagIds
         );
 
-        return $this->create()->with('submit_ok', true)->flash('submit_message', __('sendinclip.flash.submitted'));
+        return $this->create()
+            ->with('submit_ok', true)
+            ->with('submit_message', __('sendinclip.flash.submitted'));
     }
 
     private function getUserToken(): string
