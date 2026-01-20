@@ -17,19 +17,31 @@ class RolesTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label('admin/resources/roles.table.columns.name')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('desc')
+                    ->label('admin/resources/roles.table.columns.desc')
+                    ->translateLabel()
                     ->searchable(),
                 TextColumn::make('weight')
+                    ->label('admin/resources/roles.table.columns.weight')
+                    ->translateLabel()
                     ->numeric()
                     ->sortable(),
                 IconColumn::make('public')
+                    ->label('admin/resources/roles.table.columns.public')
+                    ->translateLabel()
                     ->boolean(),
                 TextColumn::make('created_at')
+                    ->label('admin/resources/roles.table.columns.created_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('admin/resources/roles.table.columns.updated_at')
+                    ->translateLabel()
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
