@@ -29,14 +29,19 @@ class ClipForm
                     ->compact()
                     ->schema([
                         TextInput::make('title')
+                            ->label('admin/resources/clips.form.title')
+                            ->translateLabel()
                             ->required(),
                         Select::make('game_id')
-                            ->label('Twitch Category')
+                            ->label('admin/resources/clips.form.twitch_category')
+                            ->translateLabel()
                             ->required()
                             ->preload()
                             ->relationship('game', 'title')
                             ->searchable(),
                         TextEntry::make('duration')
+                            ->label('admin/resources/clips.form.duration')
+                            ->translateLabel()
                             ->formatStateUsing(function ($state) {
                                 $totalSeconds = (int) round($state);
 
@@ -45,11 +50,24 @@ class ClipForm
 
                                 return sprintf('%d:%02d', $minutes, $seconds);
                             }),
-                        Select::make('broadcaster')->relationship('broadcaster', 'name')->disabled()->label('Broadcaster'),
-                        Select::make('creator')->relationship('creator', 'name')->disabled()->label('Clip Creator'),
-                        Select::make('submitter')->relationship('submitter', 'name')->disabled()->label('Submitted By'),
+                        Select::make('broadcaster')
+                            ->relationship('broadcaster', 'name')
+                            ->disabled()
+                            ->label('admin/resources/clips.form.broadcaster')
+                            ->translateLabel(),
+                        Select::make('creator')
+                            ->relationship('creator', 'name')
+                            ->disabled()
+                            ->label('admin/resources/clips.form.creator')
+                            ->translateLabel(),
+                        Select::make('submitter')
+                            ->relationship('submitter', 'name')
+                            ->disabled()
+                            ->label('admin/resources/clips.form.submitted_by')
+                            ->translateLabel(),
                         DateTimePicker::make('date')
-                            ->label('Clip Created At')
+                            ->label('admin/resources/clips.form.created_at')
+                            ->translateLabel()
                             ->disabled(),
                     ]),
             ])->columns(3);

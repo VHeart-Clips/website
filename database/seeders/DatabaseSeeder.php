@@ -1,9 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
-use App\Models\Clip\Tag;
-use App\Models\User;
 use App\Enums\Permission;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,17 +18,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        //User::firstOrCreate(
+        // User::firstOrCreate(
         //    ['email' => 'test@example.com'],
         //    [
         //        'name' => 'Test User',
         //        'password' => 'password',
         //        'email_verified_at' => now(),
         //    ]
-        //);
+        // );
 
         $this->call([
-            RoleSeeder::class
+            RoleSeeder::class,
+            TagSeeder::class,
         ]);
 
         // Kindly wipe unused permission pivots on deployment

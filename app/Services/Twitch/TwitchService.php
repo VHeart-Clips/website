@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Services\Twitch;
 
 use App\Models\User;
+use App\Services\Twitch\Contracts\TwitchDtoInterface;
 use App\Services\Twitch\Data\ClipDto;
-use App\Services\Twitch\Data\TwitchDtoInterface;
 use App\Services\Twitch\Exceptions\TwitchApiException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
