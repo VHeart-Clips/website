@@ -1,5 +1,5 @@
 import { TwitchClipContainer } from '@/components/TwitchClipContainer';
-import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { evaluateclips } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
@@ -49,11 +49,8 @@ export default function EvaluateClips() {
     function toggleLike(id: number) {
         setLiked((prev) => {
             const next = new Set(prev);
-            if (next.has(id)) {
-                next.delete(id);
-            } else {
-                next.add(id);
-            }
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
             return next;
         });
     }
@@ -61,11 +58,8 @@ export default function EvaluateClips() {
     function toggleSkip(id: number) {
         setSkipped((prev) => {
             const next = new Set(prev);
-            if (next.has(id)) {
-                next.delete(id);
-            } else {
-                next.add(id);
-            }
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
             return next;
         });
     }
@@ -99,23 +93,23 @@ export default function EvaluateClips() {
     }, []);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppHeaderLayout breadcrumbs={breadcrumbs}>
             <Head title={t('page_title')} />
 
-            <div className="relative mx-auto w-full max-w-3/4 px-2 py-2">
-                <header className="mb-4 space-y-1 text-center">
-                    <h1 className="text-xl font-bold sm:text-2xl md:text-3xl">
-                        {t('headline')}
-                    </h1>
-                    <p className="mx-auto max-w-2xl text-sm text-muted-foreground sm:text-base">
-                        {t('subtitle')}
-                    </p>
-                </header>
+            <header className="mb-3 space-y-1 pt-5 text-center sm:mb-4">
+                <h1 className="text-base font-bold sm:text-xl 2xl:text-3xl">
+                    {t('headline')}
+                </h1>
+                <p className="mx-auto max-w-2xl text-sm text-muted-foreground 2xl:text-base">
+                    {t('subtitle')}
+                </p>
+            </header>
 
-                <div className="relative overflow-hidden rounded-xl border bg-background shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/10">
+            <div className="mx-auto w-[95vw] max-w-3xl pt-5">
+                <div className="relative aspect-video overflow-hidden rounded-xl border bg-background shadow-sm dark:shadow-none dark:ring-1 dark:ring-white/10">
                     <div
                         ref={containerRef}
-                        className="scrollbar-none h-[calc(100dvh-300px)] snap-y snap-mandatory overflow-y-auto overscroll-contain"
+                        className="scrollbar-none h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
                     >
                         {items.map((it, index) => {
                             const isActive = index === activeIndex;
@@ -132,15 +126,15 @@ export default function EvaluateClips() {
                                     }}
                                     data-index={index}
                                     key={it.id}
-                                    className="flex h-[calc(100dvh-320px)] snap-start snap-always flex-col bg-black"
+                                    className="flex h-full snap-start snap-always flex-col bg-black"
                                 >
                                     {/* VIDEO */}
-                                    <div className="relative flex-1 overflow-hidden rounded-xl">
+                                    <div className="relative min-h-0 flex-1 overflow-hidden">
                                         {isActive ? (
                                             <TwitchClipContainer
                                                 slug={it.clipSlug}
                                                 parent="localhost"
-                                                className="absolute inset-0 h-full w-full px-5 py-5"
+                                                className="absolute inset-0 h-full w-full p-2 sm:p-4"
                                             />
                                         ) : (
                                             <div className="absolute inset-0 grid place-items-center text-sm text-white/40">
@@ -150,7 +144,7 @@ export default function EvaluateClips() {
                                     </div>
 
                                     {/* ACTION BAR */}
-                                    <div className="flex shrink-0 items-center justify-center gap-4 py-4">
+                                    <div className="flex shrink-0 items-center justify-center gap-3 py-2 sm:gap-4 sm:py-3">
                                         {/* Previous */}
                                         <button
                                             type="button"
@@ -158,9 +152,9 @@ export default function EvaluateClips() {
                                                 scrollToIndex(index - 1)
                                             }
                                             disabled={index === 0}
-                                            className="grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-14 sm:hover:scale-110"
+                                            className="grid size-9 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-11 sm:hover:scale-110"
                                         >
-                                            <ChevronLeft className="h-6 w-6 text-white" />
+                                            <ChevronLeft className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                                         </button>
 
                                         {/* Like */}
@@ -170,14 +164,14 @@ export default function EvaluateClips() {
                                             disabled={disableLike}
                                             onClick={() => toggleLike(it.id)}
                                             className={clsx(
-                                                'grid size-12 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-14',
+                                                'grid size-9 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-11',
                                                 'transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110',
                                                 disableLike && 'opacity-40',
                                             )}
                                         >
                                             <Heart
                                                 className={clsx(
-                                                    'h-6 w-6 sm:h-7 sm:w-7',
+                                                    'h-4 w-4 sm:h-5 sm:w-5',
                                                     isLiked
                                                         ? 'text-red-500'
                                                         : 'text-white',
@@ -195,14 +189,14 @@ export default function EvaluateClips() {
                                                 scrollToIndex(index + 1);
                                             }}
                                             className={clsx(
-                                                'grid size-12 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-14',
+                                                'grid size-9 place-items-center rounded-full bg-black ring-1 ring-white/10 sm:size-11',
                                                 'transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110',
                                                 disableSkip && 'opacity-40',
                                             )}
                                         >
                                             <CircleX
                                                 className={clsx(
-                                                    'h-6 w-6 sm:h-7 sm:w-7',
+                                                    'h-4 w-4 sm:h-5 sm:w-5',
                                                     isSkipped
                                                         ? 'text-red-500'
                                                         : 'text-white',
@@ -219,9 +213,9 @@ export default function EvaluateClips() {
                                             disabled={
                                                 index === items.length - 1
                                             }
-                                            className="grid size-12 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-14 sm:hover:scale-110"
+                                            className="grid size-9 place-items-center rounded-full bg-black/55 ring-1 ring-white/10 backdrop-blur transition-transform duration-150 ease-out active:scale-95 disabled:opacity-40 sm:size-11 sm:hover:scale-110"
                                         >
-                                            <ChevronRight className="h-6 w-6 text-white" />
+                                            <ChevronRight className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                                         </button>
                                     </div>
                                 </section>
@@ -230,6 +224,6 @@ export default function EvaluateClips() {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }
