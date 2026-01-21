@@ -56,6 +56,7 @@
         "i18next-http-backend": "^3.0.2",
         "i18next-multiload-backend-adapter": "^2.3.0",
         "input-otp": "^1.4.2",
+        "keen-slider": "^6.8.6",
         "laravel-vite-plugin": "^2.0.1",
         "lucide-react": "^0.475.0",
         "playwright": "^1.57.0",
