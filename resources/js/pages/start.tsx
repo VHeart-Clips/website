@@ -77,7 +77,7 @@ export default function Start() {
         },
     ];
 
-    const latestVideoId = '9o8qf7anq0g?si=oQ6hTJ08-pGrdG8e';
+    const latestVideoId = 'D9PHIxhU_MM?si=L69fuJNqLNI8y0Jc';
 
     const [openClip, setOpenClip] = useState<BestRatedItem | null>(null);
     const [liked, setLiked] = useState<Set<number>>(new Set());
@@ -196,8 +196,8 @@ export default function Start() {
         <AppHeaderLayout breadcrumbs={breadcrumbs}>
             <Head title={t('page_title')} />
             <SpaceBackground />
-            <div className="relative z-10 mx-auto w-11/12 max-w-6xl py-5">
-                <Card className="rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-8 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent! dark:ring-0 dark:shadow-purple-900/30">
+            <div className="relative z-10 mx-auto w-[90vw] py-5">
+                <Card className="mx-auto rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-8 shadow-2xl ring-1 shadow-black/10 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent! dark:ring-0 dark:shadow-purple-900/30">
                     <CardContent>
                         <div className="flex flex-col gap-14">
                             <section>

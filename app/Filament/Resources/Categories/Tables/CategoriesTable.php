@@ -19,12 +19,16 @@ class CategoriesTable
         return $table
             ->columns([
                 ImageColumn::make('box_art')
+                    ->label('admin/resources/categories.table.columns.box_art')
+                    ->translateLabel()
                     ->width(50)
                     ->getStateUsing(function (Game $game) {
                         return $game->getBoxArt();
                     })
                     ->imageHeight(80),
-                TextColumn::make('title')->label('Title'),
+                TextColumn::make('title')
+                    ->label('admin/resources/categories.table.columns.title')
+                    ->translateLabel(),
             ])
             ->filters([
                 //

@@ -83,7 +83,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:18-alpine
         env:
           POSTGRES_DB: laravel
           POSTGRES_USER: postgres
@@ -97,7 +97,7 @@ jobs:
           --health-retries 5
 
       redis:
-        image: redis
+        image: redis:alpine
         ports:
           - 6379/tcp
         options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -191,7 +191,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=master,enable=${{ github.ref == 'refs/heads/master' }}
+            type=ref,event=branch
             type=semver,pattern={{version}},enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest,enable=${{ github.ref_type == 'tag' }}
 

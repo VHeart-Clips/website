@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 echo "[Init] Clearing old caches..."
 php /app/artisan optimize:clear

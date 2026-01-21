@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 
 // We tell laravel where to find the policy class
 // While the name convention should allow auto-detection, we want to stay explicit to make it clear.
@@ -27,7 +26,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes;
 
     public $incrementing = false;
 
@@ -131,7 +130,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 
     public function hasVerifiedEmail(): bool
     {
-        if (is_null($this->email_verified_at)) {
+        if (is_null($this->email)) {
             // since emails are optional we have to classify null as verified
             return true;
         }

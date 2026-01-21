@@ -1,8 +1,8 @@
+import { BetterplaceDonationCard } from '@/components/aboutcard/betterplace-donation-card';
 import ClipProcessCard from '@/components/aboutcard/clip-process-card';
 import { AboutDonationCard as DonationCard } from '@/components/aboutcard/donation-card';
 import HeroCard from '@/components/aboutcard/hero-card';
 import VideoCard from '@/components/aboutcard/video-card';
-import Footer from '@/components/footer/footer';
 import SpaceBackground from '@/components/spacebackground';
 import { Link } from '@inertiajs/react';
 import { LogIn, Sparkles } from 'lucide-react';
@@ -46,12 +46,16 @@ export default function Welcome({
                         donationUrl={donationUrl}
                         partnerIcon={partnerIcon}
                     />
+                    <BetterplaceDonationCard
+                        eventId={55712}
+                        maxVisibleDonations={8}
+                        refreshInterval={300000}
+                        projectId={0}
+                    />
                     <VideoCard t={t} youtubeUrl={youtubeUrl} />
                     <ClipProcessCard t={t} />
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 }

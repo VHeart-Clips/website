@@ -26,10 +26,15 @@ class ClipInfolist
                 Section::make()
                     ->compact()
                     ->schema([
-                        TextEntry::make('title'),
+                        TextEntry::make('title')
+                            ->label('admin/resources/clips.infolist.title')
+                            ->translateLabel(),
                         TextEntry::make('game.title')
-                            ->label('Twitch Category'),
+                            ->label('admin/resources/clips.infolist.category')
+                            ->translateLabel(),
                         TextEntry::make('duration')
+                            ->label('admin/resources/clips.infolist.duration')
+                            ->translateLabel()
                             ->formatStateUsing(function ($state) {
                                 $totalSeconds = (int) round($state);
 
@@ -38,7 +43,9 @@ class ClipInfolist
 
                                 return sprintf('%d:%02d', $minutes, $seconds);
                             }),
-                        TextEntry::make('broadcaster.name')->label('Broadcaster')
+                        TextEntry::make('broadcaster.name')
+                            ->label('admin/resources/clips.infolist.broadcaster')
+                            ->translateLabel()
                             ->url(function (Clip $clip) {
                                 if (! $clip->broadcaster?->exists) {
                                     return null;
@@ -46,7 +53,9 @@ class ClipInfolist
 
                                 return UserResource::getUrl('view', ['record' => $clip->broadcaster]);
                             })->openUrlInNewTab(),
-                        TextEntry::make('creator.name')->label('Clip Creator')
+                        TextEntry::make('creator.name')
+                            ->label('admin/resources/clips.infolist.clipper')
+                            ->translateLabel()
                             ->url(function (Clip $clip) {
                                 if (! $clip->creator?->exists) {
                                     return null;
@@ -54,7 +63,9 @@ class ClipInfolist
 
                                 return UserResource::getUrl('view', ['record' => $clip->creator]);
                             })->openUrlInNewTab(),
-                        TextEntry::make('submitter.name')->label('Submitted By')
+                        TextEntry::make('submitter.name')
+                            ->label('admin/resources/clips.infolist.submitted_by')
+                            ->translateLabel()
                             ->url(function (Clip $clip) {
                                 if (! $clip->submitter?->exists) {
                                     return null;
@@ -62,9 +73,15 @@ class ClipInfolist
 
                                 return UserResource::getUrl('view', ['record' => $clip->submitter]);
                             })->openUrlInNewTab(),
+                        TextEntry::make('created_at')
+                            ->date()
+                            ->label('admin/resources/clips.infolist.submitted_at')
+                            ->translateLabel()
+                            ->disabled(),
                         TextEntry::make('date')
                             ->date()
-                            ->label('Clip Created At')
+                            ->label('admin/resources/clips.infolist.created_at')
+                            ->translateLabel()
                             ->disabled(),
                     ]),
             ])->columns(3);
