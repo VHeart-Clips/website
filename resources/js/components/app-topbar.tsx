@@ -8,11 +8,11 @@ import {
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
-import { dashboard, evaluateclips } from '@/routes';
+import { dashboard, evaluateclips, start } from '@/routes';
 import submitclip from '@/routes/submitclip';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Search, ChevronDown, Send, ScanHeart } from 'lucide-react';
+import { ChevronDown, LayoutGrid, ScanHeart, Search, Send } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LogoFullDark from '/resources/images/svg/logo-full-dark.svg';
@@ -65,38 +65,38 @@ export function AppTopbar() {
 
     return (
         <header className="sticky top-0 z-50 w-full px-2 py-2">
-            <div className="flex h-14 items-center gap-4 px-4 rounded-xl bg-background shadow-xl">
+            <div className="flex h-14 items-center gap-4 rounded-xl bg-background px-4 shadow-xl">
                 {/* Logo */}
-                <div className="flex w-auto md:w-[calc(var(--sidebar-width)-3.5rem)] shrink-0 items-center">
+                <div className="flex w-auto shrink-0 items-center md:w-[calc(var(--sidebar-width)-3.5rem)]">
                     <Link
-                        href={dashboard()}
+                        href={start()}
                         prefetch
                         className="flex items-center transition-opacity hover:opacity-80"
                     >
                         <img
                             src={LogoFullDark}
                             alt={t('logo_alt')}
-                            className="hidden h-6 dark:block"
+                            className="hidden h-8 dark:block"
                         />
                         <img
                             src={LogoFullLight}
                             alt={t('logo_alt')}
-                            className="block h-6 dark:hidden"
+                            className="block h-8 dark:hidden"
                         />
                     </Link>
                 </div>
 
                 {/* Search Field */}
-                <div className="flex flex-1 px-4">
+                <div className="flex flex-1 px-30">
                     <div className="relative w-full max-w-md">
-                        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground hover:text-accent" />
                         <input
                             ref={searchInputRef}
                             type="text"
                             placeholder={t('search_placeholder')}
-                            className="h-9 w-full rounded-lg border border-sidebar-border bg-sidebar-accent/30 pl-9 pr-12 text-sm text-sidebar-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                            className="h-9 w-full rounded-lg border border-sidebar-border bg-background pr-12 pl-9 text-sm text-sidebar-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
                         />
-                        <kbd className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 rounded border border-sidebar-border bg-sidebar-accent/50 px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+                        <kbd className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 rounded border border-sidebar-border bg-background px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
                             {t('search_shortcut')}
                         </kbd>
                     </div>
@@ -112,11 +112,13 @@ export function AppTopbar() {
                                 'flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
                                 isActive(item.href)
                                     ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground'
+                                    : 'text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground',
                             )}
                         >
                             {item.icon && <item.icon className="size-4" />}
-                            <span className="hidden lg:inline">{t(item.key)}</span>
+                            <span className="hidden lg:inline">
+                                {t(item.key)}
+                            </span>
                         </Link>
                     ))}
                 </nav>
