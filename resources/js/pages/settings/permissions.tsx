@@ -82,6 +82,9 @@ export default function Permissions() {
                                 {t('permissions.toggle_label')}
                             </Label>
                         </div>
+                        <p className="text-sm text-muted-foreground">
+                            {t('permissions.clip_disclaimer')}
+                        </p>
                     </div>
                 </div>
             </SettingsLayout>

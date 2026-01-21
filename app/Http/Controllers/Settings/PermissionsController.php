@@ -26,9 +26,9 @@ class PermissionsController extends Controller
             FILTER_VALIDATE_BOOLEAN,
         );
 
-        $request->user()?->forceFill([
+        $request->user()->update([
             'clip_permission' => $clipPermission,
-        ])->save();
+        ]);
 
         return back();
     }
