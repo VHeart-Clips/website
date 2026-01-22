@@ -55,7 +55,7 @@ class Locales
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $data[$key] = $this->i18n($value);
-            } else {
+            } elseif (is_string($value) && str_contains($value, ':')) {
                 // Find a Laravel style translation replacement in the string and replace it with
                 // one that the front-end is able to use. This won't always be present, especially
                 // for complex strings or things where we'd never have a backend component anyway.
