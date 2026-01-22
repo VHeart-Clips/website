@@ -27,7 +27,7 @@ class StagingGateMiddleware
         $whitelist = config('app.staging-whitelist', []);
         $currentUser = $request->cookie($cookieSession, false);
 
-        if (empty($whitelist)) {
+        if (! app()->environment('staging')) {
             return $next($request);
         }
 
