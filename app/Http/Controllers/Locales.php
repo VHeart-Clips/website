@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions;
+namespace App\Http\Controllers;
 
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Http\JsonResponse;

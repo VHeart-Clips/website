@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ClipSubmitController;
+use App\Http\Controllers\Locales;
 use App\Http\Controllers\TeamController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -70,7 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/locales.json', App\Actions\Locales::class)->name('locales');
+Route::get('/locales.json', Locales::class)->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
     if (! array_key_exists($lang, Config::get('app.locales'))) {
