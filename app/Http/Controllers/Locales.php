@@ -58,14 +58,17 @@ class Locales
             } else {
                 // Find a Laravel style translation replacement in the string and replace it with
                 // one that the front-end is able to use. This won't always be present, especially
-                // for complex strings or things where we'd never have a backend component anyways.
+                // for complex strings or things where we'd never have a backend component anyway.
+                // We strictly require the key to start with a letter/underscore [a-zA-Z_]
                 //
                 // For example:
-                // "Hello :name, the :notifications.0.title notification needs :count actions :foo.0.bar."
+                // "Hello :name, the :notifications.0.title notification needs :count actions :foo.0.bar before 12:00."
                 //
                 // Becomes:
-                // "Hello {{name}}, the {{notifications.0.title}} notification needs {{count}} actions {{foo.0.bar}}."
-                $data[$key] = preg_replace('/:([\w.-]+\w)([^\w:]?|$)/m', '{{$1}}$2', $value);
+                // "Hello {{name}}, the {{notifications.0.title}} notification needs {{count}} actions {{foo.0.bar}} before 12:00."
+
+                // https://regex101.com/r/dA9Xs6/1
+                $data[$key] = preg_replace('/:([a-zA-Z_](?:[\w.-]*\w)?)([^\w:]?|$)/m', '{{$1}}$2', $value);
             }
         }
 
