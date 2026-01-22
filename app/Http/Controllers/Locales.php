@@ -36,13 +36,7 @@ class Locales
             }
         }
 
-        return new JsonResponse($response, 200, [
-            // Cache this in the browser for an hour, and allow the browser to use a stale
-            // cache for up to a day after it was created while it fetches an updated set
-            // of translation keys.
-            'Cache-Control' => 'public, max-age=3600, must-revalidate, stale-while-revalidate=86400',
-            // ETag is set automatically by Middleware\ETag
-        ]);
+        return new JsonResponse($response, 200);
     }
 
     /**
