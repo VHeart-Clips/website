@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LocalesRequest;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Translation\Translator;
 
 class Locales
@@ -21,10 +21,10 @@ class Locales
     /**
      * Returns translation data given a specific local and namespace.
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(LocalesRequest $request): JsonResponse
     {
-        $locales = explode(' ', $request->input('locale') ?? '');
-        $namespaces = explode(' ', $request->input('namespace') ?? '');
+        $locales = $request->locales();
+        $namespaces = $request->namespaces();
 
         $response = [];
         foreach ($locales as $locale) {
