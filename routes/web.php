@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ClipSubmitController;
-use App\Http\Controllers\Locales;
 use App\Http\Controllers\TeamController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

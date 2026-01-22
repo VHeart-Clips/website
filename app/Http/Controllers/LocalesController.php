@@ -9,7 +9,7 @@ use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Translation\Translator;
 
-class Locales
+class LocalesController
 {
     protected Loader $loader;
 
