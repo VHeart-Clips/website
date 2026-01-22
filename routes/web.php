@@ -71,7 +71,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/locales.json', Locales::class)->name('locales');
+Route::get('/locales.json', Locales::class)
+    ->middleware(['throttle:locales'])
+    ->name('locales');
 
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
     if (! array_key_exists($lang, Config::get('app.locales'))) {
