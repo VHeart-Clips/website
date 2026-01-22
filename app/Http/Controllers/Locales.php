@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use Illuminate\Contracts\Translation\Loader;
@@ -18,8 +20,6 @@ class Locales
 
     /**
      * Returns translation data given a specific local and namespace.
-     * @param  Request  $request
-     * @return JsonResponse
      */
     public function __invoke(Request $request): JsonResponse
     {
@@ -40,7 +40,7 @@ class Locales
             // Cache this in the browser for an hour, and allow the browser to use a stale
             // cache for up to a day after it was created while it fetches an updated set
             // of translation keys.
-            'Cache-Control' => 'public, max-age=3600, must-revalidate, stale-while-revalidate=86400'
+            'Cache-Control' => 'public, max-age=3600, must-revalidate, stale-while-revalidate=86400',
             // ETag is set automatically by Middleware\ETag
         ]);
     }
