@@ -13,10 +13,14 @@ import submitclip from '@/routes/submitclip';
 import { type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronDown, LayoutGrid, ScanHeart, Search, Send } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import LogoFullDark from '/resources/images/svg/logo-full-dark.svg';
 import LogoFullLight from '/resources/images/svg/logo-full-title.svg';
+
+const TwitchPermissionsBanner = lazy(
+    () => import('@/components/twitch-permissions-banner'),
+);
 
 // Navigation item keys for translation lookup
 const navItemKeys = [
@@ -63,9 +67,19 @@ export function AppTopbar() {
         return page.url === hrefString || page.url.startsWith(hrefString + '/');
     };
 
+    const showTwitchPermissionsBanner = Boolean(
+        page.flash?.showTwitchPermissionsPrompt,
+    );
+
     return (
-        <header className="sticky top-0 z-50 w-full px-2 py-2">
-            <div className="flex h-14 items-center gap-4 rounded-xl bg-background px-4 shadow-xl">
+        <div className="sticky top-0 z-50 w-full">
+            {showTwitchPermissionsBanner && (
+                <Suspense fallback={null}>
+                    <TwitchPermissionsBanner />
+                </Suspense>
+            )}
+            <header className="w-full px-2 py-2">
+                <div className="flex h-14 items-center gap-4 rounded-xl bg-background px-4 shadow-xl">
                 {/* Logo */}
                 <div className="flex w-auto shrink-0 items-center md:w-[calc(var(--sidebar-width)-3.5rem)]">
                     <Link
@@ -151,7 +165,8 @@ export function AppTopbar() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-            </div>
-        </header>
+                </div>
+            </header>
+        </div>
     );
 }
