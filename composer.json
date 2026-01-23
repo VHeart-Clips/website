@@ -9,7 +9,7 @@
     ],
     "license": "AGPL-3.0-or-later",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "filament/filament": "^4.0",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
