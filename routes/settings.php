@@ -20,7 +20,4 @@ Route::middleware('auth')->group(function () {
 
     Route::get('settings/permissions', [PermissionsController::class, 'edit'])->name('permissions.edit');
     Route::patch('settings/permissions', [PermissionsController::class, 'update'])->name('permissions.update');
-
-    Route::get('settings/two-factor', [TwoFactorAuthenticationController::class, 'show'])
-        ->name('two-factor.show');
 });
