@@ -21,13 +21,8 @@ class PermissionsController extends Controller
             'clip_permission' => ['required', 'boolean'],
         ]);
 
-        $clipPermission = filter_var(
-            $request->input('clip_permission'),
-            FILTER_VALIDATE_BOOLEAN,
-        );
-
         $request->user()->update([
-            'clip_permission' => $clipPermission,
+            'clip_permission' => $request->boolean('clip_permission'),
         ]);
 
         return back();
