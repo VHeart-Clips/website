@@ -19,8 +19,8 @@ docker run --rm \
     --user "$(id -u):$(id -g)" \
     composer install --ignore-platform-reqs
 
-echo "Building Sail (can take a while)..."
-./vendor/bin/sail build --no-cache
+#echo "Building Sail (can take a while)..."
+#./vendor/bin/sail build --no-cache
 
 echo "Starting Sail..."
 ./vendor/bin/sail up -d
