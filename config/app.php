@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'staging-whitelist' => explode(',', (string) env('STAGING_WHITELIST', '')),
 
     /*
     |--------------------------------------------------------------------------

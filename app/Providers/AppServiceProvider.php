@@ -134,6 +134,10 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureRateLimiting(): void
     {
+        RateLimiter::for('locales', static function (Request $request) {
+            return Limit::perMinute(30)->by($request->user()?->id ?? sha1($request->ip()));
+        });
+
         RateLimiter::for('two-factor', static function (Request $request) {
             return Limit::perMinute(5)->by($request->user()?->id ?? sha1($request->ip()));
         });

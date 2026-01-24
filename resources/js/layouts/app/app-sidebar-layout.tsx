@@ -22,7 +22,7 @@ export default function AppSidebarLayout({
             <AppTopbar />
             <div className="flex flex-1">
                 <AppShell variant="sidebar">
-                    <AppSidebar className="top-19! h-[calc(100svh-4.75rem)]!">
+                    <AppSidebar className="top-[calc(4.75rem+var(--app-banner-height,0px))]! h-[calc(100svh-4.75rem-var(--app-banner-height,0px))]! transition-[top,height] duration-300 ease-out">
                         {sidebarContent}
                     </AppSidebar>
                     <AppContent variant="sidebar" className="overflow-x-hidden">

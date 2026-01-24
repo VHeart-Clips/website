@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Actions;
+declare(strict_types=1);
 
+namespace App\Http\Controllers;
+
+use App\Http\Requests\LocalesRequest;
 use Illuminate\Contracts\Translation\Loader;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Translation\Translator;
 
-class Locales
+class LocalesController
 {
     protected Loader $loader;
 
@@ -18,13 +20,11 @@ class Locales
 
     /**
      * Returns translation data given a specific local and namespace.
-     * @param  Request  $request
-     * @return JsonResponse
      */
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(LocalesRequest $request): JsonResponse
     {
-        $locales = explode(' ', $request->input('locale') ?? '');
-        $namespaces = explode(' ', $request->input('namespace') ?? '');
+        $locales = $request->locales();
+        $namespaces = $request->namespaces();
 
         $response = [];
         foreach ($locales as $locale) {
@@ -36,13 +36,7 @@ class Locales
             }
         }
 
-        return new JsonResponse($response, 200, [
-            // Cache this in the browser for an hour, and allow the browser to use a stale
-            // cache for up to a day after it was created while it fetches an updated set
-            // of translation keys.
-            'Cache-Control' => 'public, max-age=3600, must-revalidate, stale-while-revalidate=86400'
-            // ETag is set automatically by Middleware\ETag
-        ]);
+        return new JsonResponse($response, 200);
     }
 
     /**
@@ -55,17 +49,20 @@ class Locales
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 $data[$key] = $this->i18n($value);
-            } else {
+            } elseif (is_string($value) && str_contains($value, ':')) {
                 // Find a Laravel style translation replacement in the string and replace it with
                 // one that the front-end is able to use. This won't always be present, especially
-                // for complex strings or things where we'd never have a backend component anyways.
+                // for complex strings or things where we'd never have a backend component anyway.
+                // We strictly require the key to start with a letter/underscore [a-zA-Z_]
                 //
                 // For example:
-                // "Hello :name, the :notifications.0.title notification needs :count actions :foo.0.bar."
+                // "Hello :name, the :notifications.0.title notification needs :count actions :foo.0.bar before 12:00."
                 //
                 // Becomes:
-                // "Hello {{name}}, the {{notifications.0.title}} notification needs {{count}} actions {{foo.0.bar}}."
-                $data[$key] = preg_replace('/:([\w.-]+\w)([^\w:]?|$)/m', '{{$1}}$2', $value);
+                // "Hello {{name}}, the {{notifications.0.title}} notification needs {{count}} actions {{foo.0.bar}} before 12:00."
+
+                // https://regex101.com/r/dA9Xs6/1
+                $data[$key] = preg_replace('/:([a-zA-Z_](?:[\w.-]*\w)?)([^\w:]?|$)/m', '{{$1}}$2', $value);
             }
         }
 

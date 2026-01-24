@@ -59,6 +59,9 @@ Route::middleware(['guest'])->group(function () {
         session()?->regenerate();
         Auth::login($user);
         session()->put('twitch_access_token', $twitchUser->token);
+        if ($user->wasRecentlyCreated) {
+            Inertia::flash('showTwitchPermissionsPrompt', true);
+        }
 
         return redirect()->intended(route('dashboard'));
     })

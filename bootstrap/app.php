@@ -8,12 +8,17 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Session\Middleware\StartSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            Route::middleware('stateless')
+                ->group(base_path('routes/stateless.php'));
+        }
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'vheart_cookie_consent']);
@@ -23,7 +28,17 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ], prepend: [
+            App\Http\Middleware\StagingGateMiddleware::class,
             App\Http\Middleware\Localization::class,
+        ]);
+
+        $middleware->appendToPriorityList(
+            StartSession::class,
+            App\Http\Middleware\StagingGateMiddleware::class,
+        );
+
+        $middleware->group('stateless', [
+            Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
