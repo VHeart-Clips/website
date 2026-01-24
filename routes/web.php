@@ -70,8 +70,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('about');
 });
 
-Route::get('/locales.json', App\Actions\Locales::class)->name('locales');
-
 Route::get('/locales/{lang}', static function (Request $request, $lang) {
     if (! array_key_exists($lang, Config::get('app.locales'))) {
         abort(422); // we understand it but its invalid

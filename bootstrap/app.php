@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function () {
+            Route::middleware('stateless')
+                ->group(base_path('routes/stateless.php'));
+        }
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'vheart_cookie_consent']);
@@ -32,6 +36,10 @@ return Application::configure(basePath: dirname(__DIR__))
             StartSession::class,
             App\Http\Middleware\StagingGateMiddleware::class,
         );
+
+        $middleware->group('stateless', [
+            Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         Sentry\Laravel\Integration::handles($exceptions);
