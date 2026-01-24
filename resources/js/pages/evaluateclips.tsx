@@ -66,8 +66,13 @@ export default function EvaluateClips() {
 
     function scrollToIndex(index: number) {
         const clamped = Math.max(0, Math.min(index, items.length - 1));
-        const el = itemRefs.current[clamped];
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const container = containerRef.current;
+        if (container) {
+            container.scrollTo({
+                top: clamped * container.clientHeight,
+                behavior: 'smooth',
+            });
+        }
     }
 
     useEffect(() => {
@@ -129,13 +134,15 @@ export default function EvaluateClips() {
                                     className="flex h-full snap-start snap-always flex-col bg-black"
                                 >
                                     {/* VIDEO */}
-                                    <div className="relative min-h-0 flex-1 overflow-hidden">
+                                    <div className="relative min-h-0 flex-1 overflow-hidden flex items-center justify-center">
                                         {isActive ? (
-                                            <TwitchClipContainer
-                                                slug={it.clipSlug}
-                                                parent="localhost"
-                                                className="absolute inset-0 h-full w-full p-2 sm:p-4"
-                                            />
+                                            <div className="h-full aspect-video">
+                                                <TwitchClipContainer
+                                                    slug={it.clipSlug}
+                                                    parent="localhost"
+                                                    className="h-full w-full"
+                                                />
+                                            </div>
                                         ) : (
                                             <div className="absolute inset-0 grid place-items-center text-sm text-white/40">
                                                 Clip bereit
