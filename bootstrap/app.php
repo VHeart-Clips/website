@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Session\Middleware\StartSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,8 +28,14 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
         ], prepend: [
+            App\Http\Middleware\StagingGateMiddleware::class,
             App\Http\Middleware\Localization::class,
         ]);
+
+        $middleware->appendToPriorityList(
+            StartSession::class,
+            App\Http\Middleware\StagingGateMiddleware::class,
+        );
 
         $middleware->group('stateless', [
             Illuminate\Routing\Middleware\SubstituteBindings::class,
