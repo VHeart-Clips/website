@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Game;
@@ -26,8 +28,9 @@ class ClipFactory extends Factory
             'creator_id' => User::factory(),
             'submitter_id' => User::factory(),
             'game_id' => Game::factory(),
-            'duration' => fake()->randomFloat(2,5,30),
-            'date' => fake()->dateTimeBetween('-1 year')
+            'duration' => fake()->randomFloat(2, 5, 30),
+            'date' => fake()->dateTimeBetween('-1 year'),
+            'is_anonymous' => fake()->boolean(),
         ];
     }
 }
