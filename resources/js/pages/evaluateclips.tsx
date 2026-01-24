@@ -5,7 +5,13 @@ import { vote } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
-import { ChevronLeft, ChevronRight, CircleX, Heart, Loader, } from 'lucide-react';
+import {
+    ChevronLeft,
+    ChevronRight,
+    CircleX,
+    Heart,
+    Loader,
+} from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -57,13 +63,13 @@ export default function EvaluateClips() {
     };
 
     if (props.history) {
-        props.history.forEach((vote) => {
+        /*props.history.forEach((vote) => {
             items.push({
                 id: vote.clip.id,
                 clipSlug: vote.clip.twitch_id,
                 title: vote.clip.title,
             } as Item);
-        });
+        });*/
     }
 
     if (props.clip) {
@@ -170,9 +176,9 @@ export default function EvaluateClips() {
                                     className="flex h-full snap-start snap-always flex-col bg-black"
                                 >
                                     {/* VIDEO */}
-                                    <div className="relative min-h-0 flex-1 overflow-hidden flex items-center justify-center">
-                                        {isActive ? (
-                                            <div className="h-full aspect-video">
+                                    <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+                                        {true ? (
+                                            <div className="aspect-video h-full">
                                                 <TwitchClipContainer
                                                     slug={it.clipSlug}
                                                     parent="localhost"
@@ -181,7 +187,7 @@ export default function EvaluateClips() {
                                             </div>
                                         ) : (
                                             <div className="absolute inset-0 grid place-items-center text-sm text-white/40">
-                                                Clip bereit
+                                                <Loader />
                                             </div>
                                         )}
                                     </div>
