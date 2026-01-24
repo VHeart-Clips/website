@@ -1,4 +1,4 @@
-import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -124,7 +124,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
 
     if (!user) {
         return (
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppHeaderLayout breadcrumbs={breadcrumbs}>
                 <Head title={t('page_title')} />
                 <div className="container mx-auto px-4 py-8">
                     <Card>
@@ -151,12 +151,12 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                         </CardFooter>
                     </Card>
                 </div>
-            </AppLayout>
+            </AppHeaderLayout>
         );
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppHeaderLayout breadcrumbs={breadcrumbs}>
             <Head title={t('page_title')} />
 
             <div className="container mx-auto px-4 py-8">
@@ -428,6 +428,6 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }
