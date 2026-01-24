@@ -1,4 +1,4 @@
-import AppLayout from '@/layouts/app-layout';
+import AppHeaderLayout from '@/layouts/app/app-header-layout';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,8 +19,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { TagSelect } from '@/components/ui/tag-select';
 import submitclip from '@/routes/submitclip';
-import { AlertCircle, Loader2, Tag as TagIcon } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 
 interface Tag {
     id: number;
@@ -36,7 +37,7 @@ type InertiaBaseProps = Record<string, unknown>;
 
 interface PageProps extends InertiaBaseProps {
     auth: {
-        permissions: Array<String>;
+        permissions: Array<string>;
         user: {
             id: number;
             name: string;
@@ -45,38 +46,40 @@ interface PageProps extends InertiaBaseProps {
         };
     };
     tags: Tag[];
+    submit_ok?: boolean;
+    submit_message?: string;
 }
 
 export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
     const { t } = useTranslation('sendinclip');
-    const { props, flash } = usePage<PageProps>();
+    const { props } = usePage<PageProps>();
     const { errors } = props;
     const user = props.auth?.user || null;
 
     const [clipPreview, setClipPreview] = useState<ClipPreview>(null);
 
-    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSubmitting] = useState(false);
     const [clipUrl, setClipUrl] = useState('');
-    const [error, setError] = useState<string | null>(null);
+    const [error] = useState<string | null>(null);
 
     const [isChecking, setIsChecking] = useState(false);
 
     const lastPreviewUrlRef = useRef<string>('');
     const debounceRef = useRef<number | null>(null);
+    const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
     const breadcrumbs = useMemo(
         () => [{ title: t('breadcrumb'), href: submitclip.create().url }],
         [t],
     );
 
-    const previewErrors: string[] = useMemo(() => {
-        return [];
-    }, [clipPreview]);
+    const previewErrors: string[] = [];
 
     const hasInput = clipUrl.trim().length > 0;
 
     const showErrors = false;
     const showLoading = hasInput && isChecking;
+
 
     useEffect(() => {
         const trimmed = clipUrl.trim();
@@ -95,7 +98,7 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
             const host = document.location.hostname;
 
             const clipMatch = clipUrl.match(
-                /https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/,
+                /https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w/]+\/clip\/)?([\w_-]+)/,
             );
 
             if (clipMatch) {
@@ -117,9 +120,11 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
         };
     }, [clipUrl]);
 
+    const isTagSelectionValid = selectedTagIds.length >= 1;
+
     if (!user) {
         return (
-            <AppLayout breadcrumbs={breadcrumbs}>
+            <AppHeaderLayout breadcrumbs={breadcrumbs}>
                 <Head title={t('page_title')} />
                 <div className="container mx-auto px-4 py-8">
                     <Card>
@@ -146,27 +151,22 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                         </CardFooter>
                     </Card>
                 </div>
-            </AppLayout>
+            </AppHeaderLayout>
         );
     }
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <AppHeaderLayout breadcrumbs={breadcrumbs}>
             <Head title={t('page_title')} />
 
             <div className="container mx-auto px-4 py-8">
                 <div className="mx-auto max-w-4xl">
-                    <div className="mb-8 text-center">
-                        <h1 className="mb-2 text-3xl font-bold tracking-tight">
-                            {t('headline')}
-                        </h1>
-                    </div>
-
-                    {props.submit_ok && flash?.submit_message && (
+                    {props.submit_ok && props.submit_message && (
                         <div className="mb-6">
-                            <Alert>
+                            <Alert variant="success">
+                                <CheckCircle2 className="h-4 w-4" />
                                 <AlertDescription>
-                                    {flash.submit_message}
+                                    {props.submit_message}
                                 </AlertDescription>
                             </Alert>
                         </div>
@@ -250,6 +250,11 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                     <Form
                                         action={store()}
                                         className="space-y-6"
+                                        onSuccess={() => {
+                                            setClipUrl('');
+                                            setClipPreview(null);
+                                            setSelectedTagIds([]);
+                                        }}
                                         noValidate
                                     >
                                         <div className="space-y-2">
@@ -281,36 +286,42 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                             />
                                         </div>
 
-                                        <div className="space-y-4">
-                                            <Label className="flex items-center gap-2">
-                                                <TagIcon className="h-4 w-4" />
-                                                {t('submit.tags_label')}
-                                            </Label>
-
-                                            <div className="flex flex-wrap gap-2">
-                                                {tags.map((tag, index) => (
-                                                    <div key={'tag-' + tag.id}>
-                                                        <Checkbox
-                                                            id={'tag-' + tag.id}
-                                                            name="tags[]"
-                                                            value={tag.id}
-                                                        />
-                                                        <Label
-                                                            htmlFor={
-                                                                'tag-' + tag.id
-                                                            }
-                                                            className="cursor-pointer"
-                                                        >
-                                                            {tag.name}
-                                                        </Label>{' '}
-                                                    </div>
-                                                ))}
-                                                <InputError
-                                                    className="mt-2"
-                                                    message={errors.tags}
-                                                />
-                                            </div>
-                                        </div>
+                                        <TagSelect
+                                            tags={tags}
+                                            label={t('submit.tags_label')}
+                                            selectedIds={selectedTagIds}
+                                            onChange={setSelectedTagIds}
+                                            maxSelections={3}
+                                            placeholder={t(
+                                                'submit.tags_placeholder',
+                                            )}
+                                            filterPlaceholder={t(
+                                                'submit.tags_filter_placeholder',
+                                            )}
+                                            noResultsText={t(
+                                                'submit.tags_no_results',
+                                            )}
+                                            selectedCountText={(
+                                                count,
+                                                max,
+                                            ) =>
+                                                t(
+                                                    'submit.tags_selected_count',
+                                                    { count, max },
+                                                )
+                                            }
+                                            maxErrorMessage={(max) =>
+                                                t('submit.tags_max_error', {
+                                                    max,
+                                                })
+                                            }
+                                            removeLabel={(tag) =>
+                                                t('submit.tags_remove_label', {
+                                                    tag,
+                                                })
+                                            }
+                                            errorMessage={errors.tags}
+                                        />
 
                                         <Separator />
 
@@ -339,8 +350,9 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                             className="w-full"
                                             disabled={
                                                 clipUrl.match(
-                                                    /https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w\/]+\/clip\/)?([\w_-]+)/,
-                                                ) === null
+                                                    /https?:\/\/(?:www|clips)?\.?(?:twitch\.tv\/)(?:embed\?clip=|[\w/]+\/clip\/)?([\w_-]+)/,
+                                                ) === null ||
+                                                !isTagSelectionValid
                                             }
                                         >
                                             {t('submit.cta')}
@@ -360,25 +372,25 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                 <CardContent className="space-y-3">
                                     <ul className="space-y-2 text-sm">
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary translate-y-0.5" />
                                             <span>
                                                 {t('rules.items.registered')}
                                             </span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary translate-y-0.5" />
                                             <span>
                                                 {t('rules.items.consent')}
                                             </span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary translate-y-0.5" />
                                             <span>
                                                 {t('rules.items.no_explicit')}
                                             </span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-primary" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary translate-y-0.5" />
                                             <span>
                                                 {t('rules.items.tags_match')}
                                             </span>
@@ -396,17 +408,17 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                                 <CardContent>
                                     <ul className="space-y-2 text-sm">
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-500 translate-y-0.5" />
                                             <span>{t('tips.items.short')}</span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-500 translate-y-0.5" />
                                             <span>
                                                 {t('tips.items.quality')}
                                             </span>
                                         </li>
                                         <li className="flex items-start gap-2">
-                                            <div className="mt-0.5 h-2 w-2 rounded-full bg-blue-500" />
+                                            <div className="mt-1 h-2 w-2 shrink-0 rounded-full bg-blue-500 translate-y-0.5" />
                                             <span>{t('tips.items.funny')}</span>
                                         </li>
                                     </ul>
@@ -416,6 +428,6 @@ export default function SubmitClipPage({ tags = [] }: { tags: Tag[] }) {
                     </div>
                 </div>
             </div>
-        </AppLayout>
+        </AppHeaderLayout>
     );
 }

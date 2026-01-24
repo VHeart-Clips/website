@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services\Twitch\Data;
 
-class CategoryDto implements TwitchDtoInterface
+use App\Services\Twitch\Contracts\TwitchDtoInterface;
+
+readonly class CategoryDto implements TwitchDtoInterface
 {
     public function __construct(
         public int $id,

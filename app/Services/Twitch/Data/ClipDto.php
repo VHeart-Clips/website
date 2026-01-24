@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Twitch\Data;
 
+use App\Services\Twitch\Contracts\TwitchDtoInterface;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Carbon;
 

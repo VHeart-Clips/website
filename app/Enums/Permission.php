@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
 use App\Enums\Traits\HasHeadlineLabel;
@@ -18,6 +20,14 @@ enum Permission: string implements HasLabel
     case RestoreAnyUser = 'restore_any_user';
     case ForceDeleteAnyUser = 'force_delete_any_user';
 
+    // Report
+    case ViewAnyReport = 'view_any_report';
+    case ViewReport = 'view_report';
+    case CreateReport = 'create_report';
+    case UpdateAnyReport = 'update_any_report';
+    case DeleteAnyReport = 'delete_any_report';
+    case RestoreAnyReport = 'restore_any_report';
+    case ForceDeleteAnyReport = 'force_delete_any_report';
     // Compilation
     case ViewAnyCompilation = 'view_any_compilation';
     case ViewCompilation = 'view_compilation';

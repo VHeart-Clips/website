@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Twitch\Data;
+namespace App\Services\Twitch\Contracts;
 
 interface TwitchDtoInterface
 {

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use App\Http\Requests\Auth\VerifyEmailRequest;
 use App\Models\User;
+use Carbon\CarbonInterval;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Date;
 
 Route::middleware(['guest'])->group(function () {
     Route::get('login', static function (Request $request) {
@@ -34,6 +36,13 @@ Route::middleware(['guest'])->group(function () {
             return to_route('login')->with('error', __('auth.oauth_error_try_again'));
         }
 
+        $userCreatedAt = Date::parse($twitchUser->user['created_at']);
+        $userAgeMinimum = CarbonInterval::fromString(config('auth.required_account_age'));
+
+        if ($userCreatedAt->add($userAgeMinimum)->isFuture()) {
+            return to_route('login')->withErrors(['login' => __('auth.account_created_too_early')]);
+        }
+
         $user = User::updateOrCreate([
             'id' => $twitchUser->getId(),
         ],
@@ -50,6 +59,9 @@ Route::middleware(['guest'])->group(function () {
         session()?->regenerate();
         Auth::login($user);
         session()->put('twitch_access_token', $twitchUser->token);
+        if ($user->wasRecentlyCreated) {
+            Inertia::flash('showTwitchPermissionsPrompt', true);
+        }
 
         return redirect()->intended(route('dashboard'));
     })

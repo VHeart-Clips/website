@@ -1,6 +1,6 @@
+import { Button } from '@headlessui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@headlessui/react';
 
 export default function Footer() {
     const { t } = useTranslation('footer');
@@ -35,52 +35,52 @@ export default function Footer() {
         <>
             <footer
                 ref={footerRef}
-                className="fixed right-0 bottom-0 left-0 z-40 border-t border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 py-6 text-gray-900 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:text-white/85 dark:ring-0"
+                className="fixed right-0 bottom-0 left-0 z-40 border-t border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 py-2 text-gray-900 ring-black/5 sm:py-4 md:py-6 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent dark:text-white/85 dark:ring-0"
             >
-                <div className="container mx-auto px-4">
-                    <div className="grid items-center gap-4 md:grid-cols-3">
-                        <div className="min-w-0 text-center text-sm md:text-left">
+                <div className="container mx-auto px-2 sm:px-4">
+                    <div className="grid items-center gap-0.5 sm:gap-2 md:grid-cols-3 md:gap-4">
+                        {/* Copyright */}
+                        <div className="min-w-0 text-center text-[10px] leading-tight sm:text-xs md:text-left md:text-sm">
                             © {new Date().getFullYear()} VHeart.{' '}
                             {t('all_rights_reserved')}
                         </div>
 
+                        {/* Links */}
                         <nav
                             aria-label={t('footer_navigation')}
                             className="min-w-0"
                         >
-                            <ul className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+                            <ul className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 md:gap-3">
                                 <li>
-                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
+                                    <Button className="h-auto px-1.5 py-0.5 text-[10px] text-gray-600 hover:text-gray-900 sm:px-2 sm:py-1 sm:text-xs md:text-sm dark:text-white/70 dark:hover:text-white">
                                         <a href="/privacy">
                                             {t('privacy.footer')}
                                         </a>
                                     </Button>
                                 </li>
                                 <li>
-                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
+                                    <Button className="h-auto px-1.5 py-0.5 text-[10px] text-gray-600 hover:text-gray-900 sm:px-2 sm:py-1 sm:text-xs md:text-sm dark:text-white/70 dark:hover:text-white">
                                         <a href="/imprint">
                                             {t('imprint.footer')}
                                         </a>
                                     </Button>
                                 </li>
                                 <li>
-                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
-                                        <a href="/team">
-                                            {t('team')}</a>
+                                    <Button className="h-auto px-1.5 py-0.5 text-[10px] text-gray-600 hover:text-gray-900 sm:px-2 sm:py-1 sm:text-xs md:text-sm dark:text-white/70 dark:hover:text-white">
+                                        <a href="/team">{t('team')}</a>
                                     </Button>
                                 </li>
                                 <li>
-                                    <Button className="h-auto px-2 py-1 text-sm text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white">
-                                        <a href="/about-us">
-                                            {t('about')}
-                                        </a>
+                                    <Button className="h-auto px-1.5 py-0.5 text-[10px] text-gray-600 hover:text-gray-900 sm:px-2 sm:py-1 sm:text-xs md:text-sm dark:text-white/70 dark:hover:text-white">
+                                        <a href="/about-us">{t('about')}</a>
                                     </Button>
                                 </li>
                             </ul>
                         </nav>
 
+                        {/* Social icons */}
                         <div className="min-w-0">
-                            <div className="flex items-center justify-center gap-3 md:justify-end">
+                            <div className="flex items-center justify-center gap-2 sm:gap-3 md:justify-end">
                                 <a
                                     href="https://github.com/VHeart-Clips/VHeart_Webseite"
                                     target="_blank"
@@ -89,7 +89,7 @@ export default function Footer() {
                                     className="text-gray-600 transition-colors hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
                                 >
                                     <svg
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -106,7 +106,7 @@ export default function Footer() {
                                     className="text-gray-600 transition-colors hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
                                 >
                                     <svg
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -123,7 +123,7 @@ export default function Footer() {
                                     className="text-gray-600 transition-colors hover:text-red-600 dark:text-white/70 dark:hover:text-red-400"
                                 >
                                     <svg
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -140,7 +140,7 @@ export default function Footer() {
                                     className="text-gray-600 transition-colors hover:text-purple-600 dark:text-white/70 dark:hover:text-purple-400"
                                 >
                                     <svg
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -157,7 +157,7 @@ export default function Footer() {
                                     className="text-gray-600 transition-colors hover:text-gray-900 dark:text-white/70 dark:hover:text-white"
                                 >
                                     <svg
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -174,7 +174,7 @@ export default function Footer() {
                                     className="text-gray-600 transition-colors hover:text-orange-600 dark:text-white/70 dark:hover:text-orange-400"
                                 >
                                     <svg
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
@@ -192,10 +192,8 @@ export default function Footer() {
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        width="16"
-                                        height="16"
                                         fill="currentColor"
-                                        className="h-5 w-5"
+                                        className="h-4 w-4 sm:h-5 sm:w-5"
                                         viewBox="0 0 16 16"
                                         aria-hidden="true"
                                     >
