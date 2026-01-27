@@ -17,7 +17,7 @@ class GameFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => fake()->numberBetween(),
+            'id' => fake()->unique()->numberBetween(),
             'title' => fake()->paragraph(1),
             'box_art' => fake()->imageUrl(268,357)
         ];
