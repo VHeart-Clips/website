@@ -19,6 +19,8 @@ type Item = {
     id: number;
     clipSlug: string;
     title: string;
+    already_voted: boolean;
+    voted: boolean;
 };
 
 type PageProps = {
@@ -63,13 +65,16 @@ export default function EvaluateClips() {
     };
 
     if (props.history) {
-        /*props.history.forEach((vote) => {
+        for (let index = props.history.length - 1; index >= 0; index--) {
+            const vote = props.history[index];
             items.push({
                 id: vote.clip.id,
                 clipSlug: vote.clip.twitch_id,
                 title: vote.clip.title,
+                already_voted: true,
+                voted: vote.voted,
             } as Item);
-        });*/
+        }
     }
 
     if (props.clip) {
@@ -77,10 +82,14 @@ export default function EvaluateClips() {
             id: props.clip.id,
             clipSlug: props.clip.twitch_id,
             title: props.clip.title,
+            already_voted: false,
+            voted: false,
         } as Item);
+        setTimeout(() => {
+            scrollToIndex(items.length - 1);
+        }, 500);
     }
-
-    console.log(props);
+    console.log(items);
 
     function toggleLike(id: number) {
         setLiked((prev) => {
@@ -159,9 +168,13 @@ export default function EvaluateClips() {
                         className="scrollbar-none h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
                     >
                         {items.map((it, index) => {
-                            const isActive = index === activeIndex;
-                            const isSkipped = skipped.has(it.id);
-                            const isLiked = liked.has(it.id);
+                            const isActive = index === activeIndex || true;
+                            const isSkipped =
+                                skipped.has(it.id) ||
+                                (it.already_voted && !it.voted);
+                            const isLiked =
+                                liked.has(it.id) ||
+                                (it.already_voted && it.voted);
 
                             const disableLike = isSkipped;
                             const disableSkip = isLiked;
@@ -177,7 +190,7 @@ export default function EvaluateClips() {
                                 >
                                     {/* VIDEO */}
                                     <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden">
-                                        {true ? (
+                                        {isActive ? (
                                             <div className="aspect-video h-full">
                                                 <TwitchClipContainer
                                                     slug={it.clipSlug}
