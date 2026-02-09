@@ -46,6 +46,11 @@ Route::get('/about-us', static function () {
     return Inertia::render('welcome', $settings);
 })->name('home');
 
+
+Route::get('/test', static function () {
+    return Inertia::render('background-test');
+})->name('test');
+
 Route::get('/imprint', function () {
     $locale = app()->getLocale();
     $view = "legal.$locale.imprint";
