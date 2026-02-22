@@ -1,12 +1,12 @@
-import { X } from 'lucide-react';
-import { PublicClip } from '@/types';
-import { Link } from '@inertiajs/react';
-import { vote } from '@/routes';
-import T from '@/components/t';
+import TwitchClipEmbed from '@/components/embeds/twitch-clip-embed';
 import ReportButton, {
     ReportableItem,
 } from '@/components/reports/report-button';
-import TwitchClipEmbed from '@/components/embeds/twitch-clip-embed';
+import T from '@/components/t';
+import { vote } from '@/routes';
+import { PublicClip } from '@/types';
+import { Link } from '@inertiajs/react';
+import { X } from 'lucide-react';
 
 export function ClipModal({
     clip,
@@ -46,7 +46,7 @@ export function ClipModal({
                 {/* Video */}
                 <div className="min-h-0 flex-1 px-0 2xl:px-4">
                     <div className="flex h-full min-h-0 items-center justify-center overflow-hidden">
-                        <div className="relative aspect-video w-full">
+                        <div className="relative aspect-video h-full">
                             <TwitchClipEmbed
                                 slug={clip.slug}
                                 thumbnail={clip.thumbnail_url}
@@ -72,7 +72,7 @@ export function ClipModal({
                                 type: 'user',
                                 id: clip.broadcaster.id,
                                 label: 'broadcaster',
-                            }
+                            },
                         ].filter((item): item is ReportableItem =>
                             Boolean(item),
                         )}
