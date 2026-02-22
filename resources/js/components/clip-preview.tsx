@@ -1,7 +1,6 @@
 import useInstantInView from '@/hooks/use-instant-in-view';
 import { cn } from '@/lib/utils';
 import { PublicClip } from '@/types';
-import clsx from 'clsx';
 import { Clock, Heart, Image as ImageIcon, ImageOff } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -79,7 +78,10 @@ export function ClipPreview({ clip, onClick, hideTitle }: ClipPreviewProps) {
             type="button"
             onClick={onClick}
             aria-label={`Clip öffnen: ${clip.title}`}
-            className="group focus-visible:ring-primary-500 relative aspect-video w-full overflow-hidden rounded-md bg-gray-200 outline-none focus-visible:ring-2 dark:bg-gray-800"
+            className={cn(
+                'group focus-visible:ring-primary-500 relative aspect-video w-full overflow-hidden rounded-md bg-gray-200 outline-none focus-visible:ring-2 dark:bg-gray-800',
+                onClick ? 'cursor-pointer' : '',
+            )}
         >
             {/* Loading */}
             {imageStatus === 'loading' && (
