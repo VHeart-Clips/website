@@ -111,6 +111,7 @@ export interface PublicClip {
     clip_duration: number;
     clipped_at: string;
     submitted_at: string;
+    tags?: TagResource[];
 }
 
 /** default Page Data for Dashboard */
