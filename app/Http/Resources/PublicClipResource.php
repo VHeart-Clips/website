@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Enums\ExternalContentProxyType;
 use App\Models\Clip;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,13 +33,13 @@ class PublicClipResource extends JsonResource
                 'avatar' => $this->broadcaster->proxiedContentUrl(),
             ]),
 
-            'clipper' => $this->whenHas('creator', [
+            'clipper' => $this->whenLoaded('creator', [
                 'id' => $this->creator_id,
                 'name' => $this->creator?->name,
                 'avatar' => $this->creator?->proxiedContentUrl(),
             ]),
 
-            'submitter' => $this->whenHas('submitter', [
+            'submitter' => $this->whenLoaded('submitter', [
                 'id' => $this->submitter_id,
                 'name' => $this->submitter?->name,
                 'avatar' => $this->submitter?->proxiedContentUrl(),
@@ -56,6 +55,7 @@ class PublicClipResource extends JsonResource
             'clip_duration' => $this->duration,
             'clipped_at' => $this->date,
             'submitted_at' => $this->created_at,
+            'tags' => $this->whenLoaded('tags', $this->tags->toResourceCollection()),
         ];
     }
 }
