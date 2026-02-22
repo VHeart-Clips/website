@@ -1,5 +1,7 @@
 import useInstantInView from '@/hooks/use-instant-in-view';
+import { cn } from '@/lib/utils';
 import { PublicClip } from '@/types';
+import clsx from 'clsx';
 import { Clock, Heart, Image as ImageIcon, ImageOff } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -7,6 +9,7 @@ import { useInView } from 'react-intersection-observer';
 type ClipPreviewProps = {
     clip: PublicClip;
     onClick?: () => void;
+    hideTitle?: boolean;
 };
 
 const formatDuration = (seconds: number) => {
@@ -17,7 +20,7 @@ const formatDuration = (seconds: number) => {
 
 type ImageStatus = 'loading' | 'loaded' | 'error';
 
-export function ClipPreview({ clip, onClick }: ClipPreviewProps) {
+export function ClipPreview({ clip, onClick, hideTitle }: ClipPreviewProps) {
     const [imageStatus, setImageStatus] = useState<ImageStatus>('loading');
     const imgRef = useRef<HTMLImageElement>(null);
     const { isMountedInView, ref: viewportRef } = useInstantInView(100);
@@ -120,7 +123,12 @@ export function ClipPreview({ clip, onClick }: ClipPreviewProps) {
             </div>
 
             {/* Titel unten */}
-            <div className="absolute right-2 bottom-1 left-2 rounded-xl bg-black/75 px-2 py-1 text-white backdrop-blur-[2px] transition-colors group-hover:bg-black/85 sm:bottom-2">
+            <div
+                className={cn(
+                    'absolute right-2 bottom-1 left-2 rounded-xl bg-black/75 px-2 py-1 text-white backdrop-blur-[2px] transition-colors group-hover:bg-black/85 sm:bottom-2',
+                    hideTitle ? 'hidden' : '',
+                )}
+            >
                 <div className="line-clamp-1 text-xs font-medium sm:text-sm">
                     {clip.title}
                 </div>
