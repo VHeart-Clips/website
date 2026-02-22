@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\BroadcasterDashboard;
+use App\Http\Resources\PrivateClipResource;
 use App\Models\Clip;
 use App\Models\Scopes\ClipPermissionScope;
 use App\Models\User;
@@ -34,9 +35,10 @@ Route::middleware('auth')->group(function () {
                             ->orderByDesc('id')
                             ->where('broadcaster_id', $user->id)
                             ->withoutGlobalScope(ClipPermissionScope::class)
+                            ->with(['category', 'creator', 'tags'])
                             ->cursorPaginate();
 
-                        return $clip->toResourceCollection();
+                        return $clip->toResourceCollection(PrivateClipResource::class);
                     }),
                 ]);
             })->name('dashboard.clips');
