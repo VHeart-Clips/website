@@ -79,7 +79,7 @@ export interface TagResource {
 
 export interface CategoryResource {
     id: number;
-    name: string;
+    title: string;
     art: {
         small: string;
         medium: string;
