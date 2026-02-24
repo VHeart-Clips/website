@@ -8,6 +8,7 @@ use App\Http\Resources\Role\RoleUserListResource;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -26,7 +27,9 @@ class TeamController extends Controller
                 ->where('public', true)
                 ->orderBy('weight', 'desc')
                 ->orderBy('name')
-                ->with('users:id,name,avatar_url')
+                ->with('users', function (BelongsToMany $query) {
+                    $query->select(['id', 'name', 'avatar_url'])->orderBy('name');
+                })
                 ->get()
                 ->toResourceCollection(RoleUserListResource::class)),
         ]);
