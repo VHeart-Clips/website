@@ -42,7 +42,7 @@ class CompilationForm
                                     ->tooltip(__('admin/resources/compilations.action.generate-slug'))
                                     ->icon(Heroicon::Link)
                                     ->iconButton()
-                                    ->action(function (Get $schemaGet, Set $schemaSet) {
+                                    ->action(function (Get $schemaGet, Set $schemaSet): void {
                                         $schemaSet('slug', str($schemaGet('title'))->trim()->slug()->toString());
                                     })
                                 // TODO: we should have the correct filament version but jsAction does not exist yet lol

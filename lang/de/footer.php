@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'privacy.footer' => 'Datenschutz',
     'imprint.footer' => 'Impressum',

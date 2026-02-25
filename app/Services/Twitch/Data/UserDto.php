@@ -31,7 +31,7 @@ readonly class UserDto implements TwitchDtoInterface
         $created_at = Carbon::parse($data['created_at']);
         $userType = TwitchUserType::tryFrom($data['type']) ?? TwitchUserType::User;
         $broadcasterType = TwitchBroadcasterType::tryFrom($data['broadcaster_type']) ?? TwitchBroadcasterType::Normal;
-        $email = ! empty($data['email']) ? $data['email'] : null;
+        $email = empty($data['email']) ? null : $data['email'];
 
         return new self(
             id: $data['id'],

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'noscript' => [
         'title' => '⚠️ JavaScript ist deaktiviert ⚠️',

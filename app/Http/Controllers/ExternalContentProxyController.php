@@ -39,7 +39,7 @@ class ExternalContentProxyController extends Controller
             'Cache-Control' => 'public, max-age=31536000, s-maxage=31536000, immutable',
         ];
 
-        return response()->stream(function () use ($response) {
+        return response()->stream(function () use ($response): void {
             $body = $response->toPsrResponse()->getBody();
 
             while (! $body->eof()) {

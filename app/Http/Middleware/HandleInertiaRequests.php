@@ -47,8 +47,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user()?->toResource(AuthenticatedUserResource::class),
                 'permissions' => $request->user()?->permissions(),
             ],
-            'reportOptions' => Inertia::optional(static fn () => [
-                'reasons' => collect(ReportReason::cases())->map(fn (ReportReason $reason, int $index) => [
+            'reportOptions' => Inertia::optional(static fn (): array => [
+                'reasons' => collect(ReportReason::cases())->map(fn (ReportReason $reason, int $index): array => [
                     'id' => $index,
                     'label' => $reason->getLabel(),
                 ]),

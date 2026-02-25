@@ -6,7 +6,6 @@ namespace App\Filament\Resources\FaqEntries\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -34,9 +33,7 @@ class FaqEntryForm
                     ->label('admin/resources/faq-entry.form.body.label')
                     ->translateLabel()
                     ->hint(__('admin/resources/faq-entry.form.body.hint'))
-                    ->required(function (Get $get) {
-                        return ! empty($get('title'));
-                    })
+                    ->required(fn (Get $get): bool => ! empty($get('title')))
                     ->minLength(10)
                     ->maxLength(4000)
                     ->label('admin/resources/faq-entry.form.body.label')

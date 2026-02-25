@@ -39,26 +39,22 @@ class UserFactory extends Factory
 
     public function withTwoFactor(?string $secret = null): self
     {
-        return $this->state(function (array $attributes) use ($secret): array {
-            return [
-                'app_authentication_secret' => $secret ?? app(AppAuthentication::class)->generateSecretKey(),
-                'app_authentication_recovery_codes' => [],
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'app_authentication_secret' => $secret ?? app(AppAuthentication::class)->generateSecretKey(),
+            'app_authentication_recovery_codes' => [],
+        ]);
     }
 
     public function withTwoFactorRecoveryCodes(?array $recoveryCodes = null): self
     {
-        return $this->state(function (array $attributes) use ($recoveryCodes): array {
-            return [
-                'app_authentication_recovery_codes' => $recoveryCodes ?? app(AppAuthentication::class)->generateRecoveryCodes(),
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'app_authentication_recovery_codes' => $recoveryCodes ?? app(AppAuthentication::class)->generateRecoveryCodes(),
+        ]);
     }
 
     public function withVerifiedEmail(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'email' => fake()->safeEmail(),
             'email_verified_at' => fake()->dateTime(),
         ]);
@@ -66,7 +62,7 @@ class UserFactory extends Factory
 
     public function withUnverifiedEmail(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'email' => fake()->safeEmail(),
             'email_verified_at' => null,
         ]);
@@ -74,7 +70,7 @@ class UserFactory extends Factory
 
     public function withClipPermission(?bool $value = true): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'clip_permission' => $value,
         ]);
     }

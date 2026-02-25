@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clips', function (Blueprint $table) {
+        Schema::create('clips', function (Blueprint $table): void {
             $table->id();
             $table->string('twitch_id')->index();
             $table->string('title');

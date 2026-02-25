@@ -35,7 +35,7 @@ class SubmitClipRequest extends FormRequest
     ) {
         parent::__construct();
 
-        $this->twitchService->onUserTokenRefresh(function ($token) {
+        $this->twitchService->onUserTokenRefresh(function ($token): void {
             session()?->put('twitch_access_token', $token);
         });
     }
@@ -65,7 +65,7 @@ class SubmitClipRequest extends FormRequest
     public function after(): array
     {
         return [
-            function (Validator $validator) {
+            function (Validator $validator): void {
                 if ($validator->errors()->isNotEmpty()) {
                     return;
                 }
@@ -81,7 +81,7 @@ class SubmitClipRequest extends FormRequest
                     ->asUser($this->user(), session()?->get('twitch_access_token'))
                     ->getClipByID($this->clipId);
 
-                if (! $this->clipInfo) {
+                if (! $this->clipInfo instanceof ClipDto) {
                     $validator->errors()->add('clip_url', __('sendinclip.errors.clip_not_found'));
 
                     return;
@@ -108,7 +108,7 @@ class SubmitClipRequest extends FormRequest
                     ->with(['broadcasterFilter'])
                     ->first();
 
-                if ($this->broadcaster === null) {
+                if (! $this->broadcaster instanceof User) {
                     $validator->errors()->add('clip_url', __('sendinclip.errors.broadcaster_not_allowed'));
 
                     return;

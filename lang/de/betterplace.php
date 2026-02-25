@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'last_donations' => 'Letzte Spenden:',
     'donate_now' => 'Jetzt spenden',

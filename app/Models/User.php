@@ -40,13 +40,14 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
 {
     use HasComments;
     use HasExternalProxy;
+
     /** @use HasFactory<UserFactory> */
     use HasFactory;
+
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
     use Notifiable;
     use Reportable;
-
     use SoftDeletes;
 
     public $incrementing = false;
@@ -64,7 +65,7 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
         'twitch_refresh_token',
     ];
 
-    protected $rememberTokenName = null;
+    protected $rememberTokenName;
 
     protected ?Role $importantRoleCache = null;
 
@@ -134,7 +135,7 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
      */
     public function getRole(): ?Role
     {
-        if ($this->importantRoleCache) {
+        if ($this->importantRoleCache instanceof Role) {
             return $this->importantRoleCache;
         }
 

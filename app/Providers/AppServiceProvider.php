@@ -8,9 +8,9 @@ use App\Enums\Permission;
 use App\Models\BroadcasterFilter;
 use App\Models\Category;
 use App\Models\Clip;
-use App\Models\Contracts\FilamentResourceful;
 use App\Models\Clip\Compilation;
 use App\Models\Clip\CompilationClip;
+use App\Models\Contracts\FilamentResourceful;
 use App\Models\Faq\FaqEntry;
 use App\Models\Report;
 use App\Models\Role;
@@ -36,11 +36,13 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\ComponentAttributeBag;
 use Inertia\Inertia;
 use Kirschbaum\Commentions\Comment;
 use Kirschbaum\Commentions\Config;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 use Spatie\Translatable\Facades\Translatable;
+use TalesFromADev\TailwindMerge\TailwindMerge;
 use Whitecube\LaravelCookieConsent\CookiesManager;
 
 class AppServiceProvider extends ServiceProvider
@@ -51,6 +53,10 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(CookiesManager::class, CustomCookiesManager::class);
+
+        $this->app->singleton(TailwindMerge::class, function ($app) {
+            return new TailwindMerge(cache: $app->make('cache.store'));
+        });
     }
 
     /**
@@ -58,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Event::listen(static function (SocialiteWasCalled $event) {
+        Event::listen(static function (SocialiteWasCalled $event): void {
             $event->extendSocialite('twitch', TwitchSocialiteProvider::class);
         });
 
@@ -149,7 +155,7 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureOther(): void
     {
-        if (app()->isProduction() || str_starts_with(config('app.url'), 'https://')) {
+        if (app()->isProduction() || str_starts_with((string) config('app.url'), 'https://')) {
             URL::forceHttps();
         }
 
@@ -172,26 +178,38 @@ class AppServiceProvider extends ServiceProvider
 
             return Filament::getResourceUrl($record, $page);
         });
+
+        /**
+         * Merge Tailwind classes with TailwindMerge to remove tags that cause conflicts with each other
+         *
+         * Should be the same as twMerge in react.
+         *
+         * @see https://github.com/tales-from-a-dev/tailwind-merge-php/blob/main/docs/index.md#usage
+         */
+        ComponentAttributeBag::macro('twMerge', function (...$defaultClasses): ComponentAttributeBag {
+            $mergedClasses = app(TailwindMerge::class)->merge([
+                ...$defaultClasses,
+                $this->get('class', ''),
+            ]);
+
+            return new ComponentAttributeBag(
+                array_merge($this->getAttributes(), ['class' => $mergedClasses])
+            );
+        });
     }
 
     private function configureRateLimiting(): void
     {
-        RateLimiter::for('locales', static function (Request $request): Limit {
-            return Limit::perMinute(30)->by($request->user()?->id ?? sha1($request->ip()));
-        });
+        RateLimiter::for('locales', static fn (Request $request): Limit => Limit::perMinute(30)->by($request->user()?->id ?? sha1((string) $request->ip())));
 
-        RateLimiter::for('two-factor', static function (Request $request): Limit {
-            return Limit::perMinute(5)->by($request->user()?->id ?? sha1($request->ip()));
-        });
+        RateLimiter::for('two-factor', static fn (Request $request): Limit => Limit::perMinute(5)->by($request->user()?->id ?? sha1((string) $request->ip())));
 
         RateLimiter::for('login', static function (Request $request): Limit {
-            $throttleKey = sha1($request->ip());
+            $throttleKey = sha1((string) $request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('image-proxy', static function (Request $request): Limit {
-            return Limit::perMinute(50)->by($request->user()?->id ?? sha1($request->ip()));
-        });
+        RateLimiter::for('image-proxy', static fn (Request $request): Limit => Limit::perMinute(50)->by($request->user()?->id ?? sha1((string) $request->ip())));
     }
 }

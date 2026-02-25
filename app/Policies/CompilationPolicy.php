@@ -30,8 +30,11 @@ class CompilationPolicy
         if ($user->id === $compilation->user_id) {
             return true;
         }
+        if ($user->can(Permission::ViewAnyCompilation)) {
+            return true;
+        }
 
-        return $user->can(Permission::ViewAnyCompilation) || $this->denyAsNotFound();
+        return (bool) $this->denyAsNotFound();
     }
 
     /**

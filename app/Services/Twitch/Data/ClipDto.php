@@ -37,7 +37,7 @@ readonly class ClipDto implements TwitchDtoInterface
     public static function from(array $data): static
     {
         // Twitch returns an empty string "" for video_id if unavailable
-        $video_id = ! empty($data['video_id']) ? (int) $data['video_id'] : null;
+        $video_id = empty($data['video_id']) ? null : (int) $data['video_id'];
         $created_at = Carbon::parse($data['created_at']);
 
         return new static(
@@ -62,6 +62,19 @@ readonly class ClipDto implements TwitchDtoInterface
     }
 
     /**
+     * @return array<int, ClipDto>
+     */
+    public static function fromArray(array $dataList): array
+    {
+        $result = [];
+        foreach ($dataList['data'] as $clip) {
+            $result[] = self::from($clip);
+        }
+
+        return $result;
+    }
+
+    /**
      * Convert this DTO to a Model compatible structure
      */
     public function toModel(?array $data = null): array
@@ -79,18 +92,5 @@ readonly class ClipDto implements TwitchDtoInterface
             'language' => $this->language,
             'date' => $this->created_at,
         ], $data ?? []);
-    }
-
-    /**
-     * @return  array<int, ClipDto>
-     */
-    public static function fromArray(array $dataList): array
-    {
-        $result = [];
-        foreach ($dataList['data'] as $clip) {
-            $result[] = self::from($clip);
-        }
-
-        return $result;
     }
 }

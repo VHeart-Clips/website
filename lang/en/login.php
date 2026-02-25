@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'title' => 'Welcome to VHeart!',
     'description' => 'We\'re excited to have you here. Connect your Twitch account to access all features.',

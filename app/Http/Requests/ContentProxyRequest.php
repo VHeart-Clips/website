@@ -24,7 +24,7 @@ class ContentProxyRequest extends FormRequest
 
     public function withValidator(Validator $validator): void
     {
-        $validator->after(function (Validator $validator) {
+        $validator->after(function (Validator $validator): void {
             /** @var ExternalContentProxyType|null $type */
             $type = $this->route('type');
 

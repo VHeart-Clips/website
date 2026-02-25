@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -131,8 +133,8 @@ return [
         // We can send these to somewhere else later, for now a single file is enough
         'slow-queries' => [
             'driver' => 'single',
-            'path'   => storage_path('logs/slow-queries.log'),
-            'level'  => 'warning',
+            'path' => storage_path('logs/slow-queries.log'),
+            'level' => 'warning',
         ],
 
     ],

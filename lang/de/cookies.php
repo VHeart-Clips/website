@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'appearance' => [
         'description' => 'Erlaubt es uns, dein bevorzugtes Aussehen zu merken.',

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Http\Controllers;
 
 use App\Enums\ExternalContentProxyType;
-use App\Models\Clip;
 use App\Models\Category;
+use App\Models\Clip;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
@@ -133,7 +133,6 @@ test('it successfully proxies if the local clip exists and broadcaster gave perm
     $response->assertHeader('Content-Type', 'image/png');
     $response->assertHeader('Cache-Control', 'immutable, max-age=31536000, public, s-maxage=31536000');
 });
-
 
 test('it generates correct proxy url for standard models', function () {
     $clip = Clip::factory()->create(['twitch_id' => 'clipper123']);

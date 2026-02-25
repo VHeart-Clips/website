@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace Tests\Unit\Enums;
 
 use App\Enums\ExternalContentProxyType;
-use App\Models\Clip;
 use App\Models\Category;
-use App\Models\User;
+use App\Models\Clip;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Vite;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);

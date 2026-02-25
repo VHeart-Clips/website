@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'appearance' => [
         'description' => 'Allows us to remember your theme preference.',

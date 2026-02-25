@@ -10,6 +10,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * Minimal Role data.
+ *
  * @mixin Role
  */
 class MinimalRoleResource extends JsonResource

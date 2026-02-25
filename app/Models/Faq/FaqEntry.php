@@ -20,6 +20,7 @@ class FaqEntry extends Model
 {
     /** @use HasFactory<FaqEntryFactory> */
     use HasFactory;
+
     use HasTranslations;
     use SoftDeletes;
 

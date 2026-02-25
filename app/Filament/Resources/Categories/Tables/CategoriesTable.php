@@ -20,16 +20,14 @@ class CategoriesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
+            ->modifyQueryUsing(function (Builder $query): void {
                 $query->withCount('clips');
             })
             ->columns([
                 ImageColumn::make('box_art')
                     ->label('admin/resources/categories.table.columns.box_art')
                     ->translateLabel()
-                    ->getStateUsing(function (Category $game) {
-                        return $game->getBoxArt();
-                    })
+                    ->getStateUsing(fn (Category $game): ?string => $game->getBoxArt())
                     ->imageHeight(100)
                     ->width(75)
                     ->grow(false),
@@ -65,7 +63,7 @@ class CategoriesTable
                         ->color('danger')
                         ->hidden(fn (Category $record): bool => $record->is_banned)
                         ->requiresConfirmation()
-                        ->action(function (Category $category) {
+                        ->action(function (Category $category): void {
                             $category->is_banned = true;
                             $category->save();
                         }),
@@ -76,7 +74,7 @@ class CategoriesTable
                         ->color('success')
                         ->hidden(fn (Category $record): bool => ! $record->is_banned)
                         ->requiresConfirmation()
-                        ->action(function (Category $category) {
+                        ->action(function (Category $category): void {
                             $category->is_banned = false;
                             $category->save();
                         }),

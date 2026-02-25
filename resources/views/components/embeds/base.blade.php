@@ -1,3 +1,6 @@
+@props([
+    'prompt',
+])
 <div
     x-intersect.margin.100px.once="setVisible"
     {{ $attributes->merge(['class' => "relative isolate overflow-hidden aspect-video rounded-lg bg-black dark:border-black"]) }}
@@ -25,18 +28,17 @@
     <template x-if="isValidUrl && url">
         <div class="h-full w-full">
             <template x-if="!hasConsent()">
-                <div class="absolute inset-0 z-20 h-full w-full bg-black">
-                    <div class="flex h-full flex-col items-center justify-center space-y-4 p-6 text-center text-white">
+                @if($prompt?->hasActualContent())
+                    {{ $prompt }}
+                @else
+                    <x-embeds.prompt.shell>
                         <p class="text-base font-medium text-balance text-zinc-400">
                             {{ __('embeds.generic.consent.text') }}
                         </p>
 
-                        <button
-                            @click="accept()"
-                            class="text-md rounded bg-zinc-600 px-4 py-2 font-bold text-white transition hover:bg-zinc-500 hover:text-white"
-                        >
+                        <x-embeds.prompt.consent-button>
                             {{ __('embeds.generic.consent.button') }}
-                        </button>
+                        </x-embeds.prompt.consent-button>
 
                         <template x-if="link" >
                             <a
@@ -48,8 +50,8 @@
                                 {{ __('embeds.generic.consent.link-text') }}
                             </a>
                         </template>
-                    </div>
-                </div>
+                    </x-embeds.prompt.shell>
+                @endif
             </template>
 
             <template x-if="hasConsent() && isVisible">

@@ -15,7 +15,7 @@ export default (
     const base = baseEmbed({
         ...config,
         url: '',
-        cookieName: config.cookieName || 'twitch_consent',
+        cookieName: 'twitch_embed_consent',
         title: config.title || 'Twitch Clip',
     });
 

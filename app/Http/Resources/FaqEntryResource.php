@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
  */
 class FaqEntryResource extends JsonResource
 {
-    public static $wrap = null;
+    public static $wrap;
 
     /**
      * @return array<string, mixed>

@@ -20,12 +20,10 @@ class ClipWithoutBannedCategoryScope implements Scope
             return;
         }
 
-        $builder->where(function ($query) {
-            return $query->whereHas('category', function (Builder $builder) {
-                $builder->where('is_banned', false);
-            })->orWhereDoesntHave('category', function (Builder $builder) {
-                $builder->where('is_banned', true);
-            });
-        });
+        $builder->where(fn ($query) => $query->whereHas('category', function (Builder $builder): void {
+            $builder->where('is_banned', false);
+        })->orWhereDoesntHave('category', function (Builder $builder): void {
+            $builder->where('is_banned', true);
+        }));
     }
 }

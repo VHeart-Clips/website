@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Reports\Pages;
 
-use App\Enums\Permission;
 use App\Enums\Reports\ReportStatus;
 use App\Enums\Reports\ResolveAction;
 use App\Filament\Resources\Reports\ReportResource;
@@ -29,8 +28,8 @@ class ViewReport extends ViewRecord
                 ->label('Claim')
                 ->icon(Heroicon::LockClosed)
                 ->color('info')
-                ->visible(fn (Report $record) => $record->claimed_by === null && $record->status === ReportStatus::Pending)
-                ->action(function (Report $record) {
+                ->visible(fn (Report $record): bool => $record->claimed_by === null && $record->status === ReportStatus::Pending)
+                ->action(function (Report $record): void {
                     $record->update([
                         'status' => ReportStatus::InReview,
                         'claimed_by' => auth()->id(),
@@ -42,8 +41,8 @@ class ViewReport extends ViewRecord
                 ->label('Unclaim')
                 ->icon(Heroicon::LockClosed)
                 ->color('info')
-                ->visible(fn (Report $record) => $record->claimed_by !== null && $record->status === ReportStatus::InReview)
-                ->action(function (Report $record) {
+                ->visible(fn (Report $record): bool => $record->claimed_by !== null && $record->status === ReportStatus::InReview)
+                ->action(function (Report $record): void {
                     $record->update([
                         'status' => ReportStatus::Pending,
                         'claimed_by' => null,
@@ -66,8 +65,8 @@ class ViewReport extends ViewRecord
                         ->hint('Required if Action is Other')
                         ->required(fn (Get $get): bool => $get('action') !== null && $get('action') === ResolveAction::Other),
                 ])
-                ->visible(fn (Report $record) => $record->claimed_by === auth()->id() && $record->status === ReportStatus::InReview)
-                ->action(function (Report $record, array $data) {
+                ->visible(fn (Report $record): bool => $record->claimed_by === auth()->id() && $record->status === ReportStatus::InReview)
+                ->action(function (Report $record, array $data): void {
                     $record->update([
                         'status' => ReportStatus::Resolved,
                         'resolve_action' => $data['action'],

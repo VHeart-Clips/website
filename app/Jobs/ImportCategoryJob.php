@@ -15,14 +15,11 @@ use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class ImportCategoryJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
     use Queueable;
-
-    public function __construct() {}
 
     /**
      * @return array<int, object>
@@ -39,7 +36,6 @@ class ImportCategoryJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
      */
     public function handle(TwitchService $twitchService, ImportCategoryAction $importCategoryAction): void
     {
-        /** @var Collection $missingCategories */
         $missingCategories = Clip::query()
             ->withoutGlobalScope(ClipPermissionScope::class)
             ->withoutGlobalScope(ClipWithoutBannedCategoryScope::class)
@@ -57,7 +53,7 @@ class ImportCategoryJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
             'total' => $missingCategories->count(),
         ]);
 
-        $missingCategories->chunk(100)->each(function ($chunk) use ($twitchService, $importCategoryAction) {
+        $missingCategories->chunk(100)->each(function ($chunk) use ($twitchService, $importCategoryAction): void {
             $categories = $twitchService->get(TwitchEndpoints::GetGames, [
                 'id' => $chunk->values()->toArray(),
             ]);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'staging-whitelist' => explode(',', (string) env('STAGING_WHITELIST', '')),
 
@@ -91,7 +93,7 @@ return [
             'name' => 'English',
             'flag' => 'gb',
             'locale' => 'en',
-        ]
+        ],
     ],
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),

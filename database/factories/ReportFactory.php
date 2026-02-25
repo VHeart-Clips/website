@@ -49,7 +49,7 @@ class ReportFactory extends Factory
      */
     public function claimed(?User $user = null): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'claimed_by' => $user ?? User::factory(),
             'claimed_at' => now(),
         ]);
@@ -60,7 +60,7 @@ class ReportFactory extends Factory
      */
     public function resolved(?User $user = null, ?ResolveAction $resolveAction = null): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'status' => ReportStatus::Resolved,
             'resolve_action' => $resolveAction ?? $this->faker->randomElement(ResolveAction::cases()),
             'resolved_by' => $user ?? User::factory(),

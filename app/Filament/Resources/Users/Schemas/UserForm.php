@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Users\Schemas;
 
-use App\Enums\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
@@ -41,9 +40,9 @@ class UserForm
                                 modifyQueryUsing: fn ($query) => $query->orderByDesc('weight')
                             )
                             // Even though they are visible and selectable, make sure only roles below the user weight are mutable
-                            ->saveRelationshipsUsing(function (User $record, $state) use ($canIgnoreWeight, $userWeight, $roleWeights) {
+                            ->saveRelationshipsUsing(function (User $record, $state) use ($canIgnoreWeight, $userWeight, $roleWeights): void {
                                 $immutableRoles = $roleWeights
-                                    ->filter(fn (int $weight) => ! $canIgnoreWeight && $weight >= $userWeight)
+                                    ->filter(fn (int $weight): bool => ! $canIgnoreWeight && $weight >= $userWeight)
                                     ->keys();
                                 $existingRoleIds = $record->roles()->pluck('id');
                                 $rolesToKeep = $existingRoleIds->intersect($immutableRoles);
@@ -80,9 +79,7 @@ class UserForm
                                     ->disabled(),
 
                                 Checkbox::make('2fa_enabled')
-                                    ->formatStateUsing(function (User $user) {
-                                        return ! empty($user->app_authentication_secret);
-                                    })
+                                    ->formatStateUsing(fn (User $user): bool => ! empty($user->app_authentication_secret))
                                     ->dehydrated(false)
                                     ->label('2FA Active')
                                     ->helperText('Indicates if the user has enabled two factor authentication.')

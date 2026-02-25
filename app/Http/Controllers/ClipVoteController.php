@@ -10,6 +10,7 @@ use App\Enums\Permission;
 use App\Models\Clip;
 use App\Models\Scopes\ClipPermissionScope;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -34,20 +35,16 @@ class ClipVoteController extends Controller
 
                 if ($session->has(self::SESSION_QUEUE_KEY)) {
                     $clipSessionQueue = $session->get(self::SESSION_QUEUE_KEY);
-                    if (is_array($clipSessionQueue) && ! empty($clipSessionQueue)) {
+                    if (is_array($clipSessionQueue) && $clipSessionQueue !== []) {
                         $clipIdQueue = $clipSessionQueue;
                     }
                 }
 
-                if (empty($clipIdQueue)) {
+                if ($clipIdQueue === []) {
 
-                    $clips = Clip::whereDoesntHave('votes', function (Builder $query) use ($user) {
-                        return $query->where('user_id', $user->id);
-                    })->whereNot('broadcaster_id', $user->id)
+                    $clips = Clip::whereDoesntHave('votes', fn (Builder $query) => $query->where('user_id', $user->id))->whereNot('broadcaster_id', $user->id)
                         ->whereNot('submitter_id', $user->id)
-                        ->whereDoesntHave('compilations', function (Builder $query) {
-                            return $query->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases());
-                        })->select(['id'])
+                        ->whereDoesntHave('compilations', fn (Builder $query) => $query->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases()))->select(['id'])
                         ->inRandomOrder()
                         ->limit(value: self::QUEUE_SIZE)
                         ->get();
@@ -63,7 +60,7 @@ class ClipVoteController extends Controller
 
                 $clipIdToVote = $clipIdQueue[0];
 
-                $clip = Clip::withoutGlobalScope(ClipPermissionScope::class)->withCount(['votes' => function (Builder $query) {
+                $clip = Clip::withoutGlobalScope(ClipPermissionScope::class)->withCount(['votes' => function (Builder $query): void {
                     $query->where('type', ClipVoteType::Public);
                 }])->find($clipIdToVote);
 
@@ -75,7 +72,7 @@ class ClipVoteController extends Controller
     /**
      * Store the newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'clip' => ['required', 'exists:clips,id'],
@@ -87,7 +84,7 @@ class ClipVoteController extends Controller
         if ($session->has(key: self::SESSION_QUEUE_KEY)) {
             $clipSessionQueue = $session->get(self::SESSION_QUEUE_KEY);
             $clipIdtoVote = null;
-            if (is_array($clipSessionQueue) && ! empty($clipSessionQueue)) {
+            if (is_array($clipSessionQueue) && $clipSessionQueue !== []) {
                 $clipIdtoVote = $clipSessionQueue[0];
             }
 
@@ -97,9 +94,7 @@ class ClipVoteController extends Controller
             }
         }
 
-        $clip = Clip::whereDoesntHave('compilations', function (Builder $query) {
-            return $query->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases());
-        })->find($data['clip']);
+        $clip = Clip::whereDoesntHave('compilations', fn (Builder $query) => $query->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases()))->find($data['clip']);
 
         if (empty($clip)) {
             return back();

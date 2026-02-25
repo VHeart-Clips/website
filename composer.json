@@ -23,6 +23,7 @@
         "sentry/sentry-laravel": "^4.20",
         "socialiteproviders/twitch": "^5.4",
         "spatie/laravel-translatable": "^6.12",
+        "tales-from-a-dev/tailwind-merge-php": "^0.2.0",
         "whitecube/laravel-cookie-consent": "^1.3"
     },
     "require-dev": {
@@ -113,12 +114,12 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@test:type-coverage",
+            "@test:refactor",
             "@test:unit"
         ],
         "test-inactive": [
             "@php artisan config:clear --ansi",
             "@test:types",
-            "@test:refactor",
             "@test:lint"
         ]
     },

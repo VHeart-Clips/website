@@ -27,7 +27,7 @@ class TeamController extends Controller
                 ->where('public', true)
                 ->orderBy('weight', 'desc')
                 ->orderBy('name')
-                ->with('users', function (BelongsToMany $query) {
+                ->with('users', function (BelongsToMany $query): void {
                     $query->select(['id', 'name', 'avatar_url'])->orderBy('name');
                 })
                 ->get()

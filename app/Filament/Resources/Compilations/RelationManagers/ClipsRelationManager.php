@@ -86,7 +86,7 @@ class ClipsRelationManager extends RelationManager
                                 ->icon(Heroicon::Clock)
                                 ->size(TextSize::Medium)
                                 ->sortable()
-                                ->formatStateUsing(fn (int $state) => gmdate('i:s', $state))
+                                ->formatStateUsing(fn (int $state): string => gmdate('i:s', $state))
                                 ->fontFamily(FontFamily::Mono)
                                 ->badge()
                                 ->color('gray'),
@@ -156,9 +156,7 @@ class ClipsRelationManager extends RelationManager
                             ImageColumn::make('category.box_art')
                                 ->imageHeight(40)
                                 ->alignCenter()
-                                ->getStateUsing(function (Clip $record) {
-                                    return $record->category?->getBoxArt();
-                                })
+                                ->getStateUsing(fn (Clip $record) => $record->category?->getBoxArt())
                                 ->extraImgAttributes([
                                     'class' => 'object-cover rounded-md aspect-[3/4]',
                                 ])
@@ -236,20 +234,20 @@ class ClipsRelationManager extends RelationManager
                             ->pluck('claimed_by'))
                         ->pluck('name', 'id')
                         ->prepend(__('admin/resources/compilations.relation_managers.clips.filters.claimer_option_none'), 'null'))
-                    ->query(function (Builder $query, array $data) {
+                    ->query(function (Builder $query, array $data): void {
                         $values = $data['values'] ?? [];
                         if (empty($values)) {
                             return;
                         }
 
-                        $query->where(function (Builder $query) use ($values) {
+                        $query->where(function (Builder $query) use ($values): void {
                             $ids = array_diff($values, ['null']);
 
                             if (in_array('null', $values, true)) {
                                 $query->whereNull('clip_compilation.claimed_by');
                             }
 
-                            if (! empty($ids)) {
+                            if ($ids !== []) {
                                 $query->orWhereIn('clip_compilation.claimed_by', $ids);
                             }
                         });
@@ -273,7 +271,7 @@ class ClipsRelationManager extends RelationManager
                     ->queries(
                         true: fn (Builder $query) => $query->whereNotNull('removed_at'),
                         false: fn (Builder $query) => $query->whereNull('removed_at'),
-                        blank: fn (Builder $query) => $query,
+                        blank: fn (Builder $query): Builder => $query,
                     ),
 
                 // TODO: either remove this or check why it just doesnt want to work, needs more attention
@@ -301,7 +299,7 @@ class ClipsRelationManager extends RelationManager
             ->recordActions([
                 CommentsAction::make()
                     ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                    ->hidden(fn () => ! auth()->user()->can(Permission::ViewAnyComment))
+                    ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
                     ->perPage(4)
                     ->loadMoreIncrementsBy(8)
                     ->modalWidth(Width::SevenExtraLarge),
@@ -311,15 +309,15 @@ class ClipsRelationManager extends RelationManager
                         ->translateLabel()
                         ->icon(Heroicon::LockClosed)
                         ->rateLimit(5)
-                        ->hidden(fn (Clip $record) => $record->pivot->claimed_by === auth()->id())
-                        ->requiresConfirmation(fn (Clip $record) => ! is_null($record->pivot->claimed_by))
-                        ->modalHeading(fn (Clip $record) => $record->pivot->claimed_by
+                        ->hidden(fn (Clip $record): bool => $record->pivot->claimed_by === auth()->id())
+                        ->requiresConfirmation(fn (Clip $record): bool => ! is_null($record->pivot->claimed_by))
+                        ->modalHeading(fn (Clip $record): string|array|null => $record->pivot->claimed_by
                             ? __('admin/resources/compilations.relation_managers.clips.actions.claim_override.heading')
                             : null)
-                        ->modalDescription(fn (Clip $record) => $record->pivot->claimed_by
+                        ->modalDescription(fn (Clip $record): string|array|null => $record->pivot->claimed_by
                             ? __('admin/resources/compilations.relation_managers.clips.actions.claim_override.description')
                             : null)
-                        ->action(function (Clip $clip) {
+                        ->action(function (Clip $clip): true {
                             $clip->pivot->update([
                                 'claimed_by' => auth()->id(),
                             ]);
@@ -337,7 +335,7 @@ class ClipsRelationManager extends RelationManager
                         ->label('admin/resources/compilations.relation_managers.clips.actions.status.title')
                         ->translateLabel()
                         ->icon(Heroicon::Clipboard)
-                        ->hidden(fn (Clip $record) => $record->pivot->claimed_by !== auth()->id())
+                        ->hidden(fn (Clip $record): bool => $record->pivot->claimed_by !== auth()->id())
                         ->fillForm(fn (Clip $record): array => [
                             'status' => $record->pivot->status,
                         ])
@@ -364,8 +362,8 @@ class ClipsRelationManager extends RelationManager
                         ->label('admin/resources/clips.actions.download')
                         ->translateLabel()
                         ->icon(Heroicon::ArrowDownTray)
-                        ->disabled(fn (Clip $record) => $record->pivot->claimed_by !== auth()->id())
-                        ->action(function (Clip $clip, TwitchService $twitchService, Component $livewire) {
+                        ->disabled(fn (Clip $record): bool => $record->pivot->claimed_by !== auth()->id())
+                        ->action(function (Clip $clip, TwitchService $twitchService, Component $livewire): bool {
                             $broadCaster = $clip->broadcaster;
 
                             if (! $broadCaster || empty($broadCaster->twitch_refresh_token) || $broadCaster->clip_permission === false) {
@@ -420,7 +418,7 @@ class ClipsRelationManager extends RelationManager
                         ->icon('heroicon-o-clipboard-document-list')
                         ->color('gray')
                         ->tooltip(__('admin/resources/compilations.relation_managers.clips.actions.copy_filename_tooltip'))
-                        ->action(function (Clip $clip, $livewire) {
+                        ->action(function (Clip $clip, $livewire): void {
                             $title = Str::limit($clip->title, 50, '');
 
                             $filename = "[{$clip->id}] {$clip->broadcaster->name} - {$clip->category->title} - {$title}.mp4";
@@ -437,9 +435,9 @@ class ClipsRelationManager extends RelationManager
                         ->translateLabel()
                         ->color('warning')
                         ->icon(Heroicon::LockOpen)
-                        ->hidden(fn (Clip $record) => $record->pivot->claimed_by !== auth()->id())
+                        ->hidden(fn (Clip $record): bool => $record->pivot->claimed_by !== auth()->id())
                         ->requiresConfirmation()
-                        ->action(function (Clip $clip) {
+                        ->action(function (Clip $clip): void {
                             if ($clip->pivot->claimed_by !== auth()->id()) {
                                 Notification::make()
                                     ->title(__('admin/resources/compilations.relation_managers.clips.actions.unclaim_failed.title'))
@@ -470,5 +468,4 @@ class ClipsRelationManager extends RelationManager
             ->paginationMode(PaginationMode::Cursor)
             ->openRecordUrlInNewTab();
     }
-
 }

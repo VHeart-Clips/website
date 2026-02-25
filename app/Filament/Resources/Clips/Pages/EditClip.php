@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Clips\Pages;
 
 use App\Filament\Resources\Clips\ClipResource;
-use App\Models\Clip;
-use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditClip extends EditRecord

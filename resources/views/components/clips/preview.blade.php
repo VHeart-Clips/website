@@ -2,7 +2,7 @@
     href="{{ $clip->getClipUrl() }}"
     aria-label="Clip öffnen: {{ $clip->title }}"
     target="_blank"
-    {{ $attributes->merge(['class' => 'group focus-visible:ring-primary-500 relative aspect-video w-full overflow-hidden rounded-md bg-gray-200 outline-none focus-visible:ring-2 dark:bg-gray-800']) }}
+    {{ $attributes->twMerge('block group focus-visible:ring-primary-500 relative aspect-video w-full overflow-hidden rounded-md bg-gray-200 outline-none focus-visible:ring-2 dark:bg-gray-800') }}
 >
     <x-image src="{{ $clip->proxiedContentUrl() }}" class="aspect-video" />
 

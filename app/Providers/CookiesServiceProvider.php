@@ -21,22 +21,22 @@ class CookiesServiceProvider extends ServiceProvider
             ->session();
 
         Cookies::optional()
-            ->cookie(function (Cookie $cookie) {
+            ->cookie(function (Cookie $cookie): void {
                 $cookie->name('twitch_embed_consent')
                     ->description(__('cookies.twitch_embed_consent.description'))
                     ->duration(60 * 24 * 30);
             })
-            ->cookie(function (Cookie $cookie) {
+            ->cookie(function (Cookie $cookie): void {
                 $cookie->name('youtube_embed_consent')
                     ->description(__('cookies.youtube_embed_consent.description'))
                     ->duration(60 * 24 * 30);
             })
-            ->cookie(function (Cookie $cookie) {
+            ->cookie(function (Cookie $cookie): void {
                 $cookie->name('appearance')
                     ->description(__('cookies.appearance.description'))
                     ->duration(60 * 24 * 365);
             })
-            ->cookie(function (Cookie $cookie) {
+            ->cookie(function (Cookie $cookie): void {
                 $cookie->name('sidebar_state')
                     ->description(__('cookies.sidebar_state.description'))
                     ->duration(60 * 24 * 365);

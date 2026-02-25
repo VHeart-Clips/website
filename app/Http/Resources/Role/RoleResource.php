@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 /**
  * Full Role data
+ *
  * @mixin Role
  */
 class RoleResource extends MinimalRoleResource

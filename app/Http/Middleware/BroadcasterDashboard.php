@@ -14,14 +14,11 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
-class BroadcasterDashboard
+readonly class BroadcasterDashboard
 {
-    private TwitchService $twitchService;
-
-    public function __construct(TwitchService $twitchService)
+    public function __construct(private TwitchService $twitchService)
     {
-        $this->twitchService = $twitchService;
-        $this->twitchService->onUserTokenRefresh(function ($token) {
+        $this->twitchService->onUserTokenRefresh(function ($token): void {
             session()->put('twitch_access_token', $token);
         });
     }
@@ -59,13 +56,13 @@ class BroadcasterDashboard
         return Redirect::route('dashboard');
     }
 
-    private function addDashboardData(User $broadcaster, User $authUser)
+    private function addDashboardData(User $broadcaster, User $authUser): void
     {
         Inertia::share('selectedStreamer', $broadcaster->toResource(UserResource::class));
         Inertia::share('streamers', Inertia::once(function () use ($authUser) {
             Log::info('test middelware');
             $moderatedChanels = $this->twitchService->asUser($authUser, session()?->get('twitch_access_token'))->getModeratedChannels();
-            $moderatedChanelIds = array_map(fn ($item) => $item['broadcaster_id'], $moderatedChanels);
+            $moderatedChanelIds = array_map(fn (array $item) => $item['broadcaster_id'], $moderatedChanels);
 
             $channels = User::query()->whereClipPermission(true)->findMany($moderatedChanelIds);
 

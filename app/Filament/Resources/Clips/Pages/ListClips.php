@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Clips\Pages;
 
 use App\Filament\Resources\Clips\ClipResource;
@@ -13,7 +15,7 @@ class ListClips extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            //CreateAction::make(),
+            // CreateAction::make(),
         ];
     }
 }

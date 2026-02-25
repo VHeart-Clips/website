@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Str;
 
 return [
@@ -47,7 +49,7 @@ return [
     |
     */
 
-    'encrypt' => env('SESSION_ENCRYPT',  env('APP_ENV', 'local') !== 'local'),
+    'encrypt' => env('SESSION_ENCRYPT', env('APP_ENV', 'local') !== 'local'),
 
     /*
     |--------------------------------------------------------------------------

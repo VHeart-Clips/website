@@ -19,6 +19,7 @@
         "@eslint/js": "^9.19.0",
         "@laravel/vite-plugin-wayfinder": "^0.1.7",
         "@tailwindcss/vite": "^4.2.0",
+        "@types/alpinejs__anchor": "^3.13.1",
         "@types/alpinejs__intersect": "^3.13.4",
         "@types/async-alpine": "^2.0.0",
         "@types/node": "^25.3.0",
@@ -34,6 +35,7 @@
         "typescript-eslint": "^8.56.0"
     },
     "dependencies": {
+        "@alpinejs/anchor": "^3.15.8",
         "@alpinejs/intersect": "^3.15.8",
         "@headlessui/react": "^2.2.9",
         "@icons-pack/react-simple-icons": "^13.11.2",

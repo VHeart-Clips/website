@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Clips\Pages;
 
 use App\Enums\Permission;
@@ -23,16 +25,14 @@ class ViewClip extends ViewRecord
         return [
             CommentsAction::make()
                 ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                ->hidden(fn () => ! auth()->user()->can(Permission::ViewAnyComment))
+                ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
                 ->perPage(4)
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),
             Action::make('open_twitch')
                 ->label(__('admin/resources/clips.actions.view_on_twitch'))
                 ->icon(Heroicon::Link)
-                ->url(function (Clip $clip) {
-                    return $clip->getClipUrl();
-                })
+                ->url(fn (Clip $clip): string => $clip->getClipUrl())
                 ->openUrlInNewTab(),
             EditAction::make(),
         ];

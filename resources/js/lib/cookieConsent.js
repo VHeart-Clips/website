@@ -63,7 +63,7 @@ class CookieConsent {
      * Subscribe to Cookie consent changes
      * If cookieStore is not available, it will start a 1-second interval that checks the current state
      * Interval will be stopped if there are no listeners left
-     * @param {function(Object): void} listener - Callback receives new state
+     * @param {function(ConsentState): void} listener - Callback receives new state
      * @returns {function(): boolean} - Unsubscribe function
      */
     subscribe(listener) {
@@ -126,5 +126,5 @@ class CookieConsent {
         }
     }
 }
-
+export default CookieConsent;
 export const cookieConsentManager = new CookieConsent();

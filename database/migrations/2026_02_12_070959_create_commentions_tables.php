@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         // Comments
-        Schema::create(config('commentions.tables.comments', 'comments'), function (Blueprint $table) {
+        Schema::create(config('commentions.tables.comments', 'comments'), function (Blueprint $table): void {
             $table->id();
             $table->morphs('author');
             $table->morphs('commentable');
@@ -20,7 +20,7 @@ return new class extends Migration
         });
 
         // Reactions
-        Schema::create(config('commentions.tables.comment_reactions', 'comment_reactions'), function (Blueprint $table) {
+        Schema::create(config('commentions.tables.comment_reactions', 'comment_reactions'), function (Blueprint $table): void {
             $table->id();
             $table->foreignId('comment_id')->constrained(config('commentions.tables.comments'))->cascadeOnDelete();
             $table->morphs('reactor');
@@ -35,7 +35,7 @@ return new class extends Migration
         });
 
         // Subscriptions
-        Schema::create(config('commentions.tables.comment_subscriptions', 'comment_subscriptions'), function (Blueprint $table) {
+        Schema::create(config('commentions.tables.comment_subscriptions', 'comment_subscriptions'), function (Blueprint $table): void {
             $table->id();
             $table->morphs('subscribable');
             $table->morphs('subscriber');

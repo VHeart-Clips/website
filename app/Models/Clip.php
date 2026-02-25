@@ -43,6 +43,21 @@ class Clip extends Model implements Commentable, ExternalProxyable
     /** @use HasFactory<ClipFactory> */
     use HasComments, HasExternalProxy, HasFactory, Reportable;
 
+    public static function getProxyIdentifierColumn(): string
+    {
+        return 'twitch_id';
+    }
+
+    public static function getProxyUrlColumn(): string
+    {
+        return 'thumbnail_url';
+    }
+
+    public static function getProxyExtension(): string
+    {
+        return 'jpg';
+    }
+
     public function broadcaster(): BelongsTo
     {
         return $this->BelongsTo(User::class)
@@ -103,6 +118,11 @@ class Clip extends Model implements Commentable, ExternalProxyable
         return 'title';
     }
 
+    public function getProxyType(): ExternalContentProxyType
+    {
+        return ExternalContentProxyType::TwitchClip;
+    }
+
     protected function casts(): array
     {
         return [
@@ -156,7 +176,7 @@ class Clip extends Model implements Commentable, ExternalProxyable
     #[Scope]
     protected function whereNotPublished(Builder $query): Builder
     {
-        return $query->whereDoesntHave('compilations', function (Builder $q) {
+        return $query->whereDoesntHave('compilations', function (Builder $q): void {
             $q->whereIn('compilations.status', array_merge(
                 CompilationStatus::getPublicCases(),
                 [CompilationStatus::Scheduled]
@@ -216,7 +236,7 @@ class Clip extends Model implements Commentable, ExternalProxyable
     {
         return $query->withCount(
             [
-                'votes as public_votes' => function (Builder $query) {
+                'votes as public_votes' => function (Builder $query): void {
                     $query->where('type', ClipVoteType::Public);
                 },
             ]
@@ -231,7 +251,7 @@ class Clip extends Model implements Commentable, ExternalProxyable
     {
         return $query->withCount(
             [
-                'votes as jury_votes' => function (Builder $query) {
+                'votes as jury_votes' => function (Builder $query): void {
                     $query->where('type', ClipVoteType::Jury);
                 },
             ]
@@ -249,25 +269,5 @@ class Clip extends Model implements Commentable, ExternalProxyable
         return $query
             ->withJuryVoteCount()
             ->withPublicVoteCount();
-    }
-
-    public static function getProxyIdentifierColumn(): string
-    {
-        return 'twitch_id';
-    }
-
-    public static function getProxyUrlColumn(): string
-    {
-        return 'thumbnail_url';
-    }
-
-    public static function getProxyExtension(): string
-    {
-        return 'jpg';
-    }
-
-    public function getProxyType(): ExternalContentProxyType
-    {
-        return ExternalContentProxyType::TwitchClip;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Compilations\Pages;
 
 use App\Enums\Permission;
@@ -22,7 +24,7 @@ class EditCompilation extends EditRecord
         return [
             CommentsAction::make()
                 ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                ->hidden(fn () => ! auth()->user()->can(Permission::ViewAnyComment))
+                ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
                 ->perPage(4)
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),

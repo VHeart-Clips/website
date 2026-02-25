@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('user_roles', function (Blueprint $table): void {
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('role_id');
             $table->timestamps();
@@ -25,7 +25,7 @@ return new class extends Migration
             $table->unique(['user_id', 'role_id']);
         });
 
-        Schema::create('role_permissions', function (Blueprint $table) {
+        Schema::create('role_permissions', function (Blueprint $table): void {
             $table->foreignId('role_id')->constrained()->cascadeOnDelete();
             $table->string('permission');
             $table->unique(['role_id', 'permission']);

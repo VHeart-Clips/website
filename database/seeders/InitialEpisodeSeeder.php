@@ -520,7 +520,7 @@ class InitialEpisodeSeeder extends Seeder
 
         Log::notice("Importing {$allClips->count()} Clips...");
 
-        $allClips->chunk(100)->each(function ($chunk, $index) use ($twitchService, &$twitchClips, &$missingClips) {
+        $allClips->chunk(100)->each(function ($chunk, $index) use ($twitchService, &$twitchClips, &$missingClips): void {
             $requestedIds = $chunk->values()->toArray();
             $params = ['id' => $requestedIds];
 
@@ -551,7 +551,7 @@ class InitialEpisodeSeeder extends Seeder
             sleep(1);
         });
 
-        $twitchClips->each(function (ClipDto $clip) use ($systemUser, $importClipAction) {
+        $twitchClips->each(function (ClipDto $clip) use ($systemUser, $importClipAction): void {
             $importClipAction->execute($clip, $systemUser);
         });
 
@@ -577,18 +577,16 @@ class InitialEpisodeSeeder extends Seeder
                 ->withoutGlobalScope(ClipPermissionScope::class)
                 ->whereIn('twitch_id', $episodeData['clips'])
                 ->pluck('id')
-                ->map(function (int $id) {
-                    return [
-                        'clip_id' => $id,
-                        'claimed_by' => 0,
-                        'claimed_at' => now(),
-                        'status' => CompilationClipStatus::Completed,
-                    ];
-                });
+                ->map(fn (int $id): array => [
+                    'clip_id' => $id,
+                    'claimed_by' => 0,
+                    'claimed_at' => now(),
+                    'status' => CompilationClipStatus::Completed,
+                ]);
 
             $compilation->clips()->sync($clips);
 
-            $clips->each(function (array $clip) {
+            $clips->each(function (array $clip): void {
                 DB::table('clips')->where('id', $clip['clip_id'])->update(['status' => ClipStatus::Approved]);
             });
 

@@ -40,10 +40,8 @@ class CompilationFactory extends Factory
 
     public function withoutUser(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'user_id' => null,
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'user_id' => null,
+        ]);
     }
 }

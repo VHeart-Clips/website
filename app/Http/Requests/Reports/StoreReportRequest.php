@@ -46,7 +46,7 @@ class StoreReportRequest extends FormRequest
             'description' => [
                 'nullable',
                 Rule::requiredIf(
-                    fn () => $this->enum('reason', ReportReason::class) === ReportReason::Other,
+                    fn (): bool => $this->enum('reason', ReportReason::class) === ReportReason::Other,
                 ),
                 'string',
                 'max:1000',

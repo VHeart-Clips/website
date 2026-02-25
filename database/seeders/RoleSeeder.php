@@ -31,7 +31,7 @@ class RoleSeeder extends Seeder
         $allPermissions = collect(Permission::cases())->pluck('value');
 
         DB::table('role_permissions')->insertOrIgnore(
-            $allPermissions->map(fn (string $permission) => [
+            $allPermissions->map(fn (string $permission): array => [
                 'role_id' => $superadmin->id,
                 'permission' => $permission,
             ])->toArray()

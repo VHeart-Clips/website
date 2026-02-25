@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Clips\RelationManagers;
 
 use App\Enums\Clips\CompilationClipStatus;
@@ -13,12 +15,13 @@ use Filament\Tables\Table;
 class CompilationsRelationManager extends RelationManager
 {
     protected static string $relationship = 'compilations';
+
+    protected static ?string $relatedResource = CompilationResource::class;
+
     public function isReadOnly(): bool
     {
         return false;
     }
-
-    protected static ?string $relatedResource = CompilationResource::class;
 
     public function table(Table $table): Table
     {

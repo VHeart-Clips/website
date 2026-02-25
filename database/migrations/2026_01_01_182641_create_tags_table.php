@@ -15,7 +15,7 @@ return new class extends Migration
             $table->jsonb('name');
         });
 
-        Schema::create('clip_tags', function (Blueprint $table) {
+        Schema::create('clip_tags', function (Blueprint $table): void {
             $table->foreignId('clip_id')->constrained()->cascadeOnDelete();
             $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Tags\Tables;
 
 use Filament\Actions\BulkActionGroup;
@@ -14,12 +16,11 @@ use LaraZeus\SpatieTranslatable\Resources\Pages\ListRecords\Concerns\Translatabl
 class TagsTable
 {
     use Translatable;
+
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                return $query->withCount('clips');
-            })
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount('clips'))
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('clips_count'),

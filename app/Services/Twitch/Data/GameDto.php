@@ -18,6 +18,7 @@ readonly class GameDto implements TwitchDtoInterface
     public static function from(array $data): static
     {
         $igdb_id = empty($data['igdb_id']) ? null : (int) $data['igdb_id'];
+
         return new static(
             (int) $data['id'],
             $data['name'],

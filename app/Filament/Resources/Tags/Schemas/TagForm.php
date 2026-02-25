@@ -20,7 +20,7 @@ class TagForm
                     ->minLength(2)
                     ->unique(
                         table: 'tags',
-                        column: fn (Component $livewire) => 'name->'.$livewire->activeLocale,
+                        column: fn (Component $livewire): string => 'name->'.$livewire->activeLocale,
                         ignoreRecord: true
                     ),
             ])->columns(1);

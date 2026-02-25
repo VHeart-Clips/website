@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class BroadcasterFilter extends Model
 {
     public $timestamps = false;
+
     public function broadcaster(): BelongsTo
     {
         return $this->belongsTo(User::class, 'broadcaster_id');

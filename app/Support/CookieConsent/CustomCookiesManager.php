@@ -17,7 +17,7 @@ class CustomCookiesManager extends CookiesManager
             value: json_encode($this->preferences, JSON_THROW_ON_ERROR),
             minutes: config('cookieconsent.cookie.duration'),
             domain: config('cookieconsent.cookie.domain'),
-            secure: ! ((config('app.env') === 'local')),
+            secure: config('app.env') !== 'local',
             httpOnly: false,
         );
     }

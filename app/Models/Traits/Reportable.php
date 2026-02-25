@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Traits;
 
 use App\Enums\Reports\ReportStatus;
@@ -19,14 +21,22 @@ trait Reportable
     }
 
     /**
+     * Override to return the correct title attribute for this model so we can use it to show a human readable name
+     */
+    public function getReportableTitleAttribute(): string
+    {
+        return 'name';
+    }
+
+    /**
      * Ignore any models with more than $threshold reports
      */
     #[Scope]
     protected function withLimitedReports(Builder $query, int $threshold = 3): void
     {
-        $query->where(function ($q) use ($threshold) {
+        $query->where(function ($q) use ($threshold): void {
             $q->doesntHave('reports')
-                ->orWhereHas('reports', function (Builder $query) {
+                ->orWhereHas('reports', function (Builder $query): void {
                     $query->where('status', ReportStatus::Pending);
                 }, '<=', $threshold);
         });
@@ -35,16 +45,6 @@ trait Reportable
     #[Scope]
     protected function withActiveReports(Builder $query): void
     {
-        $query->whereHas('reports', function (Builder $query) {
-            return $query->where('status', ReportStatus::Pending);
-        });
-    }
-
-    /**
-     * Override to return the correct title attribute for this model so we can use it to show a human readable name
-     */
-    public function getReportableTitleAttribute(): string
-    {
-        return "name";
+        $query->whereHas('reports', fn (Builder $query) => $query->where('status', ReportStatus::Pending));
     }
 }

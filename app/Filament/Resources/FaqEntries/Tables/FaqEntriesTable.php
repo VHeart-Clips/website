@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\FaqEntries\Tables;
 
 use Filament\Actions\BulkActionGroup;
@@ -16,7 +18,6 @@ use LaraZeus\SpatieTranslatable\Resources\Pages\ListRecords\Concerns\Translatabl
 class FaqEntriesTable
 {
     use Translatable;
-
 
     public static function configure(Table $table): Table
     {

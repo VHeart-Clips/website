@@ -44,7 +44,7 @@ class TwitchService
         $this->clientId = config('services.twitch.client_id', '');
         $this->clientSecret = config('services.twitch.client_secret', '');
 
-        if ((empty($this->clientId) || empty($this->clientSecret)) && app()->environment(['local', 'staging', 'production'])) {
+        if (($this->clientId === '' || $this->clientId === '0' || ($this->clientSecret === '' || $this->clientSecret === '0')) && app()->environment(['local', 'staging', 'production'])) {
             throw TwitchApiException::ApplicationClientIdOrSecretNotConfiguredError();
         }
     }
@@ -58,7 +58,7 @@ class TwitchService
     {
         $newSelf = clone $this;
 
-        if ($user === null) {
+        if (! $user instanceof User) {
             $newSelf->user = null;
             $newSelf->userRefreshToken = null;
             $newSelf->userAccessToken = null;
@@ -140,7 +140,7 @@ class TwitchService
         if (Cache::has('twitch_access_token')) {
             try {
                 return Crypt::decryptString(Cache::get('twitch_access_token'));
-            } catch (Throwable $e) {
+            } catch (Throwable) {
             }
         }
 
@@ -171,6 +171,68 @@ class TwitchService
     public function get(string|TwitchEndpoints $endpoint, array $params = []): array|TwitchDtoInterface
     {
         return $this->request('GET', $endpoint, $params);
+    }
+
+    /**
+     * POST to Twitch
+     *
+     * @throws ConnectionException|TwitchApiException
+     */
+    public function post(string|TwitchEndpoints $endpoint, array $data = []): array|TwitchDtoInterface
+    {
+        return $this->request('POST', $endpoint, $data);
+    }
+
+    /**
+     * Returns true if the given user is moderator for the given broadcaster.
+     *
+     * This will always return false if no user was given.
+     */
+    public function isModeratorFor(?User $broadCaster = null): bool
+    {
+        if (! $this->user || ! $broadCaster) {
+            return false;
+        }
+
+        return in_array($broadCaster->id, array_column($this->getModeratedChannels(), 'broadcaster_id'), false);
+    }
+
+    /**
+     * Returns the list of Channels the current user has moderator permissions for.
+     *
+     * @return array<int, int>
+     */
+    public function getModeratedChannels(): array
+    {
+        if (! $this->user instanceof User) {
+            return [];
+        }
+
+        return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id), 300, fn () => $this->get(TwitchEndpoints::GetModeratedChannels, ['user_id' => $this->user->id, 'first' => 100])['data']);
+    }
+
+    /**
+     * Returns the Clip for this Twitch Clip id if it exists
+     */
+    public function getClipByID(?string $clipId): ?ClipDto
+    {
+        try {
+            return array_first($this->get(TwitchEndpoints::GetClips, ['id' => $clipId]) ?? []);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    /**
+     * Parses the Clip ID from a given Url
+     */
+    public function parseClipId(string $clipUrl): ?string
+    {
+        if (preg_match('/([A-Z][a-zA-Z0-9]*-[a-zA-Z0-9_-]+)/', $clipUrl, $m)) {
+            return $m[0];
+        }
+
+        return null;
     }
 
     /**
@@ -205,11 +267,7 @@ class TwitchService
 
         $url = $this->baseUrl.'/'.mb_ltrim($endpoint, '/');
 
-        if (mb_strtoupper($method) === 'GET') {
-            $response = $client->get($url, $params);
-        } else {
-            $response = $client->post($url, $params);
-        }
+        $response = mb_strtoupper($method) === 'GET' ? $client->get($url, $params) : $client->post($url, $params);
 
         if ($allowRetry && $response->status() === 401 && $this->tokenRefresh()) {
             return $this->request($method, $endpoint, $params, false);
@@ -219,7 +277,7 @@ class TwitchService
             throw TwitchApiException::GenericApiResponseError($response);
         }
 
-        if($dataTransferObject) {
+        if ($dataTransferObject) {
             return $dataTransferObject::fromArray($response->json());
         }
 
@@ -270,72 +328,5 @@ class TwitchService
         Cache::forget('twitch_access_token');
 
         return true;
-    }
-
-    /**
-     * POST to Twitch
-     *
-     * @throws ConnectionException|TwitchApiException
-     */
-    public function post(string|TwitchEndpoints $endpoint, array $data = []): array|TwitchDtoInterface
-    {
-        return $this->request('POST', $endpoint, $data);
-    }
-
-    /**
-     * Returns true if the given user is moderator for the given broadcaster.
-     *
-     * This will always return false if no user was given.
-     */
-    public function isModeratorFor(?User $broadCaster = null): bool
-    {
-        if (! $this->user || ! $broadCaster) {
-            return false;
-        }
-
-        return in_array($broadCaster->id, array_column($this->getModeratedChannels(), 'broadcaster_id'), false);
-    }
-
-    /**
-     * Returns the list of Channels the current user has moderator permissions for.
-     *
-     * @return array<int, int>
-     */
-    public function getModeratedChannels(): array
-    {
-        if (! $this->user) {
-            return [];
-        }
-
-        return Cache::remember(sha1('twitch:get:'.TwitchEndpoints::GetModeratedChannels->value.':'.$this->user->id), 300, function () {
-            return $this->get(TwitchEndpoints::GetModeratedChannels, ['user_id' => $this->user->id, 'first' => 100])['data'];
-        });
-    }
-
-    /**
-     * Returns the Clip for this Twitch Clip id if it exists
-     *
-     * @param  string|null  $clipId
-     * @return ClipDto|null
-     */
-    public function getClipByID(?string $clipId): ?ClipDto
-    {
-        try {
-            return array_first($this->get(TwitchEndpoints::GetClips, ['id' => $clipId]) ?? []);
-        } catch (Throwable $e) {
-            return null;
-        }
-    }
-
-    /**
-     * Parses the Clip ID from a given Url
-     */
-    public function parseClipId(string $clipUrl): ?string
-    {
-        if (preg_match('/([A-Z][a-zA-Z0-9]*-[a-zA-Z0-9_-]+)/', $clipUrl, $m)) {
-            return $m[0];
-        }
-
-        return null;
     }
 }

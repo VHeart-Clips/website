@@ -95,7 +95,7 @@ class ExportTranslationsCommand extends Command
      */
     protected function i18n(array $data): array
     {
-        array_walk_recursive($data, static function (&$value) {
+        array_walk_recursive($data, static function (&$value): void {
             if (is_string($value) && str_contains($value, ':')) {
                 // Find a Laravel style translation replacement in the string and replace it with
                 // one that the front-end is able to use. This won't always be present, especially

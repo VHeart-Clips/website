@@ -46,7 +46,7 @@ class ClipInfolist
                             ->schema([
                                 ImageEntry::make('category.box_art')
                                     ->hiddenLabel()
-                                    ->state(fn (?Category $category) => ($category ?? new Category(Category::Defaults))->getBoxArt())
+                                    ->state(fn (?Category $category): ?string => ($category ?? new Category(Category::Defaults))->getBoxArt())
                                     ->extraImgAttributes([
                                         'class' => 'object-cover rounded aspect-[3/4]',
                                     ])
@@ -68,7 +68,7 @@ class ClipInfolist
                                     ->label(__('admin/resources/clips.table.columns.duration'))
                                     ->tooltip(__('admin/resources/clips.table.columns.duration'))
                                     ->icon(Heroicon::Clock)
-                                    ->formatStateUsing(fn (int $state) => gmdate('i:s', $state))
+                                    ->formatStateUsing(fn (int $state): string => gmdate('i:s', $state))
                                     ->fontFamily(FontFamily::Mono)
                                     ->size(TextSize::Medium)
                                     ->badge()
@@ -97,7 +97,7 @@ class ClipInfolist
                                 ->translateLabel()
                                 ->icon(Heroicon::VideoCamera)
                                 ->color('gray')
-                                ->url(function (Clip $clip) {
+                                ->url(function (Clip $clip): ?string {
                                     if (! $clip->broadcaster?->exists) {
                                         return null;
                                     }
@@ -110,7 +110,7 @@ class ClipInfolist
                                 ->translateLabel()
                                 ->icon(Heroicon::Scissors)
                                 ->color('gray')
-                                ->url(function (Clip $clip) {
+                                ->url(function (Clip $clip): ?string {
                                     if (! $clip->creator?->exists) {
                                         return null;
                                     }
@@ -123,7 +123,7 @@ class ClipInfolist
                                 ->translateLabel()
                                 ->icon(Heroicon::User)
                                 ->color('gray')
-                                ->url(function (Clip $clip) {
+                                ->url(function (Clip $clip): ?string {
                                     if (! $clip->submitter?->exists) {
                                         return null;
                                     }

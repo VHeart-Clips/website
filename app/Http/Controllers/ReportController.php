@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Reports\StoreReportRequest;
 use App\Models\Report;
 use Illuminate\Http\RedirectResponse;
-use Inertia\Inertia;
 
 class ReportController extends Controller
 {

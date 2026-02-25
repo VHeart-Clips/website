@@ -1,5 +1,6 @@
 import { AlpineComponent } from 'alpinejs';
 import { checkInView } from '@/lib/utils';
+import CookieManager from '@/lib/cookieManager';
 
 const ViewportBuffer = 100;
 
@@ -15,18 +16,17 @@ export interface GenericEmbedData {
     url: string | null;
     link: string | null;
     title: string;
-    cookieName: string | null;
     isLoading: boolean;
     hasConsentGiven: boolean;
     isValidUrl: boolean;
     thumbnailUrl: string | null;
     isVisible: boolean;
     hasConsent(): boolean;
-    hasCookie(name: string): boolean;
     accept(): void;
     handleIframeLoad(): void;
     init(): void;
     setVisible(): void;
+    cookieManager: CookieManager | null;
 }
 
 export default (
@@ -34,13 +34,15 @@ export default (
 ): AlpineComponent<GenericEmbedData> => ({
     url: config.url || null,
     link: config.link || null,
-    cookieName: config.cookieName || null,
     title: config.title || 'Embed',
     thumbnailUrl: config.thumbnailUrl || null,
     isLoading: true,
     hasConsentGiven: false,
     isValidUrl: true,
     isVisible: false,
+    cookieManager: config.cookieName
+        ? new CookieManager(config.cookieName)
+        : null,
 
     init() {
         const el = this.$el as HTMLImageElement;
@@ -66,30 +68,29 @@ export default (
                 this.isValidUrl = false;
             }
         });
+
+        this.cookieManager?.consentManager.subscribe(() => {
+            if (this.cookieManager && this.cookieManager.hasConsent === false) {
+                this.hasConsentGiven = false;
+                this.cookieManager?.remove();
+            }
+        });
     },
 
     hasConsent() {
-        return (
-            !this.cookieName ||
-            this.hasCookie(this.cookieName) ||
-            this.hasConsentGiven
-        );
-    },
+        if (! this.cookieManager) {
+            return this.hasConsentGiven;
+        }
 
-    hasCookie(name: string) {
-        if (typeof document === 'undefined') return false;
-        return document.cookie
-            .split('; ')
-            .some((row) => row.startsWith(name + '='));
+        return this.hasConsentGiven || (this.cookieManager?.hasConsent && !! this.cookieManager?.get());
     },
 
     accept() {
         this.hasConsentGiven = true;
-        if (this.cookieName) {
-            const date = new Date();
-            date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
-            document.cookie = `${this.cookieName}=1; expires=${date.toUTCString()}; path=/`;
-        }
+
+        this.cookieManager?.set('1', {
+            days: 30
+        })
     },
     setVisible() {
         this.isVisible = true;

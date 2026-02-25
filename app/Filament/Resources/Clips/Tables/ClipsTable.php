@@ -40,10 +40,10 @@ class ClipsTable
                 'creator',
                 'submitter',
             ])->withCount([
-                'votes as votes_jury' => function (Builder $query) {
+                'votes as votes_jury' => function (Builder $query): void {
                     $query->where('type', ClipVoteType::Jury)->whereVoted(true);
                 },
-                'votes as votes_public' => function (Builder $query) {
+                'votes as votes_public' => function (Builder $query): void {
                     $query->where('type', ClipVoteType::Public)->whereVoted(true);
                 },
             ]))
@@ -76,7 +76,7 @@ class ClipsTable
                                 ->icon(Heroicon::Clock)
                                 ->size(TextSize::Medium)
                                 ->sortable()
-                                ->formatStateUsing(fn (int $state) => gmdate('i:s', $state))
+                                ->formatStateUsing(fn (int $state): string => gmdate('i:s', $state))
                                 ->fontFamily(FontFamily::Mono)
                                 ->badge()
                                 ->color('gray'),
@@ -145,9 +145,7 @@ class ClipsTable
                             ImageColumn::make('category.box_art')
                                 ->imageHeight(40)
                                 ->alignCenter()
-                                ->getStateUsing(function (Clip $record) {
-                                    return $record->category?->getBoxArt();
-                                })
+                                ->getStateUsing(fn (Clip $record) => $record->category?->getBoxArt())
                                 ->extraImgAttributes([
                                     'class' => 'object-cover rounded-md aspect-[3/4]',
                                 ])
@@ -167,27 +165,21 @@ class ClipsTable
             ])
             ->filters([
                 SelectFilter::make('broadcaster')
-                    ->relationship('broadcaster', 'name', function (Builder $query): Builder {
-                        return $query->whereHas('broadcastedClips');
-                    })
+                    ->relationship('broadcaster', 'name', fn (Builder $query): Builder => $query->whereHas('broadcastedClips'))
                     ->searchable()
                     ->preload()
                     ->multiple()
                     ->label('admin/resources/clips.filters.broadcaster')
                     ->translateLabel(),
                 SelectFilter::make('creator')
-                    ->relationship('creator', 'name', function (Builder $query): Builder {
-                        return $query->whereHas('createdClips');
-                    })
+                    ->relationship('creator', 'name', fn (Builder $query): Builder => $query->whereHas('createdClips'))
                     ->searchable()
                     ->preload()
                     ->multiple()
                     ->label('admin/resources/clips.filters.creator')
                     ->translateLabel(),
                 SelectFilter::make('submitter')
-                    ->relationship('submitter', 'name', function (Builder $query): Builder {
-                        return $query->whereHas('submittedClips');
-                    })
+                    ->relationship('submitter', 'name', fn (Builder $query): Builder => $query->whereHas('submittedClips'))
                     ->searchable()
                     ->preload()
                     ->multiple()
@@ -215,7 +207,7 @@ class ClipsTable
                     ->falseLabel(__('admin/resources/clips.filters.status_visibility.false'))
                     ->queries(
                         true: fn (Builder $query) => $query->whereIn('status', [ClipStatus::Blocked, ClipStatus::NeedApproval]),
-                        false: fn (Builder $query) => $query,
+                        false: fn (Builder $query): Builder => $query,
                         blank: fn (Builder $query) => $query->whereNotIn('status', [ClipStatus::Blocked, ClipStatus::NeedApproval]),
                     ),
 
@@ -236,17 +228,13 @@ class ClipsTable
                     ->trueLabel(__('admin/resources/clips.filters.in_compilation.only_with_compilation'))
                     ->falseLabel(__('admin/resources/clips.filters.in_compilation.with_compilation'))
                     ->queries(
-                        true: fn (Builder $query) => $query->whereHas('compilations', function (Builder $query): Builder {
-                            return $query->whereIn('compilations.status', array_merge([
-                                CompilationStatus::Planned,
-                            ], CompilationStatus::getPublicCases()));
-                        }),
-                        false: fn (Builder $query) => $query,
-                        blank: fn (Builder $query) => $query->whereDoesntHave('compilations', function (Builder $query): Builder {
-                            return $query->whereIn('compilations.status', array_merge([
-                                CompilationStatus::Planned,
-                            ], CompilationStatus::getPublicCases()));
-                        }),
+                        true: fn (Builder $query) => $query->whereHas('compilations', fn (Builder $query): Builder => $query->whereIn('compilations.status', array_merge([
+                            CompilationStatus::Planned,
+                        ], CompilationStatus::getPublicCases()))),
+                        false: fn (Builder $query): Builder => $query,
+                        blank: fn (Builder $query) => $query->whereDoesntHave('compilations', fn (Builder $query): Builder => $query->whereIn('compilations.status', array_merge([
+                            CompilationStatus::Planned,
+                        ], CompilationStatus::getPublicCases()))),
                     ),
             ])
             ->defaultSort('votes_public', 'desc')
@@ -260,11 +248,9 @@ class ClipsTable
                             Select::make('compilation_id')
                                 ->label('Compilation')
                                 ->searchable()
-                                ->options(function (Clip $record) {
-                                    return Clip\Compilation::query()
-                                        ->whereNotIn('id', $record->compilations()->pluck('compilations.id'))
-                                        ->pluck('title', 'id');
-                                })
+                                ->options(fn (Clip $record) => Clip\Compilation::query()
+                                    ->whereNotIn('id', $record->compilations()->pluck('compilations.id'))
+                                    ->pluck('title', 'id'))
                                 ->preload()
                                 ->required(),
                             Fieldset::make()
@@ -274,7 +260,7 @@ class ClipsTable
                                         ->label('admin/resources/clips.actions.attach_to_compilation.claim')
                                         ->translateLabel(),
                                     Select::make('status')
-                                        ->disabled(fn (Get $get) => $get('claim') !== true)
+                                        ->disabled(fn (Get $get): bool => $get('claim') !== true)
                                         ->label('admin/resources/clips.actions.attach_to_compilation.status')
                                         ->translateLabel()
                                         ->options(CompilationClipStatus::class)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'permissions_prompt' => [
         'title' => 'Streamer? Bitte erlaube uns, deine Clips zu nutzen.',
@@ -11,7 +13,7 @@ return [
         'consent' => [
             'text' => 'Externen Inhalt von Twitch laden?',
             'button' => 'Inhalt laden',
-            'privacy-policy' => 'Datenschutzerklärung von Twitch'
+            'privacy-policy' => 'Datenschutzerklärung von Twitch',
         ],
         'loading' => 'Lade Clip...',
     ],

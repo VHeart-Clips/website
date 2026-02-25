@@ -12,13 +12,13 @@ use Illuminate\Console\Command;
 
 class ImportTopClipsFromTwitchCommand extends Command
 {
-    public const GameCategory = 509658;
+    public const int GameCategory = 509658;
 
     protected $signature = 'app:import-top-clips-from-twitch';
 
     protected $description = 'Import top 20 clips from twitch (just chatting)';
 
-    public function handle(TwitchService $twitchService, ImportClipAction $importClipAction)
+    public function handle(TwitchService $twitchService, ImportClipAction $importClipAction): void
     {
         $clips = $twitchService->get(TwitchEndpoints::GetClips, [
             'game_id' => self::GameCategory,

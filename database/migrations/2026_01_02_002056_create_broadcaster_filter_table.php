@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('broadcaster_filters', function (Blueprint $table) {
+        Schema::create('broadcaster_filters', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('broadcaster_id')
                 ->constrained('users')

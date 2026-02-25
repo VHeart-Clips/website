@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Services\Twitch\TwitchService;
 use Tests\TestCase;
+
 uses(TestCase::class); // should probably refactor the service tbh
 
 test('correctly parses clip ids from any input', function (string $input, ?string $expectedOutput): void {

@@ -72,17 +72,15 @@ class CompilationsTable
                                 DatePicker::make('created_until'),
                             ]),
                     ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                            )
-                            ->when(
-                                $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                            );
-                    }),
+                    ->query(fn (Builder $query, array $data): Builder => $query
+                        ->when(
+                            $data['created_from'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                        )
+                        ->when(
+                            $data['created_until'],
+                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                        )),
                 TernaryFilter::make('has_youtube')
                     ->label('admin/resources/compilations.table.filters.youtube_link')
                     ->translateLabel()
@@ -93,7 +91,7 @@ class CompilationsTable
                     ->queries(
                         true: fn (Builder $query) => $query->whereNotNull('youtube_url'),
                         false: fn (Builder $query) => $query->whereNull('youtube_url'),
-                        blank: fn (Builder $query) => $query,
+                        blank: fn (Builder $query): Builder => $query,
                     ),
                 TernaryFilter::make('has_clips')
                     ->label('admin/resources/compilations.table.filters.clips')
@@ -105,7 +103,7 @@ class CompilationsTable
                     ->queries(
                         true: fn (Builder $query) => $query->whereHas('clips'),
                         false: fn (Builder $query) => $query->whereDoesntHave('clips'),
-                        blank: fn (Builder $query) => $query,
+                        blank: fn (Builder $query): Builder => $query,
                     ),
                 TrashedFilter::make()->columnSpanFull(),
             ])

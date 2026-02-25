@@ -19,7 +19,7 @@ export default (
     const base = baseEmbed({
         ...config,
         url: config.youtubeUrl || '',
-        cookieName: config.cookieName || 'youtube_consent',
+        cookieName: 'youtube_embed_consent',
         title: config.title || 'Youtube Embed',
     });
 

@@ -26,6 +26,8 @@ class Compilation extends Model implements Commentable, FilamentResourceful
     /** @use HasFactory<CompilationFactory> */
     use HasComments, HasFactory, SoftDeletes;
 
+    public string $filamentResourcePageForCommentNotifications = 'edit';
+
     /**
      * User who has Created the Compilation (if available)
      */
@@ -51,6 +53,4 @@ class Compilation extends Model implements Commentable, FilamentResourceful
             'removed_at' => 'datetime',
         ];
     }
-
-    public string $filamentResourcePageForCommentNotifications = "edit";
 }

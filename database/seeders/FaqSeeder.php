@@ -20,7 +20,7 @@ class FaqSeeder extends Seeder
                 'de' => 'Was ist VHeart?',
             ],
             'body' => [
-                'de' => "**VHeart** ist ein Projekt von den Streamern **meynhero, YuraYami, DasOnkeelchen und SilentPandaVT** organisiert wird. VHeart vereint beste Unterhaltung mit einem guten Zweck. Wir präsentieren regelmäßig neue Compilations verschiedenster Streamer. Jedes Video dient einer wichtigen Mission: **Dem Tierschutz.**",
+                'de' => '**VHeart** ist ein Projekt von den Streamern **meynhero, YuraYami, DasOnkeelchen und SilentPandaVT** organisiert wird. VHeart vereint beste Unterhaltung mit einem guten Zweck. Wir präsentieren regelmäßig neue Compilations verschiedenster Streamer. Jedes Video dient einer wichtigen Mission: **Dem Tierschutz.**',
             ],
             'published_at' => now(),
             'order' => 0,
@@ -207,7 +207,7 @@ class FaqSeeder extends Seeder
                 'de' => 'Wird der YouTube Kanal monetarisiert?',
             ],
             'body' => [
-                'de' => "Ja. Die Einnahmen des **[YouTube-Kanals](https://www.youtube.com/@vheartclips)** werden vollständig gespendet und gehen zu 100 % an den **[Erlebnishof Gerhardsbrunn](https://erlebnishof-gerhardsbrunn.de).**",
+                'de' => 'Ja. Die Einnahmen des **[YouTube-Kanals](https://www.youtube.com/@vheartclips)** werden vollständig gespendet und gehen zu 100 % an den **[Erlebnishof Gerhardsbrunn](https://erlebnishof-gerhardsbrunn.de).**',
             ],
             'published_at' => now(),
             'order' => FaqEntry::count() + 1,

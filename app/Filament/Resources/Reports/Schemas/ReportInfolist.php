@@ -56,9 +56,7 @@ class ReportInfolist
                                 ]),
 
                             Section::make('Action')
-                                ->visible(function (Model $record) {
-                                    return $record->resolve_action !== null;
-                                })
+                                ->visible(fn (Model $record): bool => $record->resolve_action !== null)
                                 ->icon(Heroicon::CommandLine)
                                 ->compact()
                                 ->schema([
@@ -76,8 +74,8 @@ class ReportInfolist
                                     Action::make('view')
                                         ->color('info')
                                         ->icon(Heroicon::ArrowTopRightOnSquare)
-                                        ->disabled(fn (Model $record) => self::getResourceUrl($record->reportable) === null)
-                                        ->url(fn (Model $record) => self::getResourceUrl($record->reportable), shouldOpenInNewTab: true),
+                                        ->disabled(fn (Model $record): bool => self::getResourceUrl($record->reportable) === null)
+                                        ->url(fn (Model $record): ?string => self::getResourceUrl($record->reportable), shouldOpenInNewTab: true),
                                 ])
                                 ->icon(Heroicon::Eye)
                                 ->columns(2)
@@ -99,14 +97,14 @@ class ReportInfolist
                                 ->icon(Heroicon::Users)
                                 ->schema([
                                     TextEntry::make('reporter.name')
-                                        ->url(fn (Model $record) => self::getResourceUrl($record->reporter), true)
+                                        ->url(fn (Model $record): ?string => self::getResourceUrl($record->reporter), true)
                                         ->label('Reporter')
                                         ->icon(Heroicon::User)
                                         ->weight(FontWeight::Bold)
                                         ->color('gray'),
 
                                     TextEntry::make('claimer.name')
-                                        ->url(fn (Model $record) => self::getResourceUrl($record->claimer), true)
+                                        ->url(fn (Model $record): ?string => self::getResourceUrl($record->claimer), true)
                                         ->label('Claimed By')
                                         ->icon(Heroicon::ShieldCheck)
                                         ->placeholder('Unclaimed')
@@ -114,7 +112,7 @@ class ReportInfolist
                                         ->color('gray'),
 
                                     TextEntry::make('resolver.name')
-                                        ->url(fn (Model $record) => self::getResourceUrl($record->resolver), true)
+                                        ->url(fn (Model $record): ?string => self::getResourceUrl($record->resolver), true)
                                         ->label('Resolved By')
                                         ->icon(Heroicon::CheckBadge)
                                         ->placeholder('Unresolved')
@@ -139,7 +137,7 @@ class ReportInfolist
                                         ->label('Resolved')
                                         ->dateTime()
                                         ->placeholder('-')
-                                        ->color(fn ($state) => $state ? 'success' : 'gray'),
+                                        ->color(fn ($state): string => $state ? 'success' : 'gray'),
 
                                     TextEntry::make('updated_at')
                                         ->label('Last Activity')
@@ -150,7 +148,7 @@ class ReportInfolist
                     ]),
                 Section::make('Comments')
                     ->columnSpanFull()
-                    ->hidden(fn () => ! auth()->user()->can(Permission::ViewAnyComment))
+                    ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
                     ->schema([
                         CommentsEntry::make('comments')
                             ->hiddenLabel()

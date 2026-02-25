@@ -41,6 +41,7 @@ class TwoFactorSubmitRequest extends TwoFactorChallengeRequest
             $mfa->verifyRecoveryCode($this->input('recovery_code', ''), $user)
         ) {
             $this->session()->forget(['auth.2fa.id']);
+
             return;
         }
 

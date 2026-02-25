@@ -26,13 +26,13 @@ class ViewUser extends ViewRecord
         return [
             CommentsAction::make()
                 ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                ->hidden(fn () => ! auth()->user()->can(Permission::ViewAnyComment))
+                ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
                 ->perPage(4)
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),
             Action::make('2fa_reset')
                 ->label('Remove 2FA')
-                ->hidden(function (User $record) {
+                ->hidden(function (User $record): bool {
                     if (! auth()->user()->can(Permission::UpdateAnyUser)) {
                         return true;
                     }
@@ -40,7 +40,7 @@ class ViewUser extends ViewRecord
                     return $record->app_authentication_secret === null;
                 })
                 ->requiresConfirmation()
-                ->action(function (User $user) {
+                ->action(function (User $user): void {
                     $user->update([
                         'app_authentication_secret' => null,
                         'app_authentication_recovery_codes' => null,

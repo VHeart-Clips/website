@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'account_disabled' => 'Your account has been deactivated. Please contact us if you think this is a mistake.',
     'account_created_too_early' => 'Your Twitch account has been created too early, please try again later.',

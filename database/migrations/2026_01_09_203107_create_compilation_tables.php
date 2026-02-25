@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('compilations', function (Blueprint $table) {
+        Schema::create('compilations', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained();
 
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('clip_compilation', function (Blueprint $table) {
+        Schema::create('clip_compilation', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('clip_id')->constrained();
             $table->foreignId('compilation_id')->constrained()->cascadeOnDelete();
@@ -37,7 +37,6 @@ return new class extends Migration
             // Cutter that claimed this Clip in the compilation, only the current claimer can change the status
             $table->foreignId('claimed_by')->nullable()->references('id')->on('users');
             $table->timestamp('claimed_at')->nullable();
-
 
             $table->unsignedInteger('status')->index(); // CompilationClipStatus
 
