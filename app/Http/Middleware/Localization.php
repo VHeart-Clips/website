@@ -27,7 +27,7 @@ class Localization
         if (session()?->has('locale')) {
             $locale = session('locale');
 
-            if (array_key_exists($locale, $availableLocales)) {
+            if (array_key_exists((string) $locale, $availableLocales)) {
                 app()->setLocale($locale);
                 $request->setLocale($locale);
 

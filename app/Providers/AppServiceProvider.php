@@ -54,9 +54,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(CookiesManager::class, CustomCookiesManager::class);
 
-        $this->app->singleton(TailwindMerge::class, function ($app) {
-            return new TailwindMerge(cache: $app->make('cache.store'));
-        });
+        $this->app->singleton(TailwindMerge::class, fn ($app): TailwindMerge => new TailwindMerge(cache: $app->make('cache.store')));
     }
 
     /**

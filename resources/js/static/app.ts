@@ -33,6 +33,7 @@ Alpine.data('reportButton', reportButton);
 const asyncComponents: [string, () => Promise<unknown>][] = [
     ['modal', () => import('@/static/components/ui/modal')],
     ['reportModal', () => import('@/static/components/ui/report/modal')],
+    ['appearanceSlider', () => import('@/static/components/appearance-slider')],
 ];
 
 asyncComponents.forEach(([componentName, importFn]) => {

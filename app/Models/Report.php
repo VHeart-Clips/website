@@ -26,16 +26,25 @@ class Report extends Model implements Commentable
     /** @use HasFactory<ReportFactory> */
     use HasComments, HasFactory, SoftDeletes;
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function reporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function claimer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'claimed_by');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function resolver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'resolved_by');

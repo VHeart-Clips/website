@@ -5,28 +5,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script>
-        (function () {
-            const stored = '{{ $appearance ?? "system" }}';
-            const mql = window.matchMedia('(prefers-color-scheme: dark)');
+        const mediaQuery = window?.matchMedia('(prefers-color-scheme: dark)');
 
-            function apply(mode) {
-                const isDark = mode === 'dark' || (mode === 'system' && mql.matches);
-                document.documentElement.classList.toggle('dark', isDark);
-            }
+        function applyAppearance() {
+            const cookieMatch = document.cookie.match(/(?:^|; )appearance=([^;]*)/);
+            const appearance = localStorage.getItem('appearance') || (cookieMatch ? cookieMatch[1] : null) || '{{ $appearance ?? "system" }}';
+            const isDark = appearance === 'dark' || (appearance === 'system' && mediaQuery?.matches);
 
-            apply(stored);
+            document.documentElement.classList.toggle('dark', isDark);
+            document.documentElement.style.colorScheme = isDark ? 'dark' : 'light';
 
-            if (stored === 'system') {
-                const onChange = () => apply('system');
-                if (mql.addEventListener) mql.addEventListener('change', onChange);
-                else mql.addListener(onChange);
-            }
+            window.dispatchEvent(new CustomEvent('appearanceChanged', {
+                detail: { appearance, isDark }
+            }));
+        }
 
-            window.addEventListener('storage', (e) => {
-                if (e.key !== 'appearance') return;
-                const next = e.newValue || 'system';
-                apply(next);
-            });
+        (function() {
+            applyAppearance();
+
+            mediaQuery?.addEventListener('change', applyAppearance);
+            window?.addEventListener('storage', applyAppearance);
+            window?.cookieStore?.addEventListener('change', applyAppearance);
         })();
     </script>
 
@@ -37,6 +36,18 @@
 
         html.dark {
             background-color: oklch(0.145 0 0);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.15) 0%, rgba(255, 255, 255, 0) 45%) fixed,
+                radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%) #ffffff fixed;
+        }
+
+        html.dark body {
+            background:
+                radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.20) 0%, rgba(10, 10, 26, 0) 45%) fixed,
+                radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.14) 0%, rgba(10, 10, 26, 0) 50%) #0a0a1a fixed;
         }
     </style>
 
@@ -56,7 +67,20 @@
     @cookieconsentscripts
 </head>
 <body class="font-inter antialiased">
-    {{ $slot }}
+    <div class="flex flex-col m-auto min-h-screen w-[95svw] md:w-[98svw] max-w-480">
+        <x-layout.header />
+
+        <main class="grow">
+            {{ $slot }}
+        </main>
+
+        <x-layout.footer />
+    </div>
+
+    {{-- use `@pushonce('elements', 'unique identifier') ... @endpushonce` to insert elements we may need only once per page (e.g. modals) --}}
+    {{-- otherwise, loops on them will explode the page in size lol --}}
+    {{-- @see https://laravel.com/docs/12.x/blade#the-once-directive --}}
+    @stack('elements')
 
     {{-- BladeUI puts deferred SVG icons in this placeholder which gets used via id "pointers" --}}
     {{-- especially useful for icons that get used a ton like the clock or similar --}}

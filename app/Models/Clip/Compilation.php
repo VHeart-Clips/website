@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
@@ -30,12 +31,17 @@ class Compilation extends Model implements Commentable, FilamentResourceful
 
     /**
      * User who has Created the Compilation (if available)
+     *
+     * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsToMany<Clip, $this, Pivot>
+     */
     public function clips(): BelongsToMany
     {
         return $this->belongsToMany(Clip::class)

@@ -50,6 +50,9 @@ class Category extends Model implements ExternalProxyable
         return true;
     }
 
+    /**
+     * @return HasMany<Clip, $this>
+     */
     public function clips(): HasMany
     {
         return $this->hasMany(Clip::class, 'category_id', 'id');

@@ -11,6 +11,8 @@ return [
     // Footer navigation
     'team' => 'Team',
     'about' => 'Über uns',
+    'our-social' => 'Unser :label',
+    'manage-cookies' => 'Cookie präferenzen verwalten',
 
     // Sidebar
     'streamer' => 'Streamer auswählen',

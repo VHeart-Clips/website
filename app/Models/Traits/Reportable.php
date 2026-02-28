@@ -7,7 +7,7 @@ namespace App\Models\Traits;
 use App\Enums\Reports\ReportStatus;
 use App\Models\Report;
 use Illuminate\Database\Eloquent\Attributes\Scope;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
@@ -15,6 +15,9 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
  */
 trait Reportable
 {
+    /**
+     * @return MorphMany<Report, $this>
+     */
     public function reports(): MorphMany
     {
         return $this->morphMany(Report::class, 'reportable');
@@ -34,7 +37,7 @@ trait Reportable
     #[Scope]
     protected function withLimitedReports(Builder $query, int $threshold = 3): void
     {
-        $query->where(function ($q) use ($threshold): void {
+        $query->where(function (Builder $q) use ($threshold): void {
             $q->doesntHave('reports')
                 ->orWhereHas('reports', function (Builder $query): void {
                     $query->where('status', ReportStatus::Pending);

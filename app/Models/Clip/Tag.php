@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\UseResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Spatie\Translatable\HasTranslations;
 
 #[UsePolicy(TagPolicy::class)]
@@ -31,6 +32,9 @@ class Tag extends Model
         'name',
     ];
 
+    /**
+     * @return BelongsToMany<Clip, $this, Pivot>
+     */
     public function clips(): BelongsToMany
     {
         return $this->belongsToMany(Clip::class, 'clip_tags');

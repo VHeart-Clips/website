@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -125,6 +126,9 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
         $this->importantRoleCache = null;
     }
 
+    /**
+     * @return BelongsToMany<Role, $this, Pivot>
+     */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles');
@@ -180,6 +184,9 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
         return parent::setRelation($relation, $value);
     }
 
+    /**
+     * @return HasMany<BroadcasterFilter, $this>
+     */
     public function broadcasterFilter(): HasMany
     {
         return $this->hasMany(BroadcasterFilter::class, 'broadcaster_id');
@@ -190,21 +197,33 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
         return $this->avatar_url;
     }
 
+    /**
+     * @return HasMany<Vote, $this>
+     */
     public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);
     }
 
+    /**
+     * @return HasMany<Clip, $this>
+     */
     public function broadcastedClips(): HasMany
     {
         return $this->hasMany(Clip::class, 'broadcaster_id');
     }
 
+    /**
+     * @return HasMany<Clip, $this>
+     */
     public function createdClips(): HasMany
     {
         return $this->hasMany(Clip::class, 'creator_id');
     }
 
+    /**
+     * @return HasMany<Clip, $this>
+     */
     public function submittedClips(): HasMany
     {
         return $this->hasMany(Clip::class, 'submitter_id');

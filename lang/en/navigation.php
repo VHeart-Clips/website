@@ -12,6 +12,8 @@ return [
     // Footer navigation
     'team' => 'Team',
     'about' => 'About us',
+    'our-social' => 'Our :label',
+    'manage-cookies' => 'Manage cookie consent',
 
     // Sidebar
     'streamer' => 'Streamers',
@@ -23,4 +25,8 @@ return [
 
     // Logo alt text
     'logo_alt' => 'VHeart Logo',
+
+    // User Dropdown
+    'settings' => 'Settings',
+    'logout' => 'Logout',
 ];

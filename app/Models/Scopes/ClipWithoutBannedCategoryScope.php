@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Scopes;
 
 use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
@@ -20,7 +20,7 @@ class ClipWithoutBannedCategoryScope implements Scope
             return;
         }
 
-        $builder->where(fn ($query) => $query->whereHas('category', function (Builder $builder): void {
+        $builder->where(fn (Builder $query) => $query->whereHas('category', function (Builder $builder): void {
             $builder->where('is_banned', false);
         })->orWhereDoesntHave('category', function (Builder $builder): void {
             $builder->where('is_banned', true);

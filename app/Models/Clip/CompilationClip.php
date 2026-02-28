@@ -6,6 +6,7 @@ namespace App\Models\Clip;
 
 use App\Enums\Clips\CompilationClipStatus;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 // pivot data, this is usually accessible via $model->pivot->stuff()
 class CompilationClip extends Pivot
 {
+    use HasFactory;
     public $incrementing = true;
 
     /**
@@ -33,6 +35,9 @@ class CompilationClip extends Pivot
         ];
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function claimer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'claimed_by');

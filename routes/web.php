@@ -117,18 +117,30 @@ Route::get('/about-us', function () {
     return Inertia::render('about', $settings);
 })->name('about');
 
-Route::get('/locales/{lang}', static function (Request $request, $lang) {
+Route::get('/locales', static function (Request $request) {
+    $lang = $request->input('locale', 'en');
+
     if (! array_key_exists($lang, Config::get('app.locales'))) {
-        abort(422); // we understand it but its invalid
+        if (! $request->expectsJson()) {
+            return redirect()->back()->withErrors([
+                'locale' => 'Invalid locale selected',
+            ]);
+        }
+
+        abort(422);
     }
 
     app()->setLocale($lang);
     session()?->put('locale', $lang);
 
-    return new JsonResponse([
-        'message' => __('Ok!'),
-    ], 200);
-});
+    if ($request->expectsJson()) {
+        return new JsonResponse([
+            'message' => __('Ok!'),
+        ], 200);
+    }
+
+    return redirect()->back();
+})->name('locales');
 
 require __DIR__.'/dashboard.php';
 require __DIR__.'/settings.php';

@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Facades\Vite;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
@@ -84,22 +85,34 @@ class Clip extends Model implements Commentable, ExternalProxyable
         return $this->BelongsTo(User::class)->withTrashed();
     }
 
+    /**
+     * @return BelongsTo<Category, $this>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class)
             ->withDefault(Category::Defaults);
     }
 
+    /**
+     * @return BelongsToMany<Tag, $this, Pivot>
+     */
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'clip_tags');
     }
 
+    /**
+     * @return HasMany<Vote, $this>
+     */
     public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);
     }
 
+    /**
+     * @return BelongsToMany<Compilation, $this, Pivot>
+     */
     public function compilations(): BelongsToMany
     {
         return $this->belongsToMany(Compilation::class)
