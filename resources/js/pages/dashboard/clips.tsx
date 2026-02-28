@@ -1,6 +1,7 @@
 import { ClipPreview } from '@/components/clip-preview';
 import { ClipModal } from '@/components/clipModal';
 import StaticSpaceBackground from '@/components/spacebackground';
+import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
 import { clips, main } from '@/routes/dashboard';
 import { PublicClip, PublicUser, type BreadcrumbItem } from '@/types';
@@ -42,9 +43,12 @@ export default function DashboardClips() {
         <AppLayout breadcrumbs={breadcrumbs} sidebarVariant="creator_dashboard">
             <Head title={props.selectedStreamer.name + ' Dashboard Clips'} />
             <StaticSpaceBackground />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <InfiniteScroll data="clips" preserveUrl buffer={50}>
-                    <div className="grid auto-rows-min gap-4">
+            <div className="sticky top-0">
+                <Button>Filter</Button>
+            </div>
+            <div className="h-full gap-4 rounded-xl p-4">
+                <div className="grid auto-rows-min gap-4">
+                    <InfiniteScroll data="clips" preserveUrl buffer={50}>
                         {props.clips?.data?.map((clip) => (
                             <div
                                 key={'clip' + clip.id}
@@ -137,8 +141,8 @@ export default function DashboardClips() {
                                 </div>
                             </div>
                         ))}
-                    </div>
-                </InfiniteScroll>
+                    </InfiniteScroll>
+                </div>
             </div>
             {openClip && (
                 <ClipModal clip={openClip} onClose={() => setOpenClip(null)} />
