@@ -26,10 +26,7 @@ export default function AppSidebarLayout({
                     <AppSidebar className="top-16! h-[calc(100svh-4.75rem-var(--app-banner-height,0px))]! transition-[top,height] duration-300 ease-out sm:top-18!">
                         {sidebarContent}
                     </AppSidebar>
-                    <AppContent
-                        variant="sidebar"
-                        className="mt-2! ml-2! overflow-x-hidden"
-                    >
+                    <AppContent variant="sidebar" className="mt-2! ml-2!">
                         <AppSidebarHeader breadcrumbs={breadcrumbs} />
                         {children}
                     </AppContent>
