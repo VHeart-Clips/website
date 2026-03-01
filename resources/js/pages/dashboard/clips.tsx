@@ -43,6 +43,10 @@ export default function DashboardClips() {
         <AppLayout breadcrumbs={breadcrumbs} sidebarVariant="creator_dashboard">
             <Head title={props.selectedStreamer.name + ' Dashboard Clips'} />
             <StaticSpaceBackground />
+            <div className="gap-4 rounded-xl p-4">
+                <div className="sticky top-19 z-10 mb-5 w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent">
+                </div>
+                <div className="max-grid auto-rows-min gap-4 overscroll-contain">
             <div className="sticky top-0">
                 <Button>Filter</Button>
             </div>
