@@ -152,7 +152,7 @@ export default function DashboardClips() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div className="max-grid auto-rows-min gap-4 overscroll-contain">
+                <div className="max-grid mb-17 auto-rows-min gap-4 overscroll-contain">
                     <InfiniteScroll data="clips" preserveUrl buffer={150}>
                         {props.clips?.data?.map((clip) => (
                             <div
