@@ -2,6 +2,21 @@ import { ClipPreview } from '@/components/clip-preview';
 import { ClipModal } from '@/components/clipModal';
 import StaticSpaceBackground from '@/components/spacebackground';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuLabel,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { clips, main } from '@/routes/dashboard';
 import { PublicClip, PublicUser, type BreadcrumbItem } from '@/types';
@@ -45,6 +60,97 @@ export default function DashboardClips() {
             <StaticSpaceBackground />
             <div className="gap-4 rounded-xl p-4">
                 <div className="sticky top-19 z-10 mb-5 w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="outline">Filter</Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-50" align="start">
+                            <DropdownMenuGroup>
+                                <DropdownMenuLabel>Status</DropdownMenuLabel>
+                                <Select>
+                                    <SelectTrigger className="w-full max-w-48">
+                                        <SelectValue placeholder="Select a Status" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="0">
+                                                Unknown
+                                            </SelectItem>
+                                            <SelectItem value="1">
+                                                Need Approval
+                                            </SelectItem>
+                                            <SelectItem value="2">
+                                                Approved
+                                            </SelectItem>
+                                            <SelectItem value="3">
+                                                Blocked
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </DropdownMenuGroup>
+                            <DropdownMenuGroup>
+                                <DropdownMenuLabel>Category</DropdownMenuLabel>
+                                <Select>
+                                    <SelectTrigger className="w-full max-w-48">
+                                        <SelectValue placeholder="Select a Category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="12345678901">
+                                                Just Chatting
+                                            </SelectItem>
+                                            <SelectItem value="12345678902">
+                                                Minecraft
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </DropdownMenuGroup>
+                            <DropdownMenuGroup>
+                                <DropdownMenuLabel>Clipper</DropdownMenuLabel>
+                                <Select>
+                                    <SelectTrigger className="w-full max-w-48">
+                                        <SelectValue placeholder="Select a Clipper" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="12345678901">
+                                                Clipper A
+                                            </SelectItem>
+                                            <SelectItem value="12345678902">
+                                                Clipper B
+                                            </SelectItem>
+                                            <SelectItem value="12345678903">
+                                                Clipper C
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </DropdownMenuGroup>
+                            <DropdownMenuGroup>
+                                <DropdownMenuLabel>Submitter</DropdownMenuLabel>
+                                <Select>
+                                    <SelectTrigger className="w-full max-w-48">
+                                        <SelectValue placeholder="Select a Submitter" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="12345678901">
+                                                Submitter A
+                                            </SelectItem>
+                                            <SelectItem value="12345678902">
+                                                Submitter B
+                                            </SelectItem>
+                                            <SelectItem value="12345678903">
+                                                Submitter C
+                                            </SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                            </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
                 <div className="max-grid auto-rows-min gap-4 overscroll-contain">
                     <InfiniteScroll data="clips" preserveUrl buffer={150}>
