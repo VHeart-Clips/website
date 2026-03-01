@@ -47,12 +47,7 @@ export default function DashboardClips() {
                 <div className="sticky top-19 z-10 mb-5 w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent">
                 </div>
                 <div className="max-grid auto-rows-min gap-4 overscroll-contain">
-            <div className="sticky top-0">
-                <Button>Filter</Button>
-            </div>
-            <div className="h-full gap-4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4">
-                    <InfiniteScroll data="clips" preserveUrl buffer={50}>
+                    <InfiniteScroll data="clips" preserveUrl buffer={150}>
                         {props.clips?.data?.map((clip) => (
                             <div
                                 key={'clip' + clip.id}
