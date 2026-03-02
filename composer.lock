@@ -4157,16 +4157,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "1.26.6",
+            "version": "1.26.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "9d28ad825bb47c6dee5e3e0fcde1478c9c789042"
+                "reference": "e583f564d79e1629ea4a2512f9a112812c30f27e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/9d28ad825bb47c6dee5e3e0fcde1478c9c789042",
-                "reference": "9d28ad825bb47c6dee5e3e0fcde1478c9c789042",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/e583f564d79e1629ea4a2512f9a112812c30f27e",
+                "reference": "e583f564d79e1629ea4a2512f9a112812c30f27e",
                 "shasum": ""
             },
             "require": {
@@ -4211,9 +4211,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/1.26.6"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/1.26.7"
             },
-            "time": "2026-02-20T00:20:20+00:00"
+            "time": "2026-02-28T00:19:56+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -4973,27 +4973,27 @@
         },
         {
             "name": "outhebox/blade-flags",
-            "version": "1.6.1",
+            "version": "1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MohmmedAshraf/blade-flags.git",
-                "reference": "8c5bc1f483fd9daf06cd2a1edb746a549683dccd"
+                "reference": "00574e523f179d5a64dec555bea4dfd9ea9cd463"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/MohmmedAshraf/blade-flags/zipball/8c5bc1f483fd9daf06cd2a1edb746a549683dccd",
-                "reference": "8c5bc1f483fd9daf06cd2a1edb746a549683dccd",
+                "url": "https://api.github.com/repos/MohmmedAshraf/blade-flags/zipball/00574e523f179d5a64dec555bea4dfd9ea9cd463",
+                "reference": "00574e523f179d5a64dec555bea4dfd9ea9cd463",
                 "shasum": ""
             },
             "require": {
                 "blade-ui-kit/blade-icons": "^1.1",
                 "ext-json": "*",
-                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
                 "php": "^7.4|^8.0|^8.1|^8.2"
             },
             "require-dev": {
-                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "phpunit/phpunit": "^9.0|^10.5|^11.5.3"
+                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0",
+                "phpunit/phpunit": "^9.0|^10.5|^11.5.3|^12.5.12"
             },
             "type": "library",
             "extra": {
@@ -5030,7 +5030,7 @@
             ],
             "support": {
                 "issues": "https://github.com/MohmmedAshraf/blade-flags/issues",
-                "source": "https://github.com/MohmmedAshraf/blade-flags/tree/js-v0.1.2"
+                "source": "https://github.com/MohmmedAshraf/blade-flags/tree/1.7.0"
             },
             "funding": [
                 {
@@ -5038,7 +5038,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-02-14T14:49:30+00:00"
+            "time": "2026-03-01T17:25:55+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -15839,16 +15839,16 @@
         },
         {
             "name": "webmozart/assert",
-            "version": "2.1.5",
+            "version": "2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozarts/assert.git",
-                "reference": "79155f94852fa27e2f73b459f6503f5e87e2c188"
+                "reference": "ff31ad6efc62e66e518fbab1cde3453d389bcdc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozarts/assert/zipball/79155f94852fa27e2f73b459f6503f5e87e2c188",
-                "reference": "79155f94852fa27e2f73b459f6503f5e87e2c188",
+                "url": "https://api.github.com/repos/webmozarts/assert/zipball/ff31ad6efc62e66e518fbab1cde3453d389bcdc8",
+                "reference": "ff31ad6efc62e66e518fbab1cde3453d389bcdc8",
                 "shasum": ""
             },
             "require": {
@@ -15895,9 +15895,9 @@
             ],
             "support": {
                 "issues": "https://github.com/webmozarts/assert/issues",
-                "source": "https://github.com/webmozarts/assert/tree/2.1.5"
+                "source": "https://github.com/webmozarts/assert/tree/2.1.6"
             },
-            "time": "2026-02-18T14:09:36+00:00"
+            "time": "2026-02-27T10:28:38+00:00"
         }
     ],
     "aliases": [],
