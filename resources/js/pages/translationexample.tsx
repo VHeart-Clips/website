@@ -28,7 +28,7 @@ export default function TranslationTest() {
 
             {/* Attributes */}
             <p>
-                <T ns="sendinclip" k="submit.clip_url_placeholder">
+                <T ns="clips" k="submit.clip_url_placeholder">
                     {(text) => <Input placeholder={text} />}
                 </T>
             </p>

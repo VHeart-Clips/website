@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+protected_branches=("main" "master" "meyn")
+
+ERROR='\033[0;31m\033[1m'
+RESET='\033[0m'
+
+while read -r _ _ remote_ref _
+do
+    for branch in "${protected_branches[@]}"; do
+        if [[ "$remote_ref" == "refs/heads/$branch" ]]; then
+            # simple format for ide popups
+            echo "Error: Direct push to '$branch' is not recommended. To bypass, use: git push --no-verify" >&2
+
+            # scream to the console in case i do it manually lol
+            echo -e "\n${ERROR}! Error: Direct push to '$branch' is not recommended. To bypass, use: git push --no-verify${RESET}" >&2
+            echo -e "${ERROR}! Error: Direct push to '$branch' is not recommended. To bypass, use: git push --no-verify${RESET}" >&2
+            echo -e "${ERROR}! Error: Direct push to '$branch' is not recommended. To bypass, use: git push --no-verify${RESET}" >&2
+            echo -e "${ERROR}! Error: Direct push to '$branch' is not recommended. To bypass, use: git push --no-verify${RESET}\n" >&2
+
+            exit 1
+        fi
+    done
+done
+
+exit 0

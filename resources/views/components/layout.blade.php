@@ -1,4 +1,4 @@
-@props(["title" => null])
+@props(["title" => null, 'background' => true])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') === 'dark'])>
 <head>
@@ -38,17 +38,19 @@
             background-color: oklch(0.145 0 0);
         }
 
-        body {
-            background:
-                radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.15) 0%, rgba(255, 255, 255, 0) 45%) fixed,
-                radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%) #ffffff fixed;
-        }
+        @if($background)
+            body {
+                background:
+                    radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.15) 0%, rgba(255, 255, 255, 0) 45%) fixed,
+                    radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%) #ffffff fixed;
+            }
 
-        html.dark body {
-            background:
-                radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.20) 0%, rgba(10, 10, 26, 0) 45%) fixed,
-                radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.14) 0%, rgba(10, 10, 26, 0) 50%) #0a0a1a fixed;
-        }
+            html.dark body {
+                background:
+                    radial-gradient(circle at 20% 30%, rgba(145, 70, 255, 0.20) 0%, rgba(10, 10, 26, 0) 45%) fixed,
+                    radial-gradient(circle at 80% 70%, rgba(0, 174, 255, 0.14) 0%, rgba(10, 10, 26, 0) 50%) #0a0a1a fixed;
+            }
+        @endif
     </style>
 
     <title>
@@ -70,7 +72,7 @@
     <div class="flex flex-col m-auto min-h-screen w-[95svw] md:w-[98svw] max-w-480">
         <x-layout.header />
 
-        <main class="grow">
+        <main {{ $attributes->twMerge("grow") }}>
             {{ $slot }}
         </main>
 

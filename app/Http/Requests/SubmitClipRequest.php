@@ -57,8 +57,8 @@ class SubmitClipRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'parsed_clip_id.required' => __('sendinclip.errors.clip_not_found'),
-            'parsed_clip_id.unique' => __('sendinclip.errors.clip_already_known'),
+            'parsed_clip_id.required' => __('clips.errors.clip_not_found'),
+            'parsed_clip_id.unique' => __('clips.errors.clip_already_known'),
         ];
     }
 
@@ -72,7 +72,7 @@ class SubmitClipRequest extends FormRequest
 
                 $this->clipId = $this->twitchService->parseClipId($this->input('clip_url'));
                 if (! $this->clipId) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.clip_not_found'));
+                    $validator->errors()->add('clip_url', __('clips.errors.clip_not_found'));
 
                     return;
                 }
@@ -82,7 +82,7 @@ class SubmitClipRequest extends FormRequest
                     ->getClipByID($this->clipId);
 
                 if (! $this->clipInfo instanceof ClipDto) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.clip_not_found'));
+                    $validator->errors()->add('clip_url', __('clips.errors.clip_not_found'));
 
                     return;
                 }
@@ -94,7 +94,7 @@ class SubmitClipRequest extends FormRequest
                     ->exists();
 
                 if ($isCategoryBanned) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.category_blocked'));
+                    $validator->errors()->add('clip_url', __('clips.errors.category_blocked'));
 
                     return;
                 }
@@ -109,7 +109,7 @@ class SubmitClipRequest extends FormRequest
                     ->first();
 
                 if (! $this->broadcaster instanceof User) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.broadcaster_not_allowed'));
+                    $validator->errors()->add('clip_url', __('clips.errors.broadcaster_not_allowed'));
 
                     return;
                 }
@@ -124,13 +124,13 @@ class SubmitClipRequest extends FormRequest
                 $this->disallowedCategories = $groupedFilters->get($categoryType)?->get(false)?->pluck('filterable_id')->toArray();
 
                 if (! $this->passesUserChecks()) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.user_not_allowed_for_broadcaster'));
+                    $validator->errors()->add('clip_url', __('clips.errors.user_not_allowed_for_broadcaster'));
 
                     return;
                 }
 
                 if (! $this->passesCategoryChecks()) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.category_blocked'));
+                    $validator->errors()->add('clip_url', __('clips.errors.category_blocked'));
 
                     return;
                 }
@@ -141,7 +141,7 @@ class SubmitClipRequest extends FormRequest
                     ->exists();
 
                 if ($clipAlreadyExists) {
-                    $validator->errors()->add('clip_url', __('sendinclip.errors.clip_already_known'));
+                    $validator->errors()->add('clip_url', __('clips.errors.clip_already_known'));
                 }
             },
         ];

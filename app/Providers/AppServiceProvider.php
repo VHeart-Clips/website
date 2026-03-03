@@ -208,6 +208,19 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('image-proxy', static fn (Request $request): Limit => Limit::perMinute(50)->by($request->user()?->id ?? sha1((string) $request->ip())));
+        RateLimiter::for('image-proxy', static function (Request $request): Limit {
+            $throttleKey = $request->user()?->id ?? sha1((string) $request->ip());
+
+            if ($request->user()?->canAny([
+                Permission::ViewAnyCompilation,
+                Permission::ViewAnyClip,
+                Permission::ViewAnyCategory,
+                Permission::ViewAnyUser,
+            ])) {
+                return Limit::none();
+            }
+
+            return Limit::perMinute(60)->by($throttleKey);
+        });
     }
 }

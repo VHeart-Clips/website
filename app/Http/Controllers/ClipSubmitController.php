@@ -9,24 +9,22 @@ use App\Http\Requests\SubmitClipRequest;
 use App\Models\Clip;
 use App\Models\Clip\Tag;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class ClipSubmitController extends Controller
 {
-    public function create(): Response
+    public function create(): View
     {
         $tags = Tag::query()
             ->whereLocale('name', app()->getLocale())
             ->get();
 
-        return Inertia::render('submitclip', [
-            'tags' => $tags->toResourceCollection(),
-        ]);
+        return view('clips.submit', ['tags' => $tags]);
     }
 
-    public function store(SubmitClipRequest $request, ImportClipAction $importClipAction): Response
+    public function store(SubmitClipRequest $request, ImportClipAction $importClipAction): RedirectResponse
     {
         Gate::authorize('submit', Clip::class);
 
@@ -44,8 +42,8 @@ class ClipSubmitController extends Controller
             $request->validated('tags') ?? []
         );
 
-        return $this->create()
+        return to_route('submitclip.create')
             ->with('submit_ok', true)
-            ->with('submit_message', __('sendinclip.flash.submitted'));
+            ->with('submit_message', __('clips.flash.submitted'));
     }
 }

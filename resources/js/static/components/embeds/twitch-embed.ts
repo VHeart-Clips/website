@@ -1,5 +1,7 @@
-import Alpine, { AlpineComponent } from 'alpinejs';
+import { AlpineComponent } from 'alpinejs';
 import baseEmbed, { GenericEmbedConfig, GenericEmbedData } from './base-embed';
+
+export type TwitchClipId = string;
 
 export interface TwitchEmbedConfig extends GenericEmbedConfig {
     clip?: string;
@@ -7,6 +9,7 @@ export interface TwitchEmbedConfig extends GenericEmbedConfig {
 
 export interface TwitchEmbedData extends GenericEmbedData {
     clipId: string;
+    updateUrl(id: TwitchClipId): void;
 }
 
 export default (
@@ -23,6 +26,13 @@ export default (
         ...base,
         clipId: config.clip || '',
 
+        updateUrl(id) {
+            if (id) {
+                const hostname = window.location.hostname;
+                this.url = `https://clips.twitch.tv/embed?clip=${id}&parent=${hostname}`;
+            }
+        },
+
         init() {
             console.debug('Twitch Embed Init', { clipId: this.clipId });
 
@@ -30,12 +40,11 @@ export default (
                 base.init.call(this);
             }
 
-            Alpine.effect(() => {
-                if (this.clipId) {
-                    const hostname = window.location.hostname;
-                    this.url = `https://clips.twitch.tv/embed?clip=${this.clipId}&parent=${hostname}`;
-                }
+            this.$watch('clipId', (value) => {
+                this.updateUrl(value);
             });
+
+            this.updateUrl(this.clipId);
         },
     };
 };

@@ -71,24 +71,14 @@ Route::get('/about-us', static function () {
 
 Route::get('/imprint', function () {
     $locale = app()->getLocale();
-    $view = "legal.$locale.imprint";
 
-    if (! view()->exists($view)) {
-        abort(404);
-    }
-
-    return view($view);
+    return view('legal', ['locale' => $locale, 'type' => 'imprint']);
 });
 
 Route::get('/privacy', function () {
     $locale = app()->getLocale();
-    $view = "legal.$locale.privacy";
 
-    if (! view()->exists($view)) {
-        abort(404);
-    }
-
-    return view($view);
+    return view('legal', ['locale' => $locale, 'type' => 'privacy']);
 });
 
 Route::get('/faq', [FaqController::class, 'index'])->name('faq');

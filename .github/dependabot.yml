@@ -18,23 +18,31 @@ updates:
           - "laravel/sail"
           - "illuminate/*"
           - "symfony/*"
+        update-types:
+          - "minor"
+          - "patch"
       filament:
         patterns:
           - "filament/*"
           - "danharrin/*"
-      pest:
+        update-types:
+          - "minor"
+          - "patch"
+      composer-dev:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      composer-other:
         patterns:
-          - "pestphp/*"
-          - "mockery/mockery"
-          - "nunomaduro/collision"
-      code-quality:
-        patterns:
-          - "larastan/*"
-          - "phpstan/*"
-          - "rector/*"
-          - "laravel/pint"
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
       - dependency-name: "laravel/framework"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "filament/filament"
         update-types: ["version-update:semver-major"]
       - dependency-name: "php"
         update-types: ["version-update:semver-major"]
@@ -48,39 +56,14 @@ updates:
       timezone: "Europe/Berlin"
     open-pull-requests-limit: 5
     groups:
-      react:
+      npm-dev:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+      npm-other:
         patterns:
-          - "react"
-          - "react-dom"
-          - "@types/react"
-          - "@types/react-dom"
-          - "@vitejs/plugin-react"
-      radix-ui:
-        patterns:
-          - "@radix-ui/*"
-      tailwind:
-        patterns:
-          - "tailwindcss"
-          - "@tailwindcss/*"
-          - "postcss"
-          - "autoprefixer"
-          - "tailwind-merge"
-          - "clsx"
-      vite:
-        patterns:
-          - "vite"
-          - "laravel-vite-plugin"
-          - "@laravel/vite-plugin-wayfinder"
-      i18n:
-        patterns:
-          - "i18next"
-          - "react-i18next"
-          - "i18next-*"
-      linting:
-        patterns:
-          - "eslint"
-          - "eslint-*"
-          - "@eslint/*"
-          - "prettier"
-          - "prettier-*"
-          - "typescript-eslint"
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"

@@ -1,0 +1,72 @@
+// https://aka.ms/devcontainer.json
+{
+    "name": "Laravel Sail",
+    "dockerComposeFile": ["../compose.yaml"],
+    "service": "laravel.test",
+    "workspaceFolder": "/var/www/html",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "bmewburn.vscode-intelephense-client",
+                "xdebug.php-debug",
+                "laravel.vscode-laravel",
+                "ryannaddy.laravel-artisan",
+                "georgykurian.laravel-ide-helper",
+                "shufo.vscode-blade-formatter",
+                "bradlc.vscode-tailwindcss",
+                "onecentlin.laravel-blade",
+                "adrianwilczynski.alpine-js-intellisense",
+                "esbenp.prettier-vscode",
+                "neilbrayfield.php-docblocker",
+                "mikestead.dotenv",
+                "formulahendry.auto-rename-tag",
+                "amiralizadeh9480.laravel-extra-intellisense",
+                "EditorConfig.EditorConfig",
+                "dbaeumer.vscode-eslint",
+                "open-southeners.laravel-pint"
+            ],
+            "settings": {
+                "php.suggest.basic": false,
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "typescript.suggest.completeFunctionCalls": true,
+                "typescript.updateImportsOnFileMove.enabled": "always",
+                "bladeFormatter.format.wrapAttributes": "force-expand-multiline",
+                "bladeFormatter.format.wrapAttributesMinAttrs": 4,
+                "helper.parallelExecution": true,
+                "helper.debounceDelay": 5000,
+                "helper.models": true,
+                "helper.facades": true,
+                "tailwindCSS.includeLanguages": {
+                    "blade": "html"
+                },
+                "emmet.includeLanguages": {
+                    "javascript": "javascriptreact"
+                },
+                "files.associations": {
+                    ".env.*": "env"
+                },
+                "[blade]": {
+                    "editor.defaultFormatter": "shufo.vscode-blade-formatter"
+                },
+                "[javascript]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                },
+                "[javascriptreact]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                },
+                "[typescript]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                },
+                "[typescriptreact]": {
+                    "editor.defaultFormatter": "esbenp.prettier-vscode"
+                },
+                "[php]": {
+                    "editor.defaultFormatter": "open-southeners.laravel-pint"
+                }
+            }
+        }
+    },
+    "remoteUser": "sail",
+    "postCreateCommand": "chown -R sail:sail /var/www/html 2>/dev/null || true"
+}

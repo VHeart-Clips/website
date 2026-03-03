@@ -75,7 +75,7 @@ const SOCIAL_DATA = [
 const NAV_LINK = [
     { key: 'privacy.footer', path: '/privacy', static: true },
     { key: 'imprint.footer', path: '/imprint', static: true },
-    { key: 'faq', path: '/faq', static: false },
+    { key: 'faq', path: '/faq', static: true },
     { key: 'team', path: '/team', static: false },
     { key: 'about', path: '/about-us', static: false },
 ];
