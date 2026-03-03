@@ -12,6 +12,7 @@ return [
         'submitted_by' => 'Submitted By',
         'category' => 'Category',
         'created_at' => 'Clip Created At',
+        'tags' => 'Tags',
     ],
     'infolist' => [
         'title' => 'Title',
@@ -44,7 +45,7 @@ return [
     ],
     'filters' => [
         'broadcaster' => 'Broadcaster',
-        'creator' => 'Creator',
+        'creator' => 'Clip Creator',
         'submitter' => 'Submitter',
         'category' => 'Category',
         'tags' => 'Tags',
@@ -60,6 +61,50 @@ return [
             'placeholder' => 'Approved Only',
             'true' => 'Blocked Only',
             'false' => 'All',
+        ],
+
+        'created_range' => [
+            'label' => 'Created Between',
+            'form' => [
+                'from' => 'From',
+                'to' => 'To',
+            ],
+            'actions' => [
+                'clear_from' => 'Clear From',
+                'clear_to' => 'Clear To',
+            ],
+            'indicators' => [
+                'from' => 'Created After: :value',
+                'to' => 'Created Before: :value',
+            ],
+        ],
+
+        'submission_range' => [
+            'label' => 'Submitted Between',
+            'form' => [
+                'from' => 'From',
+                'to' => 'To',
+            ],
+            'actions' => [
+                'clear_from' => 'Clear From',
+                'clear_to' => 'Clear To',
+            ],
+            'indicators' => [
+                'from' => 'Submitted After: :value',
+                'to' => 'Submitted Before: :value',
+            ],
+        ],
+
+        'date_range_presets' => [
+            'label' => 'Presets',
+            'options' => [
+                'today' => 'Today',
+                'last_7_days' => 'Last 7 Days',
+                'last_30_days' => 'Last 30 Days',
+                'last_90_days' => 'Last 90 Days',
+                'this_month' => 'This Month',
+                'last_month' => 'Last Month',
+            ],
         ],
     ],
     'edit' => [

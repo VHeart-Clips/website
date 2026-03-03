@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Enums\Clips;
 
-use App\Enums\Traits\HasHeadlineLabel;
+use App\Enums\Traits\HasTranslatedLabel;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
 enum ClipStatus: int implements HasColor, HasLabel
 {
-    use HasHeadlineLabel;
+    use HasTranslatedLabel;
 
     case Unknown = 0;
     case NeedApproval = 1;
@@ -25,5 +25,10 @@ enum ClipStatus: int implements HasColor, HasLabel
             self::Approved => 'success',
             self::Blocked => 'danger',
         };
+    }
+
+    private function getTranslatableEnumLabelPrefix(): string
+    {
+        return 'clips.enums';
     }
 }

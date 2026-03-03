@@ -41,6 +41,12 @@ class ClipInfolist
                             ->hiddenLabel()
                             ->weight('bold')
                             ->size(TextSize::Large),
+                        TextEntry::make('tags.name')
+                            ->label('admin/resources/clips.form.tags')
+                            ->translateLabel()
+                            ->color('gray')
+                            ->size(TextSize::Large)
+                            ->badge(),
 
                         Grid::make(4)
                             ->schema([

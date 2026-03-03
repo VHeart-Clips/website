@@ -2,12 +2,21 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     ChevronDown,
     LayoutGrid,
+    LucideProps,
     ScanHeart,
     Search,
     Send,
     X,
 } from 'lucide-react';
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import {
+    ForwardRefExoticComponent,
+    lazy,
+    RefAttributes,
+    Suspense,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ClipVoteController from '@/actions/App/Http/Controllers/ClipVoteController';
@@ -27,11 +36,21 @@ import { type SharedData as BaseSharedData } from '@/types';
 
 import LogoFullDark from '/resources/images/svg/logo-full-dark.svg';
 import LogoFullLight from '/resources/images/svg/logo-full-title.svg';
+import { RouteDefinition } from '@/wayfinder';
 
 interface SharedData extends BaseSharedData {
     flash?: {
         showTwitchPermissionsPrompt?: boolean;
     };
+}
+
+interface NavigationItem {
+    key: string;
+    href: string | RouteDefinition<'get'>;
+    icon: ForwardRefExoticComponent<
+        Omit<LucideProps, 'ref'> & RefAttributes<SVGSVGElement>
+    >;
+    static?: boolean;
 }
 
 interface AppTopbarProps {
@@ -44,13 +63,18 @@ const TwitchPermissionsBanner = lazy(
 
 const NAVIGATION_ITEMS = [
     { key: 'dashboard', href: dashboard(), icon: LayoutGrid },
-    { key: 'submit_clips', href: submitclip.create(), icon: Send },
+    {
+        key: 'submit_clips',
+        href: submitclip.create().url,
+        icon: Send,
+        static: true,
+    },
     {
         key: 'evaluate_clips',
         href: ClipVoteController.create(),
         icon: ScanHeart,
     },
-] as const;
+] as NavigationItem[];
 
 export function AppTopbar({ isIsland = true }: AppTopbarProps) {
     const { t } = useTranslation('navigation');
@@ -183,23 +207,45 @@ export function AppTopbar({ isIsland = true }: AppTopbarProps) {
                 <div className="flex flex-1 items-center justify-end gap-0.5 sm:gap-2">
                     {auth.user && (
                         <nav className="flex items-center gap-0.5 sm:gap-1">
-                            {NAVIGATION_ITEMS.map((item) => (
-                                <Link
-                                    key={item.key}
-                                    href={item.href}
-                                    className={cn(
-                                        'relative flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium outline-hidden select-none sm:px-3',
-                                        checkActive(item.href)
-                                            ? 'bg-accent text-accent-foreground'
-                                            : 'text-gray-600 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground dark:text-white/70 dark:hover:text-white dark:focus:text-white',
-                                    )}
-                                >
-                                    <item.icon className="size-5 sm:size-4" />
-                                    <span className="hidden lg:inline">
-                                        {t(item.key)}
-                                    </span>
-                                </Link>
-                            ))}
+                            {NAVIGATION_ITEMS.map((item) => {
+                                if (item?.static) {
+                                    return (
+                                        <a
+                                            key={item.key}
+                                            href={String(item.href)}
+                                            className={cn(
+                                                'relative flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium outline-hidden select-none sm:px-3',
+                                                checkActive(item.href)
+                                                    ? 'bg-accent text-accent-foreground'
+                                                    : 'text-gray-600 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground dark:text-white/70 dark:hover:text-white dark:focus:text-white',
+                                            )}
+                                        >
+                                            <item.icon className="size-5 sm:size-4" />
+                                            <span className="hidden lg:inline">
+                                                {t(item.key)}
+                                            </span>
+                                        </a>
+                                    );
+                                }
+
+                                return (
+                                    <Link
+                                        key={item.key}
+                                        href={item.href}
+                                        className={cn(
+                                            'relative flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium outline-hidden select-none sm:px-3',
+                                            checkActive(item.href)
+                                                ? 'bg-accent text-accent-foreground'
+                                                : 'text-gray-600 hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground dark:text-white/70 dark:hover:text-white dark:focus:text-white',
+                                        )}
+                                    >
+                                        <item.icon className="size-5 sm:size-4" />
+                                        <span className="hidden lg:inline">
+                                            {t(item.key)}
+                                        </span>
+                                    </Link>
+                                );
+                            })}
                         </nav>
                     )}
 

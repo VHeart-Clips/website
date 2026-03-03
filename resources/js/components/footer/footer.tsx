@@ -1,12 +1,4 @@
-import {
-    SiBluesky,
-    SiDiscord,
-    SiGithub,
-    SiReddit,
-    SiTwitch,
-    SiX,
-    SiYoutube,
-} from '@icons-pack/react-simple-icons';
+import { SiBluesky, SiDiscord, SiGithub, SiReddit, SiTwitch, SiX, SiYoutube } from '@icons-pack/react-simple-icons';
 import { Link } from '@inertiajs/react';
 import { ChevronUp } from 'lucide-react';
 import React, { lazy, memo, Suspense, useLayoutEffect, useRef } from 'react';
@@ -76,7 +68,7 @@ const NAV_LINK = [
     { key: 'privacy.footer', path: '/privacy', static: true },
     { key: 'imprint.footer', path: '/imprint', static: true },
     { key: 'faq', path: '/faq', static: true },
-    { key: 'team', path: '/team', static: false },
+    { key: 'team', path: '/team', static: true },
     { key: 'about', path: '/about-us', static: false },
 ];
 

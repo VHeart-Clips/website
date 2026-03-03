@@ -9,14 +9,17 @@ use App\Enums\Clips\CompilationClipStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\ClipVoteType;
 use App\Models\Clip;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
@@ -24,6 +27,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -105,6 +109,10 @@ class ClipsTable
                                 ->badge()
                                 ->translateLabel(),
                         ])->grow(false),
+
+                        TextColumn::make('tags.name')
+                            ->color('gray')
+                            ->badge(),
                     ])->space(),
 
                     Stack::make([
@@ -236,7 +244,11 @@ class ClipsTable
                             CompilationStatus::Planned,
                         ], CompilationStatus::getPublicCases()))),
                     ),
+
+                self::makeDateRangeFilter('created', 'date'),
+                self::makeDateRangeFilter('submission', 'created_at'),
             ])
+            ->filtersFormColumns(2)
             ->defaultSort('votes_public', 'desc')
             ->recordActions([
                 ActionGroup::make([
@@ -279,5 +291,111 @@ class ClipsTable
                     EditAction::make(),
                 ]),
             ]);
+    }
+
+    // These filters get out of hand
+    /**
+     * Returns a From-To Date filter with presets
+     */
+    private static function makeDateRangeFilter(string $name, string $column): Filter
+    {
+        $translationPrefix = 'admin/resources/clips.filters.'.$name.'_range.';
+        $translationPrefixPresets = 'admin/resources/clips.filters.date_range_presets.';
+
+        return Filter::make($name.'_range')
+            ->schema([
+                Fieldset::make($translationPrefix.'label')
+                    ->translateLabel()
+                    ->columnSpanFull()
+                    ->schema([
+                        Select::make('presets')
+                            ->label($translationPrefixPresets.'label')
+                            ->translateLabel()
+                            ->dehydrated(false)
+                            ->options([
+                                'today' => __($translationPrefixPresets.'options.today'),
+                                'last_7_days' => __($translationPrefixPresets.'options.last_7_days'),
+                                'last_30_days' => __($translationPrefixPresets.'options.last_30_days'),
+                                'last_90_days' => __($translationPrefixPresets.'options.last_90_days'),
+                                'this_month' => __($translationPrefixPresets.'options.this_month'),
+                                'last_month' => __($translationPrefixPresets.'options.last_month'),
+                            ])
+                            ->live()
+                            ->afterStateUpdated(function ($state, Set $set): void {
+                                if (! $state) {
+                                    return;
+                                }
+
+                                $from = match ($state) {
+                                    'today' => now()->startOfDay(),
+                                    'last_7_days' => now()->subDays(6)->startOfDay(),
+                                    'last_30_days' => now()->subDays(29)->startOfDay(),
+                                    'last_90_days' => now()->subDays(89)->startOfDay(),
+                                    'this_month' => now()->startOfMonth(),
+                                    'last_month' => now()->subMonth()->startOfMonth(),
+                                };
+
+                                $to = match ($state) {
+                                    'last_month' => now()->subMonth()->endOfMonth(),
+                                    default => null,
+                                };
+
+                                $set('from', $from?->toDateString());
+                                $set('to', $to?->toDateString());
+                            })
+                            ->columnSpanFull(),
+                        DatePicker::make('from')
+                            ->label($translationPrefix.'form.from')
+                            ->translateLabel()
+                            ->suffixAction(
+                                Action::make($name.'clear_from')
+                                    ->label($translationPrefix.'actions.clear_from')
+                                    ->translateLabel()
+                                    ->iconButton()
+                                    ->icon(Heroicon::XMark)
+                                    ->color('gray')
+                                    ->action(function ($set): void {
+                                        $set('from', null);
+                                    }),
+                            ),
+                        DatePicker::make('to')
+                            ->label($translationPrefix.'form.to')
+                            ->translateLabel()
+                            ->suffixAction(
+                                Action::make($name.'clear_to')
+                                    ->label($translationPrefix.'actions.clear_to')
+                                    ->translateLabel()
+                                    ->iconButton()
+                                    ->icon(Heroicon::XMark)
+                                    ->color('gray')
+                                    ->action(function ($set): void {
+                                        $set('to', null);
+                                    }),
+                            ),
+                    ])
+                    ->columns(2),
+            ])
+            ->columns(2)
+            ->columnSpanFull()
+            ->query(fn (Builder $query, array $data): Builder => $query
+                ->when(
+                    $data['from'],
+                    fn (Builder $query, $date): Builder => $query->whereDate($column, '>=', $date),
+                )
+                ->when(
+                    $data['to'],
+                    fn (Builder $query, $date): Builder => $query->whereDate($column, '<=', $date),
+                ))
+            ->indicateUsing(function (array $data) use ($name, $translationPrefix): array {
+                $indicators = [];
+                if ($data['from'] ?? null) {
+                    $indicators[$name.'_range_from'] = __($translationPrefix.'indicators.from', ['value' => Carbon::parse($data['from'])->toFormattedDateString()]);
+                }
+                if ($data['to'] ?? null) {
+                    $indicators[$name.'_range_to'] = __($translationPrefix.'indicators.to', ['value' => Carbon::parse($data['to'])->toFormattedDateString()]);
+                }
+
+                return $indicators;
+            });
     }
 }

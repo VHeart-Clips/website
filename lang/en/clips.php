@@ -49,6 +49,14 @@ return [
         ],
     ],
 
+    'enums' => [
+        'clip-status' => [
+            'unknown' => 'Unknown',
+            'need-approval' => 'Need Approval',
+            'approved' => 'Approved',
+            'blocked' => 'Blocked',
+        ],
+    ],
     // Untouched
 
     'recent' => [

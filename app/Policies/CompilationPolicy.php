@@ -25,16 +25,17 @@ class CompilationPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Compilation $compilation): Response|bool
+    public function view(User $user, Compilation $compilation): Response
     {
         if ($user->id === $compilation->user_id) {
-            return true;
-        }
-        if ($user->can(Permission::ViewAnyCompilation)) {
-            return true;
+            return $this->allow('owner can view compilation');
         }
 
-        return (bool) $this->denyAsNotFound();
+        if ($user->can(Permission::ViewAnyCompilation)) {
+            return $this->allow('user can view any compilation');
+        }
+
+        return $this->denyAsNotFound();
     }
 
     /**
@@ -48,32 +49,60 @@ class CompilationPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Compilation $compilation): bool
+    public function update(User $user, Compilation $compilation): Response
     {
-        return $user->can(Permission::UpdateAnyCompilation);
+        if ($user->id === $compilation->user_id) {
+            return $this->allow('owner can update compilation');
+        }
+
+        if ($user->can(Permission::UpdateAnyCompilation)) {
+            return $this->allow('user can update any compilation');
+        }
+
+        return $this->denyAsNotFound();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Compilation $compilation): bool
+    public function delete(User $user, Compilation $compilation): Response
     {
-        return $user->can(Permission::DeleteAnyCompilation);
+        if ($user->id === $compilation->user_id) {
+            return $this->allow('owner can delete compilation');
+        }
+
+        if ($user->can(Permission::DeleteAnyCompilation)) {
+            return $this->allow('user can delete any compilation');
+        }
+
+        return $this->denyAsNotFound();
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Compilation $compilation): bool
+    public function restore(User $user, Compilation $compilation): Response
     {
-        return $user->can(Permission::RestoreAnyCompilation);
+        if ($user->id === $compilation->user_id) {
+            return $this->allow('owner can restore compilation');
+        }
+
+        if ($user->can(Permission::RestoreAnyCompilation)) {
+            return $this->allow('user can restore any compilation');
+        }
+
+        return $this->denyAsNotFound();
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Compilation $compilation): bool
+    public function forceDelete(User $user, Compilation $compilation): Response
     {
-        return $user->can(Permission::ForceDeleteAnyCompilation);
+        if ($user->can(Permission::ForceDeleteAnyCompilation)) {
+            return $this->allow('user can force delete any compilation');
+        }
+
+        return $this->denyAsNotFound();
     }
 }

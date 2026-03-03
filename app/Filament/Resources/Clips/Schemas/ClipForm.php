@@ -38,6 +38,16 @@ class ClipForm
                             ->preload()
                             ->relationship('category', 'title')
                             ->searchable(),
+                        Select::make('tags')
+                            ->label('admin/resources/clips.form.tags')
+                            ->translateLabel()
+                            ->multiple()
+                            ->required()
+                            ->minItems(1)
+                            ->maxItems(3)
+                            ->preload()
+                            ->relationship('tags', 'name')
+                            ->searchable(),
                         TextEntry::make('duration')
                             ->label('admin/resources/clips.form.duration')
                             ->translateLabel()
