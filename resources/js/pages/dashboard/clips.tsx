@@ -59,7 +59,7 @@ export default function DashboardClips() {
             <Head title={props.selectedStreamer.name + ' Dashboard Clips'} />
             <StaticSpaceBackground />
             <div className="gap-4 rounded-xl p-4">
-                <div className="sticky top-19 z-10 mb-5 w-full rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent">
+                <div className="sticky top-19 z-10 mb-5 w-full rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent!">
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <Button variant="outline">Filter</Button>
@@ -152,12 +152,12 @@ export default function DashboardClips() {
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <div className="max-grid mb-17 auto-rows-min gap-4 overscroll-contain">
-                    <InfiniteScroll data="clips" preserveUrl buffer={150}>
+                <InfiniteScroll data="clips" preserveUrl buffer={150}>
+                    <div className="max-grid mb-17 grid auto-rows-min gap-4 overscroll-contain">
                         {props.clips?.data?.map((clip) => (
                             <div
                                 key={'clip' + clip.id}
-                                className="relative grid h-32 grid-cols-6 grid-rows-1 gap-6 rounded-2xl border border-gray-200 bg-gradient-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/30 dark:!bg-none dark:!from-transparent dark:!via-transparent dark:!to-transparent"
+                                className="relative grid h-32 grid-cols-6 grid-rows-1 gap-6 rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent!"
                             >
                                 <div
                                     key={'clip' + clip.id}
@@ -246,8 +246,8 @@ export default function DashboardClips() {
                                 </div>
                             </div>
                         ))}
-                    </InfiniteScroll>
-                </div>
+                    </div>
+                </InfiniteScroll>
             </div>
             {openClip && (
                 <ClipModal clip={openClip} onClose={() => setOpenClip(null)} />
