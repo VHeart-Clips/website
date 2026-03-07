@@ -1,6 +1,7 @@
 import { ClipPreview } from '@/components/clip-preview';
 import { ClipModal } from '@/components/clipModal';
 import StaticSpaceBackground from '@/components/spacebackground';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -20,10 +21,18 @@ import {
 import AppLayout from '@/layouts/app-layout';
 import { clips, main } from '@/routes/dashboard';
 import { PublicClip, PublicUser, type BreadcrumbItem } from '@/types';
+import {
+    Combobox,
+    ComboboxButton,
+    ComboboxInput,
+    ComboboxOption,
+    ComboboxOptions,
+} from '@headlessui/react';
 import { Head, InfiniteScroll, Link, usePage } from '@inertiajs/react';
 import clsx from 'clsx';
 import {
     CheckIcon,
+    ChevronDownIcon,
     SettingsIcon,
     TrashIcon,
     TriangleAlertIcon,
@@ -52,14 +61,24 @@ export default function DashboardClips() {
         },
     ];
 
-    console.log(props.clips?.data);
+    const status = [
+        { id: 0, name: 'Unknown' },
+        { id: 1, name: 'NeedApproval' },
+        { id: 2, name: 'Approved' },
+        { id: 3, name: 'Blocked' },
+    ];
+
+    const [selectedStatus, setSelectedStatus] = useState([
+        status[0],
+        status[1],
+    ]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs} sidebarVariant="creator_dashboard">
             <Head title={props.selectedStreamer.name + ' Dashboard Clips'} />
             <StaticSpaceBackground />
             <div className="gap-4 rounded-xl p-4">
-                <div className="sticky top-19 z-10 mb-5 w-full rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent!">
+                <div className="sticky top-19 z-10 mb-5 inline-flex w-full justify-start gap-4 rounded-2xl border border-gray-200 bg-linear-to-br from-white/70 via-white/85 to-white/70 p-2 ring-black/5 dark:border-white/20 dark:bg-black/80 dark:bg-none! dark:from-transparent! dark:via-transparent! dark:to-transparent!">
                     <DropdownMenu>
                         <DropdownMenuTrigger>
                             <Button variant="outline">Filter</Button>
@@ -151,6 +170,72 @@ export default function DashboardClips() {
                             </DropdownMenuGroup>
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    <Select>
+                        <SelectTrigger className="w-full max-w-48">
+                            <SelectValue placeholder="Select a Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="0">Unknown</SelectItem>
+                                <SelectItem value="1">Need Approval</SelectItem>
+                                <SelectItem value="2">Approved</SelectItem>
+                                <SelectItem value="3">Blocked</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+
+                    <Combobox
+                        multiple
+                        value={selectedStatus}
+                        onChange={setSelectedStatus}
+                    >
+                        <div className="relative w-full max-w-xs">
+                            <span className="inline-block w-full rounded-md border border-input p-2">
+                                <div className="relative w-full">
+                                    <span className="flex flex-wrap gap-1">
+                                        {selectedStatus.map((stati) => (
+                                            <Badge
+                                                key={stati.id}
+                                                variant="outline"
+                                                className="text-input"
+                                            >
+                                                {stati.name}
+                                            </Badge>
+                                        ))}
+                                        <ComboboxInput
+                                            aria-label="Input"
+                                            className="border-none p-0"
+                                        />
+                                    </span>
+                                    <ComboboxButton className="absolute inset-y-0 right-0 flex items-center px-2">
+                                        <ChevronDownIcon className="size-4 fill-white/60 group-data-hover:fill-white" />
+                                    </ComboboxButton>
+                                </div>
+                            </span>
+                            <ComboboxOptions
+                                anchor="bottom"
+                                transition
+                                className={clsx(
+                                    'absolute rounded-xl border border-white/5 bg-white/5 p-1 empty:invisible',
+                                    'opacity-100 transition duration-100 ease-in data-leave:data-closed:opacity-0',
+                                )}
+                            >
+                                {status.map((stati) => (
+                                    <ComboboxOption
+                                        key={stati.id}
+                                        value={stati}
+                                        className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-white/10"
+                                    >
+                                        <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
+                                        <div className="text-sm/6 text-white">
+                                            {stati.name}
+                                        </div>
+                                    </ComboboxOption>
+                                ))}
+                            </ComboboxOptions>
+                        </div>
+                    </Combobox>
                 </div>
                 <InfiniteScroll data="clips" preserveUrl buffer={150}>
                     <div className="max-grid mb-17 grid auto-rows-min gap-4 overscroll-contain">
