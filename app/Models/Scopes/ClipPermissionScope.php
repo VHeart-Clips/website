@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models\Scopes;
 
+use App\Enums\FeatureFlag;
+use App\Support\FeatureFlag\Feature;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +18,7 @@ class ClipPermissionScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void
     {
-        if (Filament::isServing()) {
+        if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsentOnClipScope) || Filament::isServing()) {
             return;
         }
 

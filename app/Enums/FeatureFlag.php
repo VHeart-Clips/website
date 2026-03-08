@@ -8,6 +8,7 @@ use App\Enums\Traits\FeatureFlagMagic;
 use App\Enums\Traits\HasHeadlineLabel;
 use App\Support\FeatureFlag\Attributes\DefaultFeatureFlagState;
 use App\Support\FeatureFlag\Attributes\Description;
+use App\Support\FeatureFlag\Attributes\Environment;
 use Filament\Support\Contracts\HasLabel;
 
 enum FeatureFlag: string implements HasLabel
@@ -26,4 +27,8 @@ enum FeatureFlag: string implements HasLabel
     #[Description('Controls the Reporting feature')]
     #[DefaultFeatureFlagState(true)]
     case Reports = 'reporting';
+
+    #[Description('Bypasses the Broadcaster Consent scope on Clips, useful for debugging locally')]
+    #[Environment(['local', 'staging'])]
+    case IgnoreBroadcasterConsentOnClipScope = 'bypass_broadcaster_consent';
 }
