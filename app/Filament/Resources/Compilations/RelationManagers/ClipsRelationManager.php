@@ -307,7 +307,12 @@ class ClipsRelationManager extends RelationManager
                             ->options(CompilationClipClaimStatus::class)
                             ->default(CompilationClipClaimStatus::Pending)
                             ->required(),
-                    ]),
+                    ])
+                    ->mutateDataUsing(function (array $data): array {
+                        $data['added_by'] = auth()->id();
+
+                        return $data;
+                    }),
             ])
             ->recordActions([
                 CommentsAction::make()

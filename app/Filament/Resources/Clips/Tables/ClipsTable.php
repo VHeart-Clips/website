@@ -288,6 +288,7 @@ class ClipsTable
                         ])
                         ->action(function (Clip $record, array $data): void {
                             $record->compilations()->attach($data['compilation_id'], [
+                                'added_by' => auth()->id(),
                                 'claim_status' => $data['status'] ?? CompilationClipClaimStatus::Pending,
                                 'claimed_by' => $data['claim'] ? auth()->id() : null,
                             ]);
