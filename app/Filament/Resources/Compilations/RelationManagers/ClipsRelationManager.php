@@ -202,6 +202,13 @@ class ClipsRelationManager extends RelationManager
                             ->icon(Heroicon::Calendar)
                             ->translateLabel()
                             ->dateTime(),
+                        TextColumn::make('pivot.added_at')
+                            ->label(__('admin/resources/compilations.relation_managers.clips.columns.added_at'))
+                            ->tooltip(__('admin/resources/compilations.relation_managers.clips.columns.added_at'))
+                            ->icon(Heroicon::Calendar)
+                            ->translateLabel()
+                            ->dateTime()
+                            ->color('gray'),
                     ])
                         ->space(1),
                 ])->from('lg'),
