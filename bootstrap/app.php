@@ -56,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]);
 
+        $middleware->prepend(App\Http\Middleware\AssignRequestId::class);
         $middleware->trustProxies('*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
