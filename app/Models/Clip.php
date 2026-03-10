@@ -128,7 +128,7 @@ class Clip extends Model implements Commentable, ExternalProxyable
      */
     public function claimer(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'claimed_by');
+        return $this->belongsTo(User::class, 'claimed_by');
     }
 
     /**
@@ -138,7 +138,7 @@ class Clip extends Model implements Commentable, ExternalProxyable
      */
     public function adder(): BelongsTo
     {
-        return $this->BelongsTo(User::class, 'added_by');
+        return $this->belongsTo(User::class, 'added_by');
     }
 
     public function getReportableTitleAttribute(): string
