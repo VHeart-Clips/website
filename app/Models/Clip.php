@@ -121,11 +121,21 @@ class Clip extends Model implements Commentable, ExternalProxyable
             ->withTimestamps();
     }
 
+    /**
+     * @internal this will not work without CompilationClip relationship being loaded (required for filament)
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function claimer(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'claimed_by');
     }
 
+    /**
+     * @internal this will not work without CompilationClip relationship being loaded (required for filament)
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function adder(): BelongsTo
     {
         return $this->BelongsTo(User::class, 'added_by');
