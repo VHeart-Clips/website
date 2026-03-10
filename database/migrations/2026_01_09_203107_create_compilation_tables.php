@@ -34,6 +34,9 @@ return new class extends Migration
             $table->foreignId('clip_id')->constrained();
             $table->foreignId('compilation_id')->constrained()->cascadeOnDelete();
 
+            $table->foreignId('added_by')->nullable()->references('id')->on('users');
+            $table->timestamp('added_at')->useCurrent();
+
             // Cutter that claimed this Clip in the compilation, only the current claimer can change the status
             $table->foreignId('claimed_by')->nullable()->references('id')->on('users');
             $table->timestamp('claimed_at')->nullable();

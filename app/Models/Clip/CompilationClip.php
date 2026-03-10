@@ -29,6 +29,8 @@ class CompilationClip extends Pivot
     {
         return [
             'id',
+            'added_by',
+            'added_at',
             'claimed_by',
             'claim_status',
             'claimed_at',
@@ -48,6 +50,7 @@ class CompilationClip extends Pivot
     {
         return [
             'claim_status' => CompilationClipClaimStatus::class,
+            'added_at' => 'datetime',
             'claimed_at' => 'datetime',
             'removed_at' => 'datetime',
         ];
