@@ -19,7 +19,6 @@ use App\Services\Twitch\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
 use Exception;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -694,17 +693,13 @@ class InitialEpisodeSeeder extends Seeder
                 'updated_at' => now(),
             ]);
 
-            /**
-             * @var Collection $clips
-             */
             $clips = Clip::query()
                 ->withoutGlobalScope(ClipPermissionScope::class)
                 ->whereIn('twitch_id', $episodeData['clips'])
                 ->pluck('id')
                 ->map(fn (int $id): array => [
                     'clip_id' => $id,
-                    'claimed_by' => 0,
-                    'claimed_at' => now(),
+                    'added_by' => 0,
                     'claim_status' => CompilationClipClaimStatus::Completed,
                 ]);
 
