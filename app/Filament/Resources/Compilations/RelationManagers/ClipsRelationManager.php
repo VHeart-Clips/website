@@ -183,6 +183,13 @@ class ClipsRelationManager extends RelationManager
                         ->space(1),
 
                     Stack::make([
+                        TextColumn::make('adder.name')
+                            ->label('admin/resources/compilations.relation_managers.clips.columns.adder')
+                            ->tooltip(__('admin/resources/compilations.relation_managers.clips.columns.adder'))
+                            ->translateLabel()
+                            ->icon(Heroicon::Plus)
+                            ->color('gray'),
+
                         TextColumn::make('claimer.name')
                             ->label('admin/resources/compilations.relation_managers.clips.columns.claimer')
                             ->tooltip(__('admin/resources/compilations.relation_managers.clips.columns.claimer'))
