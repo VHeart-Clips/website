@@ -32,10 +32,12 @@ return [
     'relation_managers' => [
         'clips' => [
             'columns' => [
+                'adder' => 'Added By',
                 'claimer' => 'Claimer',
                 'status_cutter' => 'Cutter Status',
                 'status_moderation' => 'Moderation Status',
                 'removed_at' => 'Removed At',
+                'added_at' => 'Added At',
             ],
             'filters' => [
                 'broadcaster' => 'Broadcaster',
