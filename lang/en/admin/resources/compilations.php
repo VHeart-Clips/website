@@ -43,6 +43,8 @@ return [
                 'broadcaster' => 'Broadcaster',
                 'creator' => 'Clip Creator',
                 'submitter' => 'Submitter',
+                'adder' => 'Added By',
+                'adder_option_none' => 'Nobody',
                 'claimer' => 'Claimer',
                 'claimer_option_none' => 'None / Unclaimed',
                 'category' => 'Category',

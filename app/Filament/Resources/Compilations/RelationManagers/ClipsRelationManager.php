@@ -275,6 +275,36 @@ class ClipsRelationManager extends RelationManager
                             }
                         });
                     }),
+                SelectFilter::make('adder')
+                    ->label('admin/resources/compilations.relation_managers.clips.filters.adder')
+                    ->translateLabel()
+                    ->multiple()
+                    ->searchable()
+                    ->preload()
+                    ->options(fn () => User::query()
+                        ->whereIn('id', $this->getOwnerRecord()->clips()->newPivotStatement()
+                            ->where('compilation_id', $this->getOwnerRecord()->getKey())
+                            ->pluck('added_by'))
+                        ->pluck('name', 'id')
+                        ->prepend(__('admin/resources/compilations.relation_managers.clips.filters.adder_option_none'), 'null'))
+                    ->query(function (Builder $query, array $data): void {
+                        $values = $data['values'] ?? [];
+                        if (empty($values)) {
+                            return;
+                        }
+
+                        $query->where(function (Builder $query) use ($values): void {
+                            $ids = array_diff($values, ['null']);
+
+                            if (in_array('null', $values, true)) {
+                                $query->whereNull('clip_compilation.added_by');
+                            }
+
+                            if ($ids !== []) {
+                                $query->orWhereIn('clip_compilation.added_by', $ids);
+                            }
+                        });
+                    }),
                 SelectFilter::make('category')
                     ->relationship('category', 'title',
                         fn (Builder $query) => $query->whereIn('id', $this->getOwnerRecord()->clips()->pluck('category_id')))
