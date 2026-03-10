@@ -46,6 +46,14 @@ class CompilationClip extends Pivot
         return $this->belongsTo(User::class, 'claimed_by');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function adder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'added_by');
+    }
+
     protected function casts(): array
     {
         return [

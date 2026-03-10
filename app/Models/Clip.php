@@ -126,6 +126,11 @@ class Clip extends Model implements Commentable, ExternalProxyable
         return $this->BelongsTo(User::class, 'claimed_by');
     }
 
+    public function adder(): BelongsTo
+    {
+        return $this->BelongsTo(User::class, 'added_by');
+    }
+
     public function getReportableTitleAttribute(): string
     {
         return 'title';
