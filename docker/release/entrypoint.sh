@@ -19,7 +19,7 @@ if getent hosts redis > /dev/null; then
 fi
 
 if [ "$#" -gt 0 ]; then
-    echo "you can use artisan via 'artisan <command>'"
+    echo "you can use artisan via 'production <command>'"
     exec "$@"
 fi
 
