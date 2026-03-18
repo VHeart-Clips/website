@@ -19,7 +19,7 @@ if getent hosts redis > /dev/null; then
 fi
 
 if [ "$#" -gt 0 ]; then
-    echo "you can use artisan via 'production <command>'"
+    echo "you can use artisan via 'artisan <command>'"
     exec "$@"
 fi
 
@@ -34,18 +34,18 @@ if [ "$INSTANCE" = "web" ]; then
     fi
 
     echo "[Entrypoint] Linking Storage..."
-    production storage:link --force
+    /app/artisan storage:link --force
 
     echo "[Entrypoint] Starting FrankenPHP..."
-    exec php -d variables_order=EGPCS production octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=80 --max-requests=500 --caddyfile=/etc/caddy/Caddyfile
+    exec php -d variables_order=EGPCS /app/artisan octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=80 --max-requests=500 --caddyfile=/etc/caddy/Caddyfile
 
 elif [ "$INSTANCE" = "worker" ]; then
     echo "[Entrypoint] Starting Laravel Worker..."
-    exec production queue:work --name=queue-worker --queue=default --sleep=3 --tries=3 --max-time=3600 --json
+    exec /app/artisan queue:work --name=queue-worker --queue=default --sleep=3 --tries=3 --max-time=3600 --json
 
 elif [ "$INSTANCE" = "scheduler" ]; then
     echo "[Entrypoint] Starting Laravel Scheduler..."
-    exec production schedule:work --whisper
+    exec /app/artisan schedule:work --whisper
 
 elif [ "$INSTANCE" = "init" ]; then
     echo "[Entrypoint] Running Initializations..."

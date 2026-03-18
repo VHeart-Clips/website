@@ -1,21 +1,21 @@
 #!/bin/sh
 
 echo "[Init] Running Migrations..."
-production migrate --force
+/app/artisan migrate --force
 
 echo "[Init] Clearing old caches..."
-production optimize:clear
+/app/artisan optimize:clear
 
 echo "[Init] Seeding Database..."
-production db:seed --force
+/app/artisan db:seed --force
 
 echo "[Init] Optimize..."
-production optimize
+/app/artisan optimize
 
 chown -R www-data:www-data /app/storage /app/bootstrap/cache
 chmod -R 775 /app/storage /app/bootstrap/cache
 
 echo "[Init] Restarting Queue Signal..."
-production queue:restart
+/app/artisan queue:restart
 
 echo "[Init] Done."
