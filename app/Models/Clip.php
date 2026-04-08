@@ -12,14 +12,12 @@ use App\Enums\ClipVoteType;
 use App\Enums\ExternalContentProxyType;
 use App\Enums\FeatureFlag;
 use App\Http\Resources\PublicClipResource;
-use App\Models\Broadcaster\Broadcaster;
-use App\Models\Clip\Compilation;
-use App\Models\Clip\CompilationClip;
-use App\Models\Clip\Tag;
 use App\Models\Contracts\ExternalProxyable;
 use App\Models\Scopes\ClipPermissionScope;
 use App\Models\Scopes\ClipWithoutBannedCategoryScope;
 use App\Models\Traits\Auditable;
+use App\Models\Traits\Clip\ClipRelationships;
+use App\Models\Traits\Clip\ClipToClipCompilationRelationships;
 use App\Models\Traits\HasExternalProxy;
 use App\Models\Traits\Reportable;
 use App\Policies\ClipPolicy;
@@ -34,10 +32,6 @@ use Illuminate\Database\Eloquent\Attributes\UseResource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Kirschbaum\Commentions\Contracts\Commentable;
@@ -49,8 +43,17 @@ use Kirschbaum\Commentions\HasComments;
 #[UsePolicy(ClipPolicy::class)]
 class Clip extends Model implements Commentable, ExternalProxyable
 {
+    use Auditable;
+    use ClipRelationships;
+    use ClipToClipCompilationRelationships;
+    use HasComments;
+    use HasExternalProxy;
+
     /** @use HasFactory<ClipFactory> */
-    use Auditable, HasComments, HasExternalProxy, HasFactory, Reportable, SoftDeletes;
+    use HasFactory;
+
+    use Reportable;
+    use SoftDeletes;
 
     public static function getProxyIdentifierColumn(): string
     {
@@ -68,100 +71,12 @@ class Clip extends Model implements Commentable, ExternalProxyable
     }
 
     /**
-     * @return BelongsTo<User, $this>
-     */
-    public function owner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'broadcaster_id', 'id');
-    }
-
-    /**
-     * @return BelongsTo<Broadcaster, $this>
-     */
-    public function broadcaster(): BelongsTo
-    {
-        return $this->belongsTo(Broadcaster::class);
-    }
-
-    /**
      * Returns the Twitch Clip Url for Twitch
      */
     public function getClipUrl(): string
     {
         // old ui, but less buggy
         return "https://clips.twitch.tv/{$this->twitch_id}";
-    }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function submitter(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    /**
-     * @return BelongsTo<Category, $this>
-     */
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Category::class)
-            ->withDefault(Category::Defaults);
-    }
-
-    /**
-     * @return BelongsToMany<Tag, $this, Pivot>
-     */
-    public function tags(): BelongsToMany
-    {
-        return $this->belongsToMany(Tag::class, 'clip_tags');
-    }
-
-    /**
-     * @return HasMany<Vote, $this>
-     */
-    public function votes(): HasMany
-    {
-        return $this->hasMany(Vote::class);
-    }
-
-    /**
-     * @return BelongsToMany<Compilation, $this, Pivot>
-     */
-    public function compilations(): BelongsToMany
-    {
-        return $this->belongsToMany(Compilation::class, 'compilation_clip')
-            ->using(CompilationClip::class)
-            ->withPivot(CompilationClip::getPivotColumns())
-            ->withTimestamps();
-    }
-
-    /**
-     * @internal this will not work without CompilationClip relationship being loaded (required for filament)
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function claimer(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'claimed_by');
-    }
-
-    /**
-     * @internal this will not work without CompilationClip relationship being loaded (required for filament)
-     *
-     * @return BelongsTo<User, $this>
-     */
-    public function adder(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'added_by');
     }
 
     public function getReportableTitleAttribute(): string
