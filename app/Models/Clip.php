@@ -8,7 +8,6 @@ use App\Casts\TwitchClipThumbnailCast;
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationStatus;
-use App\Enums\ClipVoteType;
 use App\Enums\ExternalContentProxyType;
 use App\Enums\FeatureFlag;
 use App\Http\Resources\PublicClipResource;
@@ -19,11 +18,11 @@ use App\Models\Traits\Auditable;
 use App\Models\Traits\Clip\ClipRelationships;
 use App\Models\Traits\Clip\ClipToClipCompilationRelationships;
 use App\Models\Traits\Clip\Scopes\ClipArchiveScopes;
+use App\Models\Traits\Clip\Scopes\ClipVoteScopes;
 use App\Models\Traits\HasExternalProxy;
 use App\Models\Traits\Reportable;
 use App\Policies\ClipPolicy;
 use App\Support\FeatureFlag\Feature;
-use Carbon\CarbonInterval;
 use Database\Factories\ClipFactory;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -48,6 +47,7 @@ class Clip extends Model implements Commentable, ExternalProxyable
     use ClipArchiveScopes;
     use ClipRelationships;
     use ClipToClipCompilationRelationships;
+    use ClipVoteScopes;
     use HasComments;
     use HasExternalProxy;
 
@@ -98,34 +98,6 @@ class Clip extends Model implements Commentable, ExternalProxyable
             'date' => 'immutable_datetime',
             'status' => ClipStatus::class,
         ];
-    }
-
-    /**
-     * add rules/filters here to limit what can be voted on.
-     */
-    #[Scope]
-    protected function whereEligibleForVoting(Builder $query, ?User $user = null): Builder
-    {
-        /** @var CarbonInterval $maxAge */
-        $maxAge = config('vheart.clips.voting.maximum_age');
-
-        if (! Feature::isActive(FeatureFlag::ClipVoting)) {
-            // Since the feature got disabled, make it impossible to get anything to vote on
-            return $query->whereRaw('1 = 0');
-        }
-
-        // Make sure to sort the rules in a way that allows the biggest scope to filter the most first
-        return $query
-            ->whereNotArchived()
-            ->whereSubmittedAfter(now()->sub($maxAge))
-            ->whereBroadcasterGavePermission()
-            ->whereNotPublished()
-            ->when($user, fn (Builder $query) => $query
-                ->whereNotBroadcastBy($user)
-                ->whereNotCreatedBy($user)
-                ->whereNotSubmittedBy($user)
-                ->whereNoVotesFrom($user)
-            );
     }
 
     /**
@@ -191,28 +163,6 @@ class Clip extends Model implements Commentable, ExternalProxyable
     }
 
     /**
-     * Exclude Clips that user has voted on
-     */
-    #[Scope]
-    protected function whereNoVotesFrom(Builder $query, User|int $userOrId): Builder
-    {
-        $userId = $this->extractUserIdFromParameter($userOrId);
-
-        return $query->whereDoesntHave('votes', fn (Builder $q) => $q->where('user_id', $userId));
-    }
-
-    /**
-     * Include only Clips that user has voted on
-     */
-    #[Scope]
-    protected function whereVotesFrom(Builder $query, User|int $userOrId): Builder
-    {
-        $userId = $this->extractUserIdFromParameter($userOrId);
-
-        return $query->whereHas('votes', fn (Builder $q) => $q->where('user_id', $userId));
-    }
-
-    /**
      * Exclude Clips the user has Broadcasted
      */
     #[Scope]
@@ -254,86 +204,6 @@ class Clip extends Model implements Commentable, ExternalProxyable
         $userId = $this->extractUserIdFromParameter($userOrId);
 
         return $query->where('broadcaster_id', $userId);
-    }
-
-    /**
-     * Counts absolute votes as `absolute_votes`
-     */
-    #[Scope]
-    protected function withAbsoluteVoteCount(Builder $query): Builder
-    {
-        return $query->withCount([
-            'votes as absolute_votes' => fn ($q) => $q->where('voted', true),
-        ]);
-    }
-
-    /**
-     * Calculates the Clip Score as `score`
-     */
-    #[Scope]
-    protected function withScore(Builder $query): Builder
-    {
-        $juryWeight = (int) config('vheart.clips.scoring.jury_weight', 10);
-        $publicWeight = (int) config('vheart.clips.scoring.public_weight', 1);
-
-        if (empty($query->getQuery()->columns)) {
-            $query->addSelect($query->getModel()->getTable().'.*');
-        }
-
-        return $query->selectSub(
-            Vote::query()
-                ->selectRaw('COALESCE(SUM(CASE WHEN type = ?::integer THEN ?::integer ELSE ?::integer END), 0)', [ClipVoteType::Jury->value, $juryWeight, $publicWeight])
-                ->whereColumn('clip_id', 'clips.id')
-                ->where('voted', true),
-            'score'
-        );
-    }
-
-    /**
-     * Counts public votes as `public_votes`.
-     */
-    #[Scope]
-    protected function withPublicVoteCount(Builder $query): Builder
-    {
-        return $query->withCount(
-            [
-                'votes as public_votes' => function (Builder $query): void {
-                    $query
-                        ->where('voted', true)
-                        ->where('type', ClipVoteType::Public);
-                },
-            ]
-        );
-    }
-
-    /**
-     * Counts jury votes as `jury_votes`.
-     */
-    #[Scope]
-    protected function withJuryVoteCount(Builder $query): Builder
-    {
-        return $query->withCount(
-            [
-                'votes as jury_votes' => function (Builder $query): void {
-                    $query
-                        ->where('voted', true)
-                        ->where('type', ClipVoteType::Jury);
-                },
-            ]
-        );
-    }
-
-    /**
-     * Counts Votes
-     * - Jury votes as `jury_votes`
-     * - Public votes as `public_votes`
-     */
-    #[Scope]
-    protected function withVoteCount(Builder $query): Builder
-    {
-        return $query
-            ->withJuryVoteCount()
-            ->withPublicVoteCount();
     }
 
     private function extractUserIdFromParameter(User|int $userOrId): int
