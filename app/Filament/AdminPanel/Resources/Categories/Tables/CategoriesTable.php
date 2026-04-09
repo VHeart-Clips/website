@@ -57,6 +57,7 @@ class CategoriesTable
             ->recordActions([
                 ActionGroup::make([
                     Action::make('ban')
+                        ->authorize('update')
                         ->label('admin/resources/categories.table.actions.ban')
                         ->translateLabel()
                         ->icon(LucideIcon::Lock)
@@ -68,6 +69,7 @@ class CategoriesTable
                             $category->save();
                         }),
                     Action::make('unban')
+                        ->authorize('update')
                         ->label('admin/resources/categories.table.actions.unban')
                         ->translateLabel()
                         ->icon(LucideIcon::LockOpen)
@@ -78,8 +80,7 @@ class CategoriesTable
                             $category->is_banned = false;
                             $category->save();
                         }),
-                ])
-                    ->hidden(fn (Category $record): bool => ! auth()->user()->can('update', $record)),
+                ]),
             ])
             ->toolbarActions([
             ]);

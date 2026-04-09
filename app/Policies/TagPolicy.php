@@ -23,7 +23,7 @@ class TagPolicy
      */
     public function view(User $user, Tag $tag): bool
     {
-        return $user->can(Permission::ViewTag);
+        return $user->can(Permission::ViewAnyTag);
     }
 
     /**

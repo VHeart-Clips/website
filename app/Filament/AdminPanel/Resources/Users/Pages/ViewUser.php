@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Users\Pages;
 
-use App\Enums\Permission;
 use App\Filament\AdminPanel\Resources\Users\UserResource;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -26,19 +25,14 @@ class ViewUser extends ViewRecord
         return [
             CommentsAction::make()
                 ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
+                ->authorize('comment')
                 ->perPage(4)
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),
             Action::make('2fa_reset')
                 ->label('Remove 2FA')
-                ->hidden(function (User $record): bool {
-                    if (! auth()->user()->can(Permission::UpdateAnyUser)) {
-                        return true;
-                    }
-
-                    return $record->app_authentication_secret === null;
-                })
+                ->hidden(fn (User $record): bool => $record->app_authentication_secret === null)
+                ->authorize('update')
                 ->requiresConfirmation()
                 ->action(function (User $user): void {
                     $user->update([

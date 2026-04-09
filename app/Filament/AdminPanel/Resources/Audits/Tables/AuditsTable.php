@@ -7,8 +7,6 @@ namespace App\Filament\AdminPanel\Resources\Audits\Tables;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Filters\DateRangeFilter;
 use App\Models\Audit;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
@@ -101,11 +99,6 @@ class AuditsTable
             ])
             ->recordActions([
                 ViewAction::make()->modalWidth(Width::ScreenTwoExtraLarge),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
             ])
             ->filtersFormWidth(Width::ExtraLarge);
     }

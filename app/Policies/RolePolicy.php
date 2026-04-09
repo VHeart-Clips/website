@@ -19,7 +19,7 @@ class RolePolicy
 
     public function view(User $user, Role $role): bool
     {
-        return $user->can(Permission::ViewRole);
+        return $user->can(Permission::ViewAnyRole);
     }
 
     public function create(User $user): bool

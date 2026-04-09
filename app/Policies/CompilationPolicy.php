@@ -62,6 +62,11 @@ class CompilationPolicy
         return $this->denyAsNotFound();
     }
 
+    public function comment(User $user, Compilation $compilation): bool
+    {
+        return $user->can(Permission::ViewAnyComment);
+    }
+
     /**
      * Determine whether the user can delete the model.
      */

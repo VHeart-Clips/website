@@ -16,8 +16,6 @@ enum Permission: string implements HasLabel
 
     // User
     case ViewAnyUser = 'view_any_user';
-    case ViewUser = 'view_user';
-    case CreateUser = 'create_user';
     case UpdateAnyUser = 'update_any_user';
     case DeleteAnyUser = 'delete_any_user';
     case RestoreAnyUser = 'restore_any_user';
@@ -25,8 +23,6 @@ enum Permission: string implements HasLabel
 
     // Report
     case ViewAnyReport = 'view_any_report';
-    case ViewReport = 'view_report';
-    case CreateReport = 'create_report';
     case UpdateAnyReport = 'update_any_report';
     case DeleteAnyReport = 'delete_any_report';
     case RestoreAnyReport = 'restore_any_report';
@@ -34,7 +30,6 @@ enum Permission: string implements HasLabel
 
     // Compilation
     case ViewAnyCompilation = 'view_any_compilation';
-    case ViewCompilation = 'view_compilation';
     case CreateCompilation = 'create_compilation';
     case UpdateAnyCompilation = 'update_any_compilation';
     case DeleteAnyCompilation = 'delete_any_compilation';
@@ -43,16 +38,11 @@ enum Permission: string implements HasLabel
 
     // Category
     case ViewAnyCategory = 'view_any_category';
-    case ViewCategory = 'view_category';
     case CreateCategory = 'create_category';
     case UpdateAnyCategory = 'update_any_category';
-    case DeleteAnyCategory = 'delete_any_category';
-    case RestoreAnyCategory = 'restore_any_category';
-    case ForceDeleteAnyCategory = 'force_delete_any_category';
 
     // Faq Entry
     case ViewAnyFaqEntry = 'view_any_faq_entry';
-    case ViewFaqEntry = 'view_faq_entry';
     case CreateFaqEntry = 'create_faq_entry';
     case UpdateAnyFaqEntry = 'update_any_faq_entry';
     case DeleteAnyFaqEntry = 'delete_any_faq_entry';
@@ -66,21 +56,18 @@ enum Permission: string implements HasLabel
 
     // Tag
     case ViewAnyTag = 'view_any_tag';
-    case ViewTag = 'view_tag';
     case CreateTag = 'create_tag';
     case UpdateAnyTag = 'update_any_tag';
     case DeleteAnyTag = 'delete_any_tag';
 
     // Roles
     case ViewAnyRole = 'view_any_role';
-    case ViewRole = 'view_role';
     case CreateRole = 'create_role';
     case UpdateAnyRole = 'update_any_role';
     case DeleteAnyRole = 'delete_any_role';
 
     // Clips
     case ViewAnyClip = 'view_any_clip';
-    case ViewClip = 'view_clip';
     case CreateClip = 'create_clip';
     case UpdateAnyClip = 'update_any_clip';
     case DeleteAnyClip = 'delete_any_clip';
@@ -89,7 +76,6 @@ enum Permission: string implements HasLabel
 
     // Broadcaster
     case ViewAnyBroadcaster = 'view_any_broadcaster';
-    case ViewBroadcaster = 'view_broadcaster';
     case CreateBroadcaster = 'create_broadcaster';
     case UpdateAnyBroadcaster = 'update_any_broadcaster';
     case DeleteAnyBroadcaster = 'delete_any_broadcaster';

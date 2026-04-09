@@ -17,7 +17,7 @@ class BroadcasterPolicy
 
     public function view(User $user, Broadcaster $broadcaster): bool
     {
-        return $user->can(Permission::ViewBroadcaster);
+        return $user->can(Permission::ViewAnyBroadcaster);
     }
 
     public function create(User $user): bool

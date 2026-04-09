@@ -7,7 +7,6 @@ namespace App\Filament\AdminPanel\Resources\Compilations\RelationManagers;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Filament\LucideIcon;
-use App\Enums\Permission;
 use App\Events\Admin\Compilations\CompilationClipClaimed;
 use App\Events\Admin\Compilations\CompilationClipStatusUpdated;
 use App\Events\Admin\Compilations\CompilationClipUnclaimed;
@@ -270,7 +269,7 @@ class ClipsRelationManager extends RelationManager
             ->recordActions([
                 CommentsAction::make()
                     ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                    ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
+                    ->authorize('comment')
                     ->perPage(4)
                     ->loadMoreIncrementsBy(8)
                     ->modalWidth(Width::SevenExtraLarge),
@@ -281,6 +280,7 @@ class ClipsRelationManager extends RelationManager
                         ->icon(LucideIcon::Lock)
                         ->rateLimit(5)
                         ->hidden(fn (Clip $record): bool => $record->pivot->claimed_by === auth()->id())
+                        ->authorize('update')
                         ->requiresConfirmation(fn (Clip $record): bool => ! is_null($record->pivot->claimed_by))
                         ->modalHeading(fn (Clip $record): string|array|null => $record->pivot->claimed_by
                             ? __('admin/resources/compilations.relation_managers.clips.actions.claim_override.heading')
@@ -309,6 +309,7 @@ class ClipsRelationManager extends RelationManager
                         ->translateLabel()
                         ->icon(LucideIcon::Clipboard)
                         ->hidden(fn (Clip $record): bool => $record->pivot->claimed_by !== auth()->id())
+                        ->authorize('update')
                         ->fillForm(fn (Clip $record): array => [
                             'status' => $record->pivot->claim_status,
                         ])
@@ -367,6 +368,7 @@ class ClipsRelationManager extends RelationManager
                         ->color('warning')
                         ->icon(LucideIcon::LockOpen)
                         ->hidden(fn (Clip $record): bool => $record->pivot->claimed_by !== auth()->id())
+                        ->authorize('update')
                         ->requiresConfirmation()
                         ->action(function (Clip $clip): void {
                             if ($clip->pivot->claimed_by !== auth()->id()) {

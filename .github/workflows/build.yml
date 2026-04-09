@@ -63,6 +63,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Dump Autoloader
+        run: composer dump-autoload --optimize
+
       - name: Run Tests
         run: |
           cp .env.ci .env

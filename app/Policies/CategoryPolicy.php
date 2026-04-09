@@ -25,7 +25,7 @@ class CategoryPolicy
      */
     public function view(User $user, Category $category): bool
     {
-        return $user->can(Permission::ViewCategory);
+        return $user->can(Permission::ViewAnyCategory);
     }
 
     /**

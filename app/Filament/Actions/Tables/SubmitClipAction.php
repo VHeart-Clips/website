@@ -28,7 +28,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
-use Illuminate\Support\Facades\Gate;
 
 class SubmitClipAction extends Action
 {
@@ -42,7 +41,6 @@ class SubmitClipAction extends Action
             ->label('filament/actions/tables.clips.submit_action.label')
             ->translateLabel()
             ->icon(LucideIcon::Plus)
-            ->hidden(fn (): bool => ! Gate::allows('submit', Clip::class))
             ->schema([
                 TextInput::make('uri')
                     ->label('filament/actions/tables.clips.submit_action.form.uri')

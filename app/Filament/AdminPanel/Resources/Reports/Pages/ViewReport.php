@@ -29,6 +29,7 @@ class ViewReport extends ViewRecord
                 ->icon(LucideIcon::Lock)
                 ->color('info')
                 ->visible(fn (Report $record): bool => $record->claimed_by === null && $record->status === ReportStatus::Pending)
+                ->authorize('claim')
                 ->action(function (Report $record): void {
                     $record->update([
                         'status' => ReportStatus::InReview,
@@ -42,6 +43,7 @@ class ViewReport extends ViewRecord
                 ->icon(LucideIcon::LockOpen)
                 ->color('info')
                 ->visible(fn (Report $record): bool => $record->claimed_by !== null && $record->status === ReportStatus::InReview)
+                ->authorize('claim')
                 ->action(function (Report $record): void {
                     $record->update([
                         'status' => ReportStatus::Pending,
@@ -66,6 +68,7 @@ class ViewReport extends ViewRecord
                         ->required(fn (Get $get): bool => $get('action') !== null && $get('action') === ResolveAction::Other),
                 ])
                 ->visible(fn (Report $record): bool => $record->claimed_by === auth()->id() && $record->status === ReportStatus::InReview)
+                ->authorize('claim')
                 ->action(function (Report $record, array $data): void {
                     $record->update([
                         'status' => ReportStatus::Resolved,

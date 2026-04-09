@@ -23,7 +23,7 @@ class FaqEntryPolicy
      */
     public function view(User $user, FaqEntry $faqEntry): bool
     {
-        return $user->can(Permission::ViewFaqEntry);
+        return $user->can(Permission::ViewAnyFaqEntry);
     }
 
     /**

@@ -24,7 +24,7 @@ class ClipFeedbackAction extends Action
 
         $this
             ->modalDescription('This clip will be removed and the broadcaster will be notified with your feedback.')
-            ->authorize(fn (Clip $record) => auth()->user()->can('feedback', $record))
+            ->authorize('feedback')
             ->icon(LucideIcon::MessagesSquare)
             ->label('Clip Feedback')
             ->requiresConfirmation()

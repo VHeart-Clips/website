@@ -47,6 +47,16 @@ class ReportPolicy
         return $user->can(Permission::UpdateAnyReport);
     }
 
+    public function claim(User $user, Report $report): bool
+    {
+        return $user->can(Permission::UpdateAnyReport);
+    }
+
+    public function comment(User $user, Report $report): bool
+    {
+        return $user->can(Permission::ViewAnyComment);
+    }
+
     /**
      * Determine whether the user can delete the model.
      */

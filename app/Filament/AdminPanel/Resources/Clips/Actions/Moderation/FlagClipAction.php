@@ -20,7 +20,7 @@ class FlagClipAction extends Action
             ->hidden(fn (Clip $record) => $record->status->isWithheld())
             ->icon(LucideIcon::Flag)
             ->label('Flag Clip')
-            ->authorize(fn (Clip $record) => auth()->user()->can('flag', $record))
+            ->authorize('flag')
             ->requiresConfirmation()
             ->color('warning')
             ->action(function (Clip $record): void {

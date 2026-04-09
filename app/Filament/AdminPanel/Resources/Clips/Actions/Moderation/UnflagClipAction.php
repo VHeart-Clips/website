@@ -19,7 +19,7 @@ class UnflagClipAction extends Action
             ->visible(fn (Clip $record) => $record->status->isWithheld())
             ->icon(LucideIcon::Flag)
             ->label('Unflag Clip')
-            ->authorize(fn (Clip $record) => auth()->user()->can('unflag', $record))
+            ->authorize('unflag')
             ->requiresConfirmation()
             ->color('success')
             ->action(function (Clip $record): void {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 
-use App\Enums\Permission;
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
 use App\Models\User;
 use Filament\Actions\ActionGroup;
@@ -26,7 +25,7 @@ class ViewCompilation extends ViewRecord
         return [
             CommentsAction::make()
                 ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
-                ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
+                ->authorize('comment')
                 ->perPage(4)
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Reports\Schemas;
 
 use App\Enums\Filament\LucideIcon;
-use App\Enums\Permission;
+use App\Models\Report;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
@@ -148,7 +148,7 @@ class ReportInfolist
                     ]),
                 Section::make('Comments')
                     ->columnSpanFull()
-                    ->hidden(fn (): bool => ! auth()->user()->can(Permission::ViewAnyComment))
+                    ->hidden(fn (Report $record): bool => ! auth()->user()->can('comment', $record))
                     ->schema([
                         CommentsEntry::make('comments')
                             ->hiddenLabel()

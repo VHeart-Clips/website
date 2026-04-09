@@ -79,9 +79,9 @@ class BroadcastersTable
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    DeleteBulkAction::make()->authorizeIndividualRecords(),
+                    ForceDeleteBulkAction::make()->authorizeIndividualRecords(),
+                    RestoreBulkAction::make()->authorizeIndividualRecords(),
                 ]),
             ]);
     }
