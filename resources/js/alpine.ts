@@ -36,6 +36,10 @@ document.addEventListener('alpine:init', () => {
         ['reportModal', () => import('@/components/ui/report/modal')],
         ['appearanceSlider', () => import('@/components/appearance-slider')],
         ['clipsSlider', () => import('@/components/index/clips-slider')],
+        [
+            'filamentClipOverlay',
+            () => import('@/components/filament/clip-overlay'),
+        ],
     ];
 
     asyncComponents.forEach(([componentName, importFn]) => {

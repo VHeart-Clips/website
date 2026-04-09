@@ -10,6 +10,7 @@ use App\Enums\Filament\LucideIcon;
 use App\Events\Admin\Compilations\CompilationClipClaimed;
 use App\Events\Admin\Compilations\CompilationClipStatusUpdated;
 use App\Events\Admin\Compilations\CompilationClipUnclaimed;
+use App\Filament\AdminPanel\Resources\Clips\Actions\Management\GenerateClipOverlayAction;
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
 use App\Models\Clip;
@@ -267,6 +268,7 @@ class ClipsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
+                GenerateClipOverlayAction::make(),
                 CommentsAction::make()
                     ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
                     ->authorize('comment')
