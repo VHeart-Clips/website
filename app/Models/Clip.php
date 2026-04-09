@@ -30,6 +30,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
 
+/**
+ * @property int $id
+ */
 #[ScopedBy(ClipPermissionScope::class)]
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
 #[UseResource(PublicClipResource::class)]
