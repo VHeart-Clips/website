@@ -32,6 +32,7 @@ use Kirschbaum\Commentions\HasComments;
 
 /**
  * @property int $id
+ * @property string $twitch_id
  */
 #[ScopedBy(ClipPermissionScope::class)]
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
