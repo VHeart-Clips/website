@@ -26,6 +26,7 @@ use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,6 +41,13 @@ use Kirschbaum\Commentions\HasComments;
  * @property int $id
  */
 #[UsePolicy(UserPolicy::class)]
+#[Hidden([
+    'password',
+    'app_authentication_secret',
+    'app_authentication_recovery_codes',
+    'remember_token',
+    'twitch_refresh_token',
+])]
 class User extends Authenticatable implements Commentable, Commenter, ExternalProxyable, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasDefaultTenant, HasName, HasTenants, MustVerifyEmail
 {
     use Auditable;
@@ -67,17 +75,6 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
     ];
 
     protected array $auditExcludeEvents = ['created'];
-
-    /**
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'app_authentication_secret',
-        'app_authentication_recovery_codes',
-        'remember_token',
-        'twitch_refresh_token',
-    ];
 
     protected $rememberTokenName;
 

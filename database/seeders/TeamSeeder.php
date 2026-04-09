@@ -71,6 +71,8 @@ class TeamSeeder extends Seeder
         243827916, // https://www.twitch.tv/solomon_h0d
         141788057, // https://www.twitch.tv/sgtdoubleu
         739357338, // https://www.twitch.tv/zelu_melu
+        123880694, // https://www.twitch.tv/liveplayer_
+        408596853, // https://www.twitch.tv/itsravora
     ];
 
     protected array $it = [
@@ -83,8 +85,8 @@ class TeamSeeder extends Seeder
     ];
 
     protected array $contributors = [
-        756841354,
-        1353141462,
+        756841354, // https://www.twitch.tv/dotgyy
+        1353141462, // https://www.twitch.tv/nythnea
     ];
 
     public function run(TwitchService $twitchService): void

@@ -12,7 +12,6 @@ use App\Models\Clip;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontFamily;
@@ -104,46 +103,47 @@ class ClipInfolist
                                     ->color('success'),
                             ]),
 
-                        Group::make([
-                            TextEntry::make('broadcaster.name')
-                                ->label('admin/resources/clips.infolist.broadcaster')
-                                ->translateLabel()
-                                ->icon(LucideIcon::Video)
-                                ->color('gray')
-                                ->url(function (Clip $clip): ?string {
-                                    if (! $clip->broadcaster?->exists) {
-                                        return null;
-                                    }
+                        Grid::make(3)
+                            ->schema([
+                                TextEntry::make('broadcaster.name')
+                                    ->label('admin/resources/clips.infolist.broadcaster')
+                                    ->translateLabel()
+                                    ->icon(LucideIcon::Video)
+                                    ->color('gray')
+                                    ->url(function (Clip $clip): ?string {
+                                        if (! $clip->broadcaster?->exists) {
+                                            return null;
+                                        }
 
-                                    return UserResource::getUrl('view', ['record' => $clip->broadcaster]);
-                                })->openUrlInNewTab(),
+                                        return UserResource::getUrl('view', ['record' => $clip->broadcaster]);
+                                    })->openUrlInNewTab(),
 
-                            TextEntry::make('creator.name')
-                                ->label('admin/resources/clips.infolist.creator')
-                                ->translateLabel()
-                                ->icon(LucideIcon::Scissors)
-                                ->color('gray')
-                                ->url(function (Clip $clip): ?string {
-                                    if (! $clip->creator?->exists) {
-                                        return null;
-                                    }
+                                TextEntry::make('creator.name')
+                                    ->label('admin/resources/clips.infolist.creator')
+                                    ->translateLabel()
+                                    ->icon(LucideIcon::Scissors)
+                                    ->color('gray')
+                                    ->url(function (Clip $clip): ?string {
+                                        if (! $clip->creator?->exists) {
+                                            return null;
+                                        }
 
-                                    return UserResource::getUrl('view', ['record' => $clip->creator]);
-                                })->openUrlInNewTab(),
+                                        return UserResource::getUrl('view', ['record' => $clip->creator]);
+                                    })->openUrlInNewTab(),
 
-                            TextEntry::make('submitter.name')
-                                ->label('admin/resources/clips.infolist.submitted_by')
-                                ->translateLabel()
-                                ->icon(LucideIcon::User)
-                                ->color('gray')
-                                ->url(function (Clip $clip): ?string {
-                                    if (! $clip->submitter?->exists) {
-                                        return null;
-                                    }
+                                TextEntry::make('submitter.name')
+                                    ->label('admin/resources/clips.infolist.submitted_by')
+                                    ->translateLabel()
+                                    ->icon(LucideIcon::User)
+                                    ->color('gray')
+                                    ->url(function (Clip $clip): ?string {
+                                        if (! $clip->submitter?->exists) {
+                                            return null;
+                                        }
 
-                                    return UserResource::getUrl('view', ['record' => $clip->submitter]);
-                                })->openUrlInNewTab(),
-                        ]),
+                                        return UserResource::getUrl('view', ['record' => $clip->submitter]);
+                                    })->openUrlInNewTab(),
+                            ]),
 
                         Grid::make(2)
                             ->schema([
@@ -160,6 +160,14 @@ class ClipInfolist
                                     ->icon(LucideIcon::Calendar)
                                     ->color('gray'),
                             ]),
+
+                        TextEntry::make('status')
+                            ->label('admin/resources/clips.table.columns.status')
+                            ->tooltip(__('admin/resources/clips.table.columns.status'))
+                            ->size(TextSize::Medium)
+                            ->icon(LucideIcon::Clipboard)
+                            ->badge()
+                            ->translateLabel(),
                     ])
                     ->columnSpan(['default' => 3, 'lg' => 1]),
             ])

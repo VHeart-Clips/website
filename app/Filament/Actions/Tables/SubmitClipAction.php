@@ -208,6 +208,13 @@ class SubmitClipAction extends Action
                             return;
                         }
                     } else {
+
+                        User::firstOrCreate([
+                            'id' => $clipInfo->broadcasterId,
+                        ], [
+                            'name' => $clipInfo->broadcasterName,
+                        ]);
+
                         Broadcaster::firstOrCreate([
                             'id' => $clipInfo->broadcasterId,
                         ]);

@@ -43,7 +43,7 @@ class CompilationsRelationManager extends RelationManager
                     ->translateLabel(),
 
                 TextColumn::make('pivot.status')
-                    ->label('admin/resources/compilations.relation_managers.clips.columns.status')
+                    ->label('admin/resources/compilations.relation_managers.clips.columns.status_cutter')
                     ->translateLabel()
                     ->badge(),
 
@@ -59,7 +59,7 @@ class CompilationsRelationManager extends RelationManager
                     ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Select::make('claim_status')
-                            ->label('admin/resources/compilations.relation_managers.clips.columns.status')
+                            ->label('admin/resources/compilations.relation_managers.clips.columns.status_cutter')
                             ->translateLabel()
                             ->options(CompilationClipClaimStatus::class)
                             ->default(CompilationClipClaimStatus::Pending)

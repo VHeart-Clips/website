@@ -24,6 +24,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -158,8 +159,8 @@ class ClipsTable
                     ->indicatorLabel(__('admin/resources/clips.filters.submission_range.indicator2'))
                     ->label('admin/resources/clips.filters.submission_range.label')
                     ->translateLabel(),
-            ])
-            ->filtersFormColumns(2)
+            ], layout: FiltersLayout::Modal)
+            ->filtersFormColumns(4)
             ->defaultSort('score', 'desc')
             ->recordActions([
                 ActionGroup::make([
