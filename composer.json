@@ -107,7 +107,10 @@
         ],
         "test:unit": "pest --parallel",
         "test:types": "phpstan",
-        "test:refactor": "rector --dry-run",
+        "test:refactor": [
+            "@php artisan ide-helper:models --nowrite",
+            "rector --dry-run"
+        ],
         "test": [
             "@php artisan config:clear --ansi",
             "@test:type-coverage",
