@@ -31,8 +31,11 @@ use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
 
 /**
- * @property int $id
- * @property string $twitch_id
+ * @mixin ClipArchiveScopes
+ * @mixin ClipVoteScopes
+ * @mixin ClipFilterScopes
+ * @mixin ClipRelationships
+ * @mixin ClipToClipCompilationRelationships
  */
 #[ScopedBy(ClipPermissionScope::class)]
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
