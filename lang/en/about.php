@@ -27,16 +27,16 @@ return [
                 'description' => 'As a community, you can vote for the funniest clips directly on this website.',
             ],
             'jury' => [
-                'title' => 'Jury Review',
-                'description' => 'In parallel, our jury (artists, VTubers, cam streamers, ...) reviews these clips.',
+                'title' => 'Jury Role',
+                'description' => '',
             ],
-            'consent' => [
-                'title' => 'Creator Consent',
-                'description' => 'Creators of the selected clips will be contacted and informed that their clip will be included in this edition.',
+            'moderation' => [
+                'title' => 'Moderation',
+                'description' => '',
             ],
             'edit' => [
                 'title' => 'Final Editing',
-                'description' => 'The final step is our editors reviewing the clip and then editing it.',
+                'description' => '',
             ],
         ],
         'neutrality' => 'This ensures nothing is out of context, nobody is misrepresented and/or clips are not selected subjectively. We want to approach the selection as neutrally as possible and therefore chose this process.',
