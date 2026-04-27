@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Reports\Schemas;
 
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Actions\ResourceLinkAction;
+use App\Filament\Infolists\Components\MorphEntry;
 use App\Models\Report;
 use App\Models\User;
 use Filament\Infolists\Components\TextEntry;
@@ -78,15 +79,9 @@ class ReportInfolist
                                 ->icon(LucideIcon::Eye)
                                 ->columns(2)
                                 ->schema([
-                                    TextEntry::make('reportable_type')
-                                        ->label('Content Type')
-                                        ->badge()
-                                        ->color('gray'),
-
-                                    TextEntry::make('reportable_id')
-                                        ->label('Target ID')
-                                        ->fontFamily('mono')
-                                        ->copyable(),
+                                    MorphEntry::make('reportable')
+                                        ->placeholder('Removed')
+                                        ->columnSpanFull(),
                                 ]),
                         ])->columnSpan(['lg' => 2]),
 

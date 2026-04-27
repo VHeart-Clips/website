@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Broadcaster;
 
+use App\Enums\Clips\ClipStatus;
 use App\Enums\FeatureFlag;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Broadcaster\OnboardingRequest;
@@ -21,6 +22,7 @@ class OnboardingSubmitController extends Controller
             'submit_user_allowed' => $request->boolean('everyone'),
             'submit_vip_allowed' => $request->boolean('vips'),
             'submit_mods_allowed' => $request->boolean('moderators'),
+            'default_clip_status' => $request->enum('default_clip_status', ClipStatus::class, ClipStatus::Unknown),
             'onboarded_at' => now(),
             'deleted_at' => null,
         ]);

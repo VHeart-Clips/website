@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
-use Whitecube\LaravelCookieConsent\Consent;
 use Whitecube\LaravelCookieConsent\Cookie;
 use Whitecube\LaravelCookieConsent\CookiesServiceProvider as ServiceProvider;
 use Whitecube\LaravelCookieConsent\Facades\Cookies;
@@ -22,6 +21,24 @@ class CookiesServiceProvider extends ServiceProvider
 
         Cookies::optional()
             ->cookie(function (Cookie $cookie): void {
+                $cookie->name('appearance')
+                    ->description(__('cookies.appearance.description'))
+                    ->duration(60 * 24 * 365);
+            })
+            ->cookie(function (Cookie $cookie): void {
+                $cookie->name('sidebar_state')
+                    ->description(__('cookies.sidebar_state.description'))
+                    ->duration(60 * 24 * 365);
+            });
+
+        /**
+         * External services will itself allow any static content like images from any external service.
+         * Non-static elements like embeds can actively track someone (e.g. what they do, at least from within the embed)
+         * so we still want to ask before loading them.
+         */
+        Cookies::category('external-services');
+        Cookies::externalServices()
+            ->cookie(function (Cookie $cookie): void {
                 $cookie->name('twitch_embed_consent')
                     ->description(__('cookies.twitch_embed_consent.description'))
                     ->duration(60 * 24 * 30);
@@ -32,14 +49,9 @@ class CookiesServiceProvider extends ServiceProvider
                     ->duration(60 * 24 * 30);
             })
             ->cookie(function (Cookie $cookie): void {
-                $cookie->name('appearance')
-                    ->description(__('cookies.appearance.description'))
-                    ->duration(60 * 24 * 365);
-            })
-            ->cookie(function (Cookie $cookie): void {
-                $cookie->name('sidebar_state')
-                    ->description(__('cookies.sidebar_state.description'))
-                    ->duration(60 * 24 * 365);
+                $cookie->name('external-services')
+                    ->description(__('cookies.external-services.description'))
+                    ->duration(60 * 24 * 30);
             });
 
         // Register all Analytics cookies at once using one single shorthand method:

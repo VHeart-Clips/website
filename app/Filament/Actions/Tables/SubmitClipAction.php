@@ -15,6 +15,7 @@ use App\Models\Clip;
 use App\Models\Clip\Tag;
 use App\Models\User;
 use App\Services\Twitch\Data\ClipDto;
+use App\Services\Twitch\Data\UserDto;
 use App\Services\Twitch\Enums\TwitchEndpoints;
 use App\Services\Twitch\Exceptions\TwitchApiException;
 use App\Services\Twitch\TwitchService;
@@ -30,6 +31,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Support\Facades\Log;
 
 class SubmitClipAction extends Action
 {
@@ -114,13 +116,31 @@ class SubmitClipAction extends Action
             ->action(function (array $data, ImportClipAction $importClipAction, TwitchService $twitchService): void {
                 try {
                     $clipId = $twitchService->parseClipId($data['uri']);
+                    $user = auth()->user();
+
                     if (! $clipId) {
                         Notification::make()->title(__('clips.errors.clip_not_found'))->danger()->send();
 
                         $this->halt();
                     }
 
-                    $user = auth()->user();
+                    if (
+                        ($totalLimit = config('vheart.clips.submission.limits.total', false))
+                        && $user->cannot(Permission::CanIgnoreTotalSubmissionLimits)
+                    ) {
+                        $total = Clip::query()
+                            ->withTrashed()
+                            ->whereSubmittedAfter(now()->startOfDay())
+                            ->whereSubmitterId($user->id)
+                            ->count();
+
+                        if ($total >= $totalLimit) {
+                            Notification::make()->title(__('clips.errors.total_limit_reached'))->danger()->send();
+
+                            $this->halt();
+                        }
+                    }
+
                     $clipInfo = $twitchService
                         ->asSessionUser()
                         ->getClip($clipId);
@@ -131,12 +151,30 @@ class SubmitClipAction extends Action
                         $this->halt();
                     }
 
+                    if (
+                        ($broadcasterLimit = config('vheart.clips.submission.limits.per_broadcaster', false))
+                        && $user->cannot(Permission::CanIgnoreBroadcasterSubmissionLimits)
+                    ) {
+                        $total = Clip::query()
+                            ->withTrashed()
+                            ->whereSubmittedAfter(now()->startOfDay())
+                            ->whereBroadcastBy($clipInfo->broadcasterId)
+                            ->whereSubmitterId($user->id)
+                            ->count();
+
+                        if ($total >= $broadcasterLimit) {
+                            Notification::make()->title(__('clips.errors.broadcaster_limit_reached'))->danger()->send();
+
+                            $this->halt();
+                        }
+                    }
+
                     $bypassBroadcasterConsent = Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent) || (auth()->user()?->can(Permission::BypassConsentCheck) && $data['broadcaster_consent']);
                     $bypassMinLength = auth()->user()?->can(Permission::BypassBannedCategoryCheck) && $data['minimum_length'];
                     $bypassMaxAge = auth()->user()?->can(Permission::BypassMaximumAgeLimitCheck) && $data['maximum_age'];
                     $bypassCategoryBan = auth()->user()?->can(Permission::BypassBannedCategoryCheck) && $data['category_ban'];
 
-                    if (Clip::query()->where('twitch_id', $clipInfo->id)->exists()) {
+                    if (Clip::query()->withTrashed()->where('twitch_id', $clipInfo->id)->exists()) {
                         Notification::make()->title(__('clips.errors.clip_already_known'))->danger()->send();
 
                         $this->halt();
@@ -221,6 +259,26 @@ class SubmitClipAction extends Action
                         Broadcaster::firstOrCreate([
                             'id' => $clipInfo->broadcasterId,
                         ]);
+                    }
+
+                    /** @var UserDto $broadcasterDto */
+                    [$broadcasterDto] = $twitchService
+                        ->asSessionUser()
+                        ->getUsers([
+                            'id' => [$clipInfo->broadcasterId],
+                        ]);
+
+                    if ($broadcasterDto) {
+                        User::updateOrCreate([
+                            'id' => $broadcasterDto->id,
+                        ], [
+                            'name' => $broadcasterDto->displayName,
+                            'avatar_url' => $broadcasterDto->profileImageUrl,
+                        ]);
+                    } else {
+                        Log::notice('Broadcaster has been removed because they where not found on twitch, possibly banned.', ['broadcaster_id' => $clipInfo->broadcasterId]);
+
+                        Broadcaster::find($clipInfo->broadcasterId)?->delete();
                     }
 
                     User::updateOrCreate([

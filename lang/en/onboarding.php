@@ -11,6 +11,14 @@ return [
             'heading' => 'Content Permission',
             'subheading' => 'We need your consent to be able to use and accept your content for our Compilations, you don\'t have to grant them now though if you just want to look around.',
         ],
+        'default_clip_status' => [
+            'heading' => 'Default Clip Status',
+            'subheading' => 'Unrelated to who can submit clips, how would you like us to handle your Clips?',
+            'options' => [
+                'approved' => 'Clips can be used for Compilations as soon as they are submitted',
+                'need_approval' => 'Clips require your approval from your dashboard before we can use them for Compilations',
+            ],
+        ],
         'submissions' => [
             'heading' => 'Clip Submissions',
             'subheading' => 'Who should be able to submit your Clips? We recommend to open it for everyone.',

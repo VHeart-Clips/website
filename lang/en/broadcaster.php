@@ -14,8 +14,7 @@ return [
             'settings' => 'Settings',
         ],
         'dashboard-navigation-item' => [
-            'manage-consent' => 'Manage Consent',
-            'manage-submissions' => 'Manage Submissions',
+            'general-settings' => 'General Settings',
             'manage-user-filter' => 'Manage User Filter',
             'manage-category-filter' => 'Manage Category Filter',
         ],

@@ -110,6 +110,8 @@ class BroadcasterInfolist
                     ->color('info')
                     ->separator()
                     ->badge(),
+
+                TextEntry::make('default_clip_status'),
             ]);
     }
 }

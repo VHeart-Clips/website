@@ -12,7 +12,6 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 #[Signature('episodes:create-weekly')]
@@ -21,46 +20,39 @@ class CreateWeeklyEpisodesCommand extends Command
 {
     public function handle(): void
     {
-        $baseCount = Compilation::query()
+        $nextCount = Compilation::query()
             ->withTrashed()
             ->where('title', 'like', 'Episode %')
             ->where('type', CompilationType::LongVideo)
-            ->count();
+            ->where('user_id', 0)
+            ->count() + 1;
 
         $weeks = [
-            [Carbon::now()->startOfWeek()->next(UnitValue::FRIDAY), $baseCount + 1],
-            [Carbon::now()->addWeek()->startOfWeek()->next(UnitValue::FRIDAY), $baseCount + 2],
+            Carbon::now()->startOfWeek()->next(UnitValue::FRIDAY),
+            Carbon::now()->addWeek()->startOfWeek()->next(UnitValue::FRIDAY),
         ];
 
-        foreach ($weeks as [$friday, $count]) {
-            $this->createEpisodeForWeek($friday, $count);
+        foreach ($weeks as $friday) {
+            $date = $friday->format('d.m.Y');
+
+            if (Compilation::query()->withTrashed()->where('title', 'like', "%($date)")->exists()) {
+                $this->line("Skipping for $date");
+
+                continue;
+            }
+
+            $title = "Episode $nextCount ($date)";
+
+            Compilation::create([
+                'title' => $title,
+                'slug' => Str::slug($title),
+                'status' => CompilationStatus::Planned,
+                'type' => CompilationType::LongVideo,
+                'user_id' => 0,
+            ]);
+
+            $this->info("Created: {$title}");
+            $nextCount++;
         }
-    }
-
-    private function createEpisodeForWeek(Carbon $friday, int $count): void
-    {
-        $date = $friday->format('d.m.Y');
-        $title = "Episode $count ($date)";
-
-        $exists = Compilation::query()
-            ->withTrashed()
-            ->where('title', 'like', "%($date)")->exists();
-
-        if ($exists) {
-            $this->line("Skipping for $date");
-
-            return;
-        }
-
-        Compilation::create([
-            'title' => $title,
-            'slug' => Str::slug($title),
-            'status' => CompilationStatus::Planned,
-            'type' => CompilationType::LongVideo,
-            'user_id' => 0,
-        ]);
-
-        Log::info("Episode created: {$title}");
-        $this->info("Created: {$title}");
     }
 }

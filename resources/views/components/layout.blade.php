@@ -9,7 +9,7 @@
 
         function applyAppearance() {
             const cookieMatch = document.cookie.match(/(?:^|; )appearance=([^;]*)/);
-            const appearance = localStorage.getItem('appearance') || (cookieMatch ? cookieMatch[1] : null) || '{{ $appearance ?? "system" }}';
+            const appearance = localStorage.getItem('theme') || (cookieMatch ? cookieMatch[1] : null) || '{{ $appearance ?? "system" }}';
             const isDark = appearance === 'dark' || (appearance === 'system' && mediaQuery?.matches);
 
             document.documentElement.classList.toggle('dark', isDark);
@@ -69,7 +69,7 @@
     @cookieconsentscripts
 </head>
 <body class="font-inter antialiased">
-    <div class="flex flex-col m-auto min-h-screen w-[95svw] md:w-[98svw] max-w-480">
+    <div class="flex flex-col m-auto min-h-svh w-[95svw] md:w-[98svw] max-w-480">
         <x-layout.header />
 
         <main {{ $attributes->twMerge("grow") }}>

@@ -17,6 +17,17 @@ enum ClipStatus: int implements HasColor, HasLabel
     case Approved = 2;
     case Blocked = 3;
 
+    /**
+     * @return ClipStatus[]
+     */
+    public static function defaultableOptions(): array
+    {
+        return [
+            self::Approved,
+            self::NeedApproval,
+        ];
+    }
+
     public function getColor(): string|array|null
     {
         return match ($this) {

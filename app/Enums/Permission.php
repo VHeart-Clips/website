@@ -108,6 +108,9 @@ enum Permission: string implements HasLabel
     // Non-Model stuff
     case JuryVote = 'jury_vote';
 
+    case CanIgnoreTotalSubmissionLimits = 'can_ignore_total_submission_limits';
+    case CanIgnoreBroadcasterSubmissionLimits = 'can_ignore_broadcaster_submission_limits';
+
     #[PermissionGroupAttribute(PermissionGroupEnum::AdminSubmission)]
     case BypassConsentCheck = 'as_bypass_consent';
     #[PermissionGroupAttribute(PermissionGroupEnum::AdminSubmission)]

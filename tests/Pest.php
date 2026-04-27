@@ -15,13 +15,20 @@ declare(strict_types=1);
 
 use App\Models\User;
 use Filament\PanelProvider as AbstractFilamentPanelProvider;
+use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Mailable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\ServiceProvider as AbstractServiceProvider;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider as AbstractSocialiteProvider;
+use Tests\TestCase;
 
-pest()->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
     ->beforeEach(function () {
         $this->withoutVite();
     })
@@ -53,6 +60,7 @@ arch()->preset()->laravel()
         "App\Services", // Services may not follow the strict laravel conventions (yet)
         "App\Enums\Traits", // should probably organize it better but this has to work for now
         "App\Http\Resources", // Resources may be used in models, preset was created before laravel had that attribute.
+        "App\Actions", // Default Laravel Preset can get in the way for some DX stuff
     ]);
 
 // Filament
@@ -87,6 +95,21 @@ arch()
     ->classes()
     ->toHaveSuffix('Exception')
     ->toExtend(Exception::class);
+
+// Actions
+arch()
+    ->expect('App\Actions')
+    ->toHaveSuffix('Action')
+    ->toBeClasses()
+    ->toHaveMethod('execute')
+    ->not->toImplement(Throwable::class)
+    ->not->toExtend(FormRequest::class)
+    ->not->toExtend(Model::class)
+    ->not->toExtend(Command::class)
+    ->not->toExtend(Mailable::class)
+    ->not->toExtend(Notification::class)
+    ->not->toExtend(AbstractServiceProvider::class)
+    ->not->toBeEnums();
 
 /**
  * mocks a successful socialite response from twitch with $user as data source

@@ -1,4 +1,21 @@
-<x-layout :title="__('clips.vote.page_title')" class="max-w-7xl w-full mx-auto pt-8 space-y-2" x-data="clipVote">
+<x-layout
+    :title="__('clips.vote.page_title')"
+    style="--base-w: 32rem; --growth: 24; --max-w: 80rem;"
+    class="md:w-[clamp(var(--base-w),calc(var(--base-w)+var(--growth)*((100svw-40rem)/60)),var(--max-w))] w-full mx-auto 2xl:pt-8 space-y-2 flex flex-col justify-center md:block"
+    x-load
+    x-data="clipVote({
+        clipTwitchId: '{{ $clip?->twitch_id ?? '' }}',
+        clipId: {{ $clip?->id ?? 'null' }},
+        clipBroadcasterAvatar: '{{ $clip?->owner?->proxiedContentUrl() ?? '' }}',
+        clipBroadcasterUrl: 'https://twitch.tv/{{ $clip?->owner?->name ?? '' }}',
+        clipBroadcasterName: '{{ $clip?->owner?->name ?? '' }}',
+        hasBroadcaster: {{ $clip?->owner ? 'true' : 'false' }},
+        hasClip: {{ $clip ? 'true' : 'false' }},
+        votes: {{ $clip?->absolute_votes ?? 0 }},
+        initialDuration: {{ $clip?->duration ?? 0 }},
+        reportItems: {{ $clip ? '[{ type: \'clip\', id: ' . $clip->id . ' }]' : 'null' }},
+    })"
+>
     <section class="w-full aspect-video h-full relative bg-black rounded-xl border border-muted shadow-sm overflow-hidden select-none">
         <template x-if="hasClip">
             <x-embeds.twitch :clip="$clip?->twitch_id ?? ''" x-model="clipTwitchId" class="h-full w-full" />
@@ -20,7 +37,7 @@
         <div class="flex items-center gap-1 flex-1 justify-start sm:py-3 pl-2 sm:pl-4">
             <template x-if="hasBroadcaster">
                 <a href="https://twitch.tv/{{ $clip->owner?->name ?? '' }}" x-bind:href="clipBroadcasterUrl" target="_blank" class="flex items-center gap-1">
-                    <img :src="$clip->owner?->proxiedContentUrl() ?? ''" x-bind:src="clipBroadcasterAvatar" class="h-6 sm:h-8 rounded-full" />
+                    <img src="{{ $clip?->owner?->proxiedContentUrl() ?? '' }}" alt="Avatar" x-bind:src="clipBroadcasterAvatar" class="size-6 sm:size-8 rounded-full" />
                     <span class="truncate max-w-26 sm:max-w-50" x-text="clipBroadcasterName">{{ $clip->owner?->name ?? '' }}</span>
                 </a>
             </template>
@@ -47,26 +64,28 @@
                     <x-ui.button
                         variant="icon"
                         type="button"
-                        @click="vote(1)"
+                        @click="arm('like')"
                         x-bind:disabled="timeLeft > 0 || isLoading || !hasClip"
+                        x-bind:data-armed="armedButton === 'like' ? 'true' : 'false'"
                         :disabled="!$clip"
                         :title="__('clips.vote.form.fields.vote.label')"
-                        class="inline size-9 place-items-center rounded-full bg-accent/25 dark:bg-black ring-1 ring-white/10 sm:size-11 transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110 sm:hover:text-destructive group relative before:absolute before:-inset-2 before:content-[''] before:rounded-full"
+                        class="inline size-9 place-items-center rounded-full bg-accent/25 dark:bg-black ring-1 ring-white/10 sm:size-11 transition-all duration-150 ease-out active:scale-95 sm:hover:scale-110 sm:hover:text-destructive group relative before:absolute before:-inset-2 before:content-[''] before:rounded-full data-[armed=true]:scale-110 data-[armed=true]:ring-2 data-[armed=true]:ring-destructive data-[armed=true]:bg-destructive/10"
                     >
-                        <x-lucide-heart defer class="size-4 sm:size-5 text-accent-foreground group-hover:text-destructive transition-colors" />
+                        <x-lucide-heart defer class="size-4 sm:size-5 text-accent-foreground group-hover:text-destructive transition-colors group-data-[armed=true]:text-destructive group-data-[armed=true]:scale-110 group-data-[armed=true]:fill-current" />
                         <span class="sr-only">{{ __('clips.vote.form.fields.vote.label') }}</span>
                     </x-ui.button>
 
                     <x-ui.button
                         variant="icon"
                         type="button"
-                        @click="vote(0)"
+                        @click="arm('skip')"
                         :disabled="!$clip"
                         x-bind:disabled="timeLeft > 0 || isLoading || !hasClip"
+                        x-bind:data-armed="armedButton === 'skip' ? 'true' : 'false'"
                         :title="__('clips.vote.form.fields.skip.label')"
-                        class="inline size-9 place-items-center rounded-full bg-accent/25 dark:bg-black ring-1 ring-white/10 sm:size-11 transition-transform duration-150 ease-out active:scale-95 sm:hover:scale-110 group relative before:absolute before:-inset-2 before:content-[''] before:rounded-full"
+                        class="inline size-9 place-items-center rounded-full bg-accent/25 dark:bg-black ring-1 ring-white/10 sm:size-11 transition-all duration-150 ease-out active:scale-95 sm:hover:scale-110 group relative before:absolute before:-inset-2 before:content-[''] before:rounded-full data-[armed=true]:scale-110 data-[armed=true]:ring-2 data-[armed=true]:ring-muted-foreground data-[armed=true]:bg-muted/30"
                     >
-                        <x-lucide-circle-x defer class="size-4 sm:size-5 text-accent-foreground group-hover:text-muted-foreground transition-colors" />
+                        <x-lucide-circle-x defer class="size-4 sm:size-5 text-accent-foreground group-hover:text-muted-foreground transition-colors group-data-[armed=true]:text-muted-foreground group-data-[armed=true]:scale-110" />
                         <span class="sr-only">{{ __('clips.vote.form.fields.skip.label') }}</span>
                     </x-ui.button>
                 </div>
@@ -79,87 +98,4 @@
             />
         </div>
     </section>
-
-    @pushonce('elements')
-        <script>
-            const MINIMUM_RATE_LIMIT = 6;
-
-            document.addEventListener('alpine:init', () => {
-                Alpine.data('clipVote', () => ({
-                    timeLeft: 0,
-                    clipTwitchId: '{{ $clip?->twitch_id ?? '' }}',
-                    clipId: {{ $clip?->id ?? 'null' }},
-                    clipBroadcasterAvatar: '{{ $clip?->owner?->proxiedContentUrl() ?? '' }}',
-                    clipBroadcasterUrl: 'https://twitch.tv/{{ $clip?->owner?->name ?? '' }}',
-                    clipBroadcasterName: '{{ $clip?->owner?->name ?? '' }}',
-                    hasBroadcaster: {{ $clip?->owner ? 'true' : 'false' }},
-                    hasClip: {{ $clip ? 'true' : 'false' }},
-                    votes: {{ $clip?->absolute_votes ?? 0 }},
-                    isLoading: false,
-                    timer: null,
-                    reportItems: @if($clip) [{ type: 'clip', id: {{ $clip->id }}}] @else null @endif ,
-                    init() {
-                        this.startTimer({{ ($clip?->duration ?? 0) * 0.3 }});
-                    },
-                    startTimer(seconds) {
-                        if(! seconds || seconds < MINIMUM_RATE_LIMIT) {
-                            this.timeLeft = MINIMUM_RATE_LIMIT;
-                        } else {
-                            this.timeLeft = Math.round(seconds);
-                        }
-
-                        if (this.timer) clearInterval(this.timer);
-                        this.timer = setInterval(() => {
-                            if (this.timeLeft > 0) {
-                                this.timeLeft--;
-                            } else {
-                                clearInterval(this.timer);
-                            }
-                        }, 1000);
-                    },
-                    async vote(decision) {
-                        if (this.isLoading || !this.hasClip) return;
-                        this.isLoading = true;
-                        this.reportItems = [];
-
-                        try {
-                            const response = await window.axios.post('{{ route('vote.submit') }}', {
-                                voted: decision
-                            }, {
-                                headers: { 'Accept': 'application/json' }
-                            });
-
-                            const nextClip = response.data;
-
-                            if (nextClip && nextClip.id) {
-                                this.hasClip = true;
-                                this.clipTwitchId = nextClip.slug;
-                                this.clipId = nextClip.id;
-                                this.votes = nextClip.votes || 0;
-                                this.reportItems = [{ type: 'clip', id: this.clipId}];
-                                this.clipBroadcasterAvatar = nextClip.broadcaster.avatar;
-                                this.clipBroadcasterUrl = 'https://twitch.tv/'+nextClip.broadcaster.name;
-                                this.clipBroadcasterName = nextClip.broadcaster.name;
-                                this.hasBroadcaster = nextClip.broadcaster ? true : false;
-                                this.startTimer(nextClip.clip_duration * 0.3);
-                            } else {
-                                this.hasClip = false;
-                                this.clipTwitchId = '';
-                                this.clipId = null;
-                                this.reportItems = null;
-                                this.clipBroadcasterAvatar = '';
-                                this.clipBroadcasterUrl = '';
-                                this.clipBroadcasterName = '';
-                                this.hasBroadcaster = false;
-                            }
-                        } catch (error) {
-                            console.error('Failed to submit vote:', error);
-                        } finally {
-                            this.isLoading = false;
-                        }
-                    }
-                }));
-            })
-        </script>
-    @endpushonce
 </x-layout>

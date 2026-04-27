@@ -9,6 +9,9 @@ use App\Enums\NavigationGroup;
 use App\Filament\AdminPanel\Resources\Users\Pages\EditUser;
 use App\Filament\AdminPanel\Resources\Users\Pages\ListUsers;
 use App\Filament\AdminPanel\Resources\Users\Pages\ViewUser;
+use App\Filament\AdminPanel\Resources\Users\RelationManagers\BroadcastedClipsRelationManager;
+use App\Filament\AdminPanel\Resources\Users\RelationManagers\CreatedClipsRelationManager;
+use App\Filament\AdminPanel\Resources\Users\RelationManagers\SubmittedClipsRelationManager;
 use App\Filament\AdminPanel\Resources\Users\Schemas\UserForm;
 use App\Filament\AdminPanel\Resources\Users\Schemas\UserInfolist;
 use App\Filament\AdminPanel\Resources\Users\Tables\UsersTable;
@@ -47,7 +50,9 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            BroadcastedClipsRelationManager::make(),
+            CreatedClipsRelationManager::make(),
+            SubmittedClipsRelationManager::make(),
         ];
     }
 

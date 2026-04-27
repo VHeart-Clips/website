@@ -15,4 +15,7 @@ return [
     'youtube_embed_consent' => [
         'description' => 'Erlaubt uns, deine Zustimmung für eingebettete Youtube-Inhalte zu speichern.',
     ],
+    'external-services' => [
+        'description' => 'Erlaubt uns, externe dienstleiter wie die Twitch CDN zu verwenden.',
+    ],
 ];

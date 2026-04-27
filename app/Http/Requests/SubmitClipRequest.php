@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Enums\Permission;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Category;
 use App\Models\Clip;
@@ -73,6 +74,23 @@ class SubmitClipRequest extends FormRequest
                     return;
                 }
 
+                if (
+                    ($totalLimit = config('vheart.clips.submission.limits.total', false))
+                    && $this->user()->cannot(Permission::CanIgnoreTotalSubmissionLimits)
+                ) {
+                    $total = Clip::query()
+                        ->withTrashed()
+                        ->whereSubmittedAfter(now()->startOfDay())
+                        ->whereSubmitterId($this->user()->id)
+                        ->count();
+
+                    if ($total >= $totalLimit) {
+                        $validator->errors()->add('clip_url', __('clips.errors.total_limit_reached'));
+
+                        return;
+                    }
+                }
+
                 $this->clipInfo = $this->twitchService
                     ->asSessionUser()
                     ->getClip($this->clipId);
@@ -84,6 +102,24 @@ class SubmitClipRequest extends FormRequest
                 }
 
                 // Check Limitations
+                if (
+                    ($broadcasterLimit = config('vheart.clips.submission.limits.per_broadcaster', false))
+                    && $this->user()->cannot(Permission::CanIgnoreBroadcasterSubmissionLimits)
+                ) {
+                    $total = Clip::query()
+                        ->withTrashed()
+                        ->whereSubmittedAfter(now()->startOfDay())
+                        ->whereBroadcastBy($this->clipInfo->broadcasterId)
+                        ->whereSubmitterId($this->user()->id)
+                        ->count();
+
+                    if ($total >= $broadcasterLimit) {
+                        $validator->errors()->add('clip_url', __('clips.errors.broadcaster_limit_reached'));
+
+                        return;
+                    }
+                }
+
                 if ($this->clipInfo->duration < config('vheart.clips.submission.minimum_length')) {
                     $validator->errors()->add('clip_url', __('clips.errors.too_short', [
                         'seconds' => config('vheart.clips.submission.minimum_length'),
@@ -163,6 +199,7 @@ class SubmitClipRequest extends FormRequest
 
                 // Check if clip already exists
                 $clipAlreadyExists = Clip::query()
+                    ->withTrashed()
                     ->where('twitch_id', $this->clipInfo->id)
                     ->exists();
 

@@ -15,7 +15,7 @@ class ArchiveClipVotesAction
     /**
      * @throws RuntimeException|LogicException|Throwable
      */
-    public function __invoke(Clip $clip): void
+    public function execute(Clip $clip): void
     {
         throw_unless(
             isset($clip->jury_votes, $clip->public_votes, $clip->score),

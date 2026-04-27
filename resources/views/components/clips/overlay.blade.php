@@ -44,13 +44,13 @@
 
     #overlay-broadcaster {
         position: absolute;
-        top: 0;
+        top: -6px;
         left: 0;
         right: 0;
         font-family: 'Montserrat', sans-serif;
         font-weight: 900;
         font-size: 28px;
-        line-height: 1;
+        line-height: 1.1;
         color: #2c225c;
         white-space: nowrap;
         overflow: hidden;
@@ -59,7 +59,7 @@
 
     #overlay-category-container {
         position: absolute;
-        top: 28px;
+        top: 26px;
         left: 0;
         right: 0;
         display: flex;
@@ -80,10 +80,9 @@
         font-family: 'Montserrat', sans-serif;
         font-weight: 600;
         font-size: 20px;
-        margin-top: 4px;
         margin-left: 4px;
         font-style: italic;
-        line-height: 0.9;
+        line-height: 1.1;
         color: #c50054;
         display: -webkit-box;
         -webkit-line-clamp: 2;

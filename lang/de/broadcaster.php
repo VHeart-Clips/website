@@ -14,8 +14,7 @@ return [
             'settings' => 'Einstellungen',
         ],
         'dashboard-navigation-item' => [
-            'manage-consent' => 'Zustimmung Verwalten',
-            'manage-submissions' => 'Einsendungen Verwalten',
+            'general-settings' => 'Allgemeine Einstellungen',
             'manage-user-filter' => 'User Filter Verwalten',
             'manage-category-filter' => 'Kategorie Filter Verwalten',
         ],

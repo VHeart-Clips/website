@@ -11,12 +11,17 @@ use App\Enums\Clips\CompilationStatus;
 use App\Enums\ClipVoteType;
 use App\Enums\ExternalContentProxyType;
 use App\Enums\FeatureFlag;
+use App\Enums\Filament\LucideIcon;
+use App\Filament\Infolists\Components\TwitchEmbedEntry;
+use App\Filament\Resources\Clips\Tables\ClipColumns;
 use App\Http\Resources\PublicClipResource;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Clip\Compilation;
 use App\Models\Clip\CompilationClip;
 use App\Models\Clip\Tag;
 use App\Models\Contracts\ExternalProxyable;
+use App\Models\Contracts\HasFilamentInfolistEntry;
+use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Scopes\ClipPermissionScope;
 use App\Models\Scopes\ClipWithoutBannedCategoryScope;
 use App\Models\Traits\Auditable;
@@ -27,6 +32,14 @@ use App\Support\FeatureFlag\Feature;
 use Carbon\CarbonInterval;
 use Database\Factories\ClipFactory;
 use DateTimeInterface;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Component as FilamentSchemaComponent;
+use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\FontFamily;
+use Filament\Support\Enums\TextSize;
+use Filament\Tables\Columns\Column as FilamentTableColumn;
+use Filament\Tables\Columns\Layout\Component as FilamentTableComponent;
+use Filament\Tables\Columns\Layout\Split;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
@@ -48,7 +61,7 @@ use Kirschbaum\Commentions\HasComments;
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
 #[UseResource(PublicClipResource::class)]
 #[UsePolicy(ClipPolicy::class)]
-class Clip extends Model implements Commentable, ExternalProxyable
+class Clip extends Model implements Commentable, ExternalProxyable, HasFilamentInfolistEntry, HasFilamentTableColumn
 {
     /** @use HasFactory<ClipFactory> */
     use Auditable, HasComments, HasExternalProxy, HasFactory, Reportable, SoftDeletes;
@@ -66,6 +79,73 @@ class Clip extends Model implements Commentable, ExternalProxyable
     public static function getProxyExtension(): string
     {
         return 'jpg';
+    }
+
+    public static function getFilamentTableColumn(string $name): FilamentTableComponent|FilamentTableColumn
+    {
+        return Split::make([
+            ClipColumns::thumbnail()
+                ->imageHeight(30)
+                ->getStateUsing(fn (Model $record) => $record->$name->proxiedContentUrl()),
+            Split::make([
+                ClipColumns::title()->make("{$name}.title"),
+            ]),
+        ]);
+    }
+
+    public static function getFilamentInfolistEntry(string $name): FilamentSchemaComponent
+    {
+        return Grid::make(2)
+            ->schema([
+                TwitchEmbedEntry::make("$name.twitch_id")
+                    ->hiddenLabel()
+                    ->columnSpan(1),
+
+                Grid::make(2)
+                    ->columnSpan(1)
+                    ->schema([
+                        TextEntry::make("$name.title")
+                            ->size(TextSize::Large)
+                            ->weight('bold')
+                            ->columnSpanFull()
+                            ->hiddenLabel()
+                            ->wrap(),
+
+                        TextEntry::make("$name.duration")
+                            ->label(__('admin/resources/clips.table.columns.duration'))
+                            ->tooltip(__('admin/resources/clips.table.columns.duration'))
+                            ->formatStateUsing(fn (int $state): string => $state.'s')
+                            ->fontFamily(FontFamily::Mono)
+                            ->icon(LucideIcon::Clock)
+                            ->color('gray')
+                            ->badge(),
+
+                        TextEntry::make("$name.status")
+                            ->label('admin/resources/clips.table.columns.status')
+                            ->tooltip(__('admin/resources/clips.table.columns.status'))
+                            ->icon(LucideIcon::Clipboard)
+                            ->translateLabel()
+                            ->badge(),
+
+                        TextEntry::make("$name.broadcaster.name")
+                            ->label(__('admin/resources/clips.table.columns.broadcaster'))
+                            ->tooltip(__('admin/resources/clips.table.columns.broadcaster'))
+                            ->icon(LucideIcon::Video)
+                            ->color('gray'),
+
+                        TextEntry::make("$name.creator.name")
+                            ->label(__('admin/resources/clips.table.columns.creator'))
+                            ->tooltip(__('admin/resources/clips.table.columns.creator'))
+                            ->icon(LucideIcon::Scissors)
+                            ->color('gray'),
+
+                        TextEntry::make("$name.tags.name")
+                            ->label('Tags')
+                            ->color('gray')
+                            ->columnSpanFull()
+                            ->badge(),
+                    ]),
+            ]);
     }
 
     /**

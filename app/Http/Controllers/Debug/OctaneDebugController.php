@@ -15,9 +15,7 @@ class OctaneDebugController extends Controller
 {
     public function __invoke(Request $request)
     {
-        if ($request->user()->getRole()?->id !== 0) {
-            abort(404);
-        }
+        abort_unless($request->user()->isSuperAdmin(), 404);
 
         $memoryUsage = memory_get_usage(true);
         $memoryPeak = memory_get_peak_usage(true);

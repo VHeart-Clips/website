@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Clips\Schemas;
 
 use App\Enums\Filament\LucideIcon;
+use App\Filament\AdminPanel\Resources\Users\Actions\UpdateUserAction;
 use App\Filament\AdminPanel\Resources\Users\UserResource;
 use App\Filament\Infolists\Components\TwitchEmbedEntry;
 use App\Models\Category;
@@ -106,6 +107,7 @@ class ClipInfolist
                         Grid::make(3)
                             ->schema([
                                 TextEntry::make('broadcaster.name')
+                                    ->hintAction(UpdateUserAction::make()->resolveUserUsing(fn (Clip $clip) => $clip->broadcaster)->shouldCreateBroadcaster()->hiddenLabel())
                                     ->label('admin/resources/clips.infolist.broadcaster')
                                     ->translateLabel()
                                     ->icon(LucideIcon::Video)
@@ -119,6 +121,7 @@ class ClipInfolist
                                     })->openUrlInNewTab(),
 
                                 TextEntry::make('creator.name')
+                                    ->hintAction(UpdateUserAction::make()->resolveUserUsing(fn (Clip $clip) => $clip->creator)->hiddenLabel())
                                     ->label('admin/resources/clips.infolist.creator')
                                     ->translateLabel()
                                     ->icon(LucideIcon::Scissors)
@@ -132,6 +135,7 @@ class ClipInfolist
                                     })->openUrlInNewTab(),
 
                                 TextEntry::make('submitter.name')
+                                    ->hintAction(UpdateUserAction::make()->resolveUserUsing(fn (Clip $clip) => $clip->submitter)->hiddenLabel())
                                     ->label('admin/resources/clips.infolist.submitted_by')
                                     ->translateLabel()
                                     ->icon(LucideIcon::User)

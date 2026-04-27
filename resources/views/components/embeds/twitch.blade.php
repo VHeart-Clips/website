@@ -8,7 +8,7 @@
     <x-embeds.base>
         <x-slot:prompt>
             <x-embeds.prompt.shell>
-                <p class="text-base font-medium text-balance text-zinc-400">
+                <p class="md:font-medium text-balance text-zinc-400">
                     {{ __('embeds.twitch.consent.text') }}
                 </p>
 
@@ -20,7 +20,7 @@
                     href="https://www.twitch.tv/p/legal/privacy-notice/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-md text-zinc-500 underline hover:text-zinc-300"
+                    class="text-zinc-500 underline hover:text-zinc-300"
                 >
                     {{ __('embeds.twitch.consent.privacy-policy') }}
                 </a>

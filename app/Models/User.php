@@ -8,6 +8,8 @@ namespace App\Models;
 use App\Casts\TwitchAvatarCast;
 use App\Enums\ExternalContentProxyType;
 use App\Models\Contracts\ExternalProxyable;
+use App\Models\Contracts\HasFilamentInfolistEntry;
+use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
 use App\Models\Traits\HasExternalProxy;
 use App\Models\Traits\Reportable;
@@ -50,7 +52,7 @@ use Kirschbaum\Commentions\HasComments;
     'remember_token',
     'twitch_refresh_token',
 ])]
-class User extends Authenticatable implements Commentable, Commenter, ExternalProxyable, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasDefaultTenant, HasName, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements Commentable, Commenter, ExternalProxyable, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasDefaultTenant, HasFilamentInfolistEntry, HasFilamentTableColumn, HasName, HasTenants, MustVerifyEmail
 {
     use Auditable;
     use HasComments;
@@ -97,6 +99,7 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
     {
         $this->permissionCache = null;
         $this->importantRoleCache = null;
+        $this->isSuperAdminCache = null;
 
         return parent::refresh();
     }

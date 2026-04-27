@@ -32,6 +32,8 @@ return [
             'rules' => [
                 'heading' => 'Guidelines',
                 'items' => [
+                    'max_age' => 'Clips must not be older than :age.',
+                    'minimum_duration' => 'Clips must be at least :duration seconds.',
                     'registered' => 'Clip must be from a registered broadcaster',
                     'consent' => 'Broadcaster must have approved usage and submissions',
                     'no_explicit' => 'No explicit or offensive content',
@@ -83,6 +85,10 @@ return [
             'other' => 'Other',
         ],
     ],
+
+    'preview' => [
+        'consent-required' => 'Requires external services consent to view this preview.',
+    ],
     // Untouched
 
     'recent' => [
@@ -114,6 +120,8 @@ return [
         'generic' => 'Something went wrong. Please try again.',
         'too_old' => 'This clip is too old. We only accept clips that are less than :age old.',
         'too_short' => 'This clip is too short. Clips must be at least :seconds seconds long.',
+        'total_limit_reached' => 'You have hit today\'s limit, try again tomorrow.',
+        'broadcaster_limit_reached' => 'You have hit today\'s limit for this broadcaster, try again tomorrow.',
     ],
 
     'status' => [

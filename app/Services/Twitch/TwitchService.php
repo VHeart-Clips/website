@@ -97,7 +97,7 @@ class TwitchService
             accessToken: session()?->get('twitch_access_token'),
             onRefresh: $onRefresh ?? static function (string $accessToken, string $refreshToken) use ($user): void {
                 $user->update(['twitch_refresh_token' => $refreshToken]);
-                session()->set('twitch_access_token', $accessToken);
+                session()->put('twitch_access_token', $accessToken);
             }
         );
     }

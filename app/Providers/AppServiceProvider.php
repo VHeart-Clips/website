@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Enums\Permission;
+use App\Jobs\Reports\CheckForRemovedClipJob;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Broadcaster\BroadcasterSubmissionFilter;
 use App\Models\Broadcaster\BroadcasterTeamMember;
@@ -91,12 +92,10 @@ class AppServiceProvider extends ServiceProvider
                 return null;
             }
 
-            if ($user->getRole()?->id === 0) {
-                return true;
-            }
-
-            return in_array($requestedPermission, $user->permissions());
+            return in_array($requestedPermission, $user->permissions()) || $user->isSuperAdmin();
         });
+
+        Gate::define('superadmin', static fn (User $user): bool => $user->isSuperAdmin());
     }
 
     private function configureVite(): void
@@ -220,6 +219,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('image-proxy', static fn (Request $request): Limit => Limit::perMinute(60)->by($request->ip()));
+
+        RateLimiter::for('jobs:reports:check-removed-clip', static fn (CheckForRemovedClipJob $job) => Limit::perHour(2)->by($job->clip?->id));
     }
 
     private function configureSecurity(): void

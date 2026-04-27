@@ -7,6 +7,7 @@ namespace App\Filament\AdminPanel\Resources\Audits\Tables;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Actions\ResourceLinkAction;
 use App\Filament\Filters\DateRangeFilter;
+use App\Filament\Tables\MorphColumn;
 use App\Models\Audit;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
@@ -23,24 +24,13 @@ class AuditsTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
+                'causer' => fn ($q) => $q->withTrashed(),
+                'auditable' => fn ($q) => $q->withTrashed(),
+            ]))
             ->columns([
-                TextColumn::make('causer_type')
-                    ->label('Actor Type')
-                    ->color('gray')
-                    ->badge(),
-
-                TextColumn::make('causer_id')
-                    ->label('Actor ID')
-                    ->color('gray'),
-
-                TextColumn::make('auditable_type')
-                    ->label('Resource')
-                    ->color('info')
-                    ->badge(),
-
-                TextColumn::make('auditable_id')
-                    ->label('Resource ID')
-                    ->color('gray'),
+                MorphColumn::make('causer')->placeholder('System'),
+                MorphColumn::make('auditable')->placeholder('Removed'),
 
                 TextColumn::make('event')
                     ->color(fn (string $state): string => match ($state) {

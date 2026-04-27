@@ -15,4 +15,7 @@ return [
     'youtube_embed_consent' => [
         'description' => 'Allows us to remember your embed consent for Youtube related embeds.',
     ],
+    'external-services' => [
+        'description' => 'Allows us to use external services like the Twitch CDN.',
+    ],
 ];

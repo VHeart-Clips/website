@@ -6,6 +6,7 @@ namespace Database\Factories\Broadcaster;
 
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Broadcaster\BroadcasterPermission;
+use App\Enums\Clips\ClipStatus;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
@@ -30,6 +31,7 @@ class BroadcasterFactory extends Factory
             'submit_user_allowed' => false,
             'submit_mods_allowed' => false,
             'submit_vip_allowed' => false,
+            'default_clip_status' => ClipStatus::Unknown,
         ];
     }
 

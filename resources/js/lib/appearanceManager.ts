@@ -28,10 +28,10 @@ export class AppearanceManager {
         }
 
         if (newAppearance === 'system') {
-            localStorage.removeItem('appearance');
+            localStorage.removeItem('theme');
             this.cookieManager.remove();
         } else {
-            localStorage.setItem('appearance', newAppearance);
+            localStorage.setItem('theme', newAppearance);
             this.cookieManager.set(newAppearance);
         }
 
@@ -43,9 +43,7 @@ export class AppearanceManager {
     }
 
     public getAppearance(): Appearance {
-        const localStorageConfig = localStorage.getItem(
-            'appearance',
-        ) as Appearance;
+        const localStorageConfig = localStorage.getItem('theme') as Appearance;
         const cookieConfig = this.cookieManager.get();
 
         return localStorageConfig || cookieConfig || 'system';

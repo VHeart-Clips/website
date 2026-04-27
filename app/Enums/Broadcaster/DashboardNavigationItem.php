@@ -11,8 +11,7 @@ enum DashboardNavigationItem implements HasLabel
 {
     use HasTranslatedLabel;
 
-    case ManageConsent;
-    case ManageSubmissions;
+    case GeneralSettings;
     case ManageUserFilter;
     case ManageCategoryFilter;
 

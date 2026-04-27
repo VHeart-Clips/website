@@ -16,9 +16,7 @@ use App\Services\Twitch\Data\GameDto;
 use App\Services\Twitch\Enums\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
 use BackedEnum;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -27,7 +25,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -37,12 +34,10 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use UnitEnum;
 
-class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTable
+class ManageCategoryFilter extends Page implements HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -66,12 +61,19 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
     public static function canAccess(): bool
     {
         // later we can check for permission to this specific page here
-        return Filament::getTenant()?->id === auth()->user()?->id;
+        return self::getBroadcaster()?->id === auth()->id();
+    }
+
+    public static function getBroadcaster(): ?Broadcaster
+    {
+        $tenant = Filament::getTenant();
+
+        return $tenant instanceof Broadcaster ? $tenant : null;
     }
 
     public function getTitle(): string|Htmlable
     {
-        return Filament::getTenant()->name.' - '.DashboardNavigationItem::ManageCategoryFilter->getLabel();
+        return self::getBroadcaster()->name.' - '.DashboardNavigationItem::ManageCategoryFilter->getLabel();
     }
 
     public function table(Table $table): Table
@@ -111,8 +113,8 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
                     ->trueLabel(__('dashboard/settings/manage-category-filters.filters.state.true'))
                     ->falseLabel(__('dashboard/settings/manage-category-filters.filters.state.false'))
                     ->queries(
-                        true: fn (Builder $q) => $q->whereState(true),
-                        false: fn (Builder $q) => $q->whereState(false),
+                        true: fn (Builder $q) => $q->where('state', true),
+                        false: fn (Builder $q) => $q->where('state', false),
                     ),
             ])
             ->recordActions([
@@ -122,20 +124,15 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
             ->description(__('dashboard/settings/manage-category-filters.section.description'))
             ->toolbarActions([
                 $this->makeCreateAction(),
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                DeleteBulkAction::make(),
             ])
             ->modelLabel(__('dashboard/settings/manage-category-filters.section.model.singular'))
             ->pluralModelLabel(__('dashboard/settings/manage-category-filters.section.model.plural'));
     }
 
-    /**
-     * @return Broadcaster
-     */
-    public function getOwnerRecord(): Model
+    private static function getCategoryMorphClass(): string
     {
-        return Filament::getTenant();
+        return (new Category)->getMorphClass();
     }
 
     private function makeCreateAction(): CreateAction
@@ -146,7 +143,7 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
                     ->getSearchResultsUsing(
                         function (string $search, TwitchService $twitchService) {
                             $search = mb_trim($search);
-                            $categorys = collect($twitchService->asSessionUser()->searchCategories($search, 100))
+                            $categories = collect($twitchService->asSessionUser()->searchCategories($search, 100))
                                 ->each(fn (CategoryDto $category) => Cache::put("twitch:category:$category->id", $category, now()->addMinutes(30)))
                                 ->map(fn (CategoryDto $item): array => ['title' => $item->name, 'id' => $item->id]);
 
@@ -154,13 +151,13 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
                                 ->whereNotExists(function ($query): void {
                                     $query->from('broadcaster_submission_filters')
                                         ->whereColumn('broadcaster_submission_filters.filterable_id', (new Category)->getTable().'.id')
-                                        ->where('broadcaster_submission_filters.filterable_type', $this->getMorphClass())
-                                        ->where('broadcaster_submission_filters.broadcaster_id', $this->getOwnerRecord()->id);
+                                        ->where('broadcaster_submission_filters.filterable_type', $this::getCategoryMorphClass())
+                                        ->where('broadcaster_submission_filters.broadcaster_id', $this::getBroadcaster()->id);
                                 })
                                 ->limit(5)
                                 ->pluck('title', 'id')
                                 ->map(fn (string $title, int $id): array => ['id' => $id, 'title' => $title])
-                                ->merge($categorys)
+                                ->merge($categories)
                                 ->unique('id')
                                 ->take(100);
 
@@ -172,7 +169,7 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
                             return $category->reject(fn (array $item): bool => in_array((string) $item['id'], $existingIds, true))
                                 ->values()
                                 ->sortBy(fn (array $item): int => levenshtein(mb_strtolower($search), mb_strtolower((string) $item['title'])))
-                                ->mapWithKeys(fn (array $item): array => [$item['id'] => $item['title']])->each(fn ($title, $id) => Log::info('Testing', ['id' => $id, 'title' => $title]));
+                                ->mapWithKeys(fn (array $item): array => [$item['id'] => $item['title']]);
                         })
                     ->getOptionLabelUsing(function (string $value, TwitchService $twitchService, ImportCategoryAction $importCategoryAction) {
                         if ($title = Category::find((int) $value)?->title) {
@@ -210,22 +207,17 @@ class ManageCategoryFilter extends Page implements HasActions, HasSchemas, HasTa
                     ->offColor('danger'),
             ])
             ->mutateDataUsing(function (array $data): array {
-                $data['broadcaster_id'] = $this->getOwnerRecord()->id;
-                $data['filterable_type'] = $this->getMorphClass();
+                $data['broadcaster_id'] = $this::getBroadcaster()->id;
+                $data['filterable_type'] = $this::getCategoryMorphClass();
 
                 return $data;
             });
     }
 
-    private function getMorphClass(): string
-    {
-        return (new Category)->getMorphClass();
-    }
-
     private function getBaseQuery(): Builder
     {
-        $tenant = $this->getOwnerRecord();
+        $tenant = $this::getBroadcaster();
 
-        return $tenant->filters()->getQuery()->where('filterable_type', $this->getMorphClass());
+        return $tenant->filters()->getQuery()->where('filterable_type', $this::getCategoryMorphClass());
     }
 }

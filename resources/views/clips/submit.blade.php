@@ -120,6 +120,12 @@
                 <x-ui.card.content class="prose prose-sm dark:prose-invert marker:text-foreground">
                     <ul class="my-2">
                         <li class="my-1">
+                            <span>{{ __('clips.submit.aside.rules.items.max_age', ['age' => config('vheart.clips.submission.maximum_age')]) }}</span>
+                        </li>
+                        <li class="my-1">
+                            <span>{{ __('clips.submit.aside.rules.items.minimum_duration', ['duration' => config('vheart.clips.submission.minimum_length')]) }}</span>
+                        </li>
+                        <li class="my-1">
                             <span>{{ __('clips.submit.aside.rules.items.registered') }}</span>
                         </li>
                         <li class="my-1">

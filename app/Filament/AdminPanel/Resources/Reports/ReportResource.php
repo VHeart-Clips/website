@@ -68,8 +68,10 @@ class ReportResource extends Resource
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
+            ->withoutGlobalScopes([SoftDeletingScope::class])
+            ->with([
+                'reportable' => fn ($q) => $q->withTrashed(),
+                'reporter' => fn ($q) => $q->withTrashed(),
             ]);
     }
 }

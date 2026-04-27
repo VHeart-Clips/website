@@ -32,6 +32,8 @@ return [
             'rules' => [
                 'heading' => 'Richtlinien',
                 'items' => [
+                    'max_age' => 'Clips dürfen nicht älter als :age sein.',
+                    'minimum_duration' => 'Clips müssen mindestens :duration sekunden lang sein.',
                     'registered' => 'Clip muss von einem registrierten Broadcaster stammen',
                     'consent' => 'Broadcaster muss der Verwendung zugestimmt haben',
                     'no_explicit' => 'Keine expliziten oder beleidigenden Inhalte',
@@ -78,6 +80,10 @@ return [
         ],
     ],
 
+    'preview' => [
+        'consent-required' => 'Erfordert Zustimmung zu externen Diensten um diese Vorschau anzuzeigen.',
+    ],
+
     // Untouched
 
     'recent' => [
@@ -109,6 +115,8 @@ return [
         'generic' => 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.',
         'too_old' => 'Dieser Clip ist zu alt. Wir akzeptieren nur Clips, die nicht älter als :age sind.',
         'too_short' => 'Dieser Clip ist zu kurz. Clips müssen mindestens :seconds Sekunden lang sein.',
+        'total_limit_reached' => 'Tageslimit erreicht, bitte versuch es morgen wieder.',
+        'broadcaster_limit_reached' => 'Tageslimit für diesen Broadcaster erreicht, bitte versuch es morgen wieder.',
     ],
 
     'status' => [

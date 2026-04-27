@@ -6,6 +6,7 @@ namespace App\Filament\Dashboard\Resources\Clips\Pages;
 
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Dashboard\Resources\Clips\ClipResource;
+use App\Filament\Resources\Clips\ClipActions;
 use App\Models\Clip;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -24,6 +25,7 @@ class ViewClip extends ViewRecord
                 ->url(fn (Clip $clip): string => $clip->getClipUrl())
                 ->openUrlInNewTab(),
             EditAction::make(),
+            ClipActions::reportableActionGroup(),
         ];
     }
 }

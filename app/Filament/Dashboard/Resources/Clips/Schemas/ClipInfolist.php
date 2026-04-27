@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Resources\Clips\Schemas;
 
-use App\Enums\ClipVoteType;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Infolists\Components\TwitchEmbedEntry;
 use App\Models\Category;
-use App\Models\Clip;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
@@ -77,11 +75,11 @@ class ClipInfolist
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('gray'),
-                                TextEntry::make('votes_public')
+                                TextEntry::make('absolute_votes')
                                     ->label(__('dashboard/resources/clips.table.columns.votes'))
-                                    ->state(fn (Clip $record) => $record->votes()->where('type', ClipVoteType::Public)->whereVoted(true)->count())
                                     ->icon(LucideIcon::Users)
                                     ->size(TextSize::Medium)
+                                    ->default(0)
                                     ->badge()
                                     ->color('success'),
                                 TextEntry::make('status')

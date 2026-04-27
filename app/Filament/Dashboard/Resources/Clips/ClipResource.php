@@ -17,6 +17,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class ClipResource extends Resource
 {
@@ -55,5 +56,11 @@ class ClipResource extends Resource
             'view' => ViewClip::route('/{record}'),
             'edit' => EditClip::route('/{record}/edit'),
         ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withAbsoluteVoteCount();
     }
 }

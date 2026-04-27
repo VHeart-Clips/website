@@ -6,6 +6,7 @@ namespace App\Filament\Dashboard\Resources\Clips\Tables;
 
 use App\Enums\Clips\ClipStatus;
 use App\Filament\Filters\DateRangeFilter;
+use App\Filament\Resources\Clips\ClipActions;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
@@ -144,6 +145,7 @@ class ClipsTable
             ->filtersFormColumns(3)
             ->defaultSort('created_at', 'desc')
             ->recordActions([
+                ClipActions::reportableActionGroup(),
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),

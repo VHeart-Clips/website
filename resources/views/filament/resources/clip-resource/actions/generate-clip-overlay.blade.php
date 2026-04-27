@@ -39,6 +39,10 @@
         </button>
     </div>
 
+    <p class="text-sm text-muted-foreground">
+        Montserrat font must be installed on your system. Chromium-based browsers only (Chrome, Edge, Brave, ...), other browsers may not work properly.
+    </p>
+
     <div
         id="clip-overlay-container"
         class="relative w-full overflow-hidden rounded-lg border border-gray-200 dark:border-white/10 aspect-video"

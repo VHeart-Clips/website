@@ -6,6 +6,11 @@ namespace App\Filament\AdminPanel\Resources\Users\Pages;
 
 use App\Filament\Actions\ResourceLinkAction;
 use App\Filament\AdminPanel\Resources\Users\UserResource;
+use App\Filament\AdminPanel\Resources\Users\Widgets\UserBroadcastedClipsWidget;
+use App\Filament\AdminPanel\Resources\Users\Widgets\UserCreatedClipsWidget;
+use App\Filament\AdminPanel\Resources\Users\Widgets\UserReportsCreatedWidget;
+use App\Filament\AdminPanel\Resources\Users\Widgets\UserReportsResolvedWidget;
+use App\Filament\AdminPanel\Resources\Users\Widgets\UserSubmittedClipsWidget;
 use App\Filament\AdminPanel\Resources\Users\Widgets\UserVotesWidget;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -56,6 +61,11 @@ class ViewUser extends ViewRecord
     {
         return [
             UserVotesWidget::class,
+            UserReportsCreatedWidget::class,
+            UserReportsResolvedWidget::class,
+            UserSubmittedClipsWidget::class,
+            UserCreatedClipsWidget::class,
+            UserBroadcastedClipsWidget::class,
         ];
     }
 }

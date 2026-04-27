@@ -1,6 +1,9 @@
 <x-layout title="Startseite">
     <div class="m-auto px-4 py-8">
-        <section class="shadow-2xl max-w-7xl m-auto">
+        <section
+            style="--base-w: 32rem; --growth: 24; --max-w: 80rem;"
+            class="shadow-2xl md:w-[clamp(var(--base-w),calc(var(--base-w)+var(--growth)*((100svw-40rem)/60)),var(--max-w))] w-full m-auto"
+        >
             <x-embeds.youtube
                 url="https://www.youtube-nocookie.com/embed/videoseries?list=PLPwib1xj01i4I_TqtyrRpnrjD2oaUknOn"
             />

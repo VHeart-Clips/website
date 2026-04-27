@@ -6,14 +6,21 @@ namespace App\Models\Broadcaster;
 
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Broadcaster\BroadcasterPermission;
+use App\Enums\Clips\ClipStatus;
 use App\Enums\FeatureFlag;
 use App\Models\Clip;
+use App\Models\Contracts\HasFilamentInfolistEntry;
+use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
+use App\Models\Traits\Reportable;
 use App\Models\User;
 use App\Policies\Broadcaster\BroadcasterPolicy;
 use App\Support\FeatureFlag\Feature;
 use Database\Factories\Broadcaster\BroadcasterFactory;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Schemas\Components\Component as FilamentSchemaComponent;
+use Filament\Tables\Columns\Column as FilamentTableColumn;
+use Filament\Tables\Columns\Layout\Component as FilamentTableComponent;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
@@ -30,14 +37,25 @@ use Illuminate\Support\Collection;
 
 #[UsePolicy(BroadcasterPolicy::class)]
 #[WithoutIncrementing]
-class Broadcaster extends Model implements HasAvatar
+class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, HasFilamentTableColumn
 {
     use Auditable;
 
     /** @use HasFactory<BroadcasterFactory> */
     use HasFactory;
 
+    use Reportable;
     use SoftDeletes;
+
+    public static function getFilamentInfolistEntry(string $name): FilamentSchemaComponent
+    {
+        return User::getFilamentInfolistEntry($name);
+    }
+
+    public static function getFilamentTableColumn(string $name): FilamentTableComponent|FilamentTableColumn
+    {
+        return User::getFilamentTableColumn($name);
+    }
 
     /**
      * @return BelongsTo<User, $this>
@@ -145,6 +163,7 @@ class Broadcaster extends Model implements HasAvatar
             'submit_mods_allowed' => 'boolean',
             'submit_vip_allowed' => 'boolean',
             'onboarded_at' => 'datetime',
+            'default_clip_status' => ClipStatus::class,
         ];
     }
 

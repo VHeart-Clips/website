@@ -14,6 +14,7 @@ use App\Events\Admin\Compilations\CompilationClipUnclaimed;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Management\GenerateClipOverlayAction;
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
+use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
 use App\Models\Clip;
 use App\Models\User;
@@ -32,6 +33,7 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -251,15 +253,19 @@ class ClipsRelationManager extends RelationManager
                     ->translateLabel()
                     ->multiple()
                     ->options(ClipStatus::class),
+
+                TrashedFilter::make(),
             ])
             ->filtersFormColumns(2)
             ->headerActions([
                 AttachAction::make()
+                    ->recordSelectSearchColumns(['title', 'id'])
+                    ->recordTitle(fn (Clip $clip): string => "[$clip->id] $clip->title")
                     ->preloadRecordSelect()
                     ->schema(fn (AttachAction $action): array => [
                         $action->getRecordSelect(),
                         Select::make('claim_status')
-                            ->label('admin/resources/compilations.relation_managers.clips.columns.status')
+                            ->label('admin/resources/compilations.relation_managers.clips.actions.attach_clip.status')
                             ->translateLabel()
                             ->options(CompilationClipClaimStatus::class)
                             ->default(CompilationClipClaimStatus::Pending)
@@ -377,6 +383,7 @@ class ClipsRelationManager extends RelationManager
                                 ->success()
                                 ->send();
                         }),
+                    MoveToCompilationAction::make(),
                     DetachAction::make(),
                 ]),
             ])

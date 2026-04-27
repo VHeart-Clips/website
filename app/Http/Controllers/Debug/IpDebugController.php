@@ -11,9 +11,7 @@ class IpDebugController extends Controller
 {
     public function __invoke(Request $request)
     {
-        if ($request->user()->getRole()?->id !== 0) {
-            abort(404);
-        }
+        abort_unless($request->user()->isSuperAdmin(), 404);
 
         return response()->json([
             'resolved' => [

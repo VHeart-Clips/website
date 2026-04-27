@@ -40,6 +40,7 @@ document.addEventListener('alpine:init', () => {
             'filamentClipOverlay',
             () => import('@/components/filament/clip-overlay'),
         ],
+        ['clipVote', () => import('@/components/vote')],
     ];
 
     asyncComponents.forEach(([componentName, importFn]) => {

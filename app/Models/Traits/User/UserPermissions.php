@@ -16,6 +16,8 @@ trait UserPermissions
 {
     protected ?Role $importantRoleCache = null;
 
+    protected ?bool $isSuperAdminCache = null;
+
     /** @var array<int,Permission>|null */
     protected ?array $permissionCache = null;
 
@@ -55,6 +57,7 @@ trait UserPermissions
         $this->roles()->attach($role);
         $this->permissionCache = null;
         $this->importantRoleCache = null;
+        $this->isSuperAdminCache = null;
     }
 
     /**
@@ -84,5 +87,14 @@ trait UserPermissions
         $this->roles()->sync($roles);
         $this->permissionCache = null;
         $this->importantRoleCache = null;
+        $this->isSuperAdminCache = null;
+    }
+
+    /**
+     * Returns true if the user is superadmin
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->isSuperAdminCache ?? ($this->isSuperAdminCache = $this->roles()->where('id', 0)->exists());
     }
 }

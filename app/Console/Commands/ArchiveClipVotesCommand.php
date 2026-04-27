@@ -36,7 +36,7 @@ class ArchiveClipVotesCommand extends Command
 
         $this->withProgressBar($query->lazyById(100), function (Clip $clip) use ($action): void {
             try {
-                $action($clip);
+                $action->execute($clip);
             } catch (Throwable $throwable) {
                 report($throwable);
                 $this->warn("Could not archive clip {$clip->id}: ".$throwable->getMessage());
