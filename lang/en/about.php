@@ -28,15 +28,15 @@ return [
             ],
             'jury' => [
                 'title' => 'Jury Role',
-                'description' => '',
+                'description' => 'The jury has a vote that is weighted more heavily than the community vote.',
             ],
             'moderation' => [
                 'title' => 'Moderation',
-                'description' => '',
+                'description' => 'Our moderators take care of the report system and are available on our Discord server if you have any questions!',
             ],
             'edit' => [
                 'title' => 'Final Editing',
-                'description' => '',
+                'description' => 'Our editors review the top-rated clips and select one of them to edit.',
             ],
         ],
         'neutrality' => 'This ensures nothing is out of context, nobody is misrepresented and/or clips are not selected subjectively. We want to approach the selection as neutrally as possible and therefore chose this process.',
