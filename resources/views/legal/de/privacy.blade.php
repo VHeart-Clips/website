@@ -258,7 +258,7 @@ Das Unternehmen verfügt über eine Zertifizierung nach dem „EU-US Data Privac
 
 ### Twitch
 
-platzthalter
+platzhalter
 
 ### Cloudflare Turnstile
 
@@ -278,7 +278,7 @@ Das Unternehmen verfügt über eine Zertifizierung nach dem „EU-US Data Privac
 
 ### Selfhosted Sentry / GlitchTip
 
-platzthalter
+platzhalter
 
 {{--
 8\. Eigene Dienste
