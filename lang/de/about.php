@@ -45,16 +45,16 @@ return [
                 'description' => 'Ihr könnt als Community direkt auf dieser Website euer Voting für die lustigsten Clips abgeben.',
             ],
             'jury' => [
-                'title' => 'Jury Sichtung',
-                'description' => 'Parallel sichtet unsere Jury, die aus Artists, VTubern, Cam-Streamern... besteht, diese Clips.',
+                'title' => 'Jury Rolle',
+                'description' => 'Die Jury besitzt einen Jury Vote, der stärker gewichtet wird als der Community Vote.',
             ],
-            'consent' => [
-                'title' => 'Creator Einverständnis',
-                'description' => 'Mit den ausgewählten Clips der Jury werden die Creator angeschrieben und informiert, dass ihr Clip in dieser Ausgabe dabei sein wird.',
+            'moderation' => [
+                'title' => 'Moderation',
+                'description' => 'Unsere Moderatoren kümmern sich um das Reportsystem und sind auf dem Discord Server bei Fragen für euch da!',
             ],
             'edit' => [
                 'title' => 'Cutter Finalisierung',
-                'description' => 'Die letzte Instanz sind dann unsere Cutter, die den Clip sichten und diese dann editieren.',
+                'description' => 'Unsere Cutter sichten die bestbewerteten Clips und wählen einen davon aus, um diesen zu editieren.',
             ],
         ],
         'neutrality' => 'Dadurch gehen wir sicher, dass nichts Out of Context ist, dass niemand falsch wahrgenommen und/oder subjektiv Clips ausgewählt werden. Wir möchten so neutral wie möglich an diese Auswahl herangehen und haben uns dadurch für diesen Weg entschieden.',

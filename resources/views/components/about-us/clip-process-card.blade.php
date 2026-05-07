@@ -46,14 +46,14 @@
                     <div class="rounded-xl border border-gray-300/80 bg-white/65 p-6 transition-transform duration-200 hover:scale-[1.02] dark:border-white/10 dark:bg-black/25">
                         <div class="mb-4 flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300/80 bg-white/60 dark:border-white/20 dark:bg-black/20">
-                                <x-lucide-user-check class="h-5 w-5 text-gray-900/90 dark:text-white"></x-lucide-user-check>
+                                <x-lucide-shield-check class="h-5 w-5 text-gray-900/90 dark:text-white"></x-lucide-shield-check>
                             </div>
                             <h3 class="text-lg font-bold text-gray-900/90 dark:text-white/90">
-                                {{ __('about.clip_process.steps.consent.title') }}
+                                {{ __('about.clip_process.steps.moderation.title') }}
                             </h3>
                         </div>
                         <p class="text-sm leading-relaxed text-gray-800 dark:text-white/90">
-                            {{ __('about.clip_process.steps.consent.description') }}
+                            {{ __('about.clip_process.steps.moderation.description') }}
                         </p>
                     </div>
 
