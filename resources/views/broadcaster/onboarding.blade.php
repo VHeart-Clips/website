@@ -78,6 +78,7 @@
                             value="1"
                         />
 
+                        {{-- https://github.com/VHeart-Clips/website/issues/714
                         <x-onboarding.checkbox
                             x-model="vips"
                             x-bind:data-everyone="everyone"
@@ -88,6 +89,7 @@
                             description="{{ __('onboarding.setup.submissions.options.vips.description') }}"
                             value="1"
                         />
+                        --}}
 
                         <x-onboarding.checkbox
                             x-model="mods"

@@ -159,21 +159,24 @@ class GeneralSettings extends Page implements HasForms
                         ->translateLabel()
                         ->afterStateUpdated(function (bool $state, Set $set): void {
                             if ($state) {
-                                $set('submit_vip_allowed', true);
+                                // $set('submit_vip_allowed', true);
                                 $set('submit_mods_allowed', true);
                             }
                             $this->submissionsSettingFormAutosave();
                         }),
-                    Toggle::make('submit_vip_allowed')
-                        ->label('dashboard/settings/manage-general-settings.sections.submissions_settings.form.submit_vip_allowed.label')
-                        ->helperText(__('dashboard/settings/manage-general-settings.sections.submissions_settings.form.submit_vip_allowed.description'))
-                        ->translateLabel()
-                        ->afterStateUpdated(function (bool $state, Set $set): void {
-                            if (! $state) {
-                                $set('submit_user_allowed', false);
-                            }
-                            $this->submissionsSettingFormAutosave();
-                        }),
+                    /**
+                     * @see https://github.com/VHeart-Clips/website/issues/714
+                     */
+                    // Toggle::make('submit_vip_allowed')
+                    //   ->label('dashboard/settings/manage-general-settings.sections.submissions_settings.form.submit_vip_allowed.label')
+                    //   ->helperText(__('dashboard/settings/manage-general-settings.sections.submissions_settings.form.submit_vip_allowed.description'))
+                    //   ->translateLabel()
+                    //    ->afterStateUpdated(function (bool $state, Set $set): void {
+                    //        if (! $state) {
+                    //            $set('submit_user_allowed', false);
+                    //        }
+                    //        $this->submissionsSettingFormAutosave();
+                    //    }),
                     Toggle::make('submit_mods_allowed')
                         ->label('dashboard/settings/manage-general-settings.sections.submissions_settings.form.submit_mods_allowed.label')
                         ->helperText(__('dashboard/settings/manage-general-settings.sections.submissions_settings.form.submit_mods_allowed.description'))

@@ -9,7 +9,6 @@ use App\Models\Broadcaster\Broadcaster;
 use App\Models\Category;
 use App\Models\Clip;
 use App\Services\Twitch\Data\ClipDto;
-use App\Services\Twitch\Exceptions\TwitchApiException;
 use App\Services\Twitch\TwitchService;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -238,11 +237,15 @@ class SubmitClipRequest extends FormRequest
 
         // Check if Broadcaster has allowed moderators to submit
         if (! $isAllowed && $broadcaster->submit_mods_allowed) {
-            $isAllowed = $this->twitchService
+            return $this->twitchService
                 ->asSessionUser()
                 ->isModeratorFor($broadcaster);
         }
 
+        /**
+         * @see https://github.com/VHeart-Clips/website/issues/714
+         */
+        /*
         // Check if Broadcaster has allowed VIPs to submit
         if (! $isAllowed && $broadcaster->submit_vip_allowed) {
             try {
@@ -255,6 +258,7 @@ class SubmitClipRequest extends FormRequest
                 return false;
             }
         }
+        */
 
         return $isAllowed;
     }

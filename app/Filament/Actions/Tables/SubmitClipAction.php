@@ -16,8 +16,6 @@ use App\Models\Clip\Tag;
 use App\Models\User;
 use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\UserDto;
-use App\Services\Twitch\Enums\TwitchEndpoints;
-use App\Services\Twitch\Exceptions\TwitchApiException;
 use App\Services\Twitch\TwitchService;
 use App\Support\FeatureFlag\Feature;
 use Carbon\CarbonInterval;
@@ -351,11 +349,15 @@ class SubmitClipAction extends Action
         }
 
         if (! $isAllowed && $broadcaster->submit_mods_allowed) {
-            $isAllowed = $twitchService
+            return $twitchService
                 ->asSessionUser()
                 ->isModeratorFor($broadcaster->user);
         }
 
+        /**
+         * @see https://github.com/VHeart-Clips/website/issues/714
+         */
+        /*
         if (! $isAllowed && $broadcaster->submit_vip_allowed) {
             try {
                 $vipInfos = $twitchService
@@ -371,6 +373,7 @@ class SubmitClipAction extends Action
                 return false;
             }
         }
+        */
 
         return $isAllowed;
     }
