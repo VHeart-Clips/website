@@ -18,6 +18,7 @@ use App\Models\User;
 use App\Models\Vote;
 use App\Support\Audit\Auditor;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -37,7 +38,7 @@ class DataExportController extends Controller
             'submittedClips' => fn (HasMany $q) => $q->withoutGlobalScopes([ClipPermissionScope::class, ClipWithoutBannedCategoryScope::class])->withTrashed(),
             'broadcastedClips' => fn (HasMany $q) => $q->withoutGlobalScopes([ClipPermissionScope::class, ClipWithoutBannedCategoryScope::class])->withTrashed(),
             'createdClips' => fn (HasMany $q) => $q->withoutGlobalScopes([ClipPermissionScope::class, ClipWithoutBannedCategoryScope::class])->withTrashed(),
-            'votes' => fn (HasMany $q) => $q->with('clip:id,twitch_id'),
+            'votes' => fn (HasMany $q) => $q->with(['clip' => fn (BelongsTo $clip) => $clip->withTrashed()->get(['id', 'twitch_id'])]),
             'broadcasterTeamMembers',
         ]);
 
