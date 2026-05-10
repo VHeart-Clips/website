@@ -27,7 +27,7 @@ class DashboardClipVotesOverview extends StatsOverviewWidget
         $totalEligible = Clip::query()->whereEligibleForVoting()->count();
         $totalEligibleWithVotes = Clip::query()->whereEligibleForVoting()->has('votes')->count();
         $totalWithVotes = Clip::query()->has('votes')->count();
-        $totalWithoutVotes = Clip::query()->doesntHave('votes')->whereEligibleForVoting()->count();
+        $totalEligibleWithoutVotes = Clip::query()->doesntHave('votes')->whereEligibleForVoting()->count();
         $totalArchived = Clip::query()->whereArchived()->count();
 
         return [
@@ -43,7 +43,7 @@ class DashboardClipVotesOverview extends StatsOverviewWidget
                 ->description('Total clips that have received votes')
                 ->icon(LucideIcon::ThumbsUp),
 
-            Stat::make('Clips without Votes', number_format($totalWithoutVotes))
+            Stat::make('Clips without Votes', number_format($totalEligibleWithoutVotes))
                 ->description('Eligible clips still awaiting votes')
                 ->icon(LucideIcon::CircleDashed),
 
