@@ -25,7 +25,7 @@ class DashboardClipVotesOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         $totalEligible = Clip::query()->whereEligibleForVoting()->count();
-        $totalWithVotes = Clip::query()->has('votes')->count();
+        $totalEligibleWithVotes = Clip::query()->whereEligibleForVoting()->has('votes')->count();
         $totalWithoutVotes = Clip::query()->doesntHave('votes')->whereEligibleForVoting()->count();
         $totalArchived = Clip::query()->whereArchived()->count();
 
@@ -34,7 +34,7 @@ class DashboardClipVotesOverview extends StatsOverviewWidget
                 ->description('Total clips available for voting')
                 ->icon(LucideIcon::Video),
 
-            Stat::make('Clips with Votes', number_format($totalWithVotes))
+            Stat::make('Eligible Clips with Votes', number_format($totalEligibleWithVotes))
                 ->description('Eligible clips that have received votes')
                 ->icon(LucideIcon::ThumbsUp),
 
