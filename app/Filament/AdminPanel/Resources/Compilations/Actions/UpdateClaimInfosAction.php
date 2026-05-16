@@ -9,7 +9,6 @@ use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Builder;
 
 class UpdateClaimInfosAction extends Action
 {
@@ -31,13 +30,12 @@ class UpdateClaimInfosAction extends Action
                     ->columnSpanFull(),
                 Select::make('claimed_by')
                     ->searchable()
+                    ->optionsLimit(5)
                     ->columnSpanFull()
                     ->relationship(
                         name: 'claimer',
                         titleAttribute: 'name',
-                        modifyQueryUsing: fn (Builder $query) => $query->whereHas('roles')
-                    )
-                    ->preload(),
+                    ),
             ])
             ->action(function (Clip $record, array $data, $livewire): void {
                 $record->compilations()
