@@ -6,5 +6,6 @@ return [
     'title' => [
         'imprint' => 'Imprint',
         'privacy' => 'Privacy',
+        'terms' => 'Terms of Use',
     ],
 ];

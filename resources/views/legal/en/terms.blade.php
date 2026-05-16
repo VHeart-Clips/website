@@ -1,0 +1,1 @@
+@include("legal.de.terms")

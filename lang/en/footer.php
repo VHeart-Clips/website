@@ -5,7 +5,7 @@ declare(strict_types=1);
 return [
     'privacy.footer' => 'Privacy',
     'imprint.footer' => 'Imprint',
-    'terms.footer' => 'Terms',
+    'terms.footer' => 'Terms of Use',
 
     'team' => 'Our team',
     'about' => 'About us',
