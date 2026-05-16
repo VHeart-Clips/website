@@ -292,7 +292,16 @@ Das Unternehmen verfügt über eine Zertifizierung nach dem „EU-US Data Privac
 
 ### Selfhosted Sentry / GlitchTip
 
-platzhalter
+Wir nutzen auf dieser Website ein selbst gehostetes Fehler-Tracking-System auf Basis von Sentry bzw. GlitchTip.
+Dabei handelt es sich um eine Open-Source-Software zur Erfassung und Analyse von Anwendungsfehlern.
+Das System wird ausschließlich auf eigenen Servern (gehostet bei Hetzner, siehe Abschnitt 2) betrieben.
+Es findet keine Übertragung von Daten an Dritte oder in Drittländer statt.
+
+Im Fehlerfall können technische Daten wie Fehlermeldungen, Stack Traces, Browsertyp, Betriebssystem sowie ggf. die IP-Adresse anonymisiert erfasst und gespeichert werden.
+Diese Daten werden ausschließlich zur Diagnose und Behebung technischer Fehler verwendet.
+
+Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir haben ein berechtigtes Interesse an der Stabilität und Fehlerfreiheit unserer Website.
+Die erfassten Daten werden nicht mit anderen Datenquellen zusammengeführt und nach spätestens 90 Tagen automatisch gelöscht.
 
 {{--
 8\. Eigene Dienste
