@@ -19,8 +19,6 @@ VHeart ist eine Community-Plattform zur Kuratierung von Livestream-Highlights.
 - Diese Compilations werden auf dem Plattform eigenen Youtube-Kanal veröffentlicht.
 - Das Projekt verfolgt ein spenden-orientiertes Konzept und soll Community-Inhalte mit einem guten Zweck verbinden.
 
-**Wichtig**: Es besteht kein Rechtsanspruch auf die Veröffentlichung, Bearbeitung, Speicherung oder Archivierung eingereichter Clips.
-
 ## 3. Einräumung von Nutzungsrechten
 
 Die Einreichung und Nutzung von Clips ist bei VHeart an eine explizite Zustimmung des jeweiligen Urhebers bzw. Streamers gebunden.
