@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Categories\Pages;
 
 use App\Filament\AdminPanel\Resources\Categories\CategoryResource;
-use App\Filament\Resources\Categories\CategoriesSelect;
+use App\Filament\Resources\Categories\CategorySelect;
 use App\Models\Category;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
@@ -22,7 +22,7 @@ class ListCategories extends ListRecords
                 ->label('Import Category')
                 ->modalHeading('Import Category')
                 ->schema([
-                    CategoriesSelect::make('id')
+                    CategorySelect::make('id')
                         ->label('dashboard/settings/manage-category-filters.table.title')
                         ->translateLabel()
                         ->columnSpanFull()

@@ -16,7 +16,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Cache;
 use Override;
 
-class CategoriesSelect extends Select
+class CategorySelect extends Select
 {
     protected ?Closure $whereNotExists = null;
 

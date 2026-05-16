@@ -7,7 +7,7 @@ namespace App\Filament\Dashboard\Pages\Broadcaster;
 use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Filament\LucideIcon;
-use App\Filament\Resources\Categories\CategoriesSelect;
+use App\Filament\Resources\Categories\CategorySelect;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Broadcaster\BroadcasterSubmissionFilter;
 use App\Models\Category;
@@ -134,7 +134,7 @@ class ManageCategoryFilter extends Page implements HasTable
     {
         return CreateAction::make()
             ->schema([
-                CategoriesSelect::make('filterable_id')
+                CategorySelect::make('filterable_id')
                     ->whereNotExists(function ($query): void {
 
                         $query->from('broadcaster_submission_filters')
