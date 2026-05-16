@@ -10,7 +10,7 @@ Emsdettener Straße 10 \
 48268 Greven \
 Germany
 
-**Email:** [vheartorga@gmail.com](mailto:vheartorga@gmail.com)
+**Email:** [vheartorga@gmail.com](mailto:vheartorga@gmail.com) \
 **Phone:** [015128096729](tel:015128096729)
 
 ## Liability for Content
