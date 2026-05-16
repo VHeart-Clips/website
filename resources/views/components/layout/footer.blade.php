@@ -12,6 +12,7 @@
     static $navs = [
         'privacy.footer' => 'privacy',
         'imprint.footer' => 'imprint',
+        'terms.footer' => 'terms',
         'faq' => 'faq',
         'team' => 'team',
         'about' => 'about'
