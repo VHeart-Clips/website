@@ -19,12 +19,9 @@ class ListCategories extends ListRecords
     {
         return [
             CreateAction::make()
-                ->label('Import Category')
-                ->modalHeading('Import Category')
                 ->schema([
                     CategorySelect::make('id')
-                        ->label('dashboard/settings/manage-category-filters.table.title')
-                        ->translateLabel()
+                        ->label('Category')
                         ->columnSpanFull()
                         ->required(),
                 ])
