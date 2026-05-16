@@ -222,22 +222,10 @@ Die Kommentare und die damit verbundenen Daten werden gespeichert und verbleiben
 Die Speicherung der Kommentare erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO). Sie können eine von Ihnen erteilte Einwilligung jederzeit widerrufen. Dazu reicht eine formlose Mitteilung per E-Mail an uns. Die Rechtmäßigkeit der bereits erfolgten Datenverarbeitungsvorgänge bleibt vom Widerruf unberührt.
 --}}
 
+{{--
 5\. Soziale Medien
 ------------------
-
-### X (ehemals Twitter)
-
-Auf dieser Website sind Funktionen des Dienstes X (ehemals Twitter) eingebunden. Diese Funktionen werden angeboten durch den Mutterkonzern X Corp., 1355 Market Street, Suite 900, San Francisco, CA 94103, USA. Für die Datenverarbeitung von außerhalb der USA lebenden Personen ist die Niederlassung Twitter International Unlimited Company, One Cumberland Place, Fenian Street, Dublin 2, D02 AX07, Irland, verantwortlich.
-
-Wenn das Social-Media-Element aktiv ist, wird eine direkte Verbindung zwischen Ihrem Endgerät und dem X-Server hergestellt. X (ehemals Twitter) erhält dadurch Informationen über den Besuch dieser Website durch Sie. Durch das Benutzen von X (ehemals Twitter) und der Funktion „Re-Tweet“ bzw. „Repost“ werden die von Ihnen besuchten Websites mit Ihrem X (ehemals Twitter)-Account verknüpft und anderen Nutzern bekannt gegeben. Wir weisen darauf hin, dass wir als Anbieter der Seiten keine Kenntnis vom Inhalt der übermittelten Daten sowie deren Nutzung durch X (ehemals Twitter) erhalten. Weitere Informationen hierzu finden Sie in der Datenschutzerklärung von X (ehemals Twitter) unter: [https://x.com/de/privacy](https://x.com/de/privacy).
-
-Die Nutzung dieses Dienstes erfolgt auf Grundlage Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG. Die Einwilligung ist jederzeit widerrufbar.
-
-Die Datenübertragung in die USA wird auf die Standardvertragsklauseln der EU-Kommission gestützt. Details finden Sie hier: [https://gdpr.x.com/en/controller-to-controller-transfers.html](https://gdpr.x.com/en/controller-to-controller-transfers.html).
-
-Ihre Datenschutzeinstellungen bei X (ehemals Twitter) können Sie in den Konto-Einstellungen unter [https://x.com/settings/account](https://x.com/settings/account) ändern.
-
-Das Unternehmen verfügt über eine Zertifizierung nach dem „EU-US Data Privacy Framework“ (DPF). Der DPF ist ein Übereinkommen zwischen der Europäischen Union und den USA, der die Einhaltung europäischer Datenschutzstandards bei Datenverarbeitungen in den USA gewährleisten soll. Jedes nach dem DPF zertifizierte Unternehmen verpflichtet sich, diese Datenschutzstandards einzuhalten. Weitere Informationen hierzu erhalten Sie vom Anbieter unter folgendem Link: [https://www.dataprivacyframework.gov/participant/2710](https://www.dataprivacyframework.gov/participant/2710).
+--}}
 
 {{--
 6\. Newsletter
