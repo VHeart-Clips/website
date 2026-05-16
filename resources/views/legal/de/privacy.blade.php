@@ -274,7 +274,68 @@ Das Unternehmen verfügt über eine Zertifizierung nach dem „EU-US Data Privac
 
 ### Twitch
 
-platzhalter
+Auf dieser Website sind Funktionen des Dienstes Twitch eingebunden.
+Anbieter ist die Twitch Interactive, Inc., 350 Bush Street, 2nd Floor, San Francisco, CA 94107, USA.
+
+Die Datenübertragung in die USA wird auf die Standardvertragsklauseln der EU-Kommission gestützt.
+
+Weitere Informationen zum Umgang mit Nutzerdaten finden Sie in der Datenschutzerklärung von Twitch: [https://www.twitch.tv/p/de-de/legal/privacy-notice/](https://www.twitch.tv/p/de-de/legal/privacy-notice/).
+
+#### Eingebettete Inhalte
+
+Wenn das Twitch-Element aktiv ist, wird eine direkte Verbindung zwischen Ihrem Endgerät und den Servern von Twitch hergestellt.
+Twitch erhält dadurch Informationen über den Besuch dieser Website.
+Wenn Sie in Ihrem Twitch-Account eingeloggt sind, kann Twitch Ihr Surfverhalten direkt Ihrem persönlichen Profil zuordnen.
+Dies können Sie verhindern, indem Sie sich aus Ihrem Twitch-Account ausloggen.
+
+Die Nutzung dieses Dienstes erfolgt auf Grundlage Ihrer Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG. Die Einwilligung ist jederzeit widerrufbar.
+
+#### Twitch CDN (Vorschaubilder und Profilbilder)
+
+Zur Anzeige von Clip-Vorschaubildern sowie Nutzer-Profilbildern werden Bilder vom Content Delivery Network von Twitch geladen.
+Dabei wird eine Verbindung zu den Servern von Twitch hergestellt, wodurch Twitch Ihre IP-Adresse sowie technische Zugriffsdaten erhalten kann.
+
+Für angemeldete Nutzer werden diese Inhalte direkt geladen, da der Datenaustausch mit Twitch bereits im Rahmen der Anmeldung stattgefunden hat und das Laden von Inhalten zur Bereitstellung des Dienstes technisch erforderlich ist (Art. 6 Abs. 1 lit. b DSGVO).
+
+Für nicht angemeldete Nutzer werden Twitch-Inhalte erst nach Ihrer Einwilligung geladen (Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG).
+
+Die Einwilligung ist jederzeit widerrufbar.
+
+#### Login mit Twitch (OAuth)
+
+Wir bieten die Möglichkeit, sich über Ihren Twitch-Account auf dieser Website anzumelden.
+Wenn Sie den Twitch-Login nutzen, werden im Rahmen des OAuth-Verfahrens folgende Daten von Twitch an uns übermittelt und in unserem System gespeichert:
+
+- **Twitch-User-ID** zur eindeutigen Zuordnung Ihres Accounts sowie zur Verknüpfung eingereichter Clips mit Ihrem Konto
+- **Twitch-Benutzername** zur Anzeige auf der Plattform sowie zu Moderationszwecken
+- **Profilbild-URL** zur Anzeige Ihres Profilbilds auf der Plattform
+
+Diese Daten sind auf der Twitch-Plattform öffentlich zugänglich, stellen jedoch im Sinne der DSGVO personenbezogene Daten dar, da sie einer identifizierbaren natürlichen Person zugeordnet werden können.
+
+Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO zur Erfüllung des Nutzungsvertrags sowie auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der technisch effizienten und regelkonformen Bereitstellung der Plattform).
+
+Die gespeicherten Daten werden bei Löschung Ihres Kontos soweit möglich entfernt.
+Twitch-User-ID und Benutzername können jedoch aus technischen Gründen weiterhin in gespeicherten Inhalten (z. B. eingereichten Clips) sowie aus Moderationsgründen (z. B. zur Durchsetzung von Sperren) in referenzierter Form verbleiben.
+In diesen Fällen erfolgt die weitere Speicherung auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Integrität und regelkonformen Betreibung der Plattform).
+
+#### Gespeicherte Daten zu Clips
+
+Bei der Verarbeitung von Clips speichern wir Daten zu drei beteiligten Twitch-Nutzern.
+Diese Daten stammen ausschließlich aus der öffentlichen Twitch-API und umfassen jeweils Twitch-User-ID, Benutzername sowie Profilbild-URL.
+Alle drei Rollen können in einem Clip durch dieselbe Person verkörpert werden.
+
+Twitch-User-ID sowie der Twitch Benutzername sind auf der Twitch-Plattform öffentlich zugänglich, stellen jedoch im Sinne der DSGVO personenbezogene Daten dar, da sie einer identifizierbaren natürlichen Person zugeordnet werden können.
+
+**Streamer (Broadcaster)** bezeichnet den Twitch-Kanal, von dem der Clip-Inhalt stammt.
+Clips werden ausschließlich von Streamern verarbeitet, die sich auf dieser Plattform registriert und die Nutzung ihrer Inhalte ausdrücklich freigegeben haben.
+Die Speicherung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO zur Erfüllung des Nutzungsvertrags.
+
+**Clip-Ersteller** bezeichnet die Person, die den Clip auf Twitch erstellt hat.
+Die Speicherung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der vollständigen und korrekten Darstellung und Zuordnung von Plattforminhalten).
+Eine Registrierung auf dieser Plattform ist hierfür nicht erforderlich.
+
+**Einsender** bezeichnet die Person, die den Clip auf dieser Plattform eingereicht hat, und ist in der Regel mit dem angemeldeten Twitch-Account verknüpft (siehe Login mit Twitch).
+Die Speicherung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO zur Erfüllung des Nutzungsvertrags.
 
 ### Cloudflare Turnstile
 
