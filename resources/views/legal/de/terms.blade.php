@@ -1,5 +1,5 @@
 # Nutzungsbedingungen
-Stand: 13.05.2026 \
+Stand: 13.05.2026
 
 ## 1. Geltungsbereich
 
