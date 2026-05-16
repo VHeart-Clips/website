@@ -83,6 +83,7 @@ class ViewReport extends ViewRecord
                         ->options(ResolveAction::class),
                     MarkdownEditor::make('reason')
                         ->minLength(10)
+                        ->maxLength(64 * 1000)
                         ->hint('Required if Action is Other')
                         ->required(fn (Get $get): bool => $get('action') !== null && $get('action') === ResolveAction::Other),
                 ])
