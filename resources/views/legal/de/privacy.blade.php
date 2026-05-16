@@ -55,7 +55,21 @@ Wir haben einen Vertrag über Auftragsverarbeitung (AVV) zur Nutzung des oben ge
 
 ### Cloudflare
 
-platzhalter proxy/speicher
+Wir nutzen Dienste von Cloudflare, Inc., 101 Townsend St., San Francisco, CA 94107, USA (nachfolgend "Cloudflare").
+Cloudflare dient als Reverse-Proxy und Content Delivery Network (CDN) für diese Website.
+Dabei werden sämtliche Anfragen an unsere Website über die Server von Cloudflare geleitet.
+Cloudflare kann dabei technische Zugriffsdaten (z. B. IP-Adresse, Browser, Aufrufzeitpunkt) verarbeiten, um die Sicherheit und Performance der Website zu gewährleisten.
+
+Die Nutzung von Cloudflare erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Wir haben ein berechtigtes Interesse an einer sicheren, schnellen und zuverlässigen Bereitstellung unserer Website sowie am Schutz vor missbräuchlichem Zugriff (z. B. DDoS-Angriffe).
+Sofern eine entsprechende Einwilligung abgefragt wurde, erfolgt die Verarbeitung ausschließlich auf Grundlage von Art. 6 Abs. 1 lit. a DSGVO und § 25 Abs. 1 TDDDG. Die Einwilligung ist jederzeit widerrufbar.
+
+Die Datenübertragung in die USA wird auf die Standardvertragsklauseln der EU-Kommission gestützt.
+Details finden Sie hier: [https://www.cloudflare.com/cloudflare-customer-scc/](https://www.cloudflare.com/cloudflare-customer-scc/).
+
+Weitere Informationen entnehmen Sie der Datenschutzerklärung von Cloudflare: [https://www.cloudflare.com/privacypolicy/](https://www.cloudflare.com/privacypolicy/).
+
+Das Unternehmen verfügt über eine Zertifizierung nach dem "EU-US Data Privacy Framework" (DPF).
+Weitere Informationen hierzu erhalten Sie vom Anbieter unter folgendem Link: [https://www.dataprivacyframework.gov/participant/5666](https://www.dataprivacyframework.gov/participant/5666).
 
 #### Auftragsverarbeitung
 
