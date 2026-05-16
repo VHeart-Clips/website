@@ -77,6 +77,7 @@ return [
                 'copy_filename' => 'Copy Filename',
                 'copy_filename_tooltip' => 'Copy standardized filename for editors',
                 'move_to_compilation' => 'Move to Compilation',
+                'update_claim_infos' => 'Update Claim Infos',
                 'status' => [
                     'title' => 'Update Status',
                 ],
@@ -99,6 +100,7 @@ return [
                 'status_updated' => 'Status has been updated',
                 'readonly' => 'This Compilation is scheduled or published and can only be updated by its owner.',
                 'moved_to_compilation' => 'Successfully moved to compilation.',
+                'update_claim_infos' => 'Successfully update Claim Infos',
             ],
         ],
     ],

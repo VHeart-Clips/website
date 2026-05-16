@@ -15,6 +15,7 @@ use App\Filament\AdminPanel\Resources\Clips\Actions\Management\GenerateClipOverl
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
+use App\Filament\AdminPanel\Resources\Compilations\Actions\UpdateClaimInfosAction;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
 use App\Models\Clip;
 use App\Models\User;
@@ -384,6 +385,7 @@ class ClipsRelationManager extends RelationManager
                                 ->send();
                         }),
                     MoveToCompilationAction::make(),
+                    UpdateClaimInfosAction::make(),
                     DetachAction::make(),
                 ]),
             ])
