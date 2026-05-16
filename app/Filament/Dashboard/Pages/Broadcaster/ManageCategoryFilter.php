@@ -141,12 +141,10 @@ class ManageCategoryFilter extends Page implements HasTable
                             ->whereColumn('broadcaster_submission_filters.filterable_id', (new Category)->getTable().'.id')
                             ->where('broadcaster_submission_filters.filterable_type', $this::getCategoryMorphClass())
                             ->where('broadcaster_submission_filters.broadcaster_id', $this::getBroadcaster()->id);
-                    })->ignoredIds(function (Collection $category): array {
-                        return $this->getBaseQuery()
-                            ->whereIn('filterable_id', $category->pluck('id'))->pluck('filterable_id')
-                            ->map(fn ($id): string => (string) $id)
-                            ->all();
-                    })
+                    })->ignoredIds(fn(Collection $category): array => $this->getBaseQuery()
+                        ->whereIn('filterable_id', $category->pluck('id'))->pluck('filterable_id')
+                        ->map(fn ($id): string => (string) $id)
+                        ->all())
                     ->label('dashboard/settings/manage-category-filters.table.title')
                     ->translateLabel()
                     ->columnSpanFull()

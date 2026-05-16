@@ -35,7 +35,7 @@ class CategorySelect extends Select
 
             $categoryQuery = Category::where('title', 'ilike', "%$search%");
 
-            if ($this->whereNotExists) {
+            if ($this->whereNotExists instanceof \Closure) {
                 $categoryQuery->whereNotExists(function (Builder $query): void {
                     $this->evaluate($this->whereNotExists, ['query' => $query]);
                 });
@@ -50,7 +50,7 @@ class CategorySelect extends Select
 
             $existingIds = [];
 
-            if ($this->ignoredIds) {
+            if ($this->ignoredIds instanceof \Closure) {
                 $existingIds = $this->evaluate($this->ignoredIds, [
                     'category' => $category,
                 ]);
