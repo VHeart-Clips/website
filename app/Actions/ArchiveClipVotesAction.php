@@ -33,6 +33,7 @@ class ArchiveClipVotesAction
             $clip->update([
                 'final_jury_votes' => $clip->jury_votes,
                 'final_public_votes' => $clip->public_votes,
+                'final_impressions' => $clip->absolute_impressions,
                 'final_score' => $clip->score,
             ]);
 
