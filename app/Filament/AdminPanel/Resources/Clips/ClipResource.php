@@ -64,6 +64,7 @@ class ClipResource extends Resource
     {
         return parent::getEloquentQuery()
             ->withScore()
+            ->withAbsoluteImpressionCount()
             ->withPublicVoteCount()
             ->withJuryVoteCount();
     }
