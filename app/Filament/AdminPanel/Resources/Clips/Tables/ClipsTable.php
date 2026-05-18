@@ -47,12 +47,20 @@ class ClipsTable
 
                         Split::make([
                             ClipColumns::duration(),
-                            ClipColumns::voteStatistics(),
+                            ClipColumns::score(),
                             ClipColumns::status(),
                         ])->grow(false),
 
                         ClipColumns::tags(),
                     ])->space(),
+
+                    Stack::make([
+                        ClipColumns::juryVotes(),
+                        ClipColumns::publicVotes(),
+                        ClipColumns::impressions(),
+                    ])
+                        ->grow(false)
+                        ->space(),
 
                     Stack::make([
                         ClipColumns::broadcasterName(),
