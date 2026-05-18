@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use SensitiveParameter;
 use Throwable;
 
 final readonly class TwitchTokenManager
@@ -21,7 +22,7 @@ final readonly class TwitchTokenManager
 
     public function __construct(
         private string $clientId,
-        private string $clientSecret,
+        #[SensitiveParameter] private string $clientSecret,
         private string $authUrl = 'https://id.twitch.tv/oauth2/token',
     ) {}
 
@@ -72,7 +73,7 @@ final readonly class TwitchTokenManager
      *
      * @throws TwitchApiException|ConnectionException
      */
-    public function refreshUserToken(string $refreshToken): array
+    public function refreshUserToken(#[SensitiveParameter] string $refreshToken): array
     {
         $response = Http::post($this->authUrl, [
             'grant_type' => 'refresh_token',
