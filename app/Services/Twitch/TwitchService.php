@@ -23,6 +23,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 use LogicException;
+use SensitiveParameter;
 
 /**
  * Twitch API service.
@@ -55,7 +56,12 @@ class TwitchService
      * @param  (Closure(string $accessToken, string $refreshToken, int $expiresIn): void)|null  $onRefresh
      *                                                                                                      Called automatically when the user token is refreshed.
      */
-    public function asUser(User|Broadcaster|int $user, ?string $refreshToken = null, ?string $accessToken = null, ?Closure $onRefresh = null): self
+    public function asUser(
+        User|Broadcaster|int $user,
+        #[SensitiveParameter] ?string $refreshToken = null,
+        #[SensitiveParameter] ?string $accessToken = null,
+        ?Closure $onRefresh = null
+    ): self
     {
         if ($user instanceof User && ! $refreshToken) {
             $refreshToken = $user->twitch_refresh_token;
@@ -95,7 +101,7 @@ class TwitchService
         return $this->asUser($user,
             refreshToken: $user->twitch_refresh_token,
             accessToken: session()?->get('twitch_access_token'),
-            onRefresh: $onRefresh ?? static function (string $accessToken, string $refreshToken) use ($user): void {
+            onRefresh: $onRefresh ?? static function (#[SensitiveParameter] string $accessToken, #[SensitiveParameter] string $refreshToken) use ($user): void {
                 $user->update(['twitch_refresh_token' => $refreshToken]);
                 session()->put('twitch_access_token', $accessToken);
             }

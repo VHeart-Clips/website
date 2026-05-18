@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Twitch;
 
 use Closure;
+use SensitiveParameter;
 
 readonly class TwitchUserContext
 {
@@ -14,8 +15,8 @@ readonly class TwitchUserContext
      */
     public function __construct(
         public int $userId,
-        public ?string $accessToken,
-        public string $refreshToken,
+        #[SensitiveParameter] public ?string $accessToken,
+        #[SensitiveParameter] public string $refreshToken,
         public bool $forceRefresh,
         public ?Closure $onRefresh = null,
     ) {}
@@ -26,7 +27,11 @@ readonly class TwitchUserContext
      * When no $accessToken is provided, forceRefresh is set to true so the
      * client fetches a fresh token before the first request.
      */
-    public static function forUser(int $userId, string $refreshToken, ?string $accessToken = null): self
+    public static function forUser(
+        int $userId,
+        #[SensitiveParameter] string $refreshToken,
+        #[SensitiveParameter] ?string $accessToken = null
+    ): self
     {
         return new self(
             userId: $userId,
@@ -39,7 +44,10 @@ readonly class TwitchUserContext
     /**
      * Called after a successful token refresh.
      */
-    public function withTokens(string $accessToken, string $refreshToken): self
+    public function withTokens(
+        #[SensitiveParameter] string $accessToken,
+        #[SensitiveParameter] string $refreshToken
+    ): self
     {
         return clone ($this, [
             'accessToken' => $accessToken,
