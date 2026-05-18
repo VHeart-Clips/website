@@ -67,7 +67,7 @@ class ClipInfolist
                             ])
                             ->relationship('category'),
 
-                        Grid::make(4)
+                        Grid::make(3)
                             ->schema([
                                 TextEntry::make('duration')
                                     ->label(__('admin/resources/clips.table.columns.duration'))
