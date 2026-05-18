@@ -18,6 +18,7 @@ class ArchiveClipVotesCommand extends Command
     public function handle(ArchiveClipVotesAction $action): int
     {
         $query = Clip::whereEligibleForArchival()
+            ->withAbsoluteImpressionCount()
             ->withVoteCount()
             ->withScore();
         $total = $query->count();

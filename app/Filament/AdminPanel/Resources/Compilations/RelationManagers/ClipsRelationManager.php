@@ -60,6 +60,7 @@ class ClipsRelationManager extends RelationManager
                 'claimer',
             ])
                 ->withScore()
+                ->withAbsoluteImpressionCount()
                 ->withPublicVoteCount()
                 ->withJuryVoteCount()
             )
@@ -74,12 +75,20 @@ class ClipsRelationManager extends RelationManager
                         ClipColumns::title(),
                         Split::make([
                             ClipColumns::duration(),
-                            ClipColumns::voteStatistics(),
+                            ClipColumns::score(),
                             ClipColumns::status()
                                 ->label('admin/resources/compilations.relation_managers.clips.columns.status_moderation')
                                 ->tooltip(__('admin/resources/compilations.relation_managers.clips.columns.status_moderation')),
                         ])->grow(false),
                     ])->space(),
+
+                    Stack::make([
+                        ClipColumns::juryVotes(),
+                        ClipColumns::publicVotes(),
+                        ClipColumns::impressions(),
+                    ])
+                        ->grow(false)
+                        ->space(),
 
                     Stack::make([
                         ClipColumns::broadcasterName(),

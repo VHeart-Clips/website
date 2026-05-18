@@ -100,6 +100,18 @@ class ClipColumns
             ->color('success');
     }
 
+    public static function impressions(string $column = 'absolute_impressions'): TextColumn
+    {
+        return TextColumn::make($column)
+            ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
+            ->tooltip(__('admin/resources/clips.table.columns.absolute_impressions'))
+            ->size(TextSize::Medium)
+            ->icon(LucideIcon::Eye)
+            ->sortable()
+            ->badge()
+            ->color('info');
+    }
+
     public static function score(string $column = 'score'): TextColumn
     {
         return TextColumn::make($column)
@@ -112,12 +124,13 @@ class ClipColumns
             ->color('info');
     }
 
-    public static function voteStatistics(bool $score = true, bool $jury = true, bool $public = true, bool $absolute = false): Split
+    public static function voteStatistics(bool $score = true, bool $jury = true, bool $public = true, bool $impressions = true, bool $absolute = false): Split
     {
         return Split::make(array_filter([
             $score ? self::score() : null,
             $jury ? self::juryVotes() : null,
             $public ? self::publicVotes() : null,
+            $impressions ? self::impressions() : null,
             $absolute ? self::absoluteVotes() : null,
         ]));
     }

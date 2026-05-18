@@ -67,7 +67,7 @@ class ClipInfolist
                             ])
                             ->relationship('category'),
 
-                        Grid::make(4)
+                        Grid::make(3)
                             ->schema([
                                 TextEntry::make('duration')
                                     ->label(__('admin/resources/clips.table.columns.duration'))
@@ -83,6 +83,14 @@ class ClipInfolist
                                     ->label(__('admin/resources/clips.table.columns.score'))
                                     ->state(fn (Clip $record) => $record->score ?? 0)
                                     ->icon(LucideIcon::BarChart)
+                                    ->size(TextSize::Medium)
+                                    ->badge()
+                                    ->color('info'),
+
+                                TextEntry::make('absolute_impressions')
+                                    ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
+                                    ->state(fn (Clip $record) => $record->absolute_impressions ?? 0)
+                                    ->icon(LucideIcon::Eye)
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('info'),

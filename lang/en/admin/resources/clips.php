@@ -38,6 +38,7 @@ return [
             'jury_votes' => 'Jury Votes',
             'public_votes' => 'Public Votes',
             'absolute_votes' => 'Votes',
+            'absolute_impressions' => 'Impressions',
             'score' => 'Clip Score',
             'submitted_at' => 'Submitted At',
             'created_at' => 'Created At',
