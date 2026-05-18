@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('clips', function (Blueprint $table) {
+        Schema::table('clips', function (Blueprint $table): void {
             $table->unsignedBigInteger('final_impressions')->nullable();
         });
     }
