@@ -102,6 +102,14 @@ class ClipInfolist
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('success'),
+
+                                TextEntry::make('absolute_impressions')
+                                    ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
+                                    ->state(fn (Clip $record) => $record->absolute_impressions ?? 0)
+                                    ->icon(LucideIcon::Eye)
+                                    ->size(TextSize::Medium)
+                                    ->badge()
+                                    ->color('info'),
                             ]),
 
                         Grid::make(3)
