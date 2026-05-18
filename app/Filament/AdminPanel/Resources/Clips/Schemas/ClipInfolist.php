@@ -87,6 +87,14 @@ class ClipInfolist
                                     ->badge()
                                     ->color('info'),
 
+                                TextEntry::make('absolute_impressions')
+                                    ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
+                                    ->state(fn (Clip $record) => $record->absolute_impressions ?? 0)
+                                    ->icon(LucideIcon::Eye)
+                                    ->size(TextSize::Medium)
+                                    ->badge()
+                                    ->color('info'),
+
                                 TextEntry::make('jury_votes')
                                     ->label(__('admin/resources/clips.table.columns.jury_votes'))
                                     ->state(fn (Clip $record) => $record->jury_votes ?? 0)
@@ -102,14 +110,6 @@ class ClipInfolist
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('success'),
-
-                                TextEntry::make('absolute_impressions')
-                                    ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
-                                    ->state(fn (Clip $record) => $record->absolute_impressions ?? 0)
-                                    ->icon(LucideIcon::Eye)
-                                    ->size(TextSize::Medium)
-                                    ->badge()
-                                    ->color('info'),
                             ]),
 
                         Grid::make(3)
