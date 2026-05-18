@@ -483,6 +483,24 @@ class Clip extends Model implements Commentable, ExternalProxyable, HasFilamentI
     }
 
     /**
+     * Counts absolute impressions as `absolute_impressions`
+     */
+    #[Scope]
+    protected function withAbsoluteImpressionCount(Builder $query): Builder
+    {
+        if (empty($query->getQuery()->columns)) {
+            $query->addSelect($query->getModel()->getTable().'.*');
+        }
+
+        return $query->selectSub(
+            Vote::query()
+                ->selectRaw('COALESCE(final_impressions,COUNT(*), 0)')
+                ->whereColumn('clip_id', 'clips.id'),
+            'absolute_impressions'
+        );
+    }
+
+    /**
      * Calculates the Clip Score as `score`
      */
     #[Scope]
