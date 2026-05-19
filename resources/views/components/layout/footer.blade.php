@@ -1,7 +1,7 @@
 @php
     static $socials = [
         ['label' => 'Github', 'href' => 'https://github.com/VHeart-Clips', 'light' => '#181717', 'dark' => '#FFFFFF', 'icon' => 'simpleicon-github'],
-        ['label' => 'Discord', 'href' => 'https://discord.gg/vheart', 'light' => '#5865F2', 'dark' => '#5865F2', 'icon' => 'simpleicon-discord'],
+        ['label' => 'Discord', 'href' => 'https://go.vheart.net/discord', 'light' => '#5865F2', 'dark' => '#5865F2', 'icon' => 'simpleicon-discord'],
         ['label' => 'Youtube', 'href' => 'https://www.youtube.com/@vheartclips', 'light' => '#FF0000', 'dark' => '#FF0000', 'icon' => 'simpleicon-youtube'],
         ['label' => 'Twitch', 'href' => 'https://www.twitch.tv/vheartclips', 'light' => '#9146FF', 'dark' => '#9146FF', 'icon' => 'simpleicon-twitch'],
         ['label' => 'Twitter / X', 'href' => 'https://x.com/VHeartClips', 'light' => '#000000', 'dark' => '#FFFFFF', 'icon' => 'simpleicon-x'],
