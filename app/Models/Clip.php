@@ -508,16 +508,33 @@ class Clip extends Model implements Commentable, ExternalProxyable, HasFilamentI
     {
         $juryWeight = (int) config('vheart.clips.scoring.jury_weight', 10);
         $publicWeight = (int) config('vheart.clips.scoring.public_weight', 1);
+        $impressionRatioExponent = (float) config('vheart.clips.scoring.impression_ratio_exponent', 1);
 
         if (empty($query->getQuery()->columns)) {
             $query->addSelect($query->getModel()->getTable().'.*');
         }
 
+        $impressionsSub = Vote::query()
+            ->selectRaw('COUNT(*)')
+            ->whereColumn('clip_id', 'clips.id');
+
         return $query->selectSub(
             Vote::query()
-                ->selectRaw('COALESCE(final_score,SUM(CASE WHEN type = ?::integer THEN ?::integer ELSE ?::integer END), 0)', [ClipVoteType::Jury->value, $juryWeight, $publicWeight])
-                ->whereColumn('clip_id', 'clips.id')
-                ->where('voted', true),
+                ->selectRaw(
+                    'COALESCE(
+                        final_score,
+                        ROUND(
+                            POWER(
+                                COUNT(*) FILTER (WHERE voted = true)::float
+                                / NULLIF(('.$impressionsSub->toSql().')::float, 0),
+                                ?
+                            ) * SUM(CASE WHEN type = ?::integer THEN ?::integer ELSE ?::integer END) FILTER (WHERE voted = true)
+                        )::integer,
+                        0
+                    )',
+                    [$impressionRatioExponent, ClipVoteType::Jury->value, $juryWeight, $publicWeight]
+                )
+                ->whereColumn('clip_id', 'clips.id'),
             'score'
         );
     }

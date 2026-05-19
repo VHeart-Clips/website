@@ -28,6 +28,7 @@ return [
         'scoring' => [
             'jury_weight' => (int) env('VHEART_CLIPS_SCORING_JURY_WEIGHT', 10),
             'public_weight' => (int) env('VHEART_CLIPS_SCORING_PUBLIC_WEIGHT', 1),
+            'impression_ratio_exponent' => (float) env('VHEART_CLIPS_SCORING_IMPRESSION_EXPONENT', 1),
         ],
     ],
 ];
