@@ -33,13 +33,17 @@ class ShortUrlResource extends Resource
         return $schema
             ->components([
                 TextInput::make('slug')
-                    ->minLength(1)
+                    ->regex('/^[a-zA-Z0-9\-_\/]+$/') // slightly less restrictive alpha-dash/numeric with / support
+                    ->unique(ShortUrl::class, 'slug', ignoreRecord: true)
                     ->maxLength(255)
+                    ->minLength(1)
+                    ->live(onBlur: true)
                     ->required(),
                 TextInput::make('url')
-                    ->url()
                     ->maxLength(2048)
-                    ->required(),
+                    ->activeUrl()
+                    ->required()
+                    ->url(),
             ]);
     }
 
