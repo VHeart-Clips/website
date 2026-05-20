@@ -33,6 +33,6 @@ class RedirectController
             return redirect()->away('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
         }
 
-        return redirect()->route('home');
+        return redirect()->away(config('app.url'));
     }
 }

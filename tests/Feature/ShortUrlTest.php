@@ -29,7 +29,7 @@ describe('redirects', function () {
 
     it('falls back to home on unknown slug', function () {
         $this->get(route('shorturl.redirect', ['slug' => 'invalid']))
-            ->assertRedirect(route('home'));
+            ->assertRedirect(config('app.url'));
     });
 
     it('rickroll', function () {
@@ -39,7 +39,7 @@ describe('redirects', function () {
 
     it('falls back to home on root access (by default at least)', function () {
         $this->get(route('shorturl.redirect'))
-            ->assertRedirect(route('home'));
+            ->assertRedirect(config('app.url'));
     });
 });
 
