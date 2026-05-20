@@ -34,7 +34,6 @@ class CompilationFactory extends Factory
             'status' => CompilationStatus::Planned,
             'description' => fake()->paragraph(),
             'youtube_url' => fake()->url(),
-            'auto_fill_seconds' => null,
         ];
     }
 
