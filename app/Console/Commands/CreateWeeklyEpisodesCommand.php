@@ -12,7 +12,6 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 #[Signature('episodes:create-weekly')]
 #[Description('Create episode compilations for current and next week if not exists')]
@@ -45,7 +44,7 @@ class CreateWeeklyEpisodesCommand extends Command
 
             Compilation::create([
                 'title' => $title,
-                'slug' => Str::slug($title),
+                'slug' => "episode-$nextCount",
                 'status' => CompilationStatus::Planned,
                 'type' => CompilationType::LongVideo,
                 'user_id' => 0,
