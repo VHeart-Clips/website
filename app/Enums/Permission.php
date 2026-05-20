@@ -102,6 +102,11 @@ enum Permission: string implements HasLabel
     case UpdateAnyRemovalRequest = 'update_any_broadcaster_removal_request';
     case DeleteAnyRemovalRequest = 'delete_any_broadcaster_removal_request';
 
+    // ShortUrl
+    case ViewAnyShortUrl = 'view_any_short_url';
+    case UpdateAnyShortUrl = 'update_any_short_url';
+    case DeleteAnyShortUrl = 'delete_any_short_url';
+
     // Audit
     case ViewAnyAudit = 'view_any_audit';
 
