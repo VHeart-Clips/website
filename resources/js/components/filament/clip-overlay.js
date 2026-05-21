@@ -4,7 +4,7 @@ export default ($initialState, identifier) => ({
     width: 1920,
     height: 1080,
     previewScale: 1,
-    exportScale: 2,
+    exportScale: 1,
     form: { ...$initialState },
     identifier: identifier || 'nevergonnagiveyouup',
     _renderTimer: null,
