@@ -41,8 +41,7 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
     && rm -rf storage/framework/sessions/* \
     && rm -rf storage/framework/cache/data/*
 
-RUN php artisan optimize \
-    && php artisan config:clear
+RUN php artisan optimize:clear && php artisan optimize --except routes,config
 
 FROM base AS runner
 
