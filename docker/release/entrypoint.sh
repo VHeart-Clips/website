@@ -24,6 +24,13 @@ if [ "$#" -gt 0 ]; then
     exec "$@"
 fi
 
+echo "[Entrypoint] Building config cache..."
+php /app/artisan config:cache
+
+echo "[Entrypoint] Make sure we have correct permissions..."
+chown -R www-data:www-data /app/storage /app/bootstrap/cache
+chmod -R 775 /app/storage /app/bootstrap/cache
+
 if [ "$INSTANCE" = "web" ]; then
     echo "[Entrypoint] Updating Cloudflare IP ranges..."
     if CF_IPS=$( { wget -qO- https://www.cloudflare.com/ips-v4; echo; wget -qO- https://www.cloudflare.com/ips-v6; } | tr '\n' ' ' ); then
@@ -38,26 +45,33 @@ if [ "$INSTANCE" = "web" ]; then
     /app/artisan storage:link --force
 
     echo "[Entrypoint] Starting FrankenPHP..."
-    exec php -d variables_order=EGPCS /app/artisan octane:start --server=frankenphp --host=0.0.0.0 --admin-port=2019 --port=80 --max-requests=500 --caddyfile=/etc/caddy/Caddyfile
+    exec php -d variables_order=EGPCS /app/artisan octane:start \
+        --server=frankenphp \
+        --host=0.0.0.0 \
+        --admin-port=2019 \
+        --port=80 \
+        --max-requests=500 \
+        --caddyfile=/etc/caddy/Caddyfile
 
 elif [ "$INSTANCE" = "worker" ]; then
     echo "[Entrypoint] Starting Laravel Worker..."
-    exec /app/artisan queue:work --name=queue-worker --queue=default --sleep=3 --tries=3 --max-time=3600 --json
+    exec /app/artisan queue:work \
+        --name=queue-worker \
+        --queue=default \
+        --sleep=3 \
+        --tries=3 \
+        --max-time=3600 \
+        --json
 
 elif [ "$INSTANCE" = "scheduler" ]; then
+    echo "[Entrypoint] Running migrations (isolated)..."
+    php /app/artisan migrate --isolated --force
+
+    echo "[Entrypoint] Restarting queue workers..."
+    php /app/artisan queue:restart
+
     echo "[Entrypoint] Starting Laravel Scheduler..."
     exec /app/artisan schedule:work --whisper
-
-elif [ "$INSTANCE" = "init" ]; then
-    echo "[Entrypoint] Running Initializations..."
-    if [ -f /app/init-app.sh ]; then
-        /bin/sh /app/init-app.sh
-    else
-        echo "[Entrypoint] /app/init-app.sh not found."
-    fi
-    echo "[Entrypoint] Initialization complete."
-    exit 0
-
 else
     echo "[Entrypoint] Error: Unknown Instance '$INSTANCE'"
     exit 1

@@ -41,6 +41,9 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative \
     && rm -rf storage/framework/sessions/* \
     && rm -rf storage/framework/cache/data/*
 
+RUN php artisan optimize \
+    && php artisan config:clear
+
 FROM base AS runner
 
 LABEL maintainer="VHeart IT Team" description="VHeart Website"
@@ -59,13 +62,12 @@ RUN mkdir -p storage/framework/sessions storage/framework/views storage/framewor
 
 COPY docker/release/Caddyfile /etc/caddy/Caddyfile
 COPY docker/release/php.ini /usr/local/etc/php/conf.d/custom.ini
-COPY docker/release/init.sh /app/init-app.sh
 COPY docker/release/entrypoint.sh /app/entrypoint.sh
 
 RUN ln -s /app/artisan /usr/local/bin/production \
     && echo 'alias production="php /app/artisan"' >> /etc/profile \
     && echo 'export ENV=/etc/profile' >> /etc/environment \
-    && chmod +x /app/init-app.sh /app/entrypoint.sh
+    && chmod +x /app/entrypoint.sh
 
 EXPOSE 80
 
