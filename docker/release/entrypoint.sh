@@ -48,6 +48,12 @@ elif [ "$INSTANCE" = "worker" ]; then
     exec /app/artisan queue:work --name=queue-worker --queue=default --sleep=3 --tries=3 --max-time=3600 --json
 
 elif [ "$INSTANCE" = "scheduler" ]; then
+    echo "[Entrypoint] Running migrations (isolated)..."
+    php /app/artisan migrate --isolated --force
+
+    echo "[Entrypoint] Restarting queue workers..."
+    php /app/artisan queue:restart
+
     echo "[Entrypoint] Starting Laravel Scheduler..."
     exec /app/artisan schedule:work --whisper
 else
