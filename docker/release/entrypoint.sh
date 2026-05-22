@@ -24,6 +24,9 @@ if [ "$#" -gt 0 ]; then
     exec "$@"
 fi
 
+echo "[Entrypoint] Building config cache..."
+php /app/artisan config:cache
+
 if [ "$INSTANCE" = "web" ]; then
     echo "[Entrypoint] Updating Cloudflare IP ranges..."
     if CF_IPS=$( { wget -qO- https://www.cloudflare.com/ips-v4; echo; wget -qO- https://www.cloudflare.com/ips-v6; } | tr '\n' ' ' ); then
