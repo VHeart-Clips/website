@@ -27,6 +27,10 @@ fi
 echo "[Entrypoint] Building config cache..."
 php /app/artisan config:cache
 
+echo "[Entrypoint] Make sure we have correct permissions..."
+chown -R www-data:www-data /app/storage /app/bootstrap/cache
+chmod -R 775 /app/storage /app/bootstrap/cache
+
 if [ "$INSTANCE" = "web" ]; then
     echo "[Entrypoint] Updating Cloudflare IP ranges..."
     if CF_IPS=$( { wget -qO- https://www.cloudflare.com/ips-v4; echo; wget -qO- https://www.cloudflare.com/ips-v6; } | tr '\n' ' ' ); then
