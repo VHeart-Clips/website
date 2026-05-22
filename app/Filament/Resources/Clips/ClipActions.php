@@ -25,8 +25,8 @@ class ClipActions
             ReportAction::make('report_submitter')
                 ->hidden(fn (Clip $record): bool => ! $record->submitter
                     || $record->submitter_id === 0
+                    || $record->submitter_id === $record->broadcaster_id
                     || $record->submitter_id === $record->creator_id
-                    || $record->broadcaster_id === $record->creator_id
                     || $record->submitter_id === auth()->id()
                 )
                 ->reportable(fn (Clip $record) => $record->submitter)
@@ -34,7 +34,8 @@ class ClipActions
                 ->icon(LucideIcon::User),
             ReportAction::make('report_clipper')
                 ->hidden(fn (Clip $record): bool => ! $record->creator
-                    || $record->broadcaster_id === $record->creator_id
+                    || $record->creator_id === 0
+                    || $record->creator_id === $record->broadcaster_id
                     || $record->creator_id === auth()->id()
                 )
                 ->reportable(fn (Clip $record) => $record->creator)
