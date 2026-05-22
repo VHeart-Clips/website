@@ -15,13 +15,16 @@ use App\Http\Controllers\Legal\TermsController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
+use App\Http\Middleware\StagingGateMiddleware;
 use Illuminate\Support\Facades\Route;
 
-Route::domain('go.vheart.net')->group(function () {
-    Route::get('{slug?}', RedirectController::class)
-        ->name('shorturl.redirect')
-        ->where('slug', '.*');
-});
+Route::domain('go.vheart.net')
+    ->withoutMiddleware(StagingGateMiddleware::class)
+    ->group(function () {
+        Route::get('{slug?}', RedirectController::class)
+            ->name('shorturl.redirect')
+            ->where('slug', '.*');
+    });
 
 Route::get('/', IndexController::class)->name('home');
 Route::get('privacy', PrivacyController::class)->name('privacy');
