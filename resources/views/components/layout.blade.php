@@ -1,3 +1,4 @@
+@use(Illuminate\Support\Facades\Vite)
 @props(["title" => null, 'background' => true])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') === 'dark'])>
@@ -61,7 +62,7 @@
     </title>
 
     <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="{{ Vite::asset('resources/images/svg/logo-light.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     @viteReactRefresh
