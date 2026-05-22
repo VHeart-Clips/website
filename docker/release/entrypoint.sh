@@ -50,17 +50,6 @@ elif [ "$INSTANCE" = "worker" ]; then
 elif [ "$INSTANCE" = "scheduler" ]; then
     echo "[Entrypoint] Starting Laravel Scheduler..."
     exec /app/artisan schedule:work --whisper
-
-elif [ "$INSTANCE" = "init" ]; then
-    echo "[Entrypoint] Running Initializations..."
-    if [ -f /app/init-app.sh ]; then
-        /bin/sh /app/init-app.sh
-    else
-        echo "[Entrypoint] /app/init-app.sh not found."
-    fi
-    echo "[Entrypoint] Initialization complete."
-    exit 0
-
 else
     echo "[Entrypoint] Error: Unknown Instance '$INSTANCE'"
     exit 1
