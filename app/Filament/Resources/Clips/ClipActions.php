@@ -34,7 +34,7 @@ class ClipActions
                 ->icon(LucideIcon::User),
             ReportAction::make('report_clipper')
                 ->hidden(fn (Clip $record): bool => ! $record->creator
-                    || $record->submitter_id === 0
+                    || $record->creator_id === 0
                     || $record->creator_id === $record->broadcaster_id
                     || $record->creator_id === auth()->id()
                 )
