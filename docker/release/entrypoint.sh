@@ -45,7 +45,7 @@ if [ "$INSTANCE" = "web" ]; then
     /app/artisan storage:link --force
 
     echo "[Entrypoint] Cache Routes..."
-    /app/artisan routes:cache
+    /app/artisan route:cache
 
     echo "[Entrypoint] Starting FrankenPHP..."
     exec php -d variables_order=EGPCS /app/artisan octane:start \
