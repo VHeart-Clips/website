@@ -98,15 +98,16 @@
                                             class="w-20 shrink-0 bg-linear-to-r from-purple-700 to-cyan-700 bg-clip-text text-base font-bold text-transparent dark:from-purple-300 dark:to-cyan-300">
                                             {{ Number::currency($donation['amount'], 'EUR', app()->getLocale(), 2) }}
                                         </div>
-
-                                        <div class="shrink-0">
-                                            @if ($donation['image'])
-                                                <img src="{{ $donation['image'] }}" alt="{{ $donation['name'] }}"
-                                                    class="size-9 rounded-full border border-gray-300/80 object-cover dark:border-white/20" />
-                                            @else
-                                                <div class="size-9 rounded-full bg-emerald-400/80"></div>
-                                            @endif
-                                        </div>
+                                        {{--
+                                            <div class="shrink-0">
+                                                @if ($donation['image'])
+                                                    <img src="{{ $donation['image'] }}" alt="{{ $donation['name'] }}"
+                                                        class="size-9 rounded-full border border-gray-300/80 object-cover dark:border-white/20" />
+                                                @else
+                                                    <div class="size-9 rounded-full bg-emerald-400/80"></div>
+                                                @endif
+                                            </div>
+                                        --}}
 
                                         <div class="min-w-0 flex-1">
                                             <div
