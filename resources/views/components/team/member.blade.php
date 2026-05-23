@@ -5,7 +5,7 @@
     <x-ui.avatar
         class="h-14 w-14 shrink-0 border-2 border-white shadow-sm dark:border-white/10"
         :force="true"
-        :src="$user->avatar_url"
+        :src="$user->proxiedContentUrl()"
         :name="$user->name"
     />
 
