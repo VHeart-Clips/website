@@ -58,7 +58,7 @@ class ClipColumns
             ->icon(LucideIcon::Clock)
             ->size(TextSize::Medium)
             ->sortable()
-            ->formatStateUsing(fn (int $state): string => round($state).'s')
+            ->formatStateUsing(fn (float $state): string => round($state).'s')
             ->fontFamily(FontFamily::Mono)
             ->badge()
             ->color('gray');
