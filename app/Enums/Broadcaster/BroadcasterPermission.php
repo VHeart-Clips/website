@@ -15,4 +15,9 @@ enum BroadcasterPermission: int implements HasLabel
     case SubmissionsSetting = 1;
     case CategoryFilter = 2;
     case UserFilter = 3;
+
+    private function getTranslatableEnumLabelPrefix(): string
+    {
+        return 'broadcaster.enums';
+    }
 }
