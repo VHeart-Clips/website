@@ -7,13 +7,11 @@ namespace App\Actions;
 use App\Enums\Reports\ReportReason;
 use App\Http\Requests\Reports\StoreReportRequest;
 use App\Jobs\Reports\CheckForRemovedClipJob;
+use App\Jobs\Reports\NotifyAboutReportsJob;
 use App\Models\Clip;
 use App\Models\Report;
 use App\Models\User;
-use Exception;
-use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\DiscordAlerts\Facades\DiscordAlert;
 
 class StoreReportAction
 {
@@ -39,7 +37,7 @@ class StoreReportAction
             'description' => $description,
         ]);
 
-        $this->notifyDiscord($report);
+        NotifyAboutReportsJob::dispatch();
 
         $clip = $reportable instanceof Clip ? $reportable : null;
         if ($reason === ReportReason::ContentUnavailable && $clip instanceof Clip) {
@@ -48,18 +46,5 @@ class StoreReportAction
         }
 
         return $report;
-    }
-
-    private function notifyDiscord(Report $report): void
-    {
-        try {
-            DiscordAlert::to('moderation')->message('<@&1494691682422226996>', [[
-                'title' => 'New Report',
-                'url' => Filament::getPanel('admin')->getResourceUrl($report, 'view'),
-                'color' => '#e71d73',
-            ]]);
-        } catch (Exception $exception) {
-            report($exception);
-        }
     }
 }
