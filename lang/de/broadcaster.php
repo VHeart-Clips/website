@@ -17,6 +17,13 @@ return [
             'general-settings' => 'Allgemeine Einstellungen',
             'manage-user-filter' => 'User Filter Verwalten',
             'manage-category-filter' => 'Kategorie Filter Verwalten',
+            'manage-team-member' => 'Team Mitglieder Verwalten',
+        ],
+        'broadcaster-permission' => [
+            'clips' => 'Clips',
+            'submissions-setting' => 'Submission Settings',
+            'category-filter' => 'Kategorie Filter',
+            'user-filter' => 'User Filter',
         ],
     ],
 ];
