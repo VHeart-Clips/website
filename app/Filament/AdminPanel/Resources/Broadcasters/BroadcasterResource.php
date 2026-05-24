@@ -10,6 +10,7 @@ use App\Filament\AdminPanel\Resources\Broadcasters\Pages\ListBroadcasters;
 use App\Filament\AdminPanel\Resources\Broadcasters\Pages\ViewBroadcaster;
 use App\Filament\AdminPanel\Resources\Broadcasters\RelationManagers\CategoryFiltersRelationManager;
 use App\Filament\AdminPanel\Resources\Broadcasters\RelationManagers\ConsentLogsRelationManager;
+use App\Filament\AdminPanel\Resources\Broadcasters\RelationManagers\MembersRelationManager;
 use App\Filament\AdminPanel\Resources\Broadcasters\RelationManagers\UserFiltersRelationManager;
 use App\Filament\AdminPanel\Resources\Broadcasters\Schemas\BroadcasterForm;
 use App\Filament\AdminPanel\Resources\Broadcasters\Schemas\BroadcasterInfolist;
@@ -60,6 +61,7 @@ class BroadcasterResource extends Resource
             UserFiltersRelationManager::make(),
             CategoryFiltersRelationManager::make(),
             ConsentLogsRelationManager::make(),
+            MembersRelationManager::make(),
         ];
     }
 
