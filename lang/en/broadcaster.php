@@ -17,6 +17,13 @@ return [
             'general-settings' => 'General Settings',
             'manage-user-filter' => 'Manage User Filter',
             'manage-category-filter' => 'Manage Category Filter',
+            'manage-team-member' => 'Manage Team Member',
+        ],
+        'broadcaster-permission' => [
+            'clips' => 'Clips',
+            'submissions-setting' => 'Submission Settings',
+            'category-filter' => 'Category Filter',
+            'user-filter' => 'User Filter',
         ],
         'removal-request-status' => [
             'pending' => 'Pending',
