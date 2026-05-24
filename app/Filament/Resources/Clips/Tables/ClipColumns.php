@@ -30,7 +30,6 @@ class ClipColumns
             ->translateLabel()
             ->imageHeight(100)
             ->alignCenter()
-            ->getStateUsing(fn (Clip $clip): ?string => $clip->proxiedContentUrl())
             ->defaultImageUrl($placeholder)
             ->extraImgAttributes([
                 'class' => "object-cover rounded aspect-video text-transparent relative after:content-[''] after:absolute after:inset-0 after:bg-[image:var(--placeholder-url)] after:bg-cover after:bg-center",
