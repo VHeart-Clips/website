@@ -12,5 +12,7 @@ enum BroadcasterPermission: int implements HasLabel
     use HasTranslatedLabel;
 
     case Clips = 0;
-    case Settings = 1;
+    case SubmissionsSetting = 1;
+    case CategoryFilter = 2;
+    case UserFilter = 3;
 }
