@@ -52,7 +52,7 @@ readonly class ClipSubmissionPipeline
 
         return new static(
             array_values(
-                array_filter($this->rules, static fn ($r) => ! in_array($r::class, Arr::wrap($rules), true))
+                array_filter($this->rules, static fn (ClipSubmissionRule $r): bool => ! in_array($r::class, Arr::wrap($rules), true))
             )
         );
     }

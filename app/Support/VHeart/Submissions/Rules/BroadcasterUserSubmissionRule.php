@@ -42,14 +42,8 @@ readonly class BroadcasterUserSubmissionRule implements ClipSubmissionRule
             return true;
         }
 
-        if (
-            $broadcaster->submit_mods_allowed
-            && $this->twitchService->asSessionUser()->isModeratorFor($broadcaster->user)
-        ) {
-            return true;
-        }
-
-        return false;
+        return $broadcaster->submit_mods_allowed
+        && $this->twitchService->asSessionUser()->isModeratorFor($broadcaster->user);
     }
 
     public function message(): string

@@ -28,11 +28,11 @@ class ClipSubmissionContext
     {
         try {
             // we allow it to retry up to 5 times in case of actual connection issues that are hopefully temporary lol
-            return retry(5, function () {
-                return $this->clipDto ??= $this->twitchService->asSessionUser()->getClip($this->clipId);
-            }, 100, static function (Exception $exception) {
-                return $exception instanceof ConnectionException;
-            });
+            return retry(5,
+                callback: fn (): ?ClipDto => $this->clipDto ??= $this->twitchService->asSessionUser()->getClip($this->clipId),
+                sleepMilliseconds: 100,
+                when: static fn (Exception $exception): bool => $exception instanceof ConnectionException
+            );
         } catch (Throwable $throwable) {
             report($throwable);
 

@@ -12,6 +12,7 @@ use App\Enums\Permission;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Clip\Tag;
 use App\Models\User;
+use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\UserDto;
 use App\Services\Twitch\TwitchService;
 use App\Support\FeatureFlag\Feature;
@@ -24,6 +25,7 @@ use App\Support\VHeart\Submissions\Rules\MaximumAgeSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\MinimumLengthSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\SiteCategoryBannedSubmissionRule;
 use Closure;
+use Deprecated;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -127,7 +129,7 @@ class SubmitClipAction extends Action
 
                     $context = new ClipSubmissionContext($user, $clipId, $twitchService);
 
-                    if (! $context->clip()) {
+                    if (! $context->clip() instanceof ClipDto) {
                         Notification::make()->title(__('clips.errors.clip_not_found'))->danger()->send();
 
                         $this->halt();
@@ -232,9 +234,8 @@ class SubmitClipAction extends Action
 
     /**
      * Allows the user to bypass selected restrictions if they have permissions for them.
-     *
-     * @deprecated Do not use outside Team panel.
      */
+    #[Deprecated(message: 'Do not use outside Team panel.')]
     public function withBypass(bool $state = true): static
     {
         $this->bypassable = $state;

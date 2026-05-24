@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
+use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\TwitchService;
 use App\Support\VHeart\Submissions\ClipSubmissionContext;
 use App\Support\VHeart\Submissions\ClipSubmissionPipeline;
@@ -61,7 +62,7 @@ class SubmitClipRequest extends FormRequest
 
                 $this->context = new ClipSubmissionContext($this->user(), $clipId, $this->twitchService);
 
-                if (! $this->context->clip()) {
+                if (! $this->context->clip() instanceof ClipDto) {
                     $validator->errors()->add('clip_url', __('clips.errors.clip_not_found'));
 
                     return;

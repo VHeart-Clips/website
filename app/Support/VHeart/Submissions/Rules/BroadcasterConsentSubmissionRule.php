@@ -29,7 +29,7 @@ readonly class BroadcasterConsentSubmissionRule implements ClipSubmissionRule
             return true;
         }
 
-        return $context->broadcaster() !== null;
+        return $context->broadcaster() instanceof Broadcaster;
     }
 
     public function message(): string
