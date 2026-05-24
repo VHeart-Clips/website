@@ -25,7 +25,6 @@ use App\Support\VHeart\Submissions\Rules\MaximumAgeSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\MinimumLengthSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\SiteCategoryBannedSubmissionRule;
 use Closure;
-use Deprecated;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -35,6 +34,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\Deprecated;
 
 class SubmitClipAction extends Action
 {
@@ -235,7 +235,7 @@ class SubmitClipAction extends Action
     /**
      * Allows the user to bypass selected restrictions if they have permissions for them.
      */
-    #[Deprecated(message: 'Do not use outside Team panel.')]
+    #[Deprecated('Do not use outside Team panel.')]
     public function withBypass(bool $state = true): static
     {
         $this->bypassable = $state;
