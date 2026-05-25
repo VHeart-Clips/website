@@ -25,6 +25,12 @@ return [
             'category-filter' => 'Category Filter',
             'user-filter' => 'User Filter',
         ],
+        'broadcaster-permission-description' => [
+            'clips' => 'View/Edit Clips',
+            'submissions-setting' => 'View/Edit Submission Settings',
+            'category-filter' => 'View/Edit Kategorie Filter',
+            'user-filter' => 'View/Edit User Filter',
+        ],
         'removal-request-status' => [
             'pending' => 'Pending',
             'approved' => 'Approved',
