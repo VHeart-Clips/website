@@ -16,6 +16,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\GridDirection;
+use Filament\Support\Enums\Operation;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
@@ -45,7 +46,8 @@ class MembersRelationManager extends RelationManager
                         ->whereIn('user_id', $user->pluck('id'))
                         ->pluck('user_id')
                         ->merge([$this->getOwnerRecord()->id])
-                        ->all()),
+                        ->all())
+                    ->disabledOn(Operation::Edit),
                 CheckboxList::make('permissions')
                     ->gridDirection(GridDirection::Row)
                     ->columns(2)
