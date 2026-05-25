@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Console\Commands\ArchiveClipVotesCommand;
 use App\Console\Commands\CreateWeeklyEpisodesCommand;
 use App\Console\Commands\ReleaseStaleReportsCommand;
+use App\Console\Commands\SyncLiveCategories;
 use App\Enums\FeatureFlag;
 use App\Models\Audit;
 use App\Support\FeatureFlag\Feature;
@@ -48,4 +49,5 @@ Schedule::command(CleanupCommand::class)->runInBackground()->onOneServer()->dail
 Schedule::command(MonitorCommand::class)->runInBackground()->onOneServer()->dailyAt('00:30');
 
 Schedule::command(CreateWeeklyEpisodesCommand::class)->onOneServer()->dailyAt('06:00');
+Schedule::command(SyncLiveCategories::class)->onOneServer()->everyFourHours();
 Schedule::command(ReleaseStaleReportsCommand::class)->onOneServer()->hourly();
