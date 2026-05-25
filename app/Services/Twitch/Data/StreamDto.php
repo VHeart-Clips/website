@@ -32,7 +32,7 @@ readonly class StreamDto implements TwitchDtoInterface
     {
         return new static(
             id: $data['id'],
-            userId: $data['user_id'],
+            userId: (int) $data['user_id'],
             userLogin: $data['user_login'],
             userName: $data['user_name'],
             gameId: (int) ($data['game_id'] ?? 0),
