@@ -59,7 +59,8 @@ class MembersRelationManager extends RelationManager
                         ->mapWithKeys(fn (BroadcasterPermission $status): array => [$status->value => __('broadcaster.enums.broadcaster-permission-description.'.Str::kebab($status->name))])
                         ->toArray())
                     ->columnSpanFull()
-                    ->bulkToggleable(),
+                    ->bulkToggleable()
+                    ->required(),
             ]);
     }
 
@@ -93,6 +94,6 @@ class MembersRelationManager extends RelationManager
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->authorizeIndividualRecords(),
                 ]),
-            ]);
+            ])->modelLabel('Team Member');
     }
 }
