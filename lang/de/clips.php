@@ -70,6 +70,12 @@ return [
     ],
 
     'enums' => [
+        'clip-status' => [
+            'unknown' => 'Unbekannt',
+            'need-approval' => 'Bestätigung Erforderlich',
+            'approved' => 'Bestätigt',
+            'blocked' => 'Blockiert',
+        ],
         'clip-feedback-option' => [
             'audio-too-quiet' => 'Ton zu leise',
             'audio-too-loud' => 'Ton zu laut',

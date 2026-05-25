@@ -95,6 +95,10 @@ trait UserFilamentConfiguration
             Permission::ViewAnyCategory,
             Permission::ViewAnyReport,
             Permission::ViewAnyCompilation,
+            Permission::ViewAnyBroadcaster,
+            Permission::ViewAnyShortUrl,
+            Permission::ViewAnyTag,
+            Permission::ViewAnyAudit,
         ]);
     }
 
