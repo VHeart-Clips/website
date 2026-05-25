@@ -21,7 +21,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 class MembersRelationManager extends RelationManager
 {
@@ -55,9 +54,6 @@ class MembersRelationManager extends RelationManager
                     ->gridDirection(GridDirection::Row)
                     ->columns(2)
                     ->options(BroadcasterPermission::class)
-                    ->descriptions(collect(BroadcasterPermission::cases())
-                        ->mapWithKeys(fn (BroadcasterPermission $status): array => [$status->value => __('broadcaster.enums.broadcaster-permission-description.'.Str::kebab($status->name))])
-                        ->toArray())
                     ->columnSpanFull()
                     ->bulkToggleable()
                     ->required(),
