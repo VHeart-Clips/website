@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Dashboard\Resources\Clips\Tables;
 
 use App\Enums\Clips\ClipStatus;
+use App\Filament\Actions\Tables\UpdateClipStatusAction;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Resources\Clips\ClipActions;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
@@ -147,6 +148,7 @@ class ClipsTable
             ->recordActions([
                 ClipActions::reportableActionGroup(),
                 ActionGroup::make([
+                    UpdateClipStatusAction::make(),
                     ViewAction::make(),
                     EditAction::make(),
                 ]),
