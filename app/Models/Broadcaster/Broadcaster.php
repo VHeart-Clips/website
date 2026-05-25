@@ -105,9 +105,9 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
         return $this->hasOne(BroadcasterConsentLog::class)->latestOfMany('changed_at');
     }
 
-    public function proxiedContentUrl(): mixed
+    public function proxiedContentUrl(): ?string
     {
-        return $this->loadMissing('user')->user->proxiedContentUrl();
+        return $this->loadMissing('user')->user?->avatar_url;
     }
 
     public function getFilamentAvatarUrl(): ?string
