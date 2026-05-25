@@ -40,6 +40,10 @@ class ClipPolicy
      */
     public function update(User $user, Clip $clip): bool
     {
+        if ($user->id === $clip->broadcaster_id) {
+            return true;
+        }
+
         return $user->can(Permission::UpdateAnyClip);
     }
 
