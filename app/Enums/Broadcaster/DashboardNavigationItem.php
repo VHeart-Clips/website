@@ -14,6 +14,7 @@ enum DashboardNavigationItem implements HasLabel
     case GeneralSettings;
     case ManageUserFilter;
     case ManageCategoryFilter;
+    case ManageTeamMember;
 
     private function getTranslatableEnumLabelPrefix(): string
     {
