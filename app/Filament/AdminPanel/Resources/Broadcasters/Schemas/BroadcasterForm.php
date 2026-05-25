@@ -34,6 +34,7 @@ class BroadcasterForm
             self::makeUserSection(),
             self::makeConsentSection(),
             self::makeSubmitPermissionsSection(),
+            self::makeModPermissionSection(),
         ]);
     }
 
@@ -55,14 +56,6 @@ class BroadcasterForm
                             ->mapWithKeys(fn (ClipStatus $status): array => [$status->value => $status->getLabel()])
                             ->toArray()
                     ),
-
-                CheckboxList::make('twitch_mod_permissions')
-                    ->options(BroadcasterPermission::class)
-                    ->gridDirection('row')
-                    ->label('Mod Permissions')
-                    ->columns(2)
-                    // hidden for now since we did not implement that currently
-                    ->hidden(),
             ]);
     }
 
@@ -108,6 +101,21 @@ class BroadcasterForm
                     ->label('Mods')
                     ->live(),
             ]);
+    }
+
+    private static function makeModPermissionSection(): Section
+    {
+        return Section::make('Mod Permission')
+            ->hiddenOn(Operation::Create)
+            ->schema([
+                CheckboxList::make('twitch_mod_permissions')
+                    ->options(BroadcasterPermission::class)
+                    ->gridDirection('row')
+                    ->label('Mod Permissions')
+                    ->columns(4)
+                    ->bulkToggleable(),
+            ])
+            ->columnSpanFull();
     }
 
     private static function makeUserSection(): Select
