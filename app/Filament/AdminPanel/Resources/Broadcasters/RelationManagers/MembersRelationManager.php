@@ -19,6 +19,7 @@ use Filament\Support\Enums\GridDirection;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Collection;
 
 class MembersRelationManager extends RelationManager
 {
@@ -32,7 +33,19 @@ class MembersRelationManager extends RelationManager
                     ->required()
                     ->columnSpanFull()
                     ->label('User')
-                    ->ignoredIds(fn () => [(string) $this->getOwnerRecord()->id]),
+                    ->whereNotExists(function ($query): void {
+                        $query->from('broadcaster_team_members')
+                            ->whereColumn('broadcaster_team_members.user_id', 'users.id')
+                            ->where('broadcaster_team_members.broadcaster_id', $this->getOwnerRecord()->id)
+                            ->where('id', '!=', $this->getOwnerRecord()->id);
+                    })
+                    ->ignoredIds(fn (Collection $user) => $this->getOwnerRecord()
+                        ->members()
+                        ->getQuery()
+                        ->whereIn('user_id', $user->pluck('id'))
+                        ->pluck('user_id')
+                        ->merge([$this->getOwnerRecord()->id])
+                        ->all()),
                 CheckboxList::make('permissions')
                     ->gridDirection(GridDirection::Row)
                     ->columns(2)
