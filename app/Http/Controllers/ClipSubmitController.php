@@ -31,7 +31,7 @@ class ClipSubmitController extends Controller
     {
         Gate::authorize('submit', Clip::class);
 
-        $clipInfo = $request->clipInfo;
+        $clipInfo = $request->context->clip();
 
         User::updateOrCreate([
             'id' => $clipInfo->creatorId,
