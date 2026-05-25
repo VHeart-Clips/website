@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
 
 #[Signature('twitch:sync-live-categories')]
 #[Description('Updates local categories based on what is currently live on twitch. only fetches first 100 streams though.')]
-class SyncLiveCategories extends Command
+class SyncLiveCategoriesCommand extends Command
 {
     /**
      * @throws TwitchApiException
