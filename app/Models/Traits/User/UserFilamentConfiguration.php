@@ -34,7 +34,10 @@ trait UserFilamentConfiguration
     {
         return Split::make([
             ImageColumn::make("$name.avatar")
-                ->getStateUsing(fn (Model $record) => $record->$name?->proxiedContentUrl())
+                ->getStateUsing(fn (Model $record) => ($record->$name instanceof Broadcaster)
+                    ? $record->$name->user?->avatar_url
+                    : $record->$name->avatar_url
+                )
                 ->imageHeight(30)
                 ->circular(),
             Split::make([
@@ -48,7 +51,10 @@ trait UserFilamentConfiguration
         return Grid::make()
             ->schema([
                 ImageEntry::make("$name.avatar")
-                    ->getStateUsing(fn (Model $record) => $record->$name?->proxiedContentUrl())
+                    ->getStateUsing(fn (Model $record) => ($record->$name instanceof Broadcaster)
+                        ? $record->$name->user?->avatar_url
+                        : $record->$name->avatar_url
+                    )
                     ->columnSpan(1)
                     ->hiddenLabel()
                     ->grow(false)
@@ -78,7 +84,7 @@ trait UserFilamentConfiguration
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return $this->proxiedContentUrl();
+        return $this->avatar_url;
     }
 
     public function canAccessPanel(Panel $panel): bool
