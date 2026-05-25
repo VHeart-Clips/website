@@ -28,7 +28,7 @@ class SyncLiveCategories extends Command
         $client = $twitchService->asApp();
 
         /** @var positive-int[] $gameIds */
-        $gameIds = collect($client->collection(TwitchEndpoints::GetStreams, ['first' => 100]))
+        $gameIds = collect($client->collection(TwitchEndpoints::GetStreams, ['first' => 100, 'language' => 'de']))
             ->pluck('gameId')
             ->unique()
             ->filter(fn (int $value): bool => $value > 0)
