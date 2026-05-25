@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Clips\Tables;
 
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationStatus;
+use App\Filament\Actions\Tables\UpdateClipStatusAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Management\AttachToCompilationAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Management\ClipFeedbackAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\FlagClipAction;
@@ -170,6 +171,7 @@ class ClipsTable
             ->recordActions([
                 ClipActions::reportableActionGroup(),
                 ActionGroup::make([
+                    UpdateClipStatusAction::make()->moderation(),
                     ClipFeedbackAction::make(),
                     FlagClipAction::make(),
                     UnflagClipAction::make(),

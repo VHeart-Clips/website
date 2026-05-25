@@ -21,5 +21,11 @@ return [
                 ],
             ],
         ],
+        'update_clip_status' => [
+            'label' => 'Update Clip Status',
+            'form' => [
+                'status' => 'Status',
+            ],
+        ],
     ],
 ];
