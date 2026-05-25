@@ -10,17 +10,21 @@ use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Enums\Permission;
 use App\Models\Broadcaster\Broadcaster;
-use App\Models\Category;
-use App\Models\Clip;
 use App\Models\Clip\Tag;
 use App\Models\User;
 use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\UserDto;
 use App\Services\Twitch\TwitchService;
 use App\Support\FeatureFlag\Feature;
-use Carbon\CarbonInterval;
+use App\Support\VHeart\Submissions\ClipSubmissionContext;
+use App\Support\VHeart\Submissions\ClipSubmissionPipeline;
+use App\Support\VHeart\Submissions\Rules\BroadcasterCategorySubmissionRule;
+use App\Support\VHeart\Submissions\Rules\BroadcasterConsentSubmissionRule;
+use App\Support\VHeart\Submissions\Rules\BroadcasterUserSubmissionRule;
+use App\Support\VHeart\Submissions\Rules\MaximumAgeSubmissionRule;
+use App\Support\VHeart\Submissions\Rules\MinimumLengthSubmissionRule;
+use App\Support\VHeart\Submissions\Rules\SiteCategoryBannedSubmissionRule;
 use Closure;
-use Deprecated;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -30,6 +34,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\Deprecated;
 
 class SubmitClipAction extends Action
 {
@@ -122,132 +127,36 @@ class SubmitClipAction extends Action
                         $this->halt();
                     }
 
-                    if (
-                        ($totalLimit = config('vheart.clips.submission.limits.total', false))
-                        && $user->cannot(Permission::CanIgnoreTotalSubmissionLimits)
-                    ) {
-                        $total = Clip::query()
-                            ->withTrashed()
-                            ->whereSubmittedAfter(now()->startOfDay())
-                            ->whereSubmitterId($user->id)
-                            ->count();
+                    $context = new ClipSubmissionContext($user, $clipId, $twitchService);
 
-                        if ($total >= $totalLimit) {
-                            Notification::make()->title(__('clips.errors.total_limit_reached'))->danger()->send();
-
-                            $this->halt();
-                        }
-                    }
-
-                    $clipInfo = $twitchService
-                        ->asSessionUser()
-                        ->getClip($clipId);
-
-                    if (! $clipInfo instanceof ClipDto) {
+                    if (! $context->clip() instanceof ClipDto) {
                         Notification::make()->title(__('clips.errors.clip_not_found'))->danger()->send();
 
                         $this->halt();
                     }
 
-                    if (
-                        ($broadcasterLimit = config('vheart.clips.submission.limits.per_broadcaster', false))
-                        && $user->cannot(Permission::CanIgnoreBroadcasterSubmissionLimits)
-                    ) {
-                        $total = Clip::query()
-                            ->withTrashed()
-                            ->whereSubmittedAfter(now()->startOfDay())
-                            ->whereBroadcastBy($clipInfo->broadcasterId)
-                            ->whereSubmitterId($user->id)
-                            ->count();
+                    $bypassBroadcasterConsent = Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)
+                        || ($user->can(Permission::BypassConsentCheck) && ($data['broadcaster_consent'] ?? false));
 
-                        if ($total >= $broadcasterLimit) {
-                            Notification::make()->title(__('clips.errors.broadcaster_limit_reached'))->danger()->send();
+                    $result = ClipSubmissionPipeline::make($twitchService)
+                        ->withoutIf(MinimumLengthSubmissionRule::class, $user->can(Permission::BypassMinimumLengthRequirementCheck) && ($data['minimum_length'] ?? false))
+                        ->withoutIf(MaximumAgeSubmissionRule::class, $user->can(Permission::BypassMaximumAgeLimitCheck) && ($data['maximum_age'] ?? false))
+                        ->withoutIf(SiteCategoryBannedSubmissionRule::class, $user->can(Permission::BypassBannedCategoryCheck) && ($data['category_ban'] ?? false))
+                        ->withoutIf([BroadcasterConsentSubmissionRule::class, BroadcasterUserSubmissionRule::class, BroadcasterCategorySubmissionRule::class], $bypassBroadcasterConsent)
+                        ->check($context);
 
-                            $this->halt();
-                        }
-                    }
-
-                    $bypassBroadcasterConsent = Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent) || (auth()->user()?->can(Permission::BypassConsentCheck) && ($data['broadcaster_consent'] ?? false));
-                    $bypassMinLength = auth()->user()?->can(Permission::BypassBannedCategoryCheck) && $data['minimum_length'];
-                    $bypassMaxAge = auth()->user()?->can(Permission::BypassMaximumAgeLimitCheck) && $data['maximum_age'];
-                    $bypassCategoryBan = auth()->user()?->can(Permission::BypassBannedCategoryCheck) && $data['category_ban'];
-
-                    if (Clip::query()->withTrashed()->where('twitch_id', $clipInfo->id)->exists()) {
-                        Notification::make()->title(__('clips.errors.clip_already_known'))->danger()->send();
+                    if (! $result->passed) {
+                        Notification::make()
+                            ->title($result->message)
+                            ->danger()
+                            ->send();
 
                         $this->halt();
                     }
 
-                    /** @var int $minClipDuration */
-                    $minClipDuration = config('vheart.clips.submission.minimum_length', 5);
-                    if (! $bypassMinLength && $clipInfo->duration < $minClipDuration) {
-                        Notification::make()->title(__('clips.errors.too_short', [
-                            'seconds' => $minClipDuration,
-                        ]))->danger()->send();
+                    $clipInfo = $context->clip();
 
-                        $this->halt();
-                    }
-
-                    /** @var CarbonInterval $maxClipAge */
-                    $maxClipAge = config('vheart.clips.submission.maximum_age');
-                    if (! $bypassMaxAge && $maxClipAge && $clipInfo->createdAt->add($maxClipAge)->isPast()) {
-                        Notification::make()->title(__('clips.errors.too_old', [
-                            'age' => $maxClipAge->forHumans(),
-                        ]))->danger()->send();
-
-                        $this->halt();
-                    }
-
-                    // Check Site Category Ban
-                    if (! $bypassCategoryBan) {
-                        $isCategoryBanned = Category::query()
-                            ->where('is_banned', true)
-                            ->where('id', $clipInfo->gameId)
-                            ->exists();
-
-                        if ($isCategoryBanned) {
-                            Notification::make()->title(__('clips.errors.category_blocked'))->danger()->send();
-
-                            $this->halt();
-                        }
-                    }
-
-                    // Broadcaster
-                    if (! $bypassBroadcasterConsent) {
-                        $broadcaster = Broadcaster::query()
-                            ->where('id', $clipInfo->broadcasterId)
-                            ->whereGaveConsent()
-                            ->with(['filters'])
-                            ->first();
-
-                        if (! $broadcaster) {
-                            Notification::make()->title(__('clips.errors.broadcaster_not_allowed'))->danger()->send();
-
-                            $this->halt();
-                        }
-
-                        $userType = $user->getMorphClass();
-                        $categoryType = new Category()->getMorphClass();
-
-                        $groupedFilters = $broadcaster->filters->groupBy(['filterable_type', 'state']);
-                        $allowedUsers = $groupedFilters->get($userType)?->get(true)?->pluck('filterable_id')->toArray() ?? [];
-                        $disallowedUsers = $groupedFilters->get($userType)?->get(false)?->pluck('filterable_id')->toArray() ?? [];
-                        $allowedCategories = $groupedFilters->get($categoryType)?->get(true)?->pluck('filterable_id')->toArray() ?? [];
-                        $disallowedCategories = $groupedFilters->get($categoryType)?->get(false)?->pluck('filterable_id')->toArray() ?? [];
-
-                        if (! $this->passesUserChecks($user, $broadcaster, $disallowedUsers, $allowedUsers, $twitchService)) {
-                            Notification::make()->title(__('clips.errors.user_not_allowed_for_broadcaster'))->danger()->send();
-
-                            $this->halt();
-                        }
-
-                        if (! $this->passesCategoryChecks($clipInfo, $disallowedCategories, $allowedCategories)) {
-                            Notification::make()->title(__('clips.errors.category_blocked'))->danger()->send();
-
-                            $this->halt();
-                        }
-                    } else {
-
+                    if ($bypassBroadcasterConsent) {
                         User::firstOrCreate([
                             'id' => $clipInfo->broadcasterId,
                         ], [
@@ -259,7 +168,7 @@ class SubmitClipAction extends Action
                         ]);
                     }
 
-                    /** @var UserDto $broadcasterDto */
+                    /** @var UserDto|null $broadcasterDto */
                     [$broadcasterDto] = $twitchService
                         ->asSessionUser()
                         ->getUsers([
@@ -274,7 +183,9 @@ class SubmitClipAction extends Action
                             'avatar_url' => $broadcasterDto->profileImageUrl,
                         ]);
                     } else {
-                        Log::notice('Broadcaster has been removed because they where not found on twitch, possibly banned.', ['broadcaster_id' => $clipInfo->broadcasterId]);
+                        Log::notice('Broadcaster has been removed because they where not found on twitch, possibly banned.', [
+                            'broadcaster_id' => $clipInfo->broadcasterId,
+                        ]);
 
                         Broadcaster::find($clipInfo->broadcasterId)?->delete();
                     }
@@ -330,66 +241,5 @@ class SubmitClipAction extends Action
         $this->bypassable = $state;
 
         return $this;
-    }
-
-    protected function passesUserChecks(User $user, Broadcaster $broadcaster, array $disallowedUsers, array $allowedUsers, TwitchService $twitchService): bool
-    {
-        if (in_array($user->id, $disallowedUsers, true)) {
-            return false;
-        }
-
-        $isAllowed = $broadcaster->submit_user_allowed || $broadcaster->id === $user->id;
-
-        if ($isAllowed) {
-            return true;
-        }
-
-        if ($allowedUsers !== []) {
-            $isAllowed = in_array($user->id, $allowedUsers, true);
-        }
-
-        if (! $isAllowed && $broadcaster->submit_mods_allowed) {
-            return $twitchService
-                ->asSessionUser()
-                ->isModeratorFor($broadcaster->user);
-        }
-
-        /**
-         * @see https://github.com/VHeart-Clips/website/issues/714
-         */
-        /*
-        if (! $isAllowed && $broadcaster->submit_vip_allowed) {
-            try {
-                $vipInfos = $twitchService
-                    ->asUser($broadcaster->user)
-                    ->get(TwitchEndpoints::GetVIPs, [
-                        'user_id' => $user->id,
-                        'broadcaster_id' => $broadcaster->id,
-                    ]);
-                $isAllowed = ! empty($vipInfos['data']);
-            } catch (TwitchApiException $th) {
-                report($th);
-
-                return false;
-            }
-        }
-        */
-
-        return $isAllowed;
-    }
-
-    protected function passesCategoryChecks(ClipDto $clipInfo, array $disallowedCategories, array $allowedCategories): bool
-    {
-        $gameId = $clipInfo->gameId;
-
-        if (in_array($gameId, $disallowedCategories, true)) {
-            return false;
-        }
-
-        if ($allowedCategories && count($allowedCategories) > 0) {
-            return in_array($gameId, $allowedCategories, true);
-        }
-
-        return true;
     }
 }
