@@ -11,6 +11,7 @@ use App\Services\Twitch\Data\ClipDownloadDto;
 use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\GameDto;
 use App\Services\Twitch\Data\SimpleUserDto;
+use App\Services\Twitch\Data\StreamDto;
 use App\Services\Twitch\Data\UserDto;
 
 enum TwitchEndpoints: string
@@ -149,6 +150,7 @@ enum TwitchEndpoints: string
             self::GetGames => GameDto::class,
             self::GetClipsDownload => ClipDownloadDto::class,
             self::SearchChannels => ChannelDto::class,
+            self::GetStreams => StreamDto::class,
             self::GetUsers => UserDto::class,
             self::GetModeratedChannels, self::GetVIPs => SimpleUserDto::class,
             default => null,
