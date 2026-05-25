@@ -66,7 +66,7 @@ class UserSelect extends Select
                 ]);
             }
 
-            return $user->reject(fn (array $item): bool => in_array((string) $item['id'], $existingIds, true))
+            return $user->reject(fn (array $item): bool => in_array((int) $item['id'], $existingIds, true))
                 ->sortBy(fn (array $item): int => levenshtein(mb_strtolower($search), mb_strtolower((string) $item['name'])))
                 ->mapWithKeys(fn (array $item): array => [$item['id'] => $item['name']]);
         })->getOptionLabelUsing(function (string $value, TwitchService $twitchService) {
@@ -82,7 +82,7 @@ class UserSelect extends Select
                 'id' => $value,
             ]);
 
-            /** @var UserDto $game */
+            /** @var UserDto $user */
             $user = array_first($users);
 
             $user = User::create($user->toModel());
