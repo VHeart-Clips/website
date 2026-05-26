@@ -10,11 +10,23 @@ use App\Filament\Resources\Clips\ClipActions;
 use App\Models\Clip;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ViewClip extends ViewRecord
 {
     protected static string $resource = ClipResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        return Filament::getTenant()->name.' - '.parent::getTitle();
+    }
+
+    public function getHeading(): string|Htmlable|null
+    {
+        return parent::getTitle();
+    }
 
     protected function getHeaderActions(): array
     {
