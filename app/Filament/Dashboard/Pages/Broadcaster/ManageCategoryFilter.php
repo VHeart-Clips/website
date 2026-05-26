@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Pages\Broadcaster;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Filament\LucideIcon;
@@ -30,6 +31,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class ManageCategoryFilter extends Page implements HasTable
@@ -55,8 +57,7 @@ class ManageCategoryFilter extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        // later we can check for permission to this specific page here
-        return self::getBroadcaster()?->id === auth()->id();
+        return Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::CategoryFilter]);
     }
 
     public static function getBroadcaster(): ?Broadcaster
@@ -141,10 +142,10 @@ class ManageCategoryFilter extends Page implements HasTable
                             ->whereColumn('broadcaster_submission_filters.filterable_id', (new Category)->getTable().'.id')
                             ->where('broadcaster_submission_filters.filterable_type', $this::getCategoryMorphClass())
                             ->where('broadcaster_submission_filters.broadcaster_id', $this::getBroadcaster()->id);
-                    })->ignoredIds(fn(Collection $category): array => $this->getBaseQuery()
-                        ->whereIn('filterable_id', $category->pluck('id'))->pluck('filterable_id')
-                        ->map(fn ($id): string => (string) $id)
-                        ->all())
+                    })->ignoredIds(fn (Collection $category): array => $this->getBaseQuery()
+                    ->whereIn('filterable_id', $category->pluck('id'))->pluck('filterable_id')
+                    ->map(fn ($id): string => (string) $id)
+                    ->all())
                     ->label('dashboard/settings/manage-category-filters.table.title')
                     ->translateLabel()
                     ->columnSpanFull()
