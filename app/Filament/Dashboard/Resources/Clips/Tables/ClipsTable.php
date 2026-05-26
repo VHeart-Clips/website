@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Resources\Clips\Tables;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Clips\ClipStatus;
 use App\Filament\Actions\Tables\UpdateClipStatusAction;
 use App\Filament\Filters\DateRangeFilter;
@@ -12,6 +13,7 @@ use App\Filament\Resources\Clips\Tables\ClipColumns;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Enums\FiltersLayout;
@@ -19,6 +21,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 
 class ClipsTable
 {
@@ -148,7 +151,7 @@ class ClipsTable
             ->recordActions([
                 ClipActions::reportableActionGroup(),
                 ActionGroup::make([
-                    UpdateClipStatusAction::make()->authorize(null),
+                    UpdateClipStatusAction::make()->authorize(fn (): bool => Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::Clips])),
                     ViewAction::make(),
                     EditAction::make(),
                 ]),
