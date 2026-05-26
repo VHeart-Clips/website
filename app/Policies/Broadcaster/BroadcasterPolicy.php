@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Policies\Broadcaster;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Permission;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\User;
+use App\Services\Twitch\TwitchService;
 
 class BroadcasterPolicy
 {
@@ -63,5 +65,34 @@ class BroadcasterPolicy
     public function forceDeleteAny(User $user): bool
     {
         return $user->can(Permission::ForceDeleteAnyBroadcaster);
+    }
+
+    public function dashboardAccess(User $user, Broadcaster $broadcaster, ?BroadcasterPermission $permission = null)
+    {
+        if ($broadcaster->id === $user->id) {
+            return true;
+        }
+
+        if (! $permission instanceof BroadcasterPermission) {
+            return false;
+        }
+
+        $hasAccessAsTeamMember = $broadcaster
+            ->members()
+            ->where('user_id', $user->id)
+            ->whereHasPermission($permission)
+            ->exists();
+
+        if ($hasAccessAsTeamMember) {
+            return true;
+        }
+
+        if ($broadcaster->twitch_mod_permissions?->doesntContain($permission)) {
+            return false;
+        }
+
+        $twitchService = app(TwitchService::class);
+
+        return $twitchService->asSessionUser()->isModeratorFor($broadcaster);
     }
 }
