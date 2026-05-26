@@ -11,6 +11,7 @@ use App\Services\Twitch\Data\ClipDownloadDto;
 use App\Services\Twitch\Data\ClipDto;
 use App\Services\Twitch\Data\GameDto;
 use App\Services\Twitch\Data\SimpleUserDto;
+use App\Services\Twitch\Data\StreamDto;
 use App\Services\Twitch\Data\UserDto;
 
 enum TwitchEndpoints: string
@@ -114,6 +115,18 @@ enum TwitchEndpoints: string
     case SearchChannels = 'search/channels';
 
     /**
+     * Gets a list of all streams.
+     *
+     * The list is in descending order by the number of viewers watching the stream.
+     * Because viewers come and go during a stream, it’s possible to find duplicate or missing streams in the list as you page through the results.
+     *
+     * - Requires app or user access token
+     *
+     * @link https://dev.twitch.tv/docs/api/reference#get-streams
+     */
+    case GetStreams = 'streams';
+
+    /**
      * Gets information about one or more users.
      *
      * You may look up users using their user ID, login name, or both but the sum total of the number of users you may look up is 100. For example, you may specify 50 IDs and 50 names or 100 IDs or names, but you cannot specify 100 IDs and 100 names.
@@ -137,6 +150,7 @@ enum TwitchEndpoints: string
             self::GetGames => GameDto::class,
             self::GetClipsDownload => ClipDownloadDto::class,
             self::SearchChannels => ChannelDto::class,
+            self::GetStreams => StreamDto::class,
             self::GetUsers => UserDto::class,
             self::GetModeratedChannels, self::GetVIPs => SimpleUserDto::class,
             default => null,
