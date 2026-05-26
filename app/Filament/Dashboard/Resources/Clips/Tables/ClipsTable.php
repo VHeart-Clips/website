@@ -148,7 +148,7 @@ class ClipsTable
             ->recordActions([
                 ClipActions::reportableActionGroup(),
                 ActionGroup::make([
-                    UpdateClipStatusAction::make(),
+                    UpdateClipStatusAction::make()->authorize(null),
                     ViewAction::make(),
                     EditAction::make(),
                 ]),
