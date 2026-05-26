@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Resources\Clips;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Dashboard\Resources\Clips\Pages\EditClip;
 use App\Filament\Dashboard\Resources\Clips\Pages\ListClips;
@@ -14,10 +15,12 @@ use App\Filament\Dashboard\Resources\Clips\Schemas\ClipInfolist;
 use App\Filament\Dashboard\Resources\Clips\Tables\ClipsTable;
 use App\Models\Clip;
 use BackedEnum;
+use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 
 class ClipResource extends Resource
 {
@@ -26,6 +29,11 @@ class ClipResource extends Resource
     protected static ?string $model = Clip::class;
 
     protected static string|BackedEnum|null $navigationIcon = LucideIcon::Film;
+
+    public static function canAccess(): bool
+    {
+        return Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::Clips]);
+    }
 
     public static function form(Schema $schema): Schema
     {
