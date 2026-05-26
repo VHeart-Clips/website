@@ -99,9 +99,9 @@ class ClipsRelationManager extends RelationManager
                         ->space(),
 
                     Stack::make([
-                        ClipColumns::broadcasterName(),
-                        ClipColumns::creatorName(),
-                        ClipColumns::submitterName(),
+                        ClipColumns::broadcasterName()->sortable(),
+                        ClipColumns::creatorName()->sortable(),
+                        ClipColumns::submitterName()->sortable(),
                     ])
                         ->space(1),
 

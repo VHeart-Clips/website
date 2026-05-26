@@ -155,6 +155,7 @@ class ClipColumns
     public static function broadcasterName(): TextColumn
     {
         return TextColumn::make('owner.name')
+            ->label(__('admin/resources/clips.table.columns.broadcaster'))
             ->tooltip(__('admin/resources/clips.table.columns.broadcaster'))
             ->icon(LucideIcon::Video)
             ->color('gray');
@@ -163,6 +164,7 @@ class ClipColumns
     public static function creatorName(): TextColumn
     {
         return TextColumn::make('creator.name')
+            ->label(__('admin/resources/clips.table.columns.creator'))
             ->tooltip(__('admin/resources/clips.table.columns.creator'))
             ->icon(LucideIcon::Scissors)
             ->color('gray');
@@ -171,6 +173,7 @@ class ClipColumns
     public static function submitterName(): TextColumn
     {
         return TextColumn::make('submitter.name')
+            ->label(__('admin/resources/clips.table.columns.submitter'))
             ->tooltip(__('admin/resources/clips.table.columns.submitter'))
             ->icon(LucideIcon::User)
             ->color('gray');
