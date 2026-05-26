@@ -35,6 +35,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -64,6 +65,13 @@ class ClipsRelationManager extends RelationManager
                 ->withPublicVoteCount()
                 ->withJuryVoteCount()
             )
+            ->groups([
+                Group::make('status')
+                    ->label(__('admin/resources/compilations.relation_managers.clips.columns.status_moderation')),
+                Group::make('claim_status'),
+                Group::make('owner.name')
+                    ->label(__('admin/resources/clips.table.columns.broadcaster')),
+            ])
             ->recordTitleAttribute('title')
             ->columns([
                 Split::make([
