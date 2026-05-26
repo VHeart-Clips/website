@@ -66,7 +66,8 @@ class ClipsRelationManager extends RelationManager
                 ->withJuryVoteCount()
             )
             ->groups([
-                'status',
+                Group::make('status')
+                    ->label(__('admin/resources/compilations.relation_managers.clips.columns.status_moderation')),
                 'claim_status',
                 Group::make('owner.name')
                     ->label(__('admin/resources/clips.table.columns.broadcaster')),
