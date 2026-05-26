@@ -37,6 +37,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class ManageTeamMember extends Page implements HasForms, HasTable
@@ -49,7 +50,7 @@ class ManageTeamMember extends Page implements HasForms, HasTable
 
     protected static string|null|BackedEnum $navigationIcon = LucideIcon::Users;
 
-    protected static ?int $navigationSort = 1000;
+    protected static ?int $navigationSort = 999;
 
     protected static string|null|UnitEnum $navigationGroup = DashboardNavigationGroup::Settings;
 
@@ -64,8 +65,7 @@ class ManageTeamMember extends Page implements HasForms, HasTable
 
     public static function canAccess(): bool
     {
-        // later we can check for permission to this specific page here
-        return Feature::isActive(FeatureFlag::BroadcasterTenant) && self::getBroadcaster()?->id === auth()->id();
+        return Feature::isActive(FeatureFlag::BroadcasterTenant) && Gate::allows('dashboardAccess', [Filament::getTenant()]);
     }
 
     public static function getBroadcaster(): ?Broadcaster

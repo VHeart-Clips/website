@@ -4,15 +4,22 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Widgets;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
 use Filament\Facades\Filament;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Gate;
 
 class ClipsOverview extends StatsOverviewWidget
 {
     protected ?string $heading = 'Clips';
+
+    public static function canView(): bool
+    {
+        return Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::Clips]);
+    }
 
     protected function getStats(): array
     {

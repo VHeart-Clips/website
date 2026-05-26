@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Dashboard\Pages\Broadcaster;
 
 use App\Enums\Broadcaster\BroadcasterConsent;
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Clips\ClipStatus;
@@ -23,6 +24,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use UnitEnum;
 
@@ -58,8 +60,7 @@ class GeneralSettings extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        // later we can check for permission to this specific page here
-        return Filament::getTenant()?->id === auth()->user()?->id;
+        return Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::SubmissionsSetting]);
     }
 
     public function getTitle(): string|Htmlable
@@ -103,7 +104,8 @@ class GeneralSettings extends Page implements HasForms
                     ->live()
                     ->afterStateUpdated(fn () => $this->defaultClipStatusFormAutosave()),
                 ]),
-        ])->statePath('defaultClipStatusFormData');
+        ])->statePath('defaultClipStatusFormData')
+            ->hidden(fn (): bool => ! Gate::allows('dashboardAccess', [Filament::getTenant()]));
     }
 
     public function defaultClipStatusFormAutosave(): void
@@ -131,7 +133,8 @@ class GeneralSettings extends Page implements HasForms
                 ),
                 ]),
         ])
-            ->statePath('consentFormData');
+            ->statePath('consentFormData')
+            ->hidden(fn (): bool => ! Gate::allows('dashboardAccess', [Filament::getTenant()]));
     }
 
     public function consentFormAutosave(): void
@@ -190,7 +193,8 @@ class GeneralSettings extends Page implements HasForms
                 ])
                     ->live(),
                 ]),
-        ])->statePath('submissionsSettingFormData');
+        ])->statePath('submissionsSettingFormData')
+            ->hidden(fn (): bool => ! Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::SubmissionsSetting]));
     }
 
     public function submissionsSettingFormAutosave(): void

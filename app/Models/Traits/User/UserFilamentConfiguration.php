@@ -122,9 +122,11 @@ trait UserFilamentConfiguration
             return true;
         }
 
-        $twitchService = app(TwitchService::class);
+        if ($tenant->twitch_mod_permissions?->isEmpty() ?? true) {
+            return false;
+        }
 
-        // TODO: check if any twitch permission is set on broadcaster to allow twitch mods access
+        $twitchService = app(TwitchService::class);
 
         return $twitchService
             ->asSessionUser()
@@ -146,9 +148,17 @@ trait UserFilamentConfiguration
         }
 
         $twitchService = app(TwitchService::class);
-        $broadcasterIds->push($twitchService->asSessionUser()->getModeratedChannels());
 
-        // TODO: check if any twitch permission is set on broadcaster to allow twitch mods access
+        $twitchModChannelsIds = $twitchService
+            ->asSessionUser()
+            ->getModeratedChannels();
+
+        $allowedBroadcasters = Broadcaster::query()
+            ->whereGaveTwitchModPermission()
+            ->whereIn('id', $twitchModChannelsIds)
+            ->pluck('id');
+
+        $broadcasterIds = $broadcasterIds->merge($allowedBroadcasters);
 
         return Broadcaster::findMany($broadcasterIds->unique());
     }

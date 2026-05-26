@@ -34,6 +34,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 #[UsePolicy(BroadcasterPolicy::class)]
 #[WithoutIncrementing]
@@ -205,5 +206,23 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
 
         return $query->whereJsonContains('consent', $consents);
 
+    }
+
+    #[Scope]
+    protected function whereGaveTwitchModPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null)
+    {
+        if (! Feature::isActive(FeatureFlag::BroadcasterTenant)) {
+            return $query->whereRaw(DB::raw('1 = 0'));
+        }
+
+        if (! $permissions) {
+            return $query->whereJsonLength('twitch_mod_permissions', '>', '0');
+        }
+
+        if ($permissions instanceof BroadcasterPermission) {
+            $permissions = [$permissions];
+        }
+
+        return $query->whereJsonContains('twitch_mod_permissions', $permissions);
     }
 }
