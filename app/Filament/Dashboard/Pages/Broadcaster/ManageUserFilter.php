@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Pages\Broadcaster;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\FeatureFlag;
@@ -33,6 +34,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
 class ManageUserFilter extends Page implements HasActions, HasSchemas, HasTable
@@ -58,8 +60,7 @@ class ManageUserFilter extends Page implements HasActions, HasSchemas, HasTable
 
     public static function canAccess(): bool
     {
-        // later we can check for permission to this specific page here
-        return Feature::isActive(FeatureFlag::BroadcasterUserSubmissionFilterManager) && Filament::getTenant()?->id === auth()->user()?->id;
+        return Feature::isActive(FeatureFlag::BroadcasterUserSubmissionFilterManager) && Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::UserFilter]);
     }
 
     public function getTitle(): string|Htmlable
