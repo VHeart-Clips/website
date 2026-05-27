@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Tables;
 
 use App\Models\Contracts\HasFilamentTableColumn;
-use Closure;
 use Filament\Tables\Columns\Column;
-use LogicException;
 
 /**
  * A smart column for morphable relationships.
@@ -52,14 +50,5 @@ class MorphColumn extends Column
     public function getRelated(): mixed
     {
         return $this->getRecord()?->{$this->getName()};
-    }
-
-    public function sortable(Closure|array|bool $condition = true, ?Closure $query = null): static
-    {
-        if ($condition === false) {
-            return $this;
-        }
-
-        throw new LogicException('MorphColumn does not support sortable(). Define it on the parent table directly.');
     }
 }
