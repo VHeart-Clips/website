@@ -43,7 +43,7 @@ abstract class BaseSubmissionFilterRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->where('filterable_type', $this->getMorphClass()))
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('filterable_type', $this->getMorphClass())->with(['filterable']))
             ->deferLoading()
             ->columns([
                 ...$this->getFilterableColumns(),
