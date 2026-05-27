@@ -13,7 +13,7 @@ use Filament\Tables\Columns\Column;
  * Resolves the column definition from the related model if it implements {@see HasFilamentTableColumn}.
  * Falls back to `Model #ID` if no resolver is provided or the interface is not implemented.
  *
- * Note: this will only work with decorative features of filament, things like `->searchable()` won't work on this or the resolved columns.
+ * Note: this will only work with decorative features of filament, things like `->searchable()` won't work on this or the resolved columns automatically.
  */
 class MorphColumn extends Column
 {
