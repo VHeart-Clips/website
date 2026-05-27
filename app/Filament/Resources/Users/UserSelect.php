@@ -34,7 +34,7 @@ class UserSelect extends Select
                     return [];
                 }
 
-                if (! RateLimiter::attempt(self::class.':ratelimit:'.auth()->id(), maxAttempts: 5, callback: static fn () => true)) {
+                if (! RateLimiter::attempt(self::class.':ratelimit:'.auth()->id(), maxAttempts: 5, callback: static fn (): true => true)) {
                     Notification::make('rate-limited')
                         ->warning()
                         ->title(__('filament/inputs/user-select.errors.rate-limited'))
