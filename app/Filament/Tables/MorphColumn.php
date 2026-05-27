@@ -54,19 +54,6 @@ class MorphColumn extends Column
         return $this->getRecord()?->{$this->getName()};
     }
 
-    public function searchable(
-        Closure|array|string|bool $condition = true,
-        ?Closure $query = null,
-        bool $isIndividual = false,
-        bool $isGlobal = true,
-    ): static {
-        if ($condition === false) {
-            return $this;
-        }
-
-        throw new LogicException('MorphColumn does not support searchable(). Define it on the parent table directly.');
-    }
-
     public function sortable(Closure|array|bool $condition = true, ?Closure $query = null): static
     {
         if ($condition === false) {
