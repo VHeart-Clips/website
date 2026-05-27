@@ -15,6 +15,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use Throwable;
 
 class UserSelect extends Select
@@ -30,6 +31,15 @@ class UserSelect extends Select
             ->translateLabel()
             ->getSearchResultsUsing(function (string $search, TwitchService $twitchService): array {
                 if (blank($search)) {
+                    return [];
+                }
+
+                if (! RateLimiter::attempt(self::class.':ratelimit:'.auth()->id(), maxAttempts: 5, callback: static fn () => true)) {
+                    Notification::make('rate-limited')
+                        ->warning()
+                        ->title(__('filament/inputs/user-select.errors.rate-limited'))
+                        ->send();
+
                     return [];
                 }
 
