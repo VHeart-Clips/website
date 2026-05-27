@@ -9,22 +9,20 @@ use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\Resources\Users\UserSelect;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\User;
 use App\Support\FeatureFlag\Feature;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\Page;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -35,9 +33,10 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use UnitEnum;
 
-class ManageUserFilter extends Page implements HasActions, HasSchemas, HasTable
+class ManageUserFilter extends Page implements HasTable
 {
     use InteractsWithActions;
     use InteractsWithSchemas;
@@ -113,26 +112,20 @@ class ManageUserFilter extends Page implements HasActions, HasSchemas, HasTable
             ->toolbarActions([
                 CreateAction::make()
                     ->schema([
-                        Select::make('filterable_id')
-                            ->getSearchResultsUsing(
-                                fn (string $search) => User::where('name', 'ilike', "%{$search}%")
-                                    ->whereNotExists(function ($query): void {
-                                        $query->from('broadcaster_submission_filters')
-                                            ->whereColumn('broadcaster_submission_filters.filterable_id', (new User)->getTable().'.id')
-                                            ->where('broadcaster_submission_filters.filterable_type', $this->getMorphClass())
-                                            ->where('broadcaster_submission_filters.broadcaster_id', $this->getOwnerRecord()->id);
-                                    })
-                                    ->whereNot('id', $this->getOwnerRecord()->id)
-                                    ->limit(5)
-                                    ->pluck('name', 'id')
-                            )
-
-                            ->getOptionLabelUsing(fn (string $value) => User::find((int) $value)?->name)
-                            ->label('dashboard/settings/manage-user-filters.table.name')
-                            ->translateLabel()
+                        UserSelect::make('filterable_id')
                             ->columnSpanFull()
-                            ->searchable()
+                            ->rules([
+                                Rule::unique('broadcaster_submission_filters', 'filterable_id')
+                                    ->where('filterable_type', $this->getMorphClass())
+                                    ->where('broadcaster_id', $this->getOwnerRecord()->id),
+                                Rule::notIn([$this->getOwnerRecord()->id]),
+                            ])
+                            ->validationMessages([
+                                'unique' => __('dashboard/settings/manage-user-filters.forms.create.user-select.rules.unique'),
+                                'not_in' => __('dashboard/settings/manage-user-filters.forms.create.user-select.rules.not_in'),
+                            ])
                             ->required(),
+
                         Toggle::make('state')
                             ->label('dashboard/settings/manage-user-filters.table.state')
                             ->translateLabel()
