@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Auth\TwoFactor;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\TwoFactorSubmitRequest;
 use App\Models\User;
+use App\Support\Audit\Auditor;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,12 @@ class TwoFactorVerificationController extends Controller
         $request->ensureCodeIsValid($user);
         $request->session()->regenerate();
         Auth::login($user);
+
+        Auditor::make()
+            ->event('auth.login.success')
+            ->anonymize(true)
+            ->on($user)
+            ->save();
 
         return redirect()->intended(route('home'));
     }

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Auth\OAuth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\Audit\Auditor;
 use Carbon\CarbonInterval;
 use Exception;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
@@ -54,6 +55,11 @@ class HandleAuthProviderCallbackController extends Controller
                 ]);
             }
 
+            Auditor::make()
+                ->event('auth.login.denied')
+                ->on($user)
+                ->save();
+
             return to_route('login')
                 ->withErrors(['login' => __('user.disabled')]);
         }
@@ -85,6 +91,12 @@ class HandleAuthProviderCallbackController extends Controller
         }
 
         Auth::login($user);
+
+        Auditor::make()
+            ->event('auth.login.success')
+            ->anonymize(true)
+            ->on($user)
+            ->save();
 
         if ($user->wasRecentlyCreated) {
             $request->session()->flash('showTwitchPermissionsPrompt');
