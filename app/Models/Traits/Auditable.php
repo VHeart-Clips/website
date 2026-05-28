@@ -197,7 +197,7 @@ trait Auditable
                 unset($old[$deletedAtCol], $new[$deletedAtCol]);
             }
 
-            if ($event === 'updated' && collect($new)->diff($old)->isEmpty()) {
+            if ($event === 'updated' && $new === $old) {
                 return;
             }
         } elseif (in_array($event, ['created', 'deleted', 'forceDeleted'], true)) {
