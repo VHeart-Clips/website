@@ -41,11 +41,12 @@ class MoveToCompilationAction extends Action
                     ->required(),
             ])
             ->action(function (Clip $record, array $data, $livewire): void {
-                $alreadyExists = $record->compilations()
-                    ->wherePivot('compilation_id', $data['compilation_id'])
+                $pivotAlreadyExists = Clip\CompilationClip::query()
+                    ->where('compilation_id', $data['compilation_id'])
+                    ->where('clip_id', $record->id)
                     ->exists();
 
-                if ($alreadyExists) {
+                if ($pivotAlreadyExists) {
                     Notification::make('already-in-compilation')
                         ->title('Could not move Clip')
                         ->body('Clip is already in the selected Compilation')
@@ -56,13 +57,14 @@ class MoveToCompilationAction extends Action
                 }
 
                 try {
-                    $updated = $record->compilations()
-                        ->newPivotStatement()
+                    $pivot = Clip\CompilationClip::query()
                         ->where('compilation_id', $livewire->getOwnerRecord()->id)
                         ->where('clip_id', $record->id)
-                        ->update(['compilation_id' => $data['compilation_id']]);
+                        ->first();
 
-                    if ($updated !== 1) {
+                    if ($pivot instanceof Clip\CompilationClip) {
+                        $pivot->update(['compilation_id' => $data['compilation_id']]);
+                    } else {
                         Notification::make('did-not-update-properly')
                             ->title('Could not move Clip')
                             ->body('There was an error while moving clip, please contact IT if the issue persists')
@@ -74,7 +76,6 @@ class MoveToCompilationAction extends Action
                             'current_compilation_id' => $livewire->getOwnerRecord()->id,
                             'target_compilation_id' => $data['compilation_id'],
                             'user_id' => auth()->id(),
-                            'updated_count' => $updated,
                         ]);
 
                         $this->halt();
