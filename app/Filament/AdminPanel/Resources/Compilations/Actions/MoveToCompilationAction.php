@@ -62,7 +62,7 @@ class MoveToCompilationAction extends Action
                 } catch (Exception $e) {
                     report($e);
 
-                    Notification::make('already-in-compilation')
+                    Notification::make('unknown-error-while-moving')
                         ->title('Could not move Clip')
                         ->body('There was an error while moving clip, please contact IT if the issue persists')
                         ->danger()
