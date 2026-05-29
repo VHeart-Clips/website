@@ -12,7 +12,9 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class MoveToCompilationAction extends Action
 {
@@ -54,11 +56,31 @@ class MoveToCompilationAction extends Action
                 }
 
                 try {
-                    $record->compilations()
+                    $updated = $record->compilations()
                         ->newPivotStatement()
                         ->where('compilation_id', $livewire->getOwnerRecord()->id)
                         ->where('clip_id', $record->id)
                         ->update(['compilation_id' => $data['compilation_id']]);
+
+                    if ($updated !== 1) {
+                        Notification::make('did-not-update-properly')
+                            ->title('Could not move Clip')
+                            ->body('There was an error while moving clip, please contact IT if the issue persists')
+                            ->danger()
+                            ->send();
+
+                        Log::warning('Did not update CompilationClip properly', [
+                            'clip_id' => $record->id,
+                            'current_compilation_id' => $livewire->getOwnerRecord()->id,
+                            'target_compilation_id' => $data['compilation_id'],
+                            'user_id' => auth()->id(),
+                            'updated_count' => $updated,
+                        ]);
+
+                        $this->halt();
+                    }
+                } catch (Halt $e) {
+                    throw $e;
                 } catch (Exception $e) {
                     report($e);
 
