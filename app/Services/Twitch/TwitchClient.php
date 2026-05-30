@@ -100,7 +100,10 @@ class TwitchClient implements TwitchClientInterface
         ])
             ->{mb_strtolower($method)}(self::BASE_URL.'/'.mb_ltrim($endpoint, '/'), $params);
 
-        TwitchTracker::record($response, $endpoint, $method);
+        // Track App usage only for now
+        if (! $this->userContext instanceof TwitchUserContext) {
+            TwitchTracker::record($response, $endpoint, $method);
+        }
 
         if ($retryOn401 && $response->status() === 401) {
             $this->handleUnauthorized();
