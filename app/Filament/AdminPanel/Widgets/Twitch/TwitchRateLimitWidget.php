@@ -46,8 +46,8 @@ class TwitchRateLimitWidget extends StatsOverviewWidget
 
             StatsOverviewWidget\Stat::make('Errors (401/429 etc)', (string) $errors)
                 ->description(collect([200, 401, 429, 500])
-                    ->reject(fn ($code) => ($statuses[$code] ?? 0) === 0)
-                    ->map(fn ($code) => "$code: ".($statuses[$code] ?? 0))
+                    ->reject(fn ($code): bool => ($statuses[$code] ?? 0) === 0)
+                    ->map(fn ($code): string => "$code: ".($statuses[$code] ?? 0))
                     ->implode('  '))
                 ->descriptionIcon($errors > 0 ? LucideIcon::TriangleAlert : LucideIcon::CircleCheck)
                 ->color($errors > 0 ? 'danger' : 'success'),

@@ -63,11 +63,11 @@ class TwitchTracker
 
         for ($i = $minutes - 1; $i >= 0; $i--) {
             $bucket = $now->copy()->subMinutes($i)->format('Y-m-d-H-i');
-            $keys = Redis::keys(self::WINDOW_PREFIX."endpoint:*:{$bucket}");
+            $keys = Redis::keys(self::WINDOW_PREFIX."endpoint:*:$bucket");
 
             foreach ($keys as $key) {
-                $unprefixed = str_starts_with($key, $prefix) ? mb_substr($key, mb_strlen($prefix)) : $key;
-                $label = preg_replace('/^twitch:window:endpoint:(.+):\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$/', '$1', $unprefixed);
+                $unprefixed = str_starts_with((string) $key, (string) $prefix) ? mb_substr((string) $key, mb_strlen((string) $prefix)) : $key;
+                $label = preg_replace('/^twitch:window:endpoint:(.+):\d{4}-\d{2}-\d{2}-\d{2}-\d{2}$/', '$1', (string) $unprefixed);
                 $counts[$label] = ($counts[$label] ?? 0) + (int) Redis::get($unprefixed);
             }
         }
@@ -115,7 +115,7 @@ class TwitchTracker
         Redis::incr($bucket);
         Redis::expire($bucket, 3660);
 
-        $endpointKey = self::WINDOW_PREFIX."endpoint:{$method}:{$endpoint}:".now()->format('Y-m-d-H-i');
+        $endpointKey = self::WINDOW_PREFIX."endpoint:$method:$endpoint:".now()->format('Y-m-d-H-i');
         Redis::incr($endpointKey);
         Redis::expire($endpointKey, 3660);
     }

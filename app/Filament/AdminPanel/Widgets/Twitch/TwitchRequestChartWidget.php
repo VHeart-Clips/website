@@ -39,7 +39,7 @@ class TwitchRequestChartWidget extends ChartWidget
                 ],
             ],
             'labels' => array_map(
-                static fn (string $bucket) => mb_substr($bucket, -5),
+                static fn (string $bucket): string => mb_substr($bucket, -5),
                 array_keys($counts)
             ),
         ];
