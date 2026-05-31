@@ -78,7 +78,7 @@ class ManageCategoryFilter extends Page implements HasTable
             ->query($this->getBaseQuery())
             ->columns([
                 ImageColumn::make('box_art')
-                    ->state(fn (BroadcasterSubmissionFilter $record) => $record->filterable?->proxiedContentUrl())
+                    ->state(fn (BroadcasterSubmissionFilter $record) => $record->filterable instanceof Category ? $record->filterable->getBoxArt() : null)
                     ->label('')
                     ->imageHeight(100)
                     ->grow(false)
