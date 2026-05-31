@@ -18,6 +18,7 @@ return [
             'manage-user-filter' => 'Manage User Filter',
             'manage-category-filter' => 'Manage Category Filter',
             'manage-team-member' => 'Manage Team Member',
+            'removal-requests' => 'Removal Request',
         ],
         'broadcaster-permission' => [
             'clips' => 'Clips',

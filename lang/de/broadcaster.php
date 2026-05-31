@@ -18,6 +18,7 @@ return [
             'manage-user-filter' => 'User Filter Verwalten',
             'manage-category-filter' => 'Kategorie Filter Verwalten',
             'manage-team-member' => 'Team Mitglieder Verwalten',
+            'removal-requests' => 'Entfernungs-Anfragen',
         ],
         'broadcaster-permission' => [
             'clips' => 'Clips',
