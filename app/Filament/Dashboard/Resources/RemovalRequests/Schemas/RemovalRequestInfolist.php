@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Resources\RemovalRequests\Schemas;
 
-use App\Enums\Filament\LucideIcon;
 use App\Filament\Infolists\Components\TwitchEmbedEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
@@ -36,20 +35,15 @@ class RemovalRequestInfolist
                                 Grid::make(3)
                                     ->schema([
                                         TextEntry::make('status')
-                                            ->icon(LucideIcon::Clipboard)
                                             ->label('dashboard/resources/removal-requests.infolist.status')
-                                            ->translateLabel()
-                                            ->badge(),
-                                        TextEntry::make('resolved_by.name')
-                                            ->icon(LucideIcon::Clipboard)
+                                            ->translateLabel(),
+                                        TextEntry::make('resolver.name')
                                             ->label('dashboard/resources/removal-requests.infolist.resolved_by')
-                                            ->translateLabel()
-                                            ->badge(),
+                                            ->translateLabel(),
                                         TextEntry::make('resolved_at')
-                                            ->icon(LucideIcon::Clipboard)
                                             ->label('dashboard/resources/removal-requests.infolist.resolved_at')
-                                            ->translateLabel()
-                                            ->badge(),
+                                            ->dateTime()
+                                            ->translateLabel(),
                                     ]),
 
                                 TextEntry::make('details')
