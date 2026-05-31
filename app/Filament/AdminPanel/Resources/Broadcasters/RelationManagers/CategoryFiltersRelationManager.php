@@ -33,7 +33,7 @@ class CategoryFiltersRelationManager extends BaseSubmissionFilterRelationManager
     {
         return [
             ImageColumn::make('box_art')
-                ->state(fn (BroadcasterSubmissionFilter $record) => $record->filterable instanceof Category ? $record->filterable->getBoxArt() : null)
+                ->state(fn (BroadcasterSubmissionFilter $record): ?string => $record->filterable instanceof Category ? $record->filterable->getBoxArt() : null)
                 ->label('')
                 ->imageHeight(100)
                 ->grow(false)
