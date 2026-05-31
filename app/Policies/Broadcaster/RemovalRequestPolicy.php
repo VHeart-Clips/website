@@ -11,7 +11,7 @@ use App\Models\User;
 
 class RemovalRequestPolicy
 {
-    public function viewAny(User $user, Broadcaster|User|null $broadcaster): bool
+    public function viewAny(User $user, Broadcaster|User|null $broadcaster = null): bool
     {
         if ($user->id === $broadcaster?->id) {
             return true;
