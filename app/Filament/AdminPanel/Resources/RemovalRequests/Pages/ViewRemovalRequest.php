@@ -14,7 +14,7 @@ class ViewRemovalRequest extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            //
+            RemovalRequestResource::resourceLinkActionGroup()->button(),
         ];
     }
 }
