@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Enums;
 
 use App\Models\Category;
-use App\Models\Clip;
 use App\Models\Contracts\ExternalProxyable;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +12,6 @@ use Illuminate\Support\Str;
 
 enum ExternalContentProxyType: string
 {
-    case TwitchClip = 'clip';
     case TwitchUser = 'user';
     case TwitchCategory = 'category';
 
@@ -24,7 +22,6 @@ enum ExternalContentProxyType: string
     {
         return match ($this) {
             self::TwitchCategory => Category::class,
-            self::TwitchClip => Clip::class,
             self::TwitchUser => User::class,
         };
     }
