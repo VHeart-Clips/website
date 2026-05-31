@@ -9,6 +9,7 @@ use App\Filament\Tables\MorphColumn;
 use App\Models\Broadcaster\RemovalRequest;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -33,7 +34,8 @@ class RemovalRequestsTable
                     ->multiple(),
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()
+                    ->modalWidth(Width::SixExtraLarge),
                 DeleteAction::make()
                     ->authorize(fn (RemovalRequest $record): bool => $record->status === RemovalRequestStatus::Pending && $record->claimed_by === null),
             ])
