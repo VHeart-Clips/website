@@ -35,7 +35,7 @@ class RemovalRequestsTable
             ->recordActions([
                 ViewAction::make(),
                 DeleteAction::make()
-                    ->authorize(fn (RemovalRequest $record) => $record->status === RemovalRequestStatus::Pending && $record->claimed_by === null),
+                    ->authorize(fn (RemovalRequest $record): bool => $record->status === RemovalRequestStatus::Pending && $record->claimed_by === null),
             ])
             ->toolbarActions([
                 //
