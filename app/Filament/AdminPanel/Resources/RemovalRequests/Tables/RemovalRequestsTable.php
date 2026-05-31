@@ -6,8 +6,10 @@ namespace App\Filament\AdminPanel\Resources\RemovalRequests\Tables;
 
 use App\Enums\Broadcaster\RemovalRequestStatus;
 use App\Filament\Tables\MorphColumn;
+use App\Models\Broadcaster\RemovalRequest;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +21,7 @@ class RemovalRequestsTable
         return $table
             ->modifyQueryUsing(fn (Builder $query) => $query->with([
                 'clip',
-                'broadcaster',
+                'broadcaster.user',
                 'claimer',
                 'resolver',
             ]))
@@ -59,6 +61,42 @@ class RemovalRequestsTable
                         false: fn (Builder $query) => $query->whereNot('status', RemovalRequestStatus::Pending),
                         blank: fn (Builder $query) => $query->where('status', RemovalRequestStatus::Pending),
                     ),
+                SelectFilter::make('broadcaster')
+                    ->relationship(
+                        'broadcaster.user',
+                        'name',
+                        fn (Builder $query) => $query->whereIn(
+                            column: 'id',
+                            values: RemovalRequest::select('broadcaster_id')->whereNotNull('broadcaster_id')
+                        )
+                    )
+                    ->optionsLimit(10)
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('claimer')
+                    ->relationship(
+                        'claimer',
+                        'name',
+                        fn (Builder $query) => $query->whereIn(
+                            column: 'id',
+                            values: RemovalRequest::select('claimed_by')->whereNotNull('claimed_by')
+                        )
+                    )
+                    ->optionsLimit(10)
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('resolver')
+                    ->relationship(
+                        'claimer',
+                        'name',
+                        fn (Builder $query) => $query->whereIn(
+                            column: 'id',
+                            values: RemovalRequest::select('resolved_by')->whereNotNull('resolved_by')
+                        )
+                    )
+                    ->optionsLimit(10)
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 ViewAction::make(),
