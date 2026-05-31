@@ -6,12 +6,14 @@ namespace App\Filament\Dashboard\Resources\RemovalRequests;
 
 use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Broadcaster\DashboardNavigationItem;
+use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Dashboard\Resources\RemovalRequests\Pages\ListRemovalRequests;
 use App\Filament\Dashboard\Resources\RemovalRequests\Schemas\RemovalRequestForm;
 use App\Filament\Dashboard\Resources\RemovalRequests\Schemas\RemovalRequestInfolist;
 use App\Filament\Dashboard\Resources\RemovalRequests\Tables\RemovalRequestsTable;
 use App\Models\Broadcaster\RemovalRequest;
+use App\Support\FeatureFlag\Feature;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Resources\Resource;
@@ -44,7 +46,7 @@ class RemovalRequestResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::RemovalRequests]);
+        return Feature::isActive(FeatureFlag::BroadcasterRemovalRequestsDashboard) && Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::RemovalRequests]);
     }
 
     public static function form(Schema $schema): Schema
