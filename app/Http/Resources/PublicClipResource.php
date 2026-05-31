@@ -24,25 +24,25 @@ class PublicClipResource extends JsonResource
             'id' => $this->id,
             'slug' => $this->twitch_id,
             'title' => $this->title,
-            'thumbnail_url' => $this->proxiedContentUrl(),
+            'thumbnail_url' => $this->thumbnail_url,
             'clip_url' => $this->getClipUrl(),
 
             'broadcaster' => $this->whenLoaded('owner', [
                 'id' => $this->broadcaster_id,
                 'name' => $this->owner->name,
-                'avatar' => $this->owner->proxiedContentUrl(),
+                'avatar' => $this->owner->avatar_url,
             ]),
 
             'clipper' => $this->whenHas('creator', [
                 'id' => $this->creator_id,
                 'name' => $this->creator?->name,
-                'avatar' => $this->creator?->proxiedContentUrl(),
+                'avatar' => $this->creator?->avatar_url,
             ]),
 
             'submitter' => $this->whenHas('submitter', [
                 'id' => $this->submitter_id,
                 'name' => $this->submitter?->name,
-                'avatar' => $this->submitter?->proxiedContentUrl(),
+                'avatar' => $this->submitter?->avatar_url,
             ]),
 
             'category' => $this->whenLoaded('category', $this->category->toResource()),

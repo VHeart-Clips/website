@@ -25,7 +25,7 @@ class AuthenticatedUserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
-            'avatar' => $this->proxiedContentUrl(),
+            'avatar' => $this->avatar_url,
             'has_email_authentication' => $this->has_email_authentication,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
