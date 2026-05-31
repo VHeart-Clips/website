@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Enums\Broadcaster;
 
+use App\Enums\Filament\LucideIcon;
 use App\Enums\Traits\HasTranslatedLabel;
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
+use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Support\Htmlable;
 
-enum RemovalRequestStatus: int implements HasColor, HasLabel
+enum RemovalRequestStatus: int implements HasColor, HasIcon, HasLabel
 {
     use HasTranslatedLabel;
 
@@ -49,6 +53,15 @@ enum RemovalRequestStatus: int implements HasColor, HasLabel
             self::Approved,
             self::Rejected,
         ];
+    }
+
+    public function getIcon(): string|BackedEnum|Htmlable|null
+    {
+        return match ($this) {
+            self::Pending => LucideIcon::Hourglass,
+            self::Approved => LucideIcon::Check,
+            self::Rejected => LucideIcon::X,
+        };
     }
 
     private function getTranslatableEnumLabelPrefix(): string
