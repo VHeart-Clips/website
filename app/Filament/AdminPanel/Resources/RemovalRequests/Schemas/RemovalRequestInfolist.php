@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\RemovalRequests\Schemas;
 
-use App\Enums\Filament\LucideIcon;
 use App\Filament\Actions\ResourceLinkAction;
 use App\Filament\Infolists\Components\TwitchEmbedEntry;
 use App\Models\Broadcaster\RemovalRequest;
@@ -34,10 +33,8 @@ class RemovalRequestInfolist
                                     ->wrap(),
 
                                 TextEntry::make('status')
-                                    ->icon(LucideIcon::Clipboard)
                                     ->label('admin/resources/removal-requests.infolist.status')
-                                    ->translateLabel()
-                                    ->badge(),
+                                    ->translateLabel(),
 
                                 Grid::make()
                                     ->schema([
