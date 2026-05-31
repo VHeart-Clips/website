@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Policies\Broadcaster;
 
+use App\Enums\Broadcaster\RemovalRequestStatus;
 use App\Enums\Permission;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Broadcaster\RemovalRequest;
@@ -51,6 +52,25 @@ class RemovalRequestPolicy
     public function deleteAny(User $user): bool
     {
         return $user->can(Permission::DeleteAnyRemovalRequest);
+    }
+
+    public function adminClaimAction(User $user, RemovalRequest $removalRequest): bool
+    {
+        return $removalRequest->claimed_by === null && $user->can(Permission::UpdateAnyRemovalRequest);
+    }
+
+    public function adminUnclaimAction(User $user, RemovalRequest $removalRequest): bool
+    {
+        return $removalRequest->claimed_by === $user->id && $removalRequest->status === RemovalRequestStatus::Pending;
+    }
+
+    public function adminForceClaimAction(User $user, RemovalRequest $removalRequest): bool
+    {
+        if ($removalRequest->claimed_by === null || $removalRequest->claimed_by === $user->id) {
+            return false;
+        }
+
+        return $user->can(Permission::UpdateAnyRemovalRequest);
     }
 
     public function restore(User $user, RemovalRequest $removalRequest): bool
