@@ -37,7 +37,7 @@ class RemovalRequestsTable
                 ViewAction::make()
                     ->modalWidth(Width::SixExtraLarge),
                 DeleteAction::make()
-                    ->authorize(fn (RemovalRequest $record): bool => $record->status === RemovalRequestStatus::Pending && $record->claimed_by === null),
+                    ->disabled(fn (RemovalRequest $record): bool => $record->status !== RemovalRequestStatus::Pending || $record->claimed_by !== null),
             ])
             ->toolbarActions([
                 //
