@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\RemovalRequests;
 
 use App\Enums\Filament\LucideIcon;
 use App\Enums\NavigationGroup;
+use App\Filament\Actions\ResourceLinkAction;
 use App\Filament\AdminPanel\Resources\RemovalRequests\Pages\ListRemovalRequests;
 use App\Filament\AdminPanel\Resources\RemovalRequests\Pages\ViewRemovalRequest;
 use App\Filament\AdminPanel\Resources\RemovalRequests\RelationManagers\RemovalRequestCompilationsRelationManager;
@@ -13,6 +14,7 @@ use App\Filament\AdminPanel\Resources\RemovalRequests\Schemas\RemovalRequestInfo
 use App\Filament\AdminPanel\Resources\RemovalRequests\Tables\RemovalRequestsTable;
 use App\Models\Broadcaster\RemovalRequest;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -59,5 +61,45 @@ class RemovalRequestResource extends Resource
             'index' => ListRemovalRequests::route('/'),
             'view' => ViewRemovalRequest::route('/{record}'),
         ];
+    }
+
+    public static function resourceLinkActionGroup(): ActionGroup
+    {
+        return ActionGroup::make([
+            ResourceLinkAction::make()
+                ->relationship('clip')
+                ->label('admin/resources/removal-requests.actions.resource-link-action.items.clip')
+                ->openUrlInNewTab()
+                ->translateLabel(),
+            ActionGroup::make([
+                ResourceLinkAction::make()
+                    ->relationship('broadcaster')
+                    ->label('admin/resources/removal-requests.actions.resource-link-action.items.broadcaster')
+                    ->openUrlInNewTab()
+                    ->translateLabel(),
+                ResourceLinkAction::make()
+                    ->relationship('broadcaster.user')
+                    ->label('admin/resources/removal-requests.actions.resource-link-action.items.user')
+                    ->openUrlInNewTab()
+                    ->translateLabel(),
+            ])
+                ->label('admin/resources/removal-requests.actions.resource-link-action.items.broadcaster')
+                ->icon(LucideIcon::DotSquare)
+                ->translateLabel(),
+            ResourceLinkAction::make()
+                ->relationship('claimer')
+                ->label('admin/resources/removal-requests.actions.resource-link-action.items.claimer')
+                ->openUrlInNewTab()
+                ->translateLabel(),
+            ResourceLinkAction::make()
+                ->relationship('resolver')
+                ->label('admin/resources/removal-requests.actions.resource-link-action.items.resolver')
+                ->openUrlInNewTab()
+                ->translateLabel(),
+        ])
+            ->label('admin/resources/removal-requests.actions.resource-link-action.group-label')
+            ->icon(LucideIcon::ExternalLink)
+            ->translateLabel()
+            ->link();
     }
 }
