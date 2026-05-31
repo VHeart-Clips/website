@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Resources\RemovalRequests\Schemas;
 
+use App\Enums\Broadcaster\RemovalRequestStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Filament\Resources\Clips\ClipSelect;
 use App\Models\Broadcaster\RemovalRequest;
@@ -40,7 +41,11 @@ class RemovalRequestForm
                         ? $query->whereHas('compilations', fn (Builder $q) => $q->whereIn('status', CompilationStatus::getVoteDisabledCases())->where('compilations.id', $compilationId))
                         : $query->whereHas('compilations', fn (Builder $q) => $q->whereIn('status', CompilationStatus::getVoteDisabledCases()))
                     )
-                    ->disableOptionWhen(fn (string|int $value) => RemovalRequest::where('clip_id', $value)->exists())
+                    ->disableOptionWhen(fn (string|int $value) => RemovalRequest::query()
+                        ->whereNot('status', RemovalRequestStatus::Rejected)
+                        ->where('clip_id', $value)
+                        ->exists()
+                    )
                     ->preload()
                     ->required(),
                 Textarea::make('details')
