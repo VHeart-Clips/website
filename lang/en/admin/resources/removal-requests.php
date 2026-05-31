@@ -41,6 +41,17 @@ return [
             ],
         ],
     ],
-    'actions' => [],
+    'actions' => [
+        'resource-link-action' => [
+            'group-label' => 'Open',
+            'items' => [
+                'clip' => 'Clip',
+                'broadcaster' => 'Broadcaster',
+                'user' => 'User',
+                'claimer' => 'Claimer',
+                'resolver' => 'Resolver',
+            ],
+        ],
+    ],
     'notifications' => [],
 ];
