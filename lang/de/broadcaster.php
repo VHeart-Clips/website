@@ -25,12 +25,14 @@ return [
             'submissions-setting' => 'Submission Settings',
             'category-filter' => 'Kategorie Filter',
             'user-filter' => 'User Filter',
+            'removal-requests' => 'Entfernungs-Anfragen',
         ],
         'broadcaster-permission-description' => [
             'clips' => 'View/Edit Clips',
             'submissions-setting' => 'View/Edit Submission Settings',
             'category-filter' => 'View/Edit Kategorie Filter',
             'user-filter' => 'View/Edit User Filter',
+            'removal-requests' => 'Verwalten deiner Entfernungs-Anfragen',
         ],
     ],
 ];

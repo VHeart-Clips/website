@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Dashboard\Resources\RemovalRequests;
 
+use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Dashboard\Resources\RemovalRequests\Pages\ListRemovalRequests;
@@ -43,7 +44,7 @@ class RemovalRequestResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Gate::allows('dashboardAccess', [Filament::getTenant()]);
+        return Gate::allows('dashboardAccess', [Filament::getTenant(), BroadcasterPermission::RemovalRequests]);
     }
 
     public static function form(Schema $schema): Schema
