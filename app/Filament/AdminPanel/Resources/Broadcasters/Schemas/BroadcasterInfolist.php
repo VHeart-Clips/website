@@ -6,7 +6,6 @@ namespace App\Filament\AdminPanel\Resources\Broadcasters\Schemas;
 
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Broadcaster\BroadcasterPermission;
-use App\Models\Broadcaster\Broadcaster;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -33,8 +32,7 @@ class BroadcasterInfolist
         return Section::make()
             ->columns(4)
             ->schema([
-                ImageEntry::make('user.avatar')
-                    ->getStateUsing(fn (Broadcaster $record) => $record->user->proxiedContentUrl())
+                ImageEntry::make('user.avatar_url')
                     ->columnSpan(1)
                     ->label('Avatar')
                     ->hiddenLabel()
