@@ -86,7 +86,7 @@ class Clip extends Model implements Commentable, ExternalProxyable, HasFilamentI
         return Split::make([
             ClipColumns::thumbnail()
                 ->imageHeight(30)
-                ->getStateUsing(fn (Model $record) => $record->$name->proxiedContentUrl()),
+                ->getStateUsing(fn (Model $record) => $record->$name->thumbnail_url),
             Split::make([
                 ClipColumns::title()->make("{$name}.title"),
             ]),
