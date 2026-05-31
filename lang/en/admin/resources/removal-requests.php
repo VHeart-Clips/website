@@ -52,6 +52,43 @@ return [
                 'resolver' => 'Resolver',
             ],
         ],
+        'claim' => [
+            'label' => 'Claim Request',
+        ],
+        'unclaim' => [
+            'label' => 'Unclaim Request',
+        ],
+        'force-claim' => [
+            'label' => 'Takeover Request',
+        ],
+        'reset-request' => [
+            'label' => 'Reset Request',
+        ],
+        'resolve-request-group' => [
+            'label' => 'Resolve Request',
+        ],
     ],
-    'notifications' => [],
+    'notifications' => [
+        'claimed' => [
+            'title' => 'You have claimed this request',
+        ],
+        'force-claimed' => [
+            'title' => 'This Removal request has been forcefully Claimed',
+            'body' => 'This Removal request was claimed by :name :ago',
+        ],
+        'already-claimed' => [
+            'title' => 'Failed to Claim this Removal Request',
+            'body' => 'This Removal request was already claimed by :name :ago',
+        ],
+        'unclaimed' => [
+            'title' => 'Failed to Claim this Removal Request',
+            'body' => 'This Removal request was already claimed by :name :ago',
+        ],
+        'resolved' => [
+            'title' => 'This Removal request has been :status',
+        ],
+        'reset-request' => [
+            'title' => 'This Removal request has been reset',
+        ],
+    ],
 ];
