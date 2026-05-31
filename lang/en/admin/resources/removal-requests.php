@@ -32,7 +32,15 @@ return [
             'status' => 'Removal Status',
         ],
     ],
-    'filters' => [],
+    'filters' => [
+        'resolved' => [
+            'options' => [
+                'true' => 'Include resolved',
+                'false' => 'Only resolved',
+                'placeholder' => 'Hide resolved',
+            ],
+        ],
+    ],
     'actions' => [],
     'notifications' => [],
 ];
