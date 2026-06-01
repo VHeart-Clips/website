@@ -22,4 +22,14 @@ return [
             'false' => 'Only Blocked',
         ],
     ],
+    'forms' => [
+        'create' => [
+            'user-select' => [
+                'rules' => [
+                    'unique' => 'This user is already in your filter list.',
+                    'not_in' => 'You can not add yourself to your own filter list.',
+                ],
+            ],
+        ],
+    ],
 ];
