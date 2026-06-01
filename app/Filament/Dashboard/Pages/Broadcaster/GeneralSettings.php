@@ -10,6 +10,7 @@ use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\Dashboard\Actions\ApplyDefaultStatusAction;
 use App\Models\Broadcaster\Broadcaster;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -103,6 +104,9 @@ class GeneralSettings extends Page implements HasForms
                 ])
                     ->live()
                     ->afterStateUpdated(fn () => $this->defaultClipStatusFormAutosave()),
+                ])
+                ->headerActions([
+                    ApplyDefaultStatusAction::make(),
                 ]),
         ])->statePath('defaultClipStatusFormData')
             ->hidden(fn (): bool => ! Gate::allows('dashboardAccess', [Filament::getTenant()]));
