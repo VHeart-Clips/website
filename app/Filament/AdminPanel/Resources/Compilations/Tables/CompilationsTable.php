@@ -70,7 +70,7 @@ class CompilationsTable
                     ->sortable(),
 
                 TextColumn::make('clips_sum_duration')
-                    ->formatStateUsing(fn (float $state): string => gmdate('i:s', (int) $state))
+                    ->formatStateUsing(fn (float $state): string => gmdate('i:s', (int) round($state)))
                     ->label('admin/resources/compilations.table.columns.clips_sum_duration')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->sum('clips', 'duration')
@@ -80,7 +80,7 @@ class CompilationsTable
                     ->alignCenter()
                     ->sortable(),
                 TextColumn::make('clips_est_duration')
-                    ->formatStateUsing(fn (float $state): string => gmdate('i:s', (int) floor($state * 0.6)))
+                    ->formatStateUsing(fn (float $state): string => gmdate('i:s', (int) round($state)))
                     ->label('admin/resources/compilations.table.columns.clips_est_duration')
                     ->sum('clips as clips_est_duration', 'duration')
                     ->toggleable(isToggledHiddenByDefault: true) // hidden by default because its likely very off, but nice to have i guess
@@ -91,7 +91,7 @@ class CompilationsTable
                     ->sortable(),
                 TextColumn::make('clips_avg_duration')
                     ->label('admin/resources/compilations.table.columns.clips_avg_duration')
-                    ->formatStateUsing(fn (int $state): string => round($state).'s')
+                    ->formatStateUsing(fn (float $state): string => round($state).'s')
                     ->avg('clips', 'duration')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->placeholder('No Clips :(')
