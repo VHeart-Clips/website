@@ -20,7 +20,7 @@ readonly class CategoryDto implements TwitchDtoInterface
         return new static(
             id: (int) $data['id'],
             name: $data['name'],
-            boxArtUrl: $data['box_art_url'],
+            boxArtUrl: str_replace('52x72', '{width}x{height}', $data['box_art_url']),
         );
     }
 

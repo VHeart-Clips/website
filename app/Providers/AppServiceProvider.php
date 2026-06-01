@@ -19,6 +19,7 @@ use App\Models\Faq\FaqEntry;
 use App\Models\Report;
 use App\Models\Role;
 use App\Models\RolePermission;
+use App\Models\ShortUrl;
 use App\Models\User;
 use App\Models\Vote;
 use App\Providers\Socialite\TwitchSocialiteProvider;
@@ -136,6 +137,7 @@ class AppServiceProvider extends ServiceProvider
             'report' => Report::class,
             'role' => Role::class,
             'role_permission' => RolePermission::class,
+            'short_url' => ShortUrl::class,
             'user' => User::class,
             'vote' => Vote::class,
             'broadcaster' => Broadcaster::class,
@@ -217,8 +219,6 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
-
-        RateLimiter::for('image-proxy', static fn (Request $request): Limit => Limit::perMinute(60)->by($request->ip()));
 
         RateLimiter::for('jobs:reports:check-removed-clip', static fn (CheckForRemovedClipJob $job) => Limit::perHour(2)->by($job->clip?->id));
     }

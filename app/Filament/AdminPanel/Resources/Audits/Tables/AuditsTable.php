@@ -18,6 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class AuditsTable
 {
@@ -29,8 +30,8 @@ class AuditsTable
                 'auditable' => fn ($q) => $q->withTrashed(),
             ]))
             ->columns([
-                MorphColumn::make('causer')->placeholder('System'),
-                MorphColumn::make('auditable')->placeholder('Removed'),
+                MorphColumn::make('causer')->placeholder(fn (Audit $audit): string => $audit->causer_type ? Str::title($audit->causer_type).'#'.$audit->causer_id : 'System'),
+                MorphColumn::make('auditable')->placeholder(fn (Audit $audit): string => Str::title($audit->auditable_type).'#'.$audit->auditable_id),
 
                 TextColumn::make('event')
                     ->color(fn (string $state): string => match ($state) {
