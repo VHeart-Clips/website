@@ -8,12 +8,16 @@ use App\Models\Audit;
 use App\Support\Audit\Auditor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use JsonException;
+use RuntimeException;
 
 /**
  * Set up a model for Auditing
+ *
+ * **Does not support Pivot models yet, use the Auditor helper manually for changes related to Pivots or extend the extra data stuff**
  *
  * @property string[] $auditExclude Attributes/columns to exclude from the audit log. Hidden attributes are excluded by default.
  * @property string[] $auditExcludeEvents Events to ignore (e.g. ['created', 'updated', 'deleted', 'restored', 'forceDeleted']).
@@ -50,6 +54,10 @@ trait Auditable
     public static function bootAuditable(): void
     {
         static::created(function (Model $model): void {
+            if ($model instanceof Pivot) {
+                throw new RuntimeException('Pivot do not support being Audited (yet): '.$model::class);
+            }
+
             if (in_array('created', $model->getIgnoredAuditEvents(), true)) {
                 return;
             }
@@ -60,6 +68,10 @@ trait Auditable
         });
 
         static::updating(function (Model $model): void {
+            if ($model instanceof Pivot) {
+                throw new RuntimeException('Pivot do not support being Audited (yet): '.$model::class);
+            }
+
             $event = $model->isRestoringAuditEvent() ? 'restored' : 'updated';
             if (in_array($event, $model->getIgnoredAuditEvents(), true)) {
                 return;
@@ -71,6 +83,10 @@ trait Auditable
         });
 
         static::updated(function (Model $model): void {
+            if ($model instanceof Pivot) {
+                throw new RuntimeException('Pivot do not support being Audited (yet): '.$model::class);
+            }
+
             $event = $model->isRestoringAuditEvent() ? 'restored' : 'updated';
             if (in_array($event, $model->getIgnoredAuditEvents(), true)) {
                 return;
@@ -85,6 +101,10 @@ trait Auditable
         });
 
         static::deleted(function (Model $model): void {
+            if ($model instanceof Pivot) {
+                throw new RuntimeException('Pivot do not support being Audited (yet): '.$model::class);
+            }
+
             $event = (in_array(SoftDeletes::class, class_uses_recursive(static::class), true) && $model->isForceDeleting())
                 ? 'forceDeleted'
                 : 'deleted';
