@@ -47,6 +47,15 @@ enum TwitchEndpoints: string
     case GetClipsDownload = 'clips/downloads';
 
     /**
+     * Get top 100 Games on twitch
+     *
+     * - Requires app or user access token.
+     *
+     * @link https://dev.twitch.tv/docs/api/reference#get-top-games
+     */
+    case GetTopGames = 'games/top';
+
+    /**
      * Gets information about specified categories or games.
      *
      * You may get up to 100 categories or games by specifying their ID or name. You may specify all IDs, all names, or a combination of IDs and names. If you specify a combination of IDs and names, the total number of IDs and names must not exceed 100.
@@ -147,7 +156,7 @@ enum TwitchEndpoints: string
         return match ($this) {
             self::GetClips => ClipDto::class,
             self::SearchCategories => CategoryDto::class,
-            self::GetGames => GameDto::class,
+            self::GetTopGames, self::GetGames => GameDto::class,
             self::GetClipsDownload => ClipDownloadDto::class,
             self::SearchChannels => ChannelDto::class,
             self::GetStreams => StreamDto::class,

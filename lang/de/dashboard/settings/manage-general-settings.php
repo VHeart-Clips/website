@@ -31,4 +31,26 @@ return [
             ],
         ],
     ],
+    'actions' => [
+        'apply_default_status' => [
+            'label' => 'Anwenden',
+            'modal' => [
+                'heading' => 'Standard-Status auf Clips anwenden',
+                'description' => 'Überschreibt Clip-Status mit deinem aktuellen Standard (:status).',
+                'submit' => 'Anwenden',
+                'helper_text' => 'Alle ausgewählten Clips werden auf deinen Standard-Status gesetzt. Das kann nicht automatisch rückgängig gemacht werden. Clips welche bereits einer Compilation angehören werden immer ausgenommen sein.',
+            ],
+            'notifications' => [
+                'none_matched' => 'Keine Clips mit den gewählten Status gefunden',
+                'success' => [
+                    'title' => ':count Clip aktualisiert|:count Clips aktualisiert',
+                    'body' => ':count Clip wurde auf :status gesetzt|:count Clips wurden auf :status gesetzt',
+                ],
+                'rate_limited' => [
+                    'title' => 'Bitte warten',
+                    'body' => 'Versuche es in :seconds sekunden erneut.',
+                ],
+            ],
+        ],
+    ],
 ];
