@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Tables;
 
 use App\Models\Contracts\HasFilamentTableColumn;
-use Closure;
 use Filament\Tables\Columns\Column;
-use LogicException;
 
 /**
  * A smart column for morphable relationships.
@@ -15,7 +13,7 @@ use LogicException;
  * Resolves the column definition from the related model if it implements {@see HasFilamentTableColumn}.
  * Falls back to `Model #ID` if no resolver is provided or the interface is not implemented.
  *
- * Note: this will only work with decorative features of filament, things like `->searchable()` won't work on this or the resolved columns.
+ * Note: this will only work with decorative features of filament, things like `->searchable()` won't work on this or the resolved columns automatically.
  */
 class MorphColumn extends Column
 {
@@ -52,27 +50,5 @@ class MorphColumn extends Column
     public function getRelated(): mixed
     {
         return $this->getRecord()?->{$this->getName()};
-    }
-
-    public function searchable(
-        Closure|array|string|bool $condition = true,
-        ?Closure $query = null,
-        bool $isIndividual = false,
-        bool $isGlobal = true,
-    ): static {
-        if ($condition === false) {
-            return $this;
-        }
-
-        throw new LogicException('MorphColumn does not support searchable(). Define it on the parent table directly.');
-    }
-
-    public function sortable(Closure|array|bool $condition = true, ?Closure $query = null): static
-    {
-        if ($condition === false) {
-            return $this;
-        }
-
-        throw new LogicException('MorphColumn does not support sortable(). Define it on the parent table directly.');
     }
 }
