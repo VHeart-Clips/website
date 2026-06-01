@@ -18,18 +18,21 @@ return [
             'manage-user-filter' => 'Manage User Filter',
             'manage-category-filter' => 'Manage Category Filter',
             'manage-team-member' => 'Manage Team Member',
+            'removal-requests' => 'Removal Request',
         ],
         'broadcaster-permission' => [
             'clips' => 'Clips',
             'submissions-setting' => 'Submission Settings',
             'category-filter' => 'Category Filter',
             'user-filter' => 'User Filter',
+            'removal-requests' => 'Removal Requests',
         ],
         'broadcaster-permission-description' => [
             'clips' => 'View/Edit Clips',
             'submissions-setting' => 'View/Edit Submission Settings',
             'category-filter' => 'View/Edit Kategorie Filter',
             'user-filter' => 'View/Edit User Filter',
+            'removal-requests' => 'Manage your Removal Requests',
         ],
         'removal-request-status' => [
             'pending' => 'Pending',
