@@ -22,4 +22,13 @@ return [
             'false' => 'Only Blocked',
         ],
     ],
+    'forms' => [
+        'create' => [
+            'category-select' => [
+                'rules' => [
+                    'unique' => 'Category is already in the filter list.',
+                ],
+            ],
+        ],
+    ],
 ];

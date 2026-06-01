@@ -6,6 +6,7 @@ namespace App\Services\Twitch;
 
 use App\Services\Twitch\Contracts\TwitchClientInterface;
 use App\Services\Twitch\Exceptions\TwitchApiException;
+use Closure;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Promises\LazyPromise;
@@ -21,7 +22,7 @@ class TwitchClient implements TwitchClientInterface
 {
     private const string BASE_URL = 'https://api.twitch.tv/helix';
 
-    private(set) bool $isTemplate = true;
+    public private(set) bool $isTemplate = true;
 
     private ?TwitchUserContext $userContext = null;
 
@@ -29,7 +30,6 @@ class TwitchClient implements TwitchClientInterface
         private readonly string $clientId,
         private readonly TwitchTokenManager $tokens,
     ) {}
-
 
     /**
      * Authenticates as the Application
@@ -100,6 +100,11 @@ class TwitchClient implements TwitchClientInterface
         ])
             ->{mb_strtolower($method)}(self::BASE_URL.'/'.mb_ltrim($endpoint, '/'), $params);
 
+        // Track App usage only for now
+        if (! $this->userContext instanceof TwitchUserContext) {
+            TwitchTracker::record($response, $endpoint, $method);
+        }
+
         if ($retryOn401 && $response->status() === 401) {
             $this->handleUnauthorized();
 
@@ -143,7 +148,7 @@ class TwitchClient implements TwitchClientInterface
         $data = $this->tokens->refreshUserToken($this->userContext->refreshToken);
         $updated = $this->userContext->withTokens($data['access_token'], $data['refresh_token']);
 
-        if ($updated->onRefresh instanceof \Closure) {
+        if ($updated->onRefresh instanceof Closure) {
             ($updated->onRefresh)($data['access_token'], $data['refresh_token'], $data['expires_in']);
         }
 

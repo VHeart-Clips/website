@@ -30,8 +30,8 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use UnitEnum;
 
 class ManageCategoryFilter extends Page implements HasTable
@@ -136,18 +136,14 @@ class ManageCategoryFilter extends Page implements HasTable
         return CreateAction::make()
             ->schema([
                 CategorySelect::make('filterable_id')
-                    ->whereNotExists(function ($query): void {
-
-                        $query->from('broadcaster_submission_filters')
-                            ->whereColumn('broadcaster_submission_filters.filterable_id', (new Category)->getTable().'.id')
-                            ->where('broadcaster_submission_filters.filterable_type', $this::getCategoryMorphClass())
-                            ->where('broadcaster_submission_filters.broadcaster_id', $this::getBroadcaster()->id);
-                    })->ignoredIds(fn (Collection $category): array => $this->getBaseQuery()
-                    ->whereIn('filterable_id', $category->pluck('id'))->pluck('filterable_id')
-                    ->map(fn ($id): string => (string) $id)
-                    ->all())
-                    ->label('dashboard/settings/manage-category-filters.table.title')
-                    ->translateLabel()
+                    ->rules([
+                        Rule::unique('broadcaster_submission_filters', 'filterable_id')
+                            ->where('filterable_type', $this::getCategoryMorphClass())
+                            ->where('broadcaster_id', $this::getBroadcaster()->id),
+                    ])
+                    ->validationMessages([
+                        'unique' => __('dashboard/settings/manage-category-filters.forms.create.category-select.rules.unique'),
+                    ])
                     ->columnSpanFull()
                     ->required(),
                 Toggle::make('state')
