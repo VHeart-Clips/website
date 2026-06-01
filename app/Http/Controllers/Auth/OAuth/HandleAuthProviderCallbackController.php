@@ -94,7 +94,7 @@ class HandleAuthProviderCallbackController extends Controller
 
         Auditor::make()
             ->event('auth.login.success')
-            ->anonymize(true)
+            ->anonymize(false)
             ->on($user)
             ->save();
 

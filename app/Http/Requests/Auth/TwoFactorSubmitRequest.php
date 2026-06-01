@@ -62,7 +62,7 @@ class TwoFactorSubmitRequest extends TwoFactorChallengeRequest
 
         Auditor::make()
             ->event('auth.2fa.failed')
-            ->anonymize(true)
+            ->anonymize(false)
             ->on($user)
             ->save();
 
