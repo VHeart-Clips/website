@@ -57,6 +57,7 @@ class HandleAuthProviderCallbackController extends Controller
 
             Auditor::make()
                 ->event('auth.login.denied')
+                ->anonymize(false)
                 ->on($user)
                 ->save();
 
