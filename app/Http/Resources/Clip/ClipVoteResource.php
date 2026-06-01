@@ -24,12 +24,12 @@ class ClipVoteResource extends JsonResource
             'title' => $this->title,
             'duration' => $this->duration,
             'url' => $this->getClipUrl(),
-            'thumbnail_url' => $this->proxiedContentUrl(),
+            'thumbnail_url' => $this->thumbnail_url,
 
             'broadcaster' => [
                 'id' => $this->broadcaster_id,
                 'name' => $this->owner->name,
-                'avatar' => $this->owner->proxiedContentUrl(),
+                'avatar' => $this->owner->avatar_url,
             ],
         ];
     }

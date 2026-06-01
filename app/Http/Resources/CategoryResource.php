@@ -22,9 +22,9 @@ class CategoryResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'art' => [
-                'small' => $this->proxiedContentUrl(144, 192),
-                'medium' => $this->proxiedContentUrl(285, 380),
-                'large' => $this->proxiedContentUrl(600, 800),
+                'small' => $this->getBoxArt(144, 192),
+                'medium' => $this->getBoxArt(285, 380),
+                'large' => $this->getBoxArt(600, 800),
             ],
         ];
     }

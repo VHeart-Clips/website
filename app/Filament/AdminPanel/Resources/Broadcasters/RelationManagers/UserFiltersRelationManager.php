@@ -34,8 +34,7 @@ class UserFiltersRelationManager extends BaseSubmissionFilterRelationManager
     protected function getFilterableColumns(): array
     {
         return [
-            ImageColumn::make('filterable.avatar')
-                ->state(fn (BroadcasterSubmissionFilter $record) => $record->filterable?->proxiedContentUrl())
+            ImageColumn::make('filterable.avatar_url')
                 ->grow(false)
                 ->imageSize(32)
                 ->label('')

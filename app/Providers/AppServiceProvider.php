@@ -220,8 +220,6 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('image-proxy', static fn (Request $request): Limit => Limit::perMinute(60)->by($request->ip()));
-
         RateLimiter::for('jobs:reports:check-removed-clip', static fn (CheckForRemovedClipJob $job) => Limit::perHour(2)->by($job->clip?->id));
     }
 

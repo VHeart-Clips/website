@@ -6,7 +6,7 @@
     x-data="clipVote({
         clipTwitchId: '{{ $clip?->twitch_id ?? '' }}',
         clipId: {{ $clip?->id ?? 'null' }},
-        clipBroadcasterAvatar: '{{ $clip?->owner?->proxiedContentUrl() ?? '' }}',
+        clipBroadcasterAvatar: '{{ $clip?->owner?->avatar_url ?? '' }}',
         clipBroadcasterUrl: 'https://twitch.tv/{{ $clip?->owner?->name ?? '' }}',
         clipBroadcasterName: '{{ $clip?->owner?->name ?? '' }}',
         hasBroadcaster: {{ $clip?->owner ? 'true' : 'false' }},
@@ -37,7 +37,7 @@
         <div class="flex items-center gap-1 flex-1 justify-start sm:py-3 pl-2 sm:pl-4">
             <template x-if="hasBroadcaster">
                 <a href="https://twitch.tv/{{ $clip->owner?->name ?? '' }}" x-bind:href="clipBroadcasterUrl" target="_blank" class="flex items-center gap-1">
-                    <img src="{{ $clip?->owner?->proxiedContentUrl() ?? '' }}" alt="Avatar" x-bind:src="clipBroadcasterAvatar" class="size-6 sm:size-8 rounded-full" />
+                    <img src="{{ $clip?->owner?->avatar_url ?? '' }}" alt="Avatar" x-bind:src="clipBroadcasterAvatar" class="size-6 sm:size-8 rounded-full" />
                     <span class="truncate max-w-26 sm:max-w-50" x-text="clipBroadcasterName">{{ $clip->owner?->name ?? '' }}</span>
                 </a>
             </template>
