@@ -8,6 +8,7 @@ use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
+use App\Support\Audit\Auditor;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -81,6 +82,13 @@ class MoveToCompilationAction extends Action
 
                         $this->halt();
                     }
+
+                    Auditor::make()
+                        ->event('compilation.clip.moved')
+                        ->old(['compilation_id' => $livewire->getOwnerRecord()->getKey()])
+                        ->new(['compilation_id' => (int) $data['compilation_id']])
+                        ->on($livewire->getOwnerRecord())
+                        ->save();
                 } catch (Halt $e) {
                     throw $e;
                 } catch (Exception $e) {
