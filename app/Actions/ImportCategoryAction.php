@@ -12,11 +12,11 @@ class ImportCategoryAction
 {
     public function execute(GameDto|CategoryDto $category): Category
     {
-        return Category::updateOrCreate([
-            'id' => $category->id,
-        ], [
-            'title' => $category->name,
-            'box_art' => $category->boxArtUrl,
-        ]);
+        return Category::query()
+            ->updateOrCreate([
+                'id' => $category->id,
+            ],
+                $category->toModel()
+            );
     }
 }
