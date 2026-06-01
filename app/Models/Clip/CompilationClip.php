@@ -18,8 +18,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 // pivot data, this is usually accessible via $model->pivot->stuff()
 class CompilationClip extends Pivot
 {
-    use Auditable;
-
     /** @use HasFactory<CompilationClipFactory> */
     use HasFactory;
 
