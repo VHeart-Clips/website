@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Support\Audit\Auditor;
 use Closure;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -58,6 +59,12 @@ class TwoFactorSubmitRequest extends TwoFactorChallengeRequest
         ) {
             return;
         }
+
+        Auditor::make()
+            ->event('auth.2fa.failed')
+            ->anonymize(false)
+            ->on($user)
+            ->save();
 
         $this->session()->keep(['auth_2fa_id']);
         throw ValidationException::withMessages([

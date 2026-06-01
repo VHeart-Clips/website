@@ -35,15 +35,18 @@ class AuditsTable
 
                 TextColumn::make('event')
                     ->color(fn (string $state): string => match ($state) {
+                        'auth.login.success' => 'info',
                         'created', 'restored' => 'success',
                         'updated' => 'warning',
-                        'deleted', 'forceDeleted' => 'danger',
+                        'deleted', 'forceDeleted', 'auth.2fa.failed' => 'danger',
                         default => 'gray',
                     })
                     ->icon(fn (string $state): LucideIcon => match ($state) {
                         'created' => LucideIcon::PlusCircle,
                         'updated' => LucideIcon::Pencil,
                         'deleted' => LucideIcon::Trash,
+                        'auth.login.success' => LucideIcon::LockKeyholeOpen,
+                        'auth.2fa.failed' => LucideIcon::Lock,
                         default => LucideIcon::CircleQuestionMark,
                     })
                     ->badge(),
