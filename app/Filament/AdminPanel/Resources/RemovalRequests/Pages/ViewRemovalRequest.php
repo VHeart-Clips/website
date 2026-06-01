@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\RemovalRequests\Pages;
 
 use App\Enums\Broadcaster\RemovalRequestStatus;
+use App\Enums\Clips\ClipStatus;
+use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\AdminPanel\Resources\RemovalRequests\RemovalRequestResource;
 use App\Models\Broadcaster\RemovalRequest;
+use App\Models\Clip\Compilation;
+use App\Models\Clip\CompilationClip;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\Radio;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Grid;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\DB;
 
 class ViewRemovalRequest extends ViewRecord
@@ -199,19 +206,137 @@ class ViewRemovalRequest extends ViewRecord
             ->requiresConfirmation()
             ->authorize('update')
             ->visible(fn (RemovalRequest $record): bool => $record->claimed_by === auth()->id() && $record->status === RemovalRequestStatus::Pending)
-            ->action(function (RemovalRequest $record) use ($requestStatus) {
-                Notification::make('resolved')
-                    ->title(__('admin/resources/removal-requests.notifications.resolved.title', [
-                        'status' => $requestStatus->getLabel(),
-                    ]))
-                    ->success()
-                    ->send();
+            ->modalWidth($requestStatus === RemovalRequestStatus::Approved ? Width::ThreeExtraLarge : null)
+            ->schema($requestStatus === RemovalRequestStatus::Approved ? [
+                Grid::make(2)
+                    ->gap()
+                    ->schema([
+                        Radio::make('published_compilations')
+                            ->disabled(static fn (RemovalRequest $record) => auth()->user()->cannot('updateAny', [Compilation::class]))
+                            ->label('admin/resources/removal-requests.actions.resolve-request-accept.schema.published_compilations.label')
+                            ->options([
+                                0 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.published_compilations.options.nothing.label'),
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.published_compilations.options.flag.label'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.published_compilations.options.remove.label'),
+                            ])
+                            ->descriptions([
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.published_compilations.options.flag.description'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.published_compilations.options.remove.description'),
+                            ])
+                            ->translateLabel()
+                            ->default(1),
 
-                $record->update([
-                    'status' => $requestStatus,
-                    'resolved_at' => now(),
-                    'resolved_by' => auth()->id(),
-                ]);
+                        Radio::make('unpublished_compilations')
+                            ->disabled(static fn (RemovalRequest $record) => auth()->user()->cannot('updateAny', [Compilation::class]))
+                            ->label('admin/resources/removal-requests.actions.resolve-request-accept.schema.unpublished_compilations.label')
+                            ->options([
+                                0 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.unpublished_compilations.options.nothing.label'),
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.unpublished_compilations.options.flag.label'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.unpublished_compilations.options.remove.label'),
+                            ])
+                            ->descriptions([
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.unpublished_compilations.options.flag.description'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.unpublished_compilations.options.remove.description'),
+                            ])
+                            ->translateLabel()
+                            ->default(2),
+
+                        Radio::make('internal_compilations')
+                            ->disabled(static fn (RemovalRequest $record) => auth()->user()->cannot('updateAny', [Compilation::class]))
+                            ->label('admin/resources/removal-requests.actions.resolve-request-accept.schema.internal_compilations.label')
+                            ->options([
+                                0 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.internal_compilations.options.nothing.label'),
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.internal_compilations.options.flag.label'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.internal_compilations.options.remove.label'),
+                            ])
+                            ->descriptions([
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.internal_compilations.options.flag.description'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.internal_compilations.options.remove.description'),
+                            ])
+                            ->translateLabel()
+                            ->default(0),
+
+                        Radio::make('clip')
+                            ->label('admin/resources/removal-requests.actions.resolve-request-accept.schema.clip.label')
+                            ->translateLabel()
+                            ->default(fn (RemovalRequest $record): int => auth()->user()->can('update', $record->clip) ? 1 : 0)
+                            ->disableOptionWhen(fn (int $value, RemovalRequest $record): bool => match ($value) {
+                                1 => auth()->user()->cannot('update', $record->clip),
+                                2 => auth()->user()->cannot('delete', $record->clip),
+                                default => false,
+                            })
+                            ->options([
+                                0 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.clip.options.nothing.label'),
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.clip.options.block.label'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.clip.options.remove.label'),
+                            ])
+                            ->descriptions([
+                                1 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.clip.options.block.description'),
+                                2 => __('admin/resources/removal-requests.actions.resolve-request-accept.schema.clip.options.remove.description'),
+                            ]),
+                    ]),
+            ] : null)
+            ->action(function (RemovalRequest $record, array $data = []) use ($requestStatus) {
+                DB::transaction(static function () use ($requestStatus, &$record, &$data) {
+                    $removalRequest = RemovalRequest::query()
+                        ->lockForUpdate()
+                        ->find($record->id);
+
+                    if (! $removalRequest) {
+                        return;
+                    }
+
+                    $removalRequest->update([
+                        'status' => $requestStatus,
+                        'resolved_at' => now(),
+                        'resolved_by' => auth()->id(),
+                    ]);
+
+                    if (auth()->user()->can('updateAny', [Compilation::class])) {
+                        $compilationQueries = [
+                            'published_compilations' => $removalRequest->clip->compilations()
+                                ->select('compilations.id')
+                                ->whereIn('status', CompilationStatus::getVoteDisabledCases()),
+
+                            'unpublished_compilations' => $removalRequest->clip->compilations()
+                                ->select('compilations.id')
+                                ->whereNotIn('status', [...CompilationStatus::getVoteDisabledCases(), CompilationStatus::Internal]),
+
+                            'internal_compilations' => $removalRequest->clip->compilations()
+                                ->select('compilations.id')
+                                ->where('status', CompilationStatus::Internal),
+                        ];
+
+                        foreach ($compilationQueries as $field => $scopedQuery) {
+                            $clipQuery = CompilationClip::query()
+                                ->whereIn('compilation_clip.compilation_id', $scopedQuery)
+                                ->where('clip_id', $removalRequest->clip_id);
+
+                            match ((int) ($data[$field] ?? 0)) {
+                                1 => $clipQuery->update(['removed_at' => now()]),
+                                2 => $clipQuery->delete(),
+                                default => null,
+                            };
+                        }
+                    }
+
+                    if (auth()->user()->canAny(['update', 'delete'], [$removalRequest->clip])) {
+                        match ((int) ($data['clip'] ?? 0)) {
+                            1 => auth()->user()->can('update', [$removalRequest->clip]) && $removalRequest->clip->update(['status' => ClipStatus::Blocked]),
+                            2 => auth()->user()->can('delete', [$removalRequest->clip]) && $removalRequest->clip->delete(),
+                            default => null,
+                        };
+                    }
+
+                    Notification::make('resolved')
+                        ->title(__('admin/resources/removal-requests.notifications.resolved.title', [
+                            'status' => $requestStatus->getLabel(),
+                        ]))
+                        ->success()
+                        ->send();
+                });
+
+                $record->refresh();
             });
     }
 }

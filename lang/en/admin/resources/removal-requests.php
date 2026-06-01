@@ -67,6 +67,74 @@ return [
         'resolve-request-group' => [
             'label' => 'Resolve Request',
         ],
+        'resolve-request-accept' => [
+            'schema' => [
+                'published_compilations' => [
+                    'label' => 'Published Compilations',
+                    'options' => [
+                        'nothing' => [
+                            'label' => 'Do Nothing',
+                        ],
+                        'flag' => [
+                            'label' => 'Flag',
+                            'description' => 'Clip gets flagged as removed but stays in the Compilation for context',
+                        ],
+                        'remove' => [
+                            'label' => 'Remove',
+                            'description' => 'Clip gets removed from the Compilation',
+                        ],
+                    ],
+                ],
+                'unpublished_compilations' => [
+                    'label' => 'Unpublished Compilations',
+                    'options' => [
+                        'nothing' => [
+                            'label' => 'Do Nothing',
+                        ],
+                        'flag' => [
+                            'label' => 'Flag',
+                            'description' => 'Clip gets flagged as removed but stays in the Compilation for context',
+                        ],
+                        'remove' => [
+                            'label' => 'Remove',
+                            'description' => 'Clip gets removed from the Compilation',
+                        ],
+                    ],
+                ],
+                'internal_compilations' => [
+                    'label' => 'Internal Compilations',
+                    'options' => [
+                        'nothing' => [
+                            'label' => 'Do Nothing',
+                        ],
+                        'flag' => [
+                            'label' => 'Flag',
+                            'description' => 'Clip gets flagged as removed but stays in the Compilation for context',
+                        ],
+                        'remove' => [
+                            'label' => 'Remove',
+                            'description' => 'Clip gets removed from the Compilation',
+                        ],
+                    ],
+                ],
+                'clip' => [
+                    'label' => 'Clip Action',
+                    'options' => [
+                        'nothing' => [
+                            'label' => 'Do Nothing',
+                        ],
+                        'block' => [
+                            'label' => 'Block',
+                            'description' => 'Hides the Clip on the platform and prevents usage in future Compilations.',
+                        ],
+                        'remove' => [
+                            'label' => 'Remove',
+                            'description' => 'Removes the Clip from the Platform',
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ],
     'notifications' => [
         'claimed' => [
