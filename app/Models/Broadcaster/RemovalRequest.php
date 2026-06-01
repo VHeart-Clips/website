@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Kirschbaum\Commentions\HasComments;
 
 #[UsePolicy(RemovalRequestPolicy::class)]
@@ -30,7 +31,8 @@ class RemovalRequest extends Model
      */
     public function broadcaster(): BelongsTo
     {
-        return $this->belongsTo(Broadcaster::class);
+        return $this->belongsTo(Broadcaster::class)
+            ->withoutGlobalScope(SoftDeletingScope::class);
     }
 
     /**
@@ -38,7 +40,8 @@ class RemovalRequest extends Model
      */
     public function clip(): BelongsTo
     {
-        return $this->belongsTo(Clip::class);
+        return $this->belongsTo(Clip::class)
+            ->withoutGlobalScope(SoftDeletingScope::class);
     }
 
     /**
@@ -46,7 +49,8 @@ class RemovalRequest extends Model
      */
     public function claimer(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'claimed_by');
+        return $this->belongsTo(User::class, 'claimed_by')
+            ->withoutGlobalScope(SoftDeletingScope::class);
     }
 
     /**
@@ -54,7 +58,8 @@ class RemovalRequest extends Model
      */
     public function resolver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'resolved_by');
+        return $this->belongsTo(User::class, 'resolved_by')
+            ->withoutGlobalScope(SoftDeletingScope::class);
     }
 
     public function isResolved(): bool
