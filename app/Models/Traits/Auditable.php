@@ -196,6 +196,10 @@ trait Auditable
                 $deletedAtCol = $this->getDeletedAtColumn();
                 unset($old[$deletedAtCol], $new[$deletedAtCol]);
             }
+
+            if ($event === 'updated' && $new === $old) {
+                return;
+            }
         } elseif (in_array($event, ['created', 'deleted', 'forceDeleted'], true)) {
             if ($event === 'created') {
                 $new = $this->resolveCompleteAuditState($excludedKeys);

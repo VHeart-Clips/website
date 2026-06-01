@@ -39,6 +39,7 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Kirschbaum\Commentions\Filament\Actions\CommentsAction;
 
 /**
@@ -69,6 +70,14 @@ class ClipsRelationManager extends RelationManager
                 Group::make('status')
                     ->label(__('admin/resources/compilations.relation_managers.clips.columns.status_moderation')),
                 Group::make('claim_status'),
+                Group::make('claimer')
+                    ->label(__('admin/resources/compilations.relation_managers.clips.columns.claimer'))
+                    ->collapsible()
+                    ->getTitleFromRecordUsing(fn ($record) => $record->claimer?->name ?? __('Unclaimed'))
+                    ->orderQueryUsing(fn (Builder $query, string $direction) => $query->leftJoin('users as claimer_user', 'claimer_user.id', '=', 'compilation_clip.claimed_by')
+                        ->orderBy(DB::raw('LOWER(claimer_user.name)'), $direction)
+                        ->orderBy('compilation_clip.claimed_by', $direction)
+                    ),
                 Group::make('owner.name')
                     ->label(__('admin/resources/clips.table.columns.broadcaster')),
             ])
