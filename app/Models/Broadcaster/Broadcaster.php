@@ -59,6 +59,21 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
     }
 
     /**
+     * Without this it is possible to trigger a 500 error from the dashboard with non-numeric tenant ids
+     *
+     * @param  mixed  $value
+     * @param  string|null  $field
+     */
+    public function resolveRouteBinding($value, $field = null): ?Model
+    {
+        if (! is_numeric($value)) {
+            return null;
+        }
+
+        return parent::resolveRouteBinding($value, $field);
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function user(): BelongsTo

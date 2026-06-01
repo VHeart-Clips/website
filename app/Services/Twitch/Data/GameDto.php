@@ -38,6 +38,7 @@ readonly class GameDto implements TwitchDtoInterface
             'id' => $this->id,
             'title' => $this->name,
             'box_art' => $this->boxArtUrl,
+            'igdb_id' => $this->igdbId,
         ], $extra);
     }
 }
