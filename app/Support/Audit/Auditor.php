@@ -39,6 +39,22 @@ class Auditor
         return $instance;
     }
 
+    public static function resolveSimpleDifferences(?array $old = null, ?array $new = null): array
+    {
+        $originalCollection = collect($old);
+        $updatedCollection = collect($new);
+
+        $changed = $originalCollection->keys()
+            ->merge($updatedCollection->keys())
+            ->unique()
+            ->filter(fn ($key): bool => $originalCollection->get($key) !== $updatedCollection->get($key));
+
+        return [
+            $changed->mapWithKeys(fn ($key) => [$key => $originalCollection->get($key)])->toArray(),
+            $changed->mapWithKeys(fn ($key) => [$key => $updatedCollection->get($key)])->toArray(),
+        ];
+    }
+
     public function causer(?Model $causer): static
     {
         $this->causer = $causer;
