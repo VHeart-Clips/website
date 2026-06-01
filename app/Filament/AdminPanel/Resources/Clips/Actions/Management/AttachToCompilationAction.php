@@ -8,6 +8,7 @@ use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
+use App\Support\Audit\Auditor;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -54,12 +55,20 @@ class AttachToCompilationAction extends Action
                     ])->columns(1),
             ])
             ->action(function (Clip $record, array $data): void {
-                $record->compilations()->attach($data['compilation_id'], [
+                $pivotData = [
                     'added_by' => auth()->id(),
                     'claim_status' => $data['status'] ?? CompilationClipClaimStatus::Pending,
                     'claimed_by' => $data['claim'] ? auth()->id() : null,
                     'claimed_at' => now(),
-                ]);
+                ];
+
+                $record->compilations()->attach($data['compilation_id'], $pivotData);
+
+                Auditor::make()
+                    ->event('compilation.clip.attached')
+                    ->new($pivotData)
+                    ->on(Clip\Compilation::find($data['compilation_id']))
+                    ->save();
             })
             ->successNotificationTitle(__('admin/resources/clips.notifications.actions.attached_to_compilation'));
     }
