@@ -7,6 +7,7 @@ namespace App\Filament\AdminPanel\Resources\Compilations\Actions;
 use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
+use App\Support\Audit\Auditor;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 
@@ -38,11 +39,28 @@ class UpdateClaimInfosAction extends Action
                     ),
             ])
             ->action(function (Clip $record, array $data, $livewire): void {
+                $updateData = [
+                    'claimed_by' => $data['claimed_by'],
+                    'claim_status' => $data['claim_status'],
+                ];
+
                 $record->compilations()
-                    ->updateExistingPivot($livewire->getOwnerRecord()->id, [
-                        'claimed_by' => $data['claimed_by'],
-                        'claim_status' => $data['claim_status'],
-                    ]);
+                    ->updateExistingPivot($livewire->getOwnerRecord()->id, $updateData);
+
+                [$old, $new] = Auditor::resolveSimpleDifferences(
+                    [
+                        'claimed_by' => $record->claimed_by,
+                        'claim_status' => $record->claim_status,
+                    ],
+                    $updateData,
+                );
+
+                Auditor::make()
+                    ->event('compilation.clip.updated')
+                    ->old(['clip_id' => $record->id, ...$old])
+                    ->new(['clip_id' => $record->id, ...$new])
+                    ->on($livewire->getOwnerRecord())
+                    ->save();
             })
             ->fillForm(fn (Clip $record): array => [
                 'claimed_by' => $record->pivot->claimed_by,
