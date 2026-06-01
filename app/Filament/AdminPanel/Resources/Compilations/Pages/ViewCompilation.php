@@ -5,12 +5,16 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
+use App\Models\Clip;
+use App\Models\Clip\Compilation;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +34,31 @@ class ViewCompilation extends ViewRecord
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),
             EditAction::make(),
+            ActionGroup::make([
+                Action::make('yura-ist-faul')
+                    ->label('Broadcaster List')
+                    ->icon('heroicon-o-clipboard-document-list')
+                    ->modalHeading('Broadcaster List')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->fillForm(function (Compilation $record): array {
+                        $list = $record->clips()
+                            ->get()
+                            ->map(fn (Clip $clip): string => " - {$clip->broadcaster?->name} https://twitch.tv/".mb_strtolower($clip->broadcaster?->name ?? ''))
+                            ->join("\n");
+
+                        return ['clips_list' => $list];
+                    })
+                    ->schema([
+                        Textarea::make('clips_list')
+                            ->hiddenLabel()
+                            ->autosize()
+                            ->readOnly()
+                            ->extraAttributes(['class' => 'font-mono text-sm']),
+                    ]),
+            ])
+                ->button()
+                ->label('Für Yura'),
             ActionGroup::make([
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
