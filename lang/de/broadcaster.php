@@ -18,18 +18,21 @@ return [
             'manage-user-filter' => 'User Filter Verwalten',
             'manage-category-filter' => 'Kategorie Filter Verwalten',
             'manage-team-member' => 'Team Mitglieder Verwalten',
+            'removal-requests' => 'Entfernungs-Anfragen',
         ],
         'broadcaster-permission' => [
             'clips' => 'Clips',
             'submissions-setting' => 'Submission Settings',
             'category-filter' => 'Kategorie Filter',
             'user-filter' => 'User Filter',
+            'removal-requests' => 'Entfernungs-Anfragen',
         ],
         'broadcaster-permission-description' => [
             'clips' => 'View/Edit Clips',
             'submissions-setting' => 'View/Edit Submission Settings',
             'category-filter' => 'View/Edit Kategorie Filter',
             'user-filter' => 'View/Edit User Filter',
+            'removal-requests' => 'Verwalten deiner Entfernungs-Anfragen',
         ],
     ],
 ];
