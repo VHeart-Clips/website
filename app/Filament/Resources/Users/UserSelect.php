@@ -5,109 +5,167 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Users;
 
 use App\Models\User;
+use App\Services\Twitch\Contracts\TwitchDtoInterface;
 use App\Services\Twitch\Data\UserDto;
 use App\Services\Twitch\TwitchService;
 use Closure;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Query\Builder;
+use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
-use Override;
+use Illuminate\Support\Facades\RateLimiter;
+use Throwable;
 
 class UserSelect extends Select
 {
-    protected ?Closure $whereNotExists = null;
-
-    protected ?Closure $ignoredIds = null;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->getSearchResultsUsing(function (string $search, TwitchService $twitchService) {
-            if (is_numeric($search)) {
-                if ($user = User::find((int) $search)) {
-                    return [$user->id => $user->name];
+        $this
+            ->searchable()
+            ->allowHtml()
+            ->label('filament/inputs/user-select.label')
+            ->translateLabel()
+            ->getSearchResultsUsing(function (string $search, TwitchService $twitchService): array {
+                if (blank($search)) {
+                    return [];
                 }
 
-                return collect($twitchService->asSessionUser()->getUsers(['id' => $search]))
-                    ->mapWithKeys(fn (UserDto $item): array => [$item->id => $item->displayName]);
-            }
+                if (! RateLimiter::attempt(self::class.':ratelimit:'.auth()->id(), maxAttempts: 5, callback: static fn (): true => true)) {
+                    Notification::make('rate-limited')
+                        ->warning()
+                        ->title(__('filament/inputs/user-select.errors.rate-limited'))
+                        ->send();
 
-            if (preg_match('/(?:.*?\/){3}([a-zA-Z0-9]\w{2,24})\b/', $search, $matches)) {
-                $search = $matches[1];
-            }
+                    return [];
+                }
 
-            $search = mb_trim($search);
+                $resolved = $this->resolve($search, $twitchService);
 
-            $users = collect($twitchService->asSessionUser()->getUsers(['login' => $search]))
-                ->each(fn (UserDto $user) => Cache::put("twitch:user:$user->id", $user, now()->addMinutes(30)))
-                ->map(fn (UserDto $item): array => ['name' => $item->displayName, 'id' => $item->id]);
+                if (! $resolved) {
+                    return [];
+                }
 
-            $userQuery = User::where('name', 'ilike', "%$search%");
+                $id = (int) $resolved->id;
+                $html = $this->buildOptionHtml($resolved);
 
-            if ($this->whereNotExists instanceof Closure) {
-                $userQuery->whereNotExists(function (Builder $query): void {
-                    $this->evaluate($this->whereNotExists, ['query' => $query]);
-                });
-            }
+                return [$id => $html];
+            })
+            ->getOptionLabelUsing(function (?int $value, TwitchService $twitchService): ?string {
+                if (blank($value)) {
+                    return null;
+                }
 
-            $user = $userQuery->limit(5)
-                ->pluck('name', 'id')
-                ->map(fn (string $name, int $id): array => ['id' => $id, 'name' => $name])
-                ->merge($users)
-                ->unique('id')
-                ->take(100);
+                $resolved = $this->resolve($value, $twitchService);
 
-            $existingIds = [];
+                if (! $resolved) {
+                    return null;
+                }
 
-            if ($this->ignoredIds instanceof Closure) {
-                $existingIds = $this->evaluate($this->ignoredIds, [
-                    'user' => $user,
-                ]);
-            }
+                return $this->buildOptionHtml($resolved);
+            })
+            ->afterStateUpdated(function (?int $state, TwitchService $twitchService): void {
+                if (blank($state)) {
+                    return;
+                }
 
-            return $user->reject(fn (array $item): bool => in_array((int) $item['id'], $existingIds, true))
-                ->sortBy(fn (array $item): int => levenshtein(mb_strtolower($search), mb_strtolower((string) $item['name'])))
-                ->mapWithKeys(fn (array $item): array => [$item['id'] => $item['name']]);
-        })->getOptionLabelUsing(function (string $value, TwitchService $twitchService) {
-            if ($name = User::find($value)?->name) {
-                return $name;
-            }
-            if ($user = Cache::get("twitch:user:$value")) {
-                $user = User::create($user->toModel());
+                if (User::withTrashed()->where('id', $state)->exists()) {
+                    return;
+                }
 
-                return $user->name;
-            }
-            $users = $twitchService->asSessionUser()->getUsers([
-                'id' => $value,
-            ]);
+                $dto = $this->fetchUserDto($state, $twitchService, 'id');
 
-            /** @var UserDto $user */
-            $user = array_first($users);
+                if ($dto instanceof UserDto) {
+                    User::create($dto->toModel());
+                } else {
+                    Notification::make('invalid-user')
+                        ->danger()
+                        ->body(__('filament/inputs/user-select.errors.invalid-user'))
+                        ->send();
 
-            $user = User::create($user->toModel());
-
-            return $user->name;
-        })->regex('/(?:https?:(?:.*?\/){3})?[a-zA-Z0-9]\w{2,24}\b/');
+                    throw new Halt('invalid user provided: '.$state);
+                }
+            });
     }
 
-    #[Override]
-    public static function make(?string $name = null): static
+    public static function make(?string $name = 'user_id'): static
     {
-        return parent::make($name)->searchable();
+        return parent::make($name);
     }
 
-    public function whereNotExists(?Closure $callback): static
+    /**
+     * Resolves the given input to a local user or twitch dto if possible
+     */
+    protected function resolve(string|int $input, TwitchService $twitchService): User|UserDto|null
     {
-        $this->whereNotExists = $callback;
+        if (is_int($input)) {
+            if ($user = User::whereNot('id', 0)->find($input)) {
+                return $user;
+            }
 
-        return $this;
+            return $this->fetchUserDto($input, $twitchService, 'id');
+        }
+
+        if (preg_match('/(?:.*?\/){3}([a-zA-Z0-9]\w{2,24})\b/', $input, $matches)) {
+            $input = $matches[1];
+        }
+
+        $input = mb_strtolower(mb_trim($input));
+
+        if (! preg_match('/^\w+$/', $input) || mb_strlen($input) < 3) {
+            return null;
+        }
+
+        if ($user = User::where('name', 'ilike', $input)->whereNot('id', 0)->first()) {
+            return $user;
+        }
+
+        return $this->fetchUserDto($input, $twitchService);
     }
 
-    public function ignoredIds(?Closure $callback): static
+    protected function fetchUserDto(string|int $value, TwitchService $twitchService, string $param = 'login'): ?UserDto
     {
-        $this->ignoredIds = $callback;
+        $cacheKey = self::class.":$param:$value";
 
-        return $this;
+        if ($cached = Cache::get($cacheKey)) {
+            return $cached;
+        }
+
+        try {
+            /** @var ?UserDto $dto */
+            $dto = retry(
+                times: 3,
+                callback: static fn (): TwitchDtoInterface|Closure|null => Arr::first($twitchService->asSessionUser()->getUsers([$param => $value])),
+                sleepMilliseconds: 200,
+                when: static fn ($e): bool => $e instanceof ConnectionException,
+            );
+        } catch (Throwable $e) {
+            report($e);
+
+            return null;
+        }
+
+        if (! $dto) {
+            return null;
+        }
+
+        Cache::put(self::class.":login:$dto->login", $dto, now()->addMinutes(30));
+        Cache::put(self::class.":id:$dto->id", $dto, now()->addMinutes(30));
+
+        return $dto;
+    }
+
+    protected function buildOptionHtml(User|UserDto $user): string
+    {
+        $name = $user instanceof UserDto ? $user->displayName : $user->name;
+
+        $avatarUrl = $user instanceof UserDto
+            ? ($user->profileImageUrl ?? $user->avatar ?? '')
+            : ($user->avatar_url ?? $user->avatar ?? '');
+
+        return "<div class='flex items-center gap-2'><img src='$avatarUrl' class='fi-avatar fi-size-md fi-circular object-cover' alt='$name Avatar'/><span class='flex items-center gap-1.5 font-medium'>$name</span></div>";
     }
 }

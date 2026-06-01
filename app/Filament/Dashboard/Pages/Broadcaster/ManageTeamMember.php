@@ -23,7 +23,6 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Section;
@@ -36,8 +35,8 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use UnitEnum;
 
 class ManageTeamMember extends Page implements HasForms, HasTable
@@ -176,18 +175,17 @@ class ManageTeamMember extends Page implements HasForms, HasTable
     {
         return CreateAction::make()
             ->schema([
-                UserSelect::make('user_id')
-                    ->whereNotExists(function ($query): void {
-                        $query->from('broadcaster_team_members')
-                            ->whereColumn('broadcaster_team_members.user_id', 'users.id')
-                            ->where('broadcaster_team_members.broadcaster_id', $this::getBroadcaster()->id);
-                    })->ignoredIds(fn (Collection $user): array => $this->getBaseQuery()
-                    ->whereIn('user_id', $user->pluck('id'))->pluck('user_id')
-                    ->map(fn ($id): string => (string) $id)
-                    ->all())
-                    ->label('dashboard/settings/manage-team-member.table.user')
-                    ->translateLabel()
+                UserSelect::make()
                     ->columnSpanFull()
+                    ->rules([
+                        Rule::unique('broadcaster_team_members', 'user_id')
+                            ->where('broadcaster_id', $this::getBroadcaster()->id),
+                        Rule::notIn([$this::getBroadcaster()->id]),
+                    ])
+                    ->validationMessages([
+                        'unique' => __('dashboard/settings/manage-team-member.forms.create.user-select.rules.unique'),
+                        'not_in' => __('dashboard/settings/manage-team-member.forms.create.user-select.rules.not_in'),
+                    ])
                     ->required(),
                 CheckboxList::make('permissions')
                     ->label('dashboard/settings/manage-team-member.table.permissions')
@@ -208,10 +206,10 @@ class ManageTeamMember extends Page implements HasForms, HasTable
     {
         return EditAction::make()
             ->schema([
-                TextEntry::make('user.name')
+                UserSelect::make()
                     ->label('dashboard/settings/manage-team-member.table.user')
-                    ->translateLabel()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->disabled(),
                 CheckboxList::make('permissions')
                     ->label('dashboard/settings/manage-team-member.table.permissions')
                     ->translateLabel()
