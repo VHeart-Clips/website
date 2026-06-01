@@ -10,99 +10,134 @@ use App\Services\Twitch\Data\CategoryDto;
 use App\Services\Twitch\Data\GameDto;
 use App\Services\Twitch\Enums\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
-use Closure;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Query\Builder;
+use Filament\Notifications\Notification;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
-use Override;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
+use Throwable;
 
 class CategorySelect extends Select
 {
-    protected ?Closure $whereNotExists = null;
-
-    protected ?Closure $ignoredIds = null;
-
-    #[Override]
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->getSearchResultsUsing(function (string $search, TwitchService $twitchService) {
-            $search = mb_trim($search);
-            $categories = collect($twitchService->asSessionUser()->searchCategories($search, 100))
-                ->each(fn (CategoryDto $category) => Cache::put("twitch:category:$category->id", $category, now()->addMinutes(30)))
-                ->map(fn (CategoryDto $item): array => ['title' => $item->name, 'id' => $item->id]);
-
-            $categoryQuery = Category::where('title', 'ilike', "%$search%");
-
-            if ($this->whereNotExists instanceof \Closure) {
-                $categoryQuery->whereNotExists(function (Builder $query): void {
-                    $this->evaluate($this->whereNotExists, ['query' => $query]);
-                });
-            }
-
-            $category = $categoryQuery->limit(5)
-                ->pluck('title', 'id')
-                ->map(fn (string $title, int $id): array => ['id' => $id, 'title' => $title])
-                ->merge($categories)
-                ->unique('id')
-                ->take(100);
-
-            $existingIds = [];
-
-            if ($this->ignoredIds instanceof \Closure) {
-                $existingIds = $this->evaluate($this->ignoredIds, [
-                    'category' => $category,
-                ]);
-            }
-
-            return $category->reject(fn (array $item): bool => in_array((string) $item['id'], $existingIds, true))
-                ->values()
-                ->sortBy(fn (array $item): int => levenshtein(mb_strtolower($search), mb_strtolower((string) $item['title'])))
-                ->mapWithKeys(fn (array $item): array => [$item['id'] => $item['title']]);
-        })
-            ->getOptionLabelUsing(function (string $value, TwitchService $twitchService, ImportCategoryAction $importCategoryAction) {
-                if ($title = Category::find((int) $value)?->title) {
-                    return $title;
+        $this
+            ->label('filament/inputs/category-select.label')
+            ->translateLabel()
+            ->searchable()
+            ->allowHtml()
+            ->getSearchResultsUsing(function (string $search, TwitchService $twitchService): array {
+                if (blank($search)) {
+                    return [];
                 }
 
-                if ($category = Cache::get("twitch:category:$value")) {
-                    $category = $importCategoryAction->execute($category);
+                $search = mb_trim($search);
+                $lowercaseSearch = mb_strtolower($search);
 
-                    return $category->title;
+                $twitchQuery = collect(explode(' ', $lowercaseSearch))->unique()->sort()->values();
+                $twitchQueryCacheKey = self::class.':query:'.sha1($twitchQuery->join(','));
+
+                if (! RateLimiter::attempt(self::class.':ratelimit:'.auth()->id(), maxAttempts: 20, callback: static fn (): true => true)) {
+                    Notification::make('rate-limited')
+                        ->warning()
+                        ->title(__('filament/inputs/category-select.errors.rate-limited'))
+                        ->send();
+
+                    $twitchResults = collect();
+                } else {
+                    try {
+                        $twitchResults = collect(Cache::remember($twitchQueryCacheKey, now()->addDay(), static fn () => retry(
+                            times: 3,
+                            callback: static fn (): array => $twitchService->asSessionUser()->searchCategories($twitchQuery->join(' '), 100),
+                            sleepMilliseconds: 200,
+                            when: static fn ($e): bool => $e instanceof ConnectionException,
+                        )));
+
+                        $twitchResults->each(fn (CategoryDto $dto) => Cache::put("twitch:category:$dto->id", $dto, now()->addMinutes(30)));
+                    } catch (Throwable $e) {
+                        report($e);
+                        $twitchResults = collect();
+                    }
                 }
 
-                $categories = $twitchService->collection(TwitchEndpoints::GetGames, [
-                    'id' => $value,
-                ]);
+                $localQuery = Category::query()
+                    ->whereNot('id', 0)
+                    ->where('title', 'ilike', "%$search%")
+                    ->orderByRaw('CASE WHEN lower(title) LIKE lower(?) THEN 0 ELSE 1 END', [$search.'%'])
+                    ->limit(100)
+                    ->get()
+                    ->toBase();
 
-                /** @var GameDto $game */
-                $game = array_first($categories);
+                return $localQuery
+                    ->merge($twitchResults)
+                    ->sortBy(function (Category|CategoryDto|GameDto $item) use ($lowercaseSearch): float {
+                        $title = mb_strtolower($item instanceof Category ? $item->title : $item->name);
 
-                $category = $importCategoryAction->execute($game);
+                        similar_text($lowercaseSearch, $title, $percent);
+                        $prefixBonus = Str::startsWith($title, $lowercaseSearch) ? 50 : 0;
 
-                return $category->title;
+                        return -($percent + $prefixBonus);
+                    })
+                    ->take(15)
+                    ->mapWithKeys(fn (Category|CategoryDto|GameDto $category): array => [
+                        $category->id => $this->buildOptionHtml($category),
+                    ])
+                    ->all();
+            })
+            ->getOptionLabelUsing(function (string $value, TwitchService $twitchService, ImportCategoryAction $importCategoryAction): ?string {
+                $resolved = $this->resolveCategory((int) $value, $twitchService, $importCategoryAction);
+
+                if (! $resolved || $resolved->id === 0) {
+                    return null;
+                }
+
+                return $this->buildOptionHtml($resolved);
             });
     }
 
-    #[Override]
-    public static function make(?string $name = null): static
+    protected function resolveCategory(int $id, TwitchService $twitchService, ImportCategoryAction $importCategoryAction): ?Category
     {
-        return parent::make($name)
-            ->searchable();
+        if ($id === 0) {
+            return null;
+        }
+
+        if ($category = Category::find($id)) {
+            return $category;
+        }
+
+        /** @var CategoryDto|GameDto|null $dto */
+        if ($dto = Cache::get("twitch:category:$id")) {
+            return $importCategoryAction->execute($dto);
+        }
+
+        try {
+            $dto = retry(
+                times: 3,
+                callback: static fn (): ?GameDto => array_first($twitchService->collection(TwitchEndpoints::GetGames, ['id' => $id])),
+                sleepMilliseconds: 200,
+                when: static fn ($e): bool => $e instanceof ConnectionException,
+            );
+
+            return $importCategoryAction->execute($dto);
+        } catch (Throwable $e) {
+            report($e);
+        }
+
+        return null;
     }
 
-    public function whereNotExists(?Closure $callback): static
+    protected function buildOptionHtml(Category|CategoryDto|GameDto|null $category): string
     {
-        $this->whereNotExists = $callback;
+        $isModel = $category instanceof Category;
 
-        return $this;
-    }
+        $name = e($isModel ? $category->title : $category->name);
+        $imageUrl = Str::replace(['{width}', '{height}'], [18, 24], $isModel ? $category->box_art : $category->boxArtUrl);
 
-    public function ignoredIds(?Closure $callback): static
-    {
-        $this->ignoredIds = $callback;
+        $img = "<img src='$imageUrl' loading='lazy' class='h-6 w-4.5 object-cover rounded-sm' alt='$name'/>";
 
-        return $this;
+        return "<div class='flex items-center gap-2'>$img<span class='font-medium'>$name</span></div>";
     }
 }
