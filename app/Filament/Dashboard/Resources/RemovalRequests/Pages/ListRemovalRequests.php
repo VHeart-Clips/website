@@ -19,6 +19,11 @@ class ListRemovalRequests extends ListRecords
         return Filament::getTenant()->name.' - '.parent::getTitle();
     }
 
+    public function getHeading(): string|Htmlable|null
+    {
+        return parent::getTitle();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
