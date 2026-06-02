@@ -15,7 +15,7 @@ return new class extends Migration
             ->where('auditable_type', 'compilation_clip')
             ->delete();
 
-        Schema::table('compilation_clip', function (Blueprint $table) {
+        Schema::table('compilation_clip', function (Blueprint $table): void {
             $table->dropPrimary();
             $table->dropColumn('id');
         });

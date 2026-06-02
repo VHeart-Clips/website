@@ -17,6 +17,7 @@ use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\UpdateClaimInfosAction;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
+use App\Models\Audit;
 use App\Models\Clip;
 use App\Models\User;
 use App\Support\Audit\Auditor;
@@ -299,7 +300,7 @@ class ClipsRelationManager extends RelationManager
                             ->default(CompilationClipClaimStatus::Pending)
                             ->required(),
                     ])
-                    ->after(fn (Model $record, array $data, RelationManager $livewire) => Auditor::make()
+                    ->after(fn (Model $record, array $data, RelationManager $livewire): Audit => Auditor::make()
                         ->event('compilation.clip.attached')
                         ->new([
                             'clip_id' => $record->id,
@@ -463,7 +464,7 @@ class ClipsRelationManager extends RelationManager
                     MoveToCompilationAction::make(),
                     UpdateClaimInfosAction::make(),
                     DetachAction::make()
-                        ->after(fn (Clip $record, array $data, RelationManager $livewire) => Auditor::make()
+                        ->after(fn (Clip $record, array $data, RelationManager $livewire): Audit => Auditor::make()
                             ->event('compilation.clip.detached')
                             ->old(array_filter($record->pivot->getAttributes()))
                             ->on($livewire->getOwnerRecord())

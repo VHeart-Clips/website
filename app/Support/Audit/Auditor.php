@@ -50,8 +50,8 @@ class Auditor
             ->filter(fn ($key): bool => $originalCollection->get($key) !== $updatedCollection->get($key));
 
         return [
-            $changed->mapWithKeys(fn ($key) => [$key => $originalCollection->get($key)])->toArray(),
-            $changed->mapWithKeys(fn ($key) => [$key => $updatedCollection->get($key)])->toArray(),
+            $changed->mapWithKeys(fn ($key): array => [$key => $originalCollection->get($key)])->toArray(),
+            $changed->mapWithKeys(fn ($key): array => [$key => $updatedCollection->get($key)])->toArray(),
         ];
     }
 
