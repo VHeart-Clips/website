@@ -162,7 +162,7 @@ class ClipsTable
                     ->query(function (Builder $query, array $data): Builder {
                         $values = array_filter($data['values'] ?? []);
 
-                        if (empty($values)) {
+                        if ($values === []) {
                             return $query;
                         }
 
