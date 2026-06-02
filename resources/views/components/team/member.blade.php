@@ -1,6 +1,9 @@
 @use(Whitecube\LaravelCookieConsent\Facades\Cookies)
 @props(['user' => null])
-<div
+<a
+    href="https://twitch.tv/{{ $user?->name ?? '' }}"
+    target="_blank"
+    rel="noopener noreferrer"
     class="group relative flex items-center gap-4 rounded-2xl border p-4 transition-all duration-300  border-white bg-white/95 shadow-[0_8px_30px_rgb(0,0,0,0.04)] backdrop-blur-xl  dark:border-white/10 dark:bg-zinc-900/40 dark:shadow-2xl dark:shadow-purple-900/20  group-hover:-translate-y-1 hover:shadow-purple-500/10 hover:border-purple-500/30"
 >
     <x-ui.avatar
@@ -15,4 +18,4 @@
             {{ $user?->name ?? 'Unknown User' }}
         </p>
     </div>
-</div>
+</a>
