@@ -205,7 +205,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
      * check if the broadcaster has given the consents or when no consents provided check if any consent is given
      */
     #[Scope]
-    protected function whereGaveConsent(Builder $query, BroadcasterConsent|Collection|array|null $consents = null): Builder
+    protected function whereGaveConsent(Builder $query, BroadcasterConsent|Collection|array|null $consents = null, string $boolean = 'and', bool $not = false): Builder
     {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query;
@@ -219,7 +219,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
             $consents = [$consents];
         }
 
-        return $query->whereJsonContains('consent', $consents);
+        return $query->whereJsonContains('consent', $consents, $boolean, $not);
 
     }
 

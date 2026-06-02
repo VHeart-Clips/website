@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Clips\Tables;
 
+use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Filament\Actions\Tables\UpdateClipStatusAction;
@@ -150,6 +151,37 @@ class ClipsTable
                         blank: fn (Builder $query) => $query->whereDoesntHave('compilations', fn (Builder $query): Builder => $query->whereIn('compilations.status', array_merge([
                             CompilationStatus::Planned,
                         ], CompilationStatus::getPublicCases()))),
+                    ),
+
+                SelectFilter::make('has_consent')
+                    ->options(BroadcasterConsent::class)
+                    ->multiple()
+                    ->searchable()
+                    ->label('admin/resources/clips.filters.has_consent.label')
+                    ->translateLabel()
+                    ->query(function (Builder $query, array $data): Builder {
+                        $values = collect($data['values'] ?? [])
+                            ->map(fn (string $value) => BroadcasterConsent::tryFrom((int) $value))
+                            ->filter();
+
+                        if ($values->isEmpty()) {
+                            return $query;
+                        }
+
+                        return $query->whereBroadcasterGavePermission($values->all());
+                    }),
+
+                TernaryFilter::make('has_consent_simple')
+                    ->label('admin/resources/clips.filters.has_consent_simple.label')
+                    ->translateLabel()
+                    ->nullable()
+                    ->placeholder(__('admin/resources/clips.filters.has_consent_simple.options.default'))
+                    ->trueLabel(__('admin/resources/clips.filters.has_consent_simple.options.true'))
+                    ->falseLabel(__('admin/resources/clips.filters.has_consent_simple.options.false'))
+                    ->queries(
+                        true: fn (Builder $query) => $query->whereBroadcasterDeniedPermission(),
+                        false: fn (Builder $query): Builder => $query,
+                        blank: fn (Builder $query) => $query->whereBroadcasterGavePermission(),
                     ),
 
                 TrashedFilter::make(),

@@ -10,6 +10,7 @@ use App\Filament\AdminPanel\Resources\Clips\Actions\Management\ClipFeedbackActio
 use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\FlagClipAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\UnflagClipAction;
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
+use App\Filament\Resources\Clips\ClipActions;
 use App\Models\Clip;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -55,6 +56,8 @@ class ViewClip extends ViewRecord
                 ->modalWidth(Width::SevenExtraLarge),
 
             EditAction::make(),
+
+            ClipActions::reportableActionGroup(),
         ];
     }
 }
