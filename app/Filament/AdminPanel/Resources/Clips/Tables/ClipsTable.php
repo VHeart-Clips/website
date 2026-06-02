@@ -160,13 +160,15 @@ class ClipsTable
                     ->label('admin/resources/clips.filters.has_consent.label')
                     ->translateLabel()
                     ->query(function (Builder $query, array $data): Builder {
-                        $values = array_filter($data['values'] ?? []);
+                        $values = collect($data['values'] ?? [])
+                            ->map(fn (string $value) => BroadcasterConsent::tryFrom((int) $value))
+                            ->filter();
 
-                        if ($values === []) {
+                        if ($values->isEmpty()) {
                             return $query;
                         }
 
-                        return $query->whereBroadcasterGavePermission($values);
+                        return $query->whereBroadcasterGavePermission($values->all());
                     }),
 
                 TernaryFilter::make('has_consent_simple')
