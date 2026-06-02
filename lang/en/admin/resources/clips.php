@@ -66,6 +66,19 @@ return [
             'false' => 'All',
         ],
 
+        'has_consent_simple' => [
+            'label' => 'Consent (Simple)',
+            'options' => [
+                'default' => 'Only clips with Consent',
+                'true' => 'Only clips without Consent',
+                'false' => 'All Clips with or without Consent',
+            ],
+        ],
+
+        'has_consent' => [
+            'label' => 'Consent',
+        ],
+
         'created_range' => [
             'label' => 'Created Between',
             'indicator' => 'Clip Created',
