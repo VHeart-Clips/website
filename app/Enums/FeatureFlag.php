@@ -29,7 +29,7 @@ enum FeatureFlag: string implements HasLabel
     case Reports = 'reporting';
 
     #[Description('Bypasses the Broadcaster Consent globally, useful for debugging locally')]
-    // #[Environment(['local', 'staging'])] disabled for the softrelease
+    #[Environment(['local', 'staging'])]
     case IgnoreBroadcasterConsent = 'bypass_broadcaster_consent';
 
     #[Description('Shows the about-us page on index (also hides the footer item and route for about us)')]
