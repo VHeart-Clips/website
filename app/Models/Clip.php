@@ -334,14 +334,14 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      * Include only Clips where the broadcaster has explicitly granted content use permission.
      */
     #[Scope]
-    protected function whereBroadcasterGavePermission(Builder $query, BroadcasterConsent|Collection|array|null $consents = null): Builder
+    protected function whereBroadcasterGavePermission(Builder $query, BroadcasterConsent|Collection|array|null $consents = null, string $boolean = 'and', bool $not = false): Builder
     {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query;
         }
 
         return $query->whereHas('broadcaster',
-            fn (Builder $q) => $q->whereGaveConsent($consents)
+            fn (Builder $q) => $q->whereGaveConsent($consents, $boolean, $not)
         );
     }
 
