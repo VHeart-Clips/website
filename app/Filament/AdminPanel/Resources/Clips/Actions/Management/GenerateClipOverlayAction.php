@@ -35,7 +35,7 @@ class GenerateClipOverlayAction extends Action
                 'category' => $record->category?->title ?? 'Unknown Category',
                 'clipper' => $record->creator?->name ?? '',
                 'cutter' => $record->claimer?->name ?? '',
-                'avatar' => $record->broadcaster?->user?->proxiedContentUrl() ?? '',
+                'avatar' => $record->broadcaster?->user?->avatar_url ?? '',
                 'show_avatar' => $this->shouldEnableAvatar($record->broadcaster?->user?->avatar_url),
             ])
             ->schema([
@@ -50,7 +50,7 @@ class GenerateClipOverlayAction extends Action
                             ->after(function (Clip $record, Get $get, Component $livewire): void {
                                 $record->load('broadcaster');
                                 $livewire->mountedActions[0]['data']['broadcaster'] = $record->broadcaster?->name ?? 'Unknown Broadcaster';
-                                $livewire->mountedActions[0]['data']['avatar'] = $record->broadcaster?->user?->proxiedContentUrl() ?? '';
+                                $livewire->mountedActions[0]['data']['avatar'] = $record->broadcaster?->user?->avatar_url ?? '';
                                 $livewire->mountedActions[0]['data']['show_avatar'] = $this->shouldEnableAvatar($record->broadcaster?->user?->avatar_url);
                                 $livewire->dispatch('clip-overlay-updated', ...$this->buildOverlayState($get));
                             })
@@ -107,7 +107,7 @@ class GenerateClipOverlayAction extends Action
                         'category' => $this->categoryName($record->category?->title ?? 'Unknown Category'),
                         'clipper' => $this->userName($record->creator?->name),
                         'cutter' => $this->userName($record->claimer?->name),
-                        'avatar' => $record->broadcaster?->user?->proxiedContentUrl() ?? '',
+                        'avatar' => $record->broadcaster?->user?->avatar_url ?? '',
                         'show_avatar' => $this->shouldEnableAvatar($record->broadcaster?->user?->avatar_url),
                     ],
                     'identifier' => $record->id

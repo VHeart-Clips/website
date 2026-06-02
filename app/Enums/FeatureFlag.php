@@ -64,4 +64,8 @@ enum FeatureFlag: string implements HasLabel
     #[DefaultFeatureFlagState(false)]
     #[Environment(['local', 'staging'])]
     case Debug = 'debug';
+
+    #[Description('Allows the broadcasters to submit removal requests from their dashboard')]
+    #[DefaultFeatureFlagState(true)]
+    case BroadcasterRemovalRequestsDashboard = 'broadcaster_removal_requests_dashboard';
 }

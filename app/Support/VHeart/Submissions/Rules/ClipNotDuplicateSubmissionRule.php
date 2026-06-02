@@ -17,10 +17,10 @@ readonly class ClipNotDuplicateSubmissionRule implements ClipSubmissionRule
 
     public function passes(ClipSubmissionContext $context): bool
     {
-        return ! Clip::query()
+        return Clip::query()
             ->withTrashed()
-            ->where('twitch_id', $context->clip()?->id)
-            ->exists();
+            ->where('twitch_id', $context->clipId)
+            ->doesntExist();
     }
 
     public function message(): string

@@ -46,7 +46,7 @@
                             >
                                 <x-ui.avatar
                                     class="size-8 text-base"
-                                    :src="auth()->user()->proxiedContentUrl()"
+                                    :src="auth()->user()->avatar_url"
                                     :name="auth()->user()->name"
                                     :force="true"
                                 />

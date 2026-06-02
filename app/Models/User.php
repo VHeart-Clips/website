@@ -6,12 +6,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Casts\TwitchAvatarCast;
-use App\Enums\ExternalContentProxyType;
-use App\Models\Contracts\ExternalProxyable;
 use App\Models\Contracts\HasFilamentInfolistEntry;
 use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
-use App\Models\Traits\HasExternalProxy;
 use App\Models\Traits\Reportable;
 use App\Models\Traits\User\UserFilamentConfiguration;
 use App\Models\Traits\User\UserPermissions;
@@ -35,7 +32,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Vite;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\Contracts\Commenter;
 use Kirschbaum\Commentions\HasComments;
@@ -52,11 +48,10 @@ use Kirschbaum\Commentions\HasComments;
     'remember_token',
     'twitch_refresh_token',
 ])]
-class User extends Authenticatable implements Commentable, Commenter, ExternalProxyable, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasDefaultTenant, HasFilamentInfolistEntry, HasFilamentTableColumn, HasName, HasTenants, MustVerifyEmail
+class User extends Authenticatable implements Commentable, Commenter, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasDefaultTenant, HasFilamentInfolistEntry, HasFilamentTableColumn, HasName, HasTenants, MustVerifyEmail
 {
     use Auditable;
     use HasComments;
-    use HasExternalProxy;
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -79,16 +74,6 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
     protected array $auditExcludeEvents = ['created'];
 
     protected $rememberTokenName;
-
-    public static function getProxyUrlColumn(): string
-    {
-        return 'avatar_url';
-    }
-
-    public static function getProxyExtension(): string
-    {
-        return 'png';
-    }
 
     public function getAppAuthenticationHolderName(): string
     {
@@ -117,20 +102,6 @@ class User extends Authenticatable implements Commentable, Commenter, ExternalPr
     public function getPasswordAttribute(): ?string
     {
         return null;
-    }
-
-    public function proxiedContentUrl(?int $width = null, ?int $height = null): ?string
-    {
-        if (! $this->exists || $this->id === 0 || ! $this->getAttribute(static::getProxyUrlColumn())) {
-            return Vite::asset('resources/images/png/mani.png');
-        }
-
-        return $this->generateExternalProxyUrl($width, $height);
-    }
-
-    public function getProxyType(): ExternalContentProxyType
-    {
-        return ExternalContentProxyType::TwitchUser;
     }
 
     /**

@@ -9,7 +9,6 @@ use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\ClipVoteType;
-use App\Enums\ExternalContentProxyType;
 use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Infolists\Components\TwitchEmbedEntry;
@@ -19,13 +18,11 @@ use App\Models\Broadcaster\Broadcaster;
 use App\Models\Clip\Compilation;
 use App\Models\Clip\CompilationClip;
 use App\Models\Clip\Tag;
-use App\Models\Contracts\ExternalProxyable;
 use App\Models\Contracts\HasFilamentInfolistEntry;
 use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Scopes\ClipPermissionScope;
 use App\Models\Scopes\ClipWithoutBannedCategoryScope;
 use App\Models\Traits\Auditable;
-use App\Models\Traits\HasExternalProxy;
 use App\Models\Traits\Reportable;
 use App\Policies\ClipPolicy;
 use App\Support\FeatureFlag\Feature;
@@ -61,32 +58,17 @@ use Kirschbaum\Commentions\HasComments;
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
 #[UseResource(PublicClipResource::class)]
 #[UsePolicy(ClipPolicy::class)]
-class Clip extends Model implements Commentable, ExternalProxyable, HasFilamentInfolistEntry, HasFilamentTableColumn
+class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFilamentTableColumn
 {
     /** @use HasFactory<ClipFactory> */
-    use Auditable, HasComments, HasExternalProxy, HasFactory, Reportable, SoftDeletes;
-
-    public static function getProxyIdentifierColumn(): string
-    {
-        return 'twitch_id';
-    }
-
-    public static function getProxyUrlColumn(): string
-    {
-        return 'thumbnail_url';
-    }
-
-    public static function getProxyExtension(): string
-    {
-        return 'jpg';
-    }
+    use Auditable, HasComments, HasFactory, Reportable, SoftDeletes;
 
     public static function getFilamentTableColumn(string $name): FilamentTableComponent|FilamentTableColumn
     {
         return Split::make([
             ClipColumns::thumbnail()
                 ->imageHeight(30)
-                ->getStateUsing(fn (Model $record) => $record->$name->proxiedContentUrl()),
+                ->getStateUsing(fn (Model $record) => $record->$name->thumbnail_url),
             Split::make([
                 ClipColumns::title()->make("{$name}.title"),
             ]),
@@ -248,11 +230,6 @@ class Clip extends Model implements Commentable, ExternalProxyable, HasFilamentI
     public function getReportableTitleAttribute(): string
     {
         return 'title';
-    }
-
-    public function getProxyType(): ExternalContentProxyType
-    {
-        return ExternalContentProxyType::TwitchClip;
     }
 
     protected function casts(): array
