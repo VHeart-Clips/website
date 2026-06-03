@@ -58,7 +58,7 @@ class RemovalRequestsTable
                     ->falseLabel(__('admin/resources/removal-requests.filters.resolved.options.false'))
                     ->placeholder(__('admin/resources/removal-requests.filters.resolved.options.placeholder'))
                     ->queries(
-                        true: fn (Builder $query) => $query,
+                        true: fn (Builder $query): Builder => $query,
                         false: fn (Builder $query) => $query->whereNot('status', RemovalRequestStatus::Pending),
                         blank: fn (Builder $query) => $query->where('status', RemovalRequestStatus::Pending),
                     ),

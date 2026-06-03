@@ -72,8 +72,8 @@ class ViewRemovalRequest extends ViewRecord
             ->translateLabel()
             ->requiresConfirmation()
             ->authorize('adminClaimAction')
-            ->action(function (RemovalRequest $record) {
-                DB::transaction(static function () use (&$record) {
+            ->action(function (RemovalRequest $record): void {
+                DB::transaction(static function () use (&$record): void {
                     $removalRequest = RemovalRequest::query()
                         ->lockForUpdate()
                         ->find($record->id);
@@ -112,8 +112,8 @@ class ViewRemovalRequest extends ViewRecord
             ->translateLabel()
             ->requiresConfirmation()
             ->authorize('adminForceClaimAction')
-            ->action(function (RemovalRequest $record) {
-                DB::transaction(static function () use (&$record) {
+            ->action(function (RemovalRequest $record): void {
+                DB::transaction(static function () use (&$record): void {
                     $removalRequest = RemovalRequest::query()
                         ->lockForUpdate()
                         ->find($record->id);
@@ -151,7 +151,7 @@ class ViewRemovalRequest extends ViewRecord
             ->translateLabel()
             ->requiresConfirmation()
             ->authorize('adminUnclaimAction')
-            ->action(function (RemovalRequest $record) {
+            ->action(function (RemovalRequest $record): void {
                 Notification::make('unclaimed')
                     ->title(__('admin/resources/removal-requests.notifications.unclaimed.title'))
                     ->success()
@@ -170,8 +170,8 @@ class ViewRemovalRequest extends ViewRecord
             ->requiresConfirmation()
             ->authorize('superadmin')
             ->visible(fn (RemovalRequest $record): bool => $record->resolved_by || $record->resolved_at || $record->claimed_by || $record->claimed_at || $record->status !== RemovalRequestStatus::Pending)
-            ->action(function (RemovalRequest $record) {
-                DB::transaction(static function () use (&$record) {
+            ->action(function (RemovalRequest $record): void {
+                DB::transaction(static function () use (&$record): void {
                     $removalRequest = RemovalRequest::query()
                         ->lockForUpdate()
                         ->find($record->id);
@@ -276,8 +276,8 @@ class ViewRemovalRequest extends ViewRecord
                             ]),
                     ]),
             ] : null)
-            ->action(function (RemovalRequest $record, array $data = []) use ($requestStatus) {
-                DB::transaction(static function () use ($requestStatus, &$record, &$data) {
+            ->action(function (RemovalRequest $record, array $data = []) use ($requestStatus): void {
+                DB::transaction(static function () use ($requestStatus, &$record, &$data): void {
                     $removalRequest = RemovalRequest::query()
                         ->lockForUpdate()
                         ->find($record->id);
