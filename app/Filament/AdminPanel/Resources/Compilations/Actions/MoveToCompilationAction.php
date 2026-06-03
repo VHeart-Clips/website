@@ -8,10 +8,12 @@ use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
+use App\Support\Audit\Auditor;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
@@ -40,7 +42,7 @@ class MoveToCompilationAction extends Action
                     ->preload()
                     ->required(),
             ])
-            ->action(function (Clip $record, array $data, $livewire): void {
+            ->action(function (Clip $record, array $data, RelationManager $livewire): void {
                 $pivotAlreadyExists = Clip\CompilationClip::query()
                     ->where('compilation_id', $data['compilation_id'])
                     ->where('clip_id', $record->id)
@@ -57,14 +59,14 @@ class MoveToCompilationAction extends Action
                 }
 
                 try {
-                    $pivot = Clip\CompilationClip::query()
-                        ->where('compilation_id', $livewire->getOwnerRecord()->id)
+                    $updatedCount = Clip\CompilationClip::query()
+                        ->where('compilation_id', $livewire->getOwnerRecord()->getKey())
                         ->where('clip_id', $record->id)
-                        ->first();
+                        ->update([
+                            'compilation_id' => $data['compilation_id'],
+                        ]);
 
-                    if ($pivot instanceof Clip\CompilationClip) {
-                        $pivot->update(['compilation_id' => $data['compilation_id']]);
-                    } else {
+                    if ($updatedCount === 0) {
                         Notification::make('did-not-update-properly')
                             ->title('Could not move Clip')
                             ->body('There was an error while moving clip, please contact IT if the issue persists')
@@ -73,13 +75,20 @@ class MoveToCompilationAction extends Action
 
                         Log::warning('Did not update CompilationClip properly', [
                             'clip_id' => $record->id,
-                            'current_compilation_id' => $livewire->getOwnerRecord()->id,
+                            'current_compilation_id' => $livewire->getOwnerRecord()->getKey(),
                             'target_compilation_id' => $data['compilation_id'],
                             'user_id' => auth()->id(),
                         ]);
 
                         $this->halt();
                     }
+
+                    Auditor::make()
+                        ->event('compilation.clip.moved')
+                        ->old(['compilation_id' => $livewire->getOwnerRecord()->getKey()])
+                        ->new(['compilation_id' => (int) $data['compilation_id']])
+                        ->on($livewire->getOwnerRecord())
+                        ->save();
                 } catch (Halt $e) {
                     throw $e;
                 } catch (Exception $e) {
