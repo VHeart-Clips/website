@@ -20,12 +20,14 @@ use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function (): void {
             Route::middleware('stateless')
                 ->group(base_path('routes/stateless.php'));
+
+            Route::middleware('web')
+                ->group(base_path('routes/web.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware): void {
