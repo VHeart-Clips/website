@@ -17,8 +17,10 @@ use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\UpdateClaimInfosAction;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
+use App\Models\Audit;
 use App\Models\Clip;
 use App\Models\User;
+use App\Support\Audit\Auditor;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
@@ -298,6 +300,16 @@ class ClipsRelationManager extends RelationManager
                             ->default(CompilationClipClaimStatus::Pending)
                             ->required(),
                     ])
+                    ->after(fn (Model $record, array $data, RelationManager $livewire): Audit => Auditor::make()
+                        ->event('compilation.clip.attached')
+                        ->new([
+                            'clip_id' => $record->id,
+                            'claim_status' => $data['claim_status'],
+                            'added_by' => auth()->id(),
+                        ])
+                        ->on($livewire->getOwnerRecord())
+                        ->save()
+                    )
                     ->mutateDataUsing(function (array $data): array {
                         $data['added_by'] = auth()->id();
 
@@ -336,6 +348,19 @@ class ClipsRelationManager extends RelationManager
 
                             CompilationClipClaimed::dispatch($this->getOwnerRecord(), auth()->user(), $clip);
 
+                            Auditor::make()
+                                ->event('compilation.clip.claimed')
+                                ->old([
+                                    'clip_id' => $clip->id,
+                                    'claimed_by' => $clip->claimed_by,
+                                ])
+                                ->new([
+                                    'clip_id' => $clip->id,
+                                    'claimed_by' => auth()->id(),
+                                ])
+                                ->on($this->getOwnerRecord())
+                                ->save();
+
                             Notification::make()
                                 ->title(__('admin/resources/compilations.relation_managers.clips.notifications.claimed.title'))
                                 ->success()
@@ -372,6 +397,19 @@ class ClipsRelationManager extends RelationManager
 
                             CompilationClipStatusUpdated::dispatch($this->getOwnerRecord(), auth()->user(), $clip, $oldStatus, $data['status']);
 
+                            Auditor::make()
+                                ->event('compilation.clip.updated')
+                                ->old([
+                                    'clip_id' => $clip->id,
+                                    'claim_status' => $oldStatus,
+                                ])
+                                ->new([
+                                    'clip_id' => $clip->id,
+                                    'claim_status' => $data['status'],
+                                ])
+                                ->on($this->getOwnerRecord())
+                                ->save();
+
                             Notification::make()
                                 ->title(__('admin/resources/compilations.relation_managers.clips.notifications.status_updated'))
                                 ->success()
@@ -405,6 +443,19 @@ class ClipsRelationManager extends RelationManager
 
                             CompilationClipUnclaimed::dispatch($this->getOwnerRecord(), auth()->user(), $clip);
 
+                            Auditor::make()
+                                ->event('compilation.clip.unclaimed')
+                                ->old([
+                                    'clip_id' => $clip->id,
+                                    'claimed_by' => auth()->id(),
+                                ])
+                                ->new([
+                                    'clip_id' => $clip->id,
+                                    'claimed_by' => null,
+                                ])
+                                ->on($this->getOwnerRecord())
+                                ->save();
+
                             Notification::make()
                                 ->title(__('admin/resources/compilations.relation_managers.clips.notifications.unclaimed_title'))
                                 ->success()
@@ -412,7 +463,13 @@ class ClipsRelationManager extends RelationManager
                         }),
                     MoveToCompilationAction::make(),
                     UpdateClaimInfosAction::make(),
-                    DetachAction::make(),
+                    DetachAction::make()
+                        ->after(fn (Clip $record, array $data, RelationManager $livewire): Audit => Auditor::make()
+                            ->event('compilation.clip.detached')
+                            ->old(array_filter($record->pivot->getAttributes()))
+                            ->on($livewire->getOwnerRecord())
+                            ->save()
+                        ),
                 ]),
             ])
             ->toolbarActions([

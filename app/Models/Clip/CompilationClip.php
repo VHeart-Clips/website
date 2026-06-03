@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Models\Clip;
 
 use App\Enums\Clips\CompilationClipClaimStatus;
-use App\Models\Traits\Auditable;
 use App\Models\User;
 use Database\Factories\Clip\CompilationClipFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,12 +17,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 // pivot data, this is usually accessible via $model->pivot->stuff()
 class CompilationClip extends Pivot
 {
-    use Auditable;
-
     /** @use HasFactory<CompilationClipFactory> */
     use HasFactory;
-
-    public $incrementing = true;
 
     /**
      * Get the list of columns for this pivot
@@ -33,7 +28,6 @@ class CompilationClip extends Pivot
     public static function getPivotColumns(): array
     {
         return [
-            'id',
             'added_by',
             'added_at',
             'claimed_by',
