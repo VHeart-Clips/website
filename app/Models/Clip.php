@@ -317,6 +317,14 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         return $query->whereNull(['final_jury_votes', 'final_public_votes', 'final_score']);
     }
 
+    #[Scope]
+    protected function whereShouldSync(Builder $query): Builder
+    {
+        return $query
+            ->whereNotNull('next_sync_at')
+            ->whereNowOrPast('next_sync_at');
+    }
+
     /**
      * Get Clips that should be archived
      *
