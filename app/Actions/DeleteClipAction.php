@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions;
 
 use App\Models\Clip;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class DeleteClipAction
@@ -20,9 +21,12 @@ class DeleteClipAction
         }
 
         Log::debug('Clip has no compilations, wiping completely.');
-        $clip->votes()->forceDelete();
-        $clip->comments()->forceDelete();
-        $clip->tags()->detach();
-        $clip->forceDelete();
+
+        DB::transaction(static function () use (&$clip): void {
+            $clip->votes()->forceDelete();
+            $clip->comments()->forceDelete();
+            $clip->tags()->detach();
+            $clip->forceDelete();
+        });
     }
 }
