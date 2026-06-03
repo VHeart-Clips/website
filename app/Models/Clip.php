@@ -26,6 +26,7 @@ use App\Models\Traits\Auditable;
 use App\Models\Traits\Reportable;
 use App\Policies\ClipPolicy;
 use App\Support\FeatureFlag\Feature;
+use Carbon\CarbonInterface;
 use Carbon\CarbonInterval;
 use Database\Factories\ClipFactory;
 use DateTimeInterface;
@@ -131,6 +132,26 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     }
 
     /**
+     * Calculates the next time after which we have to update it from twitch based on
+     * Everything will update eventually, minimum every 30 minutes and maximum once a year
+     *
+     * @param  CarbonInterface  $date  The time a clip was created
+     */
+    public static function calculateNextSyncAt(CarbonInterface $date): ?CarbonInterface
+    {
+        $age = now()->diffAsCarbonInterval($date, true);
+
+        return match (true) {
+            $age->lessThanOrEqualTo(CarbonInterval::hour()) => now()->addMinutes(30),
+            $age->lessThanOrEqualTo(CarbonInterval::day()) => now()->addHour(),
+            $age->lessThanOrEqualTo(CarbonInterval::weeks(2)) => now()->addWeek(),
+            $age->lessThanOrEqualTo(CarbonInterval::months(2)) => now()->addWeeks(2),
+            $age->lessThanOrEqualTo(CarbonInterval::year()) => now()->addMonth(),
+            default => now()->addYear(),
+        };
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function owner(): BelongsTo
@@ -205,6 +226,14 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             ->using(CompilationClip::class)
             ->withPivot(CompilationClip::getPivotColumns())
             ->withTimestamps();
+    }
+
+    /**
+     * Calculates the next time after which we have to update it from twitch for this clip
+     */
+    public function getNextSyncAt(): ?CarbonInterface
+    {
+        return self::calculateNextSyncAt($this->date);
     }
 
     /**
