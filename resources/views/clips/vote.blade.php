@@ -31,9 +31,20 @@
 
     <section
         data-clip="false"
+        data-maintenance="false"
         :data-clip="hasClip ? 'true' : 'false'"
+        :data-maintenance="isMaintenanceMode ? 'true' : 'false'"
         class="sticky bottom-18 w-full max-w-3xl mx-auto flex flex-row items-center bg-white/75 dark:bg-black/80    border border-muted    ring-black/5 ring-1 dark:ring-0    backdrop-blur-md rounded-2xl    shadow-xl dark:shadow-none    transition-all duration-300 ease-out data-[clip=false]:opacity-0 data-[clip=false]:translate-y-4 data-[clip=false]:pointer-events-none"
     >
+        <div
+            data-shown="false"
+            :data-shown="isMaintenanceMode ? 'true' : 'false'"
+            class="absolute inset-0 z-20 rounded-2xl flex items-center justify-center gap-2 bg-white/95 dark:bg-black/95 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 data-[shown=true]:opacity-100 data-[shown=true]:pointer-events-auto"
+        >
+            <x-lucide-loader-circle class="size-4 shrink-0 animate-spin text-muted-foreground"/>
+            <span class="text-sm text-muted-foreground">{{ __('clips.vote.maintenance') }}</span>
+        </div>
+
         <div class="flex items-center gap-1 flex-1 justify-start sm:py-3 pl-2 sm:pl-4">
             <template x-if="hasBroadcaster">
                 <a href="https://twitch.tv/{{ $clip->owner?->name ?? '' }}" x-bind:href="clipBroadcasterUrl" target="_blank" class="flex items-center gap-1">
@@ -65,7 +76,7 @@
                         variant="icon"
                         type="button"
                         @click="arm('like')"
-                        x-bind:disabled="timeLeft > 0 || isLoading || !hasClip"
+                        x-bind:disabled="timeLeft > 0 || isLoading || !hasClip || isMaintenanceMode"
                         x-bind:data-armed="armedButton === 'like' ? 'true' : 'false'"
                         :disabled="!$clip"
                         :title="__('clips.vote.form.fields.vote.label')"
@@ -80,7 +91,7 @@
                         type="button"
                         @click="arm('skip')"
                         :disabled="!$clip"
-                        x-bind:disabled="timeLeft > 0 || isLoading || !hasClip"
+                        x-bind:disabled="timeLeft > 0 || isLoading || !hasClip || isMaintenanceMode"
                         x-bind:data-armed="armedButton === 'skip' ? 'true' : 'false'"
                         :title="__('clips.vote.form.fields.skip.label')"
                         class="inline size-9 place-items-center rounded-full bg-accent/25 dark:bg-black ring-1 ring-white/10 sm:size-11 transition-all duration-150 ease-out active:scale-95 sm:hover:scale-110 group relative before:absolute before:-inset-2 before:content-[''] before:rounded-full data-[armed=true]:scale-110 data-[armed=true]:ring-2 data-[armed=true]:ring-muted-foreground data-[armed=true]:bg-muted/30"

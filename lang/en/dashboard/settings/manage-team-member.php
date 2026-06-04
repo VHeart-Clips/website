@@ -20,14 +20,6 @@ return [
         'user' => 'User',
         'permissions' => 'Permission',
     ],
-    'filters' => [
-        'state' => [
-            'label' => 'Allowed',
-            'placeholder' => 'All',
-            'true' => 'Only Allowed',
-            'false' => 'Only Blocked',
-        ],
-    ],
     'forms' => [
         'create' => [
             'user-select' => [

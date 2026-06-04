@@ -34,9 +34,11 @@ export interface ClipVoteConfig {
 export interface ClipVoteData extends ClipVoteConfig {
     timeLeft: number;
     isLoading: boolean;
+    isMaintenanceMode: boolean;
     timer: ReturnType<typeof setInterval> | null;
     armedButton: 'like' | 'skip' | null;
     armTimeout: ReturnType<typeof setTimeout> | null;
+    maintenanceRetryTimeout: ReturnType<typeof setTimeout> | null;
     isTouch: boolean;
     isTouchHandler: ((e: MediaQueryListEvent) => void) | null;
     isTouchQuery: MediaQueryList | null;
@@ -45,16 +47,18 @@ export interface ClipVoteData extends ClipVoteConfig {
     arm(type: 'like' | 'skip'): Promise<void>;
     vote(decision: 0 | 1): Promise<void>;
     isTextInput(el: HTMLElement | null): boolean;
-
+    scheduleMaintenanceRetry(decision: 0 | 1): void;
 }
 
 export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
     ...config,
     timeLeft: 0,
     isLoading: false,
+    isMaintenanceMode: false,
     timer: null,
     armedButton: null,
     armTimeout: null,
+    maintenanceRetryTimeout: null,
     isTouch: false,
     isTouchHandler: null,
     isTouchQuery: null,
@@ -64,14 +68,22 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
         this.startTimer(config.initialDuration * 0.3);
 
         this.keyboardHandler = (e: KeyboardEvent) => {
-            if (this.isLoading || !this.hasClip || this.timeLeft > 0) return;
+            if (
+                this.isLoading ||
+                !this.hasClip ||
+                this.timeLeft > 0 ||
+                this.isMaintenanceMode
+            )
+                return;
 
-            if(e.target instanceof HTMLElement && this.isTextInput(e.target as HTMLElement)) return;
+            if (
+                e.target instanceof HTMLElement &&
+                this.isTextInput(e.target as HTMLElement)
+            )
+                return;
 
-            if (e.key === 'ArrowLeft')
-                void this.arm('like');
-            if (e.key === 'ArrowRight')
-                void this.arm('skip');
+            if (e.key === 'ArrowLeft') void this.arm('like');
+            if (e.key === 'ArrowRight') void this.arm('skip');
         };
 
         this.isTouchQuery = window.matchMedia('(pointer: coarse)');
@@ -100,6 +112,8 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
 
         if (this.timer) clearInterval(this.timer);
         if (this.armTimeout) clearTimeout(this.armTimeout);
+        if (this.maintenanceRetryTimeout)
+            clearTimeout(this.maintenanceRetryTimeout);
     },
 
     startTimer(seconds: number) {
@@ -119,7 +133,7 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
     },
 
     async arm(type: 'like' | 'skip') {
-        if (this.isLoading || !this.hasClip) return;
+        if (this.isLoading || !this.hasClip || this.isMaintenanceMode) return;
 
         if (!this.isTouch) {
             await this.vote(type === 'like' ? 1 : 0);
@@ -141,7 +155,7 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
     },
 
     async vote(decision: 0 | 1) {
-        if (this.isLoading || !this.hasClip) return;
+        if (this.isLoading || !this.hasClip || this.isMaintenanceMode) return;
         this.isLoading = true;
         this.reportItems = [];
 
@@ -155,6 +169,11 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                     headers: { Accept: 'application/json' },
                 },
             );
+
+            if (typeof response.data === 'string') {
+                this.scheduleMaintenanceRetry(decision);
+                return;
+            }
 
             const nextClip: ClipVoteResource | null = response.data;
 
@@ -178,12 +197,39 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 this.clipBroadcasterName = '';
                 this.hasBroadcaster = false;
             }
+        } catch {
+            this.scheduleMaintenanceRetry(decision);
         } finally {
             this.isLoading = false;
         }
     },
 
-    isTextInput (el: HTMLElement | null) {
+    scheduleMaintenanceRetry(decision: 0 | 1) {
+        this.isMaintenanceMode = true;
+        this.armedButton = null;
+
+        if (this.maintenanceRetryTimeout)
+            clearTimeout(this.maintenanceRetryTimeout);
+
+        this.maintenanceRetryTimeout = setTimeout(async () => {
+            try {
+                const response = await window.axios.post(
+                    clipVoteController.store().url,
+                    { voted: decision },
+                    { headers: { Accept: 'application/json' } },
+                );
+                if (typeof response.data !== 'string') {
+                    window.location.reload();
+                } else {
+                    this.scheduleMaintenanceRetry(decision);
+                }
+            } catch {
+                this.scheduleMaintenanceRetry(decision);
+            }
+        }, 5000);
+    },
+
+    isTextInput(el: HTMLElement | null) {
         if (!el) return false;
         const tag = (el.tagName || '').toLowerCase();
         return tag === 'input' || tag === 'textarea' || el.isContentEditable;

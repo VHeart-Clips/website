@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'settings' => [
-        'title' => 'Account Settings',
+        'title' => 'Einstellungen',
         'broadcaster_note' => [
             'label' => 'Hinweis für Broadcaster',
             'description' => 'Um spezifische Einstellungen für deinen Kanal zu verwalten, wechsle bitte in das Broadcaster Dashboard.',
