@@ -20,4 +20,14 @@ return [
         'user' => 'User',
         'permissions' => 'Rechte',
     ],
+    'forms' => [
+        'create' => [
+            'user-select' => [
+                'rules' => [
+                    'unique' => 'Dieser Benutzer ist bereits in deinem Team.',
+                    'not_in' => 'Du kannst dich nicht selber zu deinem Team hinzufügen.',
+                ],
+            ],
+        ],
+    ],
 ];

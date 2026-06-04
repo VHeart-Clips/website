@@ -24,4 +24,10 @@ return [
 
     // Logo alt text
     'logo_alt' => 'VHeart Logo',
+
+    // User Dropdown
+    'onboarding' => 'Onboarding',
+    'team_dashboard' => 'Team Dashboard',
+    'settings' => 'Einstellungen',
+    'logout' => 'Abmelden',
 ];

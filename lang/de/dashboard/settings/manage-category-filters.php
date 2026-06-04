@@ -22,4 +22,13 @@ return [
             'false' => 'Nur Geblockte',
         ],
     ],
+    'forms' => [
+        'create' => [
+            'category-select' => [
+                'rules' => [
+                    'unique' => 'Die Kategorie ist bereits in deiner liste.',
+                ],
+            ],
+        ],
+    ],
 ];
