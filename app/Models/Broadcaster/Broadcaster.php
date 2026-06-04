@@ -12,6 +12,7 @@ use App\Models\Clip;
 use App\Models\Contracts\HasFilamentInfolistEntry;
 use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
+use App\Models\Traits\Bannable;
 use App\Models\Traits\Reportable;
 use App\Models\User;
 use App\Policies\Broadcaster\BroadcasterPolicy;
@@ -41,6 +42,7 @@ use Illuminate\Support\Facades\DB;
 class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, HasFilamentTableColumn
 {
     use Auditable;
+    use Bannable;
 
     /** @use HasFactory<BroadcasterFactory> */
     use HasFactory;
