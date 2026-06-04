@@ -6,6 +6,7 @@ namespace App\Providers;
 
 use App\Enums\Permission;
 use App\Jobs\Reports\CheckForRemovedClipJob;
+use App\Models\Ban;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Broadcaster\BroadcasterSubmissionFilter;
 use App\Models\Broadcaster\BroadcasterTeamMember;
@@ -132,6 +133,7 @@ class AppServiceProvider extends ServiceProvider
             'compilation_clip' => CompilationClip::class,
             'tag' => Clip\Tag::class,
             'faq_entry' => FaqEntry::class,
+            'ban' => Ban::class,
             'category' => Category::class,
             'clip' => Clip::class,
             'report' => Report::class,
