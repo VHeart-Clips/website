@@ -67,6 +67,7 @@ return [
             'total_votes' => 'Bisherige stimmen für diesen Clip',
             'nothing_left' => 'Wir finden gerade nix was du Voten könntest. Komme bitte später nochmal vorbei!',
         ],
+        'maintenance' => 'Wird aktualisiert, gleich geht es weiter...',
     ],
 
     'enums' => [
