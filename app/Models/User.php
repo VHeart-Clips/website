@@ -9,6 +9,7 @@ use App\Casts\TwitchAvatarCast;
 use App\Models\Contracts\HasFilamentInfolistEntry;
 use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
+use App\Models\Traits\Bannable;
 use App\Models\Traits\Reportable;
 use App\Models\Traits\User\UserFilamentConfiguration;
 use App\Models\Traits\User\UserPermissions;
@@ -51,6 +52,7 @@ use Kirschbaum\Commentions\HasComments;
 class User extends Authenticatable implements Commentable, Commenter, FilamentUser, HasAppAuthentication, HasAppAuthenticationRecovery, HasAvatar, HasDefaultTenant, HasFilamentInfolistEntry, HasFilamentTableColumn, HasName, HasTenants, MustVerifyEmail
 {
     use Auditable;
+    use Bannable;
     use HasComments;
 
     /** @use HasFactory<UserFactory> */
