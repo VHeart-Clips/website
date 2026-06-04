@@ -14,7 +14,7 @@ class UpdateClipAction
         ClipDto $dto,
         ?array $only = null,
         bool $ignoreNullValues = true,
-        bool $updateNextSync = true
+        bool $updateNextRefreshAfter = true
     ): void {
         $updates = $only === null
             ? $dto->toModel()
@@ -24,8 +24,8 @@ class UpdateClipAction
             $updates = array_filter($updates, static fn (mixed $value): bool => $value !== null);
         }
 
-        if ($updateNextSync) {
-            $updates['next_sync_at'] = $clip->getNextSyncAt();
+        if ($updateNextRefreshAfter) {
+            $updates['next_refresh_after'] = $clip->getNextRefreshAfter();
         }
 
         $clip->update($updates);

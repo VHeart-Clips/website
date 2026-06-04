@@ -40,7 +40,7 @@ class UpdateClipsBatchJob implements ShouldQueue
     public function __construct(
         public readonly array $clipIds,
         public ?array $columnsToUpdate = null,
-        public readonly bool $shouldUpdateNextSyncAt = true
+        public readonly bool $shouldUpdateNextRefreshAfter = true
     ) {
         throw_if(
             count($this->clipIds) > 100,
@@ -91,7 +91,7 @@ class UpdateClipsBatchJob implements ShouldQueue
                 $updateClipAction->execute($clip, $clipDto, $this->columnsToUpdate ?? [
                     'title',
                     'thumbnail_url',
-                ], updateNextSync: $this->shouldUpdateNextSyncAt);
+                ], updateNextRefreshAfter: $this->shouldUpdateNextRefreshAfter);
             }
         });
     }

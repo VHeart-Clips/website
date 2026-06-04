@@ -12,7 +12,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 #[Signature('clips:refresh')]
-#[Description('Updates clip metadata from Twitch based on their next_sync_at timestamp')]
+#[Description('Updates clip metadata from Twitch based on their next_refresh_after timestamp')]
 class RefreshClipsCommand extends Command
 {
     public function handle(): int
@@ -21,8 +21,8 @@ class RefreshClipsCommand extends Command
         $clipCount = 0;
 
         Clip::query()
-            ->whereShouldSync()
-            ->orderBy('next_sync_at')
+            ->whereShouldRefresh()
+            ->orderBy('next_refresh_after')
             ->select('id')
             ->chunkById(100, function ($clips) use (&$jobCount, &$clipCount): void {
                 $ids = $clips->pluck('id')->all();
@@ -31,7 +31,7 @@ class RefreshClipsCommand extends Command
                     Clip::query()
                         ->whereIn('id', $ids)
                         ->update([
-                            'next_sync_at' => null,
+                            'next_refresh_after' => null,
                         ]);
 
                     UpdateClipsBatchJob::dispatch($ids)

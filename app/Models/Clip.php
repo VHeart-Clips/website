@@ -137,7 +137,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      *
      * @param  CarbonInterface  $date  The time a clip was created
      */
-    public static function calculateNextSyncAt(CarbonInterface $date): ?CarbonInterface
+    public static function calculateNextRefreshAfter(CarbonInterface $date): ?CarbonInterface
     {
         $age = now()->diffAsCarbonInterval($date, true);
 
@@ -231,9 +231,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     /**
      * Calculates the next time after which we have to update it from twitch for this clip
      */
-    public function getNextSyncAt(): ?CarbonInterface
+    public function getNextRefreshAfter(): ?CarbonInterface
     {
-        return self::calculateNextSyncAt($this->date);
+        return self::calculateNextRefreshAfter($this->date);
     }
 
     /**
@@ -267,7 +267,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             'thumbnail_url' => TwitchClipThumbnailCast::class,
             'date' => 'immutable_datetime',
             'status' => ClipStatus::class,
-            'next_sync_at' => 'datetime',
+            'next_refresh_after' => 'datetime',
         ];
     }
 
@@ -319,11 +319,11 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     }
 
     #[Scope]
-    protected function whereShouldSync(Builder $query): Builder
+    protected function whereShouldRefresh(Builder $query): Builder
     {
         return $query
-            ->whereNotNull('next_sync_at')
-            ->whereNowOrPast('next_sync_at');
+            ->whereNotNull('next_refresh_after')
+            ->whereNowOrPast('next_refresh_after');
     }
 
     /**

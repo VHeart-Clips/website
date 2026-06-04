@@ -25,7 +25,7 @@ class ImportClipAction
             ], $clip->toModel([
                 'submitter_id' => $user?->id,
                 'status' => Broadcaster::select('default_clip_status')->find($clip->broadcasterId)?->default_clip_status ?? ClipStatus::Unknown,
-                'next_sync_at' => Clip::calculateNextSyncAt($clip->createdAt),
+                'next_refresh_after' => Clip::calculateNextRefreshAfter($clip->createdAt),
             ]));
 
         if (is_array($tags)) {
