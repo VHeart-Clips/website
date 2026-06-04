@@ -67,6 +67,7 @@ return [
             'total_votes' => 'Total votes for this Clip so far',
             'nothing_left' => 'We can\'t find any Clips for you to vote. Please come back later.',
         ],
+        'maintenance' => 'Updating, hold a moment...',
     ],
 
     'enums' => [
