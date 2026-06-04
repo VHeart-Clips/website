@@ -267,6 +267,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             'thumbnail_url' => TwitchClipThumbnailCast::class,
             'date' => 'immutable_datetime',
             'status' => ClipStatus::class,
+            'next_sync_at' => 'datetime',
         ];
     }
 
