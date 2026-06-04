@@ -100,11 +100,19 @@ class BroadcasterPolicy implements BannablePolicy
 
     public function ban(User $user, Model $model): bool
     {
-        return $user->can(Permission::CreateAnyBan) || $user->can(Permission::CanBanBroadcasters);
+        if ($user->can(Permission::CreateAnyBan)) {
+            return true;
+        }
+
+        return $user->can(Permission::CanBanBroadcasters);
     }
 
     public function unban(User $user, Model $model): bool
     {
-        return $user->can(Permission::UpdateAnyBan) || $user->can(Permission::CanBanBroadcasters);
+        if ($user->can(Permission::UpdateAnyBan)) {
+            return true;
+        }
+
+        return $user->can(Permission::CanBanBroadcasters);
     }
 }
