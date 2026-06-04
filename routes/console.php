@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Console\Commands\ArchiveClipVotesCommand;
 use App\Console\Commands\CreateWeeklyEpisodesCommand;
+use App\Console\Commands\RefreshClipsCommand;
 use App\Console\Commands\ReleaseStaleReportsCommand;
 use App\Console\Commands\SyncTopGamesCommand;
 use App\Enums\FeatureFlag;
@@ -51,3 +52,4 @@ Schedule::command(MonitorCommand::class)->runInBackground()->onOneServer()->dail
 Schedule::command(CreateWeeklyEpisodesCommand::class)->onOneServer()->dailyAt('06:00');
 Schedule::command(SyncTopGamesCommand::class)->onOneServer()->everyFourHours();
 Schedule::command(ReleaseStaleReportsCommand::class)->onOneServer()->hourly();
+Schedule::command(RefreshClipsCommand::class)->runInBackground()->onOneServer()->everyFiveMinutes();

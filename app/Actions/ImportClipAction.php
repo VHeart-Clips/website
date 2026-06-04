@@ -19,13 +19,14 @@ class ImportClipAction
 {
     public function execute(ClipDto $clip, ?User $user = null, ?array $tags = null): Clip
     {
-        /** @var Clip $clipModel */
-        $clipModel = Clip::firstOrCreate([
-            'twitch_id' => $clip->id,
-        ], $clip->toModel([
-            'submitter_id' => $user?->id,
-            'status' => Broadcaster::select('default_clip_status')->find($clip->broadcasterId)?->default_clip_status ?? ClipStatus::Unknown,
-        ]));
+        $clipModel = Clip::query()
+            ->firstOrCreate([
+                'twitch_id' => $clip->id,
+            ], $clip->toModel([
+                'submitter_id' => $user?->id,
+                'status' => Broadcaster::select('default_clip_status')->find($clip->broadcasterId)?->default_clip_status ?? ClipStatus::Unknown,
+                'next_refresh_after' => Clip::calculateNextRefreshAfter($clip->createdAt),
+            ]));
 
         if (is_array($tags)) {
             $clipModel->tags()->sync($tags);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Reports;
 
+use App\Actions\DeleteClipAction;
 use App\Enums\Reports\ReportStatus;
 use App\Enums\Reports\ResolveAction;
 use App\Models\Clip;
@@ -39,7 +40,7 @@ class CheckForRemovedClipJob implements ShouldBeUnique, ShouldDispatchAfterCommi
     /**
      * @throws ConnectionException
      */
-    public function handle(TwitchService $twitchService): void
+    public function handle(TwitchService $twitchService, DeleteClipAction $deleteClip): void
     {
         Context::add('clip_id', $this->clip->id);
         Context::add('clip_slug', $this->clip->twitch_id);
@@ -57,7 +58,7 @@ class CheckForRemovedClipJob implements ShouldBeUnique, ShouldDispatchAfterCommi
 
         Log::debug('Clip removed from Twitch, resolving...');
         $this->resolve();
-        $this->deleteClip();
+        $deleteClip->execute($this->clip);
     }
 
     public function failed(?Throwable $exception): void
@@ -95,22 +96,6 @@ class CheckForRemovedClipJob implements ShouldBeUnique, ShouldDispatchAfterCommi
             'resolve_description' => 'Clip was removed from Twitch. (Automatically Resolved)',
             'deleted_at' => now(),
         ]);
-    }
-
-    private function deleteClip(): void
-    {
-        if ($this->clip->compilations()->exists()) {
-            Log::debug('Clip belongs to compilations, soft deleting only.');
-            $this->clip->delete();
-
-            return;
-        }
-
-        Log::debug('Clip has no compilations, wiping completely.');
-        $this->clip->votes()->forceDelete();
-        $this->clip->comments()->forceDelete();
-        $this->clip->tags()->detach();
-        $this->clip->forceDelete();
     }
 
     private function cannotResolve(string $message): void
