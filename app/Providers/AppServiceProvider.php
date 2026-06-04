@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Enums\Permission;
+use App\Jobs\Contracts\TwitchUserApiConsumingJob;
 use App\Jobs\Reports\CheckForRemovedClipJob;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Broadcaster\BroadcasterSubmissionFilter;
@@ -219,6 +220,31 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
+
+        /**
+         * App token rate limits
+         *
+         * We do not want to allow **everything** to be consumed instantly to have some headroom
+         * this limit will allow a buffer of 200 "points" and will spread out jobs and stuff
+         *
+         * @link https://dev.twitch.tv/docs/api/guide#twitch-rate-limits
+         */
+        RateLimiter::for('twitch-api', static fn (): array => [
+            Limit::perSecond(10),
+        ]);
+
+        /**
+         * We can allow users to use up their full bucket without affecting other users
+         *
+         * @link https://dev.twitch.tv/docs/api/guide#twitch-rate-limits
+         */
+        RateLimiter::for('twitch-api-user', static fn (TwitchUserApiConsumingJob|Request $jobOrRequest): array => [
+            Limit::perSecond(13)->by(
+                $jobOrRequest instanceof TwitchUserApiConsumingJob
+                    ? $jobOrRequest->getTwitchUserIdentifier()
+                    : $jobOrRequest->user()->id
+            ),
+        ]);
 
         RateLimiter::for('jobs:reports:check-removed-clip', static fn (CheckForRemovedClipJob $job) => Limit::perHour(2)->by($job->clip?->id));
     }
