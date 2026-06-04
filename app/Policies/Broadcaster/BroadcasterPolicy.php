@@ -98,6 +98,9 @@ class BroadcasterPolicy implements BannablePolicy
         return $twitchService->asSessionUser()->isModeratorFor($broadcaster);
     }
 
+    /**
+     * @param  Broadcaster  $model
+     */
     public function ban(User $user, Model $model): bool
     {
         if ($user->can(Permission::CreateAnyBan)) {
@@ -107,6 +110,9 @@ class BroadcasterPolicy implements BannablePolicy
         return $user->can(Permission::CanBanBroadcasters);
     }
 
+    /**
+     * @param  Broadcaster  $model
+     */
     public function unban(User $user, Model $model): bool
     {
         if ($user->can(Permission::UpdateAnyBan)) {

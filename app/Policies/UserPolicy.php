@@ -128,6 +128,9 @@ class UserPolicy implements BannablePolicy
         return $user->can(Permission::ForceDeleteAnyUser);
     }
 
+    /**
+     * @param  User  $model
+     */
     public function ban(User $user, Model $model): bool
     {
         if ($user->can(Permission::CreateAnyBan)) {
@@ -137,6 +140,9 @@ class UserPolicy implements BannablePolicy
         return $user->can(Permission::CanBanUsers);
     }
 
+    /**
+     * @param  User  $model
+     */
     public function unban(User $user, Model $model): bool
     {
         if ($user->can(Permission::UpdateAnyBan)) {
