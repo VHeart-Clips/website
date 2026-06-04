@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Support\Audit;
 
 use App\Models\Audit;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
+use UnitEnum;
 
 class Auditor
 {
@@ -69,9 +71,14 @@ class Auditor
         return $this;
     }
 
-    public function event(string $event): static
+    public function event(string|UnitEnum|BackedEnum $event): static
     {
-        $this->event = $event;
+        $this->event = match (true) {
+            $event instanceof BackedEnum => (string) $event->value,
+            $event instanceof UnitEnum => $event->name,
+
+            default => $event,
+        };
 
         return $this;
     }
