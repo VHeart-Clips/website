@@ -130,7 +130,7 @@ class UserPolicy implements BannablePolicy
 
     public function ban(User $user, Model $model): bool
     {
-        return $user->can(Permission::CreateBan) || $user->can(Permission::CanBanUsers);
+        return $user->can(Permission::CreateAnyBan) || $user->can(Permission::CanBanUsers);
     }
 
     public function unban(User $user, Model $model): bool

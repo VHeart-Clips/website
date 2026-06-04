@@ -112,7 +112,7 @@ enum Permission: string implements HasLabel
 
     // Ban
     case ViewAnyBan = 'view_any_ban';
-    case CreateBan = 'create_ban';
+    case CreateAnyBan = 'create_any_ban';
     case UpdateAnyBan = 'update_any_ban';
     case DeleteAnyBan = 'delete_any_ban';
 

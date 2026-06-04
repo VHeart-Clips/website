@@ -22,7 +22,7 @@ class BanPolicy
 
     public function create(User $user): bool
     {
-        return $user->can(Permission::CreateBan);
+        return $user->can(Permission::CreateAnyBan);
     }
 
     public function update(User $user, Ban $ban): bool
