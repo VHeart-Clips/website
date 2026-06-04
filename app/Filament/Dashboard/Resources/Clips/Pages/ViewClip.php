@@ -32,7 +32,7 @@ class ViewClip extends ViewRecord
     {
         return [
             Action::make('open_twitch')
-                ->label(__('admin/resources/clips.actions.view_on_twitch'))
+                ->label(__('dashboard/resources/clips.actions.view_on_twitch'))
                 ->icon(LucideIcon::Link)
                 ->url(fn (Clip $clip): string => $clip->getClipUrl())
                 ->openUrlInNewTab(),
