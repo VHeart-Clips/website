@@ -62,6 +62,11 @@ class CompilationPolicy
         return $this->denyAsNotFound();
     }
 
+    public function updateAny(User $user): bool
+    {
+        return $user->can(Permission::UpdateAnyCompilation);
+    }
+
     public function comment(User $user, Compilation $compilation): bool
     {
         return $user->can(Permission::ViewAnyComment);
