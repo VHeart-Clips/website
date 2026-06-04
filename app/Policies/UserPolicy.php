@@ -7,10 +7,12 @@ namespace App\Policies;
 use App\Enums\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Policies\Contracts\BannablePolicy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
 
-class UserPolicy
+class UserPolicy implements BannablePolicy
 {
     use HandlesAuthorization;
 
@@ -124,5 +126,15 @@ class UserPolicy
     public function forceDeleteAny(User $user): bool
     {
         return $user->can(Permission::ForceDeleteAnyUser);
+    }
+
+    public function ban(User $user, Model $model): bool
+    {
+        return $user->can(Permission::CreateBan) || $user->can(Permission::CanBanUsers);
+    }
+
+    public function unban(User $user, Model $model): bool
+    {
+        return $user->can(Permission::CreateBan) || $user->can(Permission::CanBanUsers);
     }
 }
