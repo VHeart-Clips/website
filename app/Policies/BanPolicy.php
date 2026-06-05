@@ -27,6 +27,17 @@ class BanPolicy
 
     public function update(User $user, Ban $ban): bool
     {
+        // we should allow moderation with ban permission to fix typos and stuff in their own bans
+        // assuming they still have ban permission overall for that bannable
+        // but we also limit this to 24 hours after creating the ban to limit abuse in the future
+        if (
+            $ban->admin_id === $user->id
+            && $user->canAny(['ban', 'unban'], $ban->bannable)
+            && $ban->created_at->addDay()->isNowOrFuture()
+        ) {
+            return true;
+        }
+
         return $user->can(Permission::UpdateAnyBan);
     }
 
