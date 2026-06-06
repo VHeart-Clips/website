@@ -45,7 +45,7 @@ class BanAction extends Action
             ->action(function (Model $record, array $data, BanModelAction $banModelAction): void {
                 $bannable = $this->getBannable($record);
 
-                if (! $bannable) {
+                if (! $bannable instanceof Model) {
                     Notification::make()
                         ->title('Could not Ban '.Str::title($this->banRelationship ?? 'User'))
                         ->body('The '.Str::title($this->banRelationship ?? 'User').' could not be resolved.')

@@ -18,7 +18,7 @@ class UnbanAction extends Action
         parent::setUp();
 
         $this
-            ->authorize(fn (?Ban $record) => $record?->isActive()
+            ->authorize(fn (?Ban $record): bool => $record?->isActive()
                 && auth()->user()->can('unban', $record->loadMissing('bannable')->bannable)
             )
             ->icon(LucideIcon::Ban)
