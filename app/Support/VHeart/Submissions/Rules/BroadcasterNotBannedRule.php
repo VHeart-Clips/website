@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\VHeart\Submissions\Rules;
 
+use App\Models\Broadcaster\Broadcaster;
 use App\Support\VHeart\Submissions\ClipSubmissionContext;
 use App\Support\VHeart\Submissions\ClipSubmissionRule;
 
@@ -19,14 +20,12 @@ readonly class BroadcasterNotBannedRule implements ClipSubmissionRule
 
     public function passes(ClipSubmissionContext $context): bool
     {
-        if (! $context->broadcaster()) {
+        if (! $context->broadcaster() instanceof Broadcaster) {
             return false;
         }
 
-        return ! (
-            $context->broadcaster()->isBanned()
-            || $context->broadcaster()->user?->isBanned()
-        );
+        return ! $context->broadcaster()->isBanned()
+            && ! $context->broadcaster()->user?->isBanned();
     }
 
     public function message(): string
