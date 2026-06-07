@@ -34,6 +34,10 @@
                     </p>
                     <p class="text-gray-400 mt-4 text-sm md:text-base">
                         {{ __('clips.vote.ban.any-questions') }}
+                        <a href="https://go.vheart.net/discord" target="_blank"
+                           class="font-medium underline underline-offset-2 hover:opacity-75">
+                            {{ __('clips.vote.ban.discord') }}
+                        </a>
                     </p>
                 </div>
             </div>

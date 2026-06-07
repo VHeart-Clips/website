@@ -82,7 +82,8 @@ return [
                 'temporary' => 'Your ban expires :time.',
                 'permanent' => 'This ban is permanent.',
             ],
-            'any-questions' => 'Have questions? Open a ticket in our Discord.',
+            'any-questions' => 'Have questions?',
+            'discord' => 'Open a ticket in our Discord.',
         ],
     ],
 
