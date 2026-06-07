@@ -290,6 +290,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             ->whereNotArchived()
             ->whereSubmittedAfter(now()->sub($maxAge))
             ->whereBroadcasterGavePermission()
+            ->whereBroadcasterHasNoActiveBans()
             ->whereNotBlocked()
             ->whereNotPublished()
             ->when($user, fn (Builder $query) => $query
