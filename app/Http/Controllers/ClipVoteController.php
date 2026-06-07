@@ -94,6 +94,7 @@ class ClipVoteController extends Controller
             if ($clip = Clip::query()
                 ->withoutGlobalScope(ClipPermissionScope::class)
                 ->whereNoVotesFrom($request->user())
+                ->whereBroadcasterHasNoActiveBans()
                 ->find($clipId)
             ) {
                 return $clip;
