@@ -49,6 +49,14 @@ return [
                 ],
             ],
         ],
+        'ban' => [
+            'heading' => 'Your account is banned and submission is disabled.',
+            'length' => [
+                'temporary' => 'Your ban expires :time.',
+                'permanent' => 'This ban is permanent.',
+            ],
+            'any-questions' => 'Have questions? Open a ticket in our Discord.',
+        ],
     ],
 
     'vote' => [

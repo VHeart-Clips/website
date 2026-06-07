@@ -49,6 +49,14 @@ return [
                 ],
             ],
         ],
+        'ban' => [
+            'heading' => 'Dein Account ist gesperrt und du kannst keine Clips einsenden.',
+            'length' => [
+                'temporary' => 'Deine Sperre endet :time.',
+                'permanent' => 'Diese Sperre ist permanent.',
+            ],
+            'any-questions' => 'Fragen? Erstelle ein Ticket in unserem Discord.',
+        ],
     ],
 
     'vote' => [
