@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
 /**
@@ -29,6 +30,7 @@ class HandleAuthProviderCallbackController extends Controller
     public function __invoke(Request $request, AppAuthentication $mfa): RedirectResponse
     {
         try {
+            /** @var \Laravel\Socialite\Two\User $twitchUser */
             $twitchUser = Socialite::driver('twitch')->user();
         } catch (Exception) {
             return to_route('login')
@@ -45,27 +47,8 @@ class HandleAuthProviderCallbackController extends Controller
         }
 
         /** @var ?User $user */
-        $user = User::withTrashed()->find($twitchUser->getId());
+        $user = User::query()->find($twitchUser->getId());
 
-        // If the user was "banned" (soft deleted) clear out refresh token and deny access
-        if ($user?->trashed()) {
-            if ($user->twitch_refresh_token !== null) {
-                $user->update([
-                    'twitch_refresh_token' => null,
-                ]);
-            }
-
-            Auditor::make()
-                ->event('auth.login.denied')
-                ->anonymize(false)
-                ->on($user)
-                ->save();
-
-            return to_route('login')
-                ->withErrors(['login' => __('user.disabled')]);
-        }
-
-        // Otherwise update (or create) the user
         $updateAttributes = [
             'name' => $twitchUser->getName(),
             'avatar_url' => $twitchUser->getAvatar(),
@@ -75,10 +58,13 @@ class HandleAuthProviderCallbackController extends Controller
         if ($user) {
             $user->update($updateAttributes);
         } else {
-            $user = User::create([
+            $user = User::restoreOrCreate([
                 'id' => $twitchUser->getId(),
-                ...$updateAttributes,
-            ]);
+            ], $updateAttributes);
+
+            if (! $user->wasRecentlyCreated) {
+                Log::notice('User has been restored by user itself.', ['user_id' => $user->id]);
+            }
         }
 
         // Authenticate the user
