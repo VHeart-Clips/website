@@ -384,6 +384,21 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     }
 
     /**
+     * Exclude Clips where the Broadcaster (and related user) have active bans
+     */
+    #[Scope]
+    protected function whereBroadcasterHasNoActiveBans(Builder $query): Builder
+    {
+        return $query
+            ->whereDoesntHave('broadcaster',
+                fn (Builder $q) => $q->whereBanned()
+            )
+            ->whereDoesntHave('owner',
+                fn (Builder $q) => $q->whereBanned()
+            );
+    }
+
+    /**
      * Exclude Clips where the broadcaster has not granted content use permission.
      */
     #[Scope]
