@@ -68,6 +68,14 @@ return [
             'nothing_left' => 'Wir finden gerade nix was du Voten könntest. Komme bitte später nochmal vorbei!',
         ],
         'maintenance' => 'Wird aktualisiert, gleich geht es weiter...',
+        'ban' => [
+            'heading' => 'Dein Account ist gesperrt und du kannst nicht abstimmen.',
+            'length' => [
+                'temporary' => 'Deine Sperre endet :time.',
+                'permanent' => 'Diese Sperre ist permanent.',
+            ],
+            'any-questions' => 'Fragen? Erstelle ein Ticket in unserem Discord.',
+        ],
     ],
 
     'enums' => [
