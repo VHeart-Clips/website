@@ -55,7 +55,8 @@ return [
                 'temporary' => 'Deine Sperre endet :time.',
                 'permanent' => 'Diese Sperre ist permanent.',
             ],
-            'any-questions' => 'Fragen? Erstelle ein Ticket in unserem Discord.',
+            'any-questions' => 'Fragen?',
+            'discord' => 'Erstelle ein Ticket in unserem Discord.',
         ],
     ],
 
