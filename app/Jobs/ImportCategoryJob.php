@@ -13,12 +13,19 @@ use App\Services\Twitch\Enums\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\Attributes\MaxExceptions;
+use Illuminate\Queue\Attributes\Tries;
+use Illuminate\Queue\Attributes\DebounceFor;
+use Illuminate\Queue\Middleware\RateLimited;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 
+
+#[Tries(254)]
+#[MaxExceptions(3)]
 #[DebounceFor(60, maxWait: 600)]
-class ImportCategoryJob implements ShouldQueue
+class ImportCategoryJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
     use Queueable;
 
@@ -28,7 +35,12 @@ class ImportCategoryJob implements ShouldQueue
     public function middleware(): array
     {
         return [
+            new RateLimited('twitch-api'),
             new WithoutOverlapping(),
+            new ThrottlesExceptions(
+                maxAttempts: 3,
+                decaySeconds: 15
+            ),
         ];
     }
 
