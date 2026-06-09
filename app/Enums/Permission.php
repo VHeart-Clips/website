@@ -110,6 +110,12 @@ enum Permission: string implements HasLabel
     // Audit
     case ViewAnyAudit = 'view_any_audit';
 
+    // Ban
+    case ViewAnyBan = 'view_any_ban';
+    case CreateAnyBan = 'create_any_ban';
+    case UpdateAnyBan = 'update_any_ban';
+    case DeleteAnyBan = 'delete_any_ban';
+
     // Non-Model stuff
     case JuryVote = 'jury_vote';
 
@@ -137,6 +143,12 @@ enum Permission: string implements HasLabel
     case CanUnflagClips = 'can_unflag_clips';
 
     case CanImportUsers = 'can_import_user';
+
+    #[PermissionGroupAttribute(PermissionGroupEnum::Moderation)]
+    case CanBanUsers = 'can_ban_users';
+
+    #[PermissionGroupAttribute(PermissionGroupEnum::Moderation)]
+    case CanBanBroadcasters = 'can_ban_broadcasters';
 
     public function getPermissionGroup(): string
     {
