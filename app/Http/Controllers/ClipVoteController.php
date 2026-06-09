@@ -29,10 +29,19 @@ class ClipVoteController extends Controller
      */
     public function create(Request $request): View
     {
+        if ($ban = $request->user()->getBan()) {
+            return view('clips.vote', [
+                'clip' => null,
+                'ban' => $ban,
+                'unbanInMs' => $ban->banned_until ? now()->diffInMilliseconds($ban->banned_until) : -1,
+            ]);
+        }
+
         $clip = $this->resolveNextClip($request);
 
         return view('clips.vote', [
             'clip' => $clip,
+            'ban' => null,
         ]);
     }
 
@@ -44,6 +53,10 @@ class ClipVoteController extends Controller
         $request->validate([
             'voted' => ['required', 'bool'],
         ]);
+
+        if ($request->user()->getBan()) {
+            return new JsonResponse(['ban' => true]);
+        }
 
         $vote = $request->boolean('voted');
         $clipId = $this->getNextClipId($request);
@@ -81,6 +94,7 @@ class ClipVoteController extends Controller
             if ($clip = Clip::query()
                 ->withoutGlobalScope(ClipPermissionScope::class)
                 ->whereNoVotesFrom($request->user())
+                ->whereBroadcasterHasNoActiveBans()
                 ->find($clipId)
             ) {
                 return $clip;
