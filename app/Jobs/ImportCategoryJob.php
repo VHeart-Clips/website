@@ -11,9 +11,9 @@ use App\Models\Scopes\ClipWithoutBannedCategoryScope;
 use App\Services\Twitch\Data\GameDto;
 use App\Services\Twitch\Enums\TwitchEndpoints;
 use App\Services\Twitch\TwitchService;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Queue\Attributes\MaxExceptions;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\Middleware\RateLimited;
@@ -23,7 +23,8 @@ use Illuminate\Support\Facades\Log;
 
 #[Tries(254)]
 #[MaxExceptions(3)]
-class ImportCategoryJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
+#[DebounceFor(60, maxWait: 600)]
+class ImportCategoryJob implements ShouldQueue
 {
     use Queueable;
 

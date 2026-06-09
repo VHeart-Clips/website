@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 return [
+    'ban' => [
+        'heading' => [
+            'temporary' => ':name ist vorübergehend gesperrt',
+            'permanent' => ':name ist permanent gesperrt',
+        ],
+        'description' => 'Clip-Einreichungen sind für diesen Kanal deaktiviert.',
+        'temporary' => 'Sperre endet am :date.',
+        'permanent' => 'Diese Sperre hat kein Ablaufdatum.',
+        'any-questions' => 'Fragen?',
+        'discord' => 'Erstelle ein Ticket in unserem Discord.',
+    ],
     'enums' => [
         'broadcaster-consent' => [
             'compilations' => 'Compilations',

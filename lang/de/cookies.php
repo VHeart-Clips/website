@@ -15,6 +15,9 @@ return [
     'youtube_embed_consent' => [
         'description' => 'Erlaubt uns, deine Zustimmung für eingebettete Youtube-Inhalte zu speichern.',
     ],
+    'cf_clearance' => [
+        'description' => 'Wird von Cloudflare gesetzt, um zu bestätigen, dass dein Browser eine Sicherheitsprüfung bestanden hat. Notwendig, damit du die Seite nutzen kannst, ohne wiederholt geprüft zu werden.',
+    ],
     'external-services' => [
         'description' => 'Erlaubt uns, externe dienstleiter wie die Twitch CDN zu verwenden.',
     ],

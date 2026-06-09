@@ -78,7 +78,7 @@ class ClipPolicy
 
     public function submit(User $user, ?Clip $clip = null): bool
     {
-        return empty($user->deleted_at);
+        return ! $user->isBanned();
     }
 
     public function feedback(User $user, Clip $clip): bool

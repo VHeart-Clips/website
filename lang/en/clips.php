@@ -49,6 +49,15 @@ return [
                 ],
             ],
         ],
+        'ban' => [
+            'heading' => 'Your account is banned and submission is disabled.',
+            'length' => [
+                'temporary' => 'Your ban expires :time.',
+                'permanent' => 'This ban is permanent.',
+            ],
+            'any-questions' => 'Have questions?',
+            'discord' => 'Open a ticket in our Discord.',
+        ],
     ],
 
     'vote' => [
@@ -68,6 +77,15 @@ return [
             'nothing_left' => 'We can\'t find any Clips for you to vote. Please come back later.',
         ],
         'maintenance' => 'Updating, hold a moment...',
+        'ban' => [
+            'heading' => 'Your account is banned and voting is disabled.',
+            'length' => [
+                'temporary' => 'Your ban expires :time.',
+                'permanent' => 'This ban is permanent.',
+            ],
+            'any-questions' => 'Have questions?',
+            'discord' => 'Open a ticket in our Discord.',
+        ],
     ],
 
     'enums' => [

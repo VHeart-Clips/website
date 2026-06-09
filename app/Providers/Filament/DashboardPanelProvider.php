@@ -11,6 +11,7 @@ use App\Http\Middleware\FeatureFlagGuard;
 use App\Http\Middleware\Localization;
 use App\Http\Middleware\RequiresBroadcasterProfile;
 use App\Http\Middleware\StagingGateMiddleware;
+use App\Models\Ban;
 use App\Models\Broadcaster\Broadcaster;
 use App\Support\FeatureFlag\Feature;
 use Filament\Actions\Action;
@@ -31,8 +32,10 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
+use Throwable;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -100,6 +103,10 @@ class DashboardPanelProvider extends PanelProvider
                 RequiresBroadcasterProfile::class,
             ])
             ->renderHook(
+                PanelsRenderHook::PAGE_START,
+                fn (): ?HtmlString => $this->renderBanNotice(),
+            )
+            ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): string => '<script type="module" src="'.Vite::asset('resources/js/alpine.ts').'"></script>',
             )
@@ -115,5 +122,30 @@ class DashboardPanelProvider extends PanelProvider
                 url('/admin'),
                 '*/admin*',
             ]);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    private function renderBanNotice(): ?HtmlString
+    {
+        /** @var Broadcaster $currentTenant */
+        $currentTenant = Filament::getTenant();
+        $currentBan = $currentTenant?->getBan();
+        $userBan = $currentTenant->user?->getBan();
+
+        $ban = collect([$currentBan, $userBan])
+            ->filter()
+            ->sortByDesc(fn (Ban $ban): int => $ban->banned_until?->timestamp ?? PHP_INT_MAX)
+            ->first();
+
+        if (! $ban) {
+            return null;
+        }
+
+        return new HtmlString(view('filament.dashboard.components.alerts.ban-notice', [
+            'ban' => $ban,
+            'tenant' => $currentTenant,
+        ])->render());
     }
 }

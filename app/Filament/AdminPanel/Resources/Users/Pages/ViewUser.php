@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Users\Pages;
 
 use App\Filament\Actions\ResourceLinkAction;
+use App\Filament\AdminPanel\Actions\Ban\BanAction;
 use App\Filament\AdminPanel\Resources\Users\UserResource;
 use App\Filament\AdminPanel\Resources\Users\Widgets\UserBroadcastedClipsWidget;
 use App\Filament\AdminPanel\Resources\Users\Widgets\UserCreatedClipsWidget;
@@ -14,10 +15,7 @@ use App\Filament\AdminPanel\Resources\Users\Widgets\UserSubmittedClipsWidget;
 use App\Filament\AdminPanel\Resources\Users\Widgets\UserVotesWidget;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
@@ -51,9 +49,7 @@ class ViewUser extends ViewRecord
                     ]);
                 }),
             EditAction::make(),
-            DeleteAction::make()->label('Disable User'),
-            ForceDeleteAction::make(),
-            RestoreAction::make()->label('Restore User'),
+            BanAction::make(),
         ];
     }
 
