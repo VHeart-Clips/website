@@ -3,6 +3,17 @@
 declare(strict_types=1);
 
 return [
+    'ban' => [
+        'heading' => [
+            'temporary' => ':name is Temporarily Banned',
+            'permanent' => ':name is Permanently Banned',
+        ],
+        'description' => 'Clip submissions are disabled for this channel.',
+        'temporary' => 'Ban lifts on :date.',
+        'permanently' => 'This ban has no expiry date.',
+        'any-questions' => 'Have questions?',
+        'discord' => 'Open a ticket in our Discord.',
+    ],
     'enums' => [
         'broadcaster-consent' => [
             'compilations' => 'Compilations',

@@ -21,9 +21,9 @@ class EditUser extends EditRecord
         return [
             UpdateUserAction::make(),
             ViewAction::make(),
-            DeleteAction::make()->label('Disable User'),
+            DeleteAction::make(),
             ForceDeleteAction::make(),
-            RestoreAction::make()->label('Restore User'),
+            RestoreAction::make(),
         ];
     }
 }

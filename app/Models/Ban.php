@@ -12,9 +12,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Kirschbaum\Commentions\HasComments;
 
 class Ban extends Model
 {
+    use HasComments;
+
     /** @use HasFactory<BanFactory> */
     use HasFactory;
 

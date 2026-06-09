@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Users\Tables;
 
+use App\Filament\AdminPanel\Actions\Ban\BanAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
@@ -53,7 +53,7 @@ class UsersTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
-                DeleteAction::make()->label('Disable User'),
+                BanAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make()->label('Restore User'),
             ])

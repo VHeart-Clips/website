@@ -8,9 +8,11 @@ use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Permission;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\User;
+use App\Policies\Contracts\BannablePolicy;
 use App\Services\Twitch\TwitchService;
+use Illuminate\Database\Eloquent\Model;
 
-class BroadcasterPolicy
+class BroadcasterPolicy implements BannablePolicy
 {
     public function viewAny(User $user): bool
     {
@@ -94,5 +96,29 @@ class BroadcasterPolicy
         $twitchService = app(TwitchService::class);
 
         return $twitchService->asSessionUser()->isModeratorFor($broadcaster);
+    }
+
+    /**
+     * @param  Broadcaster  $model
+     */
+    public function ban(User $user, Model $model): bool
+    {
+        if ($user->can(Permission::CreateAnyBan)) {
+            return true;
+        }
+
+        return $user->can(Permission::CanBanBroadcasters);
+    }
+
+    /**
+     * @param  Broadcaster  $model
+     */
+    public function unban(User $user, Model $model): bool
+    {
+        if ($user->can(Permission::UpdateAnyBan)) {
+            return true;
+        }
+
+        return $user->can(Permission::CanBanBroadcasters);
     }
 }
