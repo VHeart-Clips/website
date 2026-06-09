@@ -18,15 +18,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+use Illuminate\Queue\Attributes\MaxExceptions;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\Middleware\RateLimited;
+use Illuminate\Queue\Middleware\ThrottlesExceptions;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
+#[Tries(254)]
+#[MaxExceptions(3)]
 #[DeleteWhenMissingModels]
-#[Tries(1)]
 class CheckForRemovedClipJob implements ShouldBeUnique, ShouldDispatchAfterCommit, ShouldQueue
 {
     use Queueable;
@@ -75,6 +78,11 @@ class CheckForRemovedClipJob implements ShouldBeUnique, ShouldDispatchAfterCommi
     {
         return [
             new RateLimited('jobs:reports:check-removed-clip')->dontRelease(),
+            new RateLimited('twitch-api'),
+            new ThrottlesExceptions(
+                maxAttempts: 3,
+                decaySeconds: 15
+            ),
         ];
     }
 
