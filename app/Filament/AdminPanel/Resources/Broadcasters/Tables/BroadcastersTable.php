@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Broadcasters\Tables;
 
 use App\Enums\Broadcaster\BroadcasterConsent;
+use App\Filament\AdminPanel\Actions\Ban\BanAction;
 use Closure;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -76,6 +77,7 @@ class BroadcastersTable
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
+                BanAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

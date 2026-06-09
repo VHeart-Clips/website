@@ -7,10 +7,12 @@ namespace App\Policies;
 use App\Enums\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Policies\Contracts\BannablePolicy;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
 
-class UserPolicy
+class UserPolicy implements BannablePolicy
 {
     use HandlesAuthorization;
 
@@ -124,5 +126,65 @@ class UserPolicy
     public function forceDeleteAny(User $user): bool
     {
         return $user->can(Permission::ForceDeleteAnyUser);
+    }
+
+    /**
+     * @param  User  $model
+     */
+    public function ban(User $user, Model $model): Response|bool
+    {
+        if ($model->id === self::SystemUser) {
+            return false;
+        }
+
+        if ($user->is($model)) {
+            return $this->deny('Cannot ban own user');
+        }
+
+        $userRole = $user->getRole();
+
+        if (! $userRole instanceof Role) {
+            return $this->deny();
+        }
+
+        if ($userRole->weight <= $model->getRole()?->weight) {
+            return $this->deny('Cannot ban users with equal or higher role weight');
+        }
+
+        if ($user->can(Permission::CreateAnyBan)) {
+            return true;
+        }
+
+        return $user->can(Permission::CanBanUsers);
+    }
+
+    /**
+     * @param  User  $model
+     */
+    public function unban(User $user, Model $model): Response|bool
+    {
+        if ($model->id === self::SystemUser) {
+            return false;
+        }
+
+        if ($user->is($model)) {
+            return $this->deny('Cannot unban own user');
+        }
+
+        $userRole = $user->getRole();
+
+        if (! $userRole instanceof Role) {
+            return $this->deny();
+        }
+
+        if ($userRole->weight <= $model->getRole()?->weight) {
+            return $this->deny('Cannot unban users with equal or higher role weight');
+        }
+
+        if ($user->can(Permission::UpdateAnyBan)) {
+            return true;
+        }
+
+        return $user->can(Permission::CanBanUsers);
     }
 }

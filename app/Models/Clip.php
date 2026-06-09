@@ -290,6 +290,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             ->whereNotArchived()
             ->whereSubmittedAfter(now()->sub($maxAge))
             ->whereBroadcasterGavePermission()
+            ->whereBroadcasterHasNoActiveBans()
             ->whereNotBlocked()
             ->whereNotPublished()
             ->when($user, fn (Builder $query) => $query
@@ -381,6 +382,21 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         return $query->whereHas('broadcaster',
             fn (Builder $q) => $q->whereGaveConsent($consents, $boolean, $not)
         );
+    }
+
+    /**
+     * Exclude Clips where the Broadcaster (and related user) have active bans
+     */
+    #[Scope]
+    protected function whereBroadcasterHasNoActiveBans(Builder $query): Builder
+    {
+        return $query
+            ->whereDoesntHave('broadcaster',
+                fn (Builder $q) => $q->whereBanned()
+            )
+            ->whereDoesntHave('owner',
+                fn (Builder $q) => $q->whereBanned()
+            );
     }
 
     /**

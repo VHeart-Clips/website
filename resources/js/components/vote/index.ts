@@ -175,6 +175,11 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 return;
             }
 
+            if (response.data?.ban === true) {
+                location.reload();
+                return;
+            }
+
             const nextClip: ClipVoteResource | null = response.data;
 
             if (nextClip?.id) {

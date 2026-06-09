@@ -248,6 +248,17 @@ class AppServiceProvider extends ServiceProvider
             ),
         ]);
 
+        /**
+         * Discord Webhook rate limit seems to be 30 per minute or 5 per 2 seconds, we will go a bit lower to be safe
+         * We dont want to annoy discord too much otherwise they can easily block us permanently
+         *
+         * @link https://docs.discord.com/developers/topics/rate-limits
+         */
+        RateLimiter::for('discord-webhooks', static fn (): array => [
+            Limit::perSecond(3, 2),
+            Limit::perMinute(25),
+        ]);
+
         RateLimiter::for('jobs:reports:check-removed-clip', static fn (CheckForRemovedClipJob $job) => Limit::perHour(2)->by($job->clip?->id));
     }
 
