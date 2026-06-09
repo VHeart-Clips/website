@@ -7,6 +7,18 @@ updates:
       day: "friday"
       time: "06:00"
       timezone: "Europe/Berlin"
+  - package-ecosystem: "docker"
+    directory: "docker/release"
+    schedule:
+      interval: "weekly"
+      day: "friday"
+      time: "06:00"
+      timezone: "Europe/Berlin"
+    cooldown:
+      default-days: 2
+    ignore:
+      - dependency-name: "*"
+        update-types: [ "version-update:semver-major" ]
   - package-ecosystem: "composer"
     directory: "/"
     schedule:

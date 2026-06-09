@@ -19,7 +19,7 @@ ENV TZ=Europe/Berlin \
 
 FROM base AS build
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2.10.1 /usr/bin/composer /usr/bin/composer
 
 RUN --mount=type=bind,source=composer.json,target=composer.json \
     --mount=type=bind,source=composer.lock,target=composer.lock \
