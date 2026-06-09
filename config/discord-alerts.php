@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Spatie\DiscordAlerts\Jobs\SendToDiscordChannelJob;
+use App\Jobs\Discord\DiscordWebhookJob;
 
 return [
     /*
@@ -26,7 +26,7 @@ return [
      * This job will send the message to Discord. You can extend this
      * job to set timeouts, retries, etc...
      */
-    'job' => SendToDiscordChannelJob::class,
+    'job' => DiscordWebhookJob::class,
 
     /*
      * The queue connection that should be used to send the alert.
