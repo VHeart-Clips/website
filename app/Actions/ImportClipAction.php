@@ -32,9 +32,7 @@ class ImportClipAction
             $clipModel->tags()->sync($tags);
         }
 
-        ImportCategoryJob::dispatch($clipModel->category_id)
-            // some time to breath for other submissions, take as many as possible.
-            ->delay(now()->addSeconds(5));
+        ImportCategoryJob::dispatch($clipModel->category_id);
 
         ClipSubmitted::dispatch($clipModel, $user, $tags);
 
