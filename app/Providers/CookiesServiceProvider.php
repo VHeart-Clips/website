@@ -17,6 +17,11 @@ class CookiesServiceProvider extends ServiceProvider
     {
         // Register Laravel's base cookies under the "required" cookies section:
         Cookies::essentials()
+            ->cookie(function (Cookie $cookie): void {
+                $cookie->name('cf_clearance')
+                    ->description(__('cookies.cf_clearance.description'))
+                    ->duration(30);
+            })
             ->session();
 
         Cookies::optional()
