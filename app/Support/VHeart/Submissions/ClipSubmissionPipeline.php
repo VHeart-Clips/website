@@ -8,6 +8,7 @@ use App\Services\Twitch\TwitchService;
 use App\Support\VHeart\Submissions\Rules\BroadcasterCategorySubmissionRule;
 use App\Support\VHeart\Submissions\Rules\BroadcasterConsentSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\BroadcasterDailyLimitSubmissionRule;
+use App\Support\VHeart\Submissions\Rules\BroadcasterNotBannedRule;
 use App\Support\VHeart\Submissions\Rules\BroadcasterUserSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\ClipNotDuplicateSubmissionRule;
 use App\Support\VHeart\Submissions\Rules\MaximumAgeSubmissionRule;
@@ -34,6 +35,7 @@ readonly class ClipSubmissionPipeline
             new MaximumAgeSubmissionRule(),
             new SiteCategoryBannedSubmissionRule(),
 
+            new BroadcasterNotBannedRule(),
             new BroadcasterConsentSubmissionRule(),
             new BroadcasterUserSubmissionRule($twitchService),
             new BroadcasterCategorySubmissionRule(),
