@@ -23,6 +23,7 @@ jobs:
         with:
           filters: |
             src:
+              - '.github/workflows/test.yml'
               - '**/*.php'
               - '**/*.json'
               - 'composer.lock'
