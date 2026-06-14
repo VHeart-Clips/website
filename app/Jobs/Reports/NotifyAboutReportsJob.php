@@ -36,7 +36,7 @@ class NotifyAboutReportsJob implements ShouldQueue
 
             Cache::put(self::NOTIFICATION_CACHE_KEY_PREFIX.$report->id, true, now()->addWeek());
 
-            ReportWebhookJob::dispatchSync($report);
+            ReportWebhookJob::dispatch($report);
         });
     }
 }
