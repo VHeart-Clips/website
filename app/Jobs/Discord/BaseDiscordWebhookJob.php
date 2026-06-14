@@ -13,6 +13,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Queue\Attributes\MaxExceptions;
+use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\RateLimited;
@@ -27,6 +28,7 @@ use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[Tries(254)]
 #[MaxExceptions(3)]
+#[Queue('discord-webhooks')]
 abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable;
