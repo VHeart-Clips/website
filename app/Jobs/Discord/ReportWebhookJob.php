@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
 use Illuminate\Http\Client\Response;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
+use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JustinKluever\DiscordWebhookBuilder\Components\ActionRow;
@@ -24,6 +25,7 @@ use JustinKluever\DiscordWebhookBuilder\Support\Webhook\AllowedMentions;
 use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[DeleteWhenMissingModels]
+#[Queue('moderation')]
 class ReportWebhookJob extends BaseDiscordWebhookJob
 {
     public function __construct(
