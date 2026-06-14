@@ -27,7 +27,6 @@
         "sentry/sentry-laravel": "^4.24",
         "socialiteproviders/twitch": "^5.4",
         "spatie/laravel-backup": "^10.2",
-        "spatie/laravel-discord-alerts": "^1.9",
         "spatie/laravel-translatable": "^6.13",
         "tales-from-a-dev/tailwind-merge-php": "^0.3.0",
         "ublabs/blade-simple-icons": "^0.203.0",
