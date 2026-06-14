@@ -60,7 +60,7 @@ elif [ "$INSTANCE" = "worker" ]; then
     echo "[Entrypoint] Starting Laravel Worker..."
     exec /app/artisan queue:work \
         --name=queue-worker \
-        --queue=default \
+        --queue=moderation,default,discord-webhooks \
         --sleep=3 \
         --tries=3 \
         --max-time=3600 \
