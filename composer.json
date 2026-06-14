@@ -15,6 +15,7 @@
         "blade-ui-kit/blade-icons": "^1.9",
         "filament/filament": "^5.4",
         "flowframe/laravel-trend": "^0.5.0",
+        "justinkluever/discord-webhook-builder": "^0.1.0",
         "kirschbaum-development/commentions": "^0.7",
         "lara-zeus/spatie-translatable": "^2.0",
         "laravel/framework": "^13.3",

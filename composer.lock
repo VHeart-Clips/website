@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "209e86fabd21118bea34e29d0d1f24a8",
+    "content-hash": "1e8318672cb225a3760a0330d1320441",
     "packages": [
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -2158,6 +2158,70 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.1.1"
             },
             "time": "2025-03-19T14:43:43+00:00"
+        },
+        {
+            "name": "justinkluever/discord-webhook-builder",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/justinkluever/discord-webhook-builder.git",
+                "reference": "e19ede6eaa3904db7c854843a0bdb7d9a1d696ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/justinkluever/discord-webhook-builder/zipball/e19ede6eaa3904db7c854843a0bdb7d9a1d696ac",
+                "reference": "e19ede6eaa3904db7c854843a0bdb7d9a1d696ac",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "laravel/pint": "^v1.29.1",
+                "pestphp/pest": "^4.7.3",
+                "pestphp/pest-plugin-arch": "^4.0.2",
+                "pestphp/pest-plugin-type-coverage": "^4.0.4",
+                "phpstan/phpstan": "^2.2.2",
+                "rector/rector": "^2.4.5",
+                "symfony/var-dumper": "^7.0.0|^8.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JustinKluever\\DiscordWebhookBuilder\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Klüver",
+                    "email": "justin@kluever.info"
+                }
+            ],
+            "description": "a simple and fluent builder for discord webhook messages with embeds or components v2",
+            "homepage": "https://github.com/justinkluever/discord-webhook-builder",
+            "keywords": [
+                "builder",
+                "component",
+                "components-v2",
+                "discord",
+                "discord-webhook",
+                "dto",
+                "embed",
+                "fluent",
+                "notification",
+                "payload",
+                "php",
+                "webhook"
+            ],
+            "support": {
+                "issues": "https://github.com/justinkluever/discord-webhook-builder/issues",
+                "source": "https://github.com/justinkluever/discord-webhook-builder"
+            },
+            "time": "2026-06-13T11:22:39+00:00"
         },
         {
             "name": "kirschbaum-development/commentions",
