@@ -204,7 +204,7 @@
                     Alpine.data('clipPreview', () => ({
                         currentClipId: null,
                         timeout: null,
-                        selectedTags: [],
+                        selectedTags: @js(old('tags', []), JSON_THROW_ON_ERROR),
 
                         init() {
                             const initialUrl = document.getElementById('clip_url')?.value || '';
@@ -216,7 +216,7 @@
                         },
 
                         isValid() {
-                            return true; // this.currentClipId && this.selectedTags.length > 0 && this.selectedTags.length <= 3;
+                            return this.currentClipId && this.selectedTags.length > 0 && this.selectedTags.length <= 3;
                         },
 
                         handleInput(e) {
