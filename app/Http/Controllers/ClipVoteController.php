@@ -61,22 +61,30 @@ class ClipVoteController extends Controller
 
         $vote = $request->boolean('voted');
         $clipId = $this->getNextClipId($request);
-        $this->shiftClipQueue($request);
 
-        $clip = Clip::query()
-            ->whereNotPublished()
-            ->find($clipId);
+        if ($clipId === $request->integer('clip_id')) {
+            $this->shiftClipQueue($request);
 
-        if ($clip) {
-            $voteType = $request->user()->can(Permission::JuryVote)
-                ? ClipVoteType::Jury
-                : ClipVoteType::Public;
+            $clip = Clip::query()
+                ->whereNotPublished()
+                ->find($clipId);
 
-            $clip->votes()->updateOrCreate([
-                'user_id' => $request->user()->id,
-            ], [
-                'voted' => $vote,
-                'type' => $voteType,
+            if ($clip) {
+                $voteType = $request->user()->can(Permission::JuryVote)
+                    ? ClipVoteType::Jury
+                    : ClipVoteType::Public;
+
+                $clip->votes()->updateOrCreate([
+                    'user_id' => $request->user()->id,
+                ], [
+                    'voted' => $vote,
+                    'type' => $voteType,
+                ]);
+            }
+        } else {
+            Log::debug('skipping vote because of invalid clip id', [
+                'current_id' => $clipId,
+                'provided_id' => $request->integer('clip_id'),
             ]);
         }
 
