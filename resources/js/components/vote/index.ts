@@ -213,7 +213,10 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
         try {
             const response = await window.axios.post(
                 clipVoteController.store().url,
-                { voted: decision },
+                {
+                    clip_id: this.clipId,
+                    voted: decision,
+                },
                 {
                     headers: { Accept: 'application/json' },
                     timeout: REQUEST_TIMEOUT_MS,
@@ -267,7 +270,10 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
             try {
                 const response = await window.axios.post(
                     clipVoteController.store().url,
-                    { voted: decision },
+                    {
+                        clip_id: this.clipId,
+                        voted: decision,
+                    },
                     {
                         headers: { Accept: 'application/json' },
                         timeout: REQUEST_TIMEOUT_MS,
