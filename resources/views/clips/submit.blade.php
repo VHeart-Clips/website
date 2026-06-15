@@ -71,7 +71,6 @@
                                     name="clip_url"
                                     value="{{ old('clip_url') }}"
                                     @input="handleInput"
-                                    @keydown.enter.prevent
                                     required
                                     placeholder="{{ __('clips.submit.form.fields.clip_url.placeholder') }}"
                                     autocomplete="off"
@@ -217,7 +216,7 @@
                         },
 
                         isValid() {
-                            return this.currentClipId && this.selectedTags.length > 0 && this.selectedTags.length <= 3;
+                            return true; // this.currentClipId && this.selectedTags.length > 0 && this.selectedTags.length <= 3;
                         },
 
                         handleInput(e) {
