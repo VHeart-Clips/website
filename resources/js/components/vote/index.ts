@@ -34,6 +34,9 @@ export interface ClipVoteConfig {
     reportItems: { type: string; id: number }[] | null;
 }
 
+type VoteStatus = 'ok' | 'maintenance' | 'banned';
+type VoteResult = { status: VoteStatus; clip?: ClipVoteResource | null };
+
 export interface ClipVoteData extends ClipVoteConfig {
     timeLeft: number;
     isLoading: boolean;
