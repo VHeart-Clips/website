@@ -52,6 +52,7 @@ class ClipVoteController extends Controller
     {
         $request->validate([
             'voted' => ['required', 'bool'],
+            'clip_id' => ['required', 'integer', 'min:1'],
         ]);
 
         if ($request->user()->getBan()) {
