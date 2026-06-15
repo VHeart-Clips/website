@@ -4,6 +4,9 @@ import { AlpineComponent } from 'alpinejs';
 
 const MINIMUM_RATE_LIMIT = 6;
 const INTERACTION_ARM_TIMEOUT = 3000;
+const MAX_VOTE_RETRIES = 3;
+const VOTE_RETRY_DELAY_MS = 1500;
+const REQUEST_TIMEOUT_MS = 8000;
 
 /**
  * @resource App\Http\Resources\Clip\ClipVoteResource
