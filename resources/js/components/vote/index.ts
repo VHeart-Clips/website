@@ -52,6 +52,7 @@ export interface ClipVoteData extends ClipVoteConfig {
     startTimer(seconds: number): void;
     arm(type: 'like' | 'skip'): Promise<void>;
     vote(decision: 0 | 1): Promise<void>;
+    attemptVote(decision: 0 | 1, attempt: number): Promise<VoteResult>;
     isTextInput(el: HTMLElement | null): boolean;
     scheduleMaintenanceRetry(decision: 0 | 1): void;
 }
@@ -166,27 +167,19 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
         this.reportItems = [];
 
         try {
-            const response = await window.axios.post(
-                clipVoteController.store().url,
-                {
-                    voted: decision,
-                },
-                {
-                    headers: { Accept: 'application/json' },
-                },
-            );
+            const result = await this.attemptVote(decision, 0);
 
-            if (typeof response.data === 'string') {
-                this.scheduleMaintenanceRetry(decision);
-                return;
-            }
-
-            if (response.data?.ban === true) {
+            if (result.status === 'banned') {
                 location.reload();
                 return;
             }
 
-            const nextClip: ClipVoteResource | null = response.data;
+            if (result.status === 'maintenance') {
+                this.scheduleMaintenanceRetry(decision);
+                return;
+            }
+
+            const nextClip = result.clip ?? null;
 
             if (nextClip?.id) {
                 this.hasClip = true;
@@ -208,10 +201,58 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 this.clipBroadcasterName = '';
                 this.hasBroadcaster = false;
             }
-        } catch {
+        } catch (err) {
+            console.error('vote failed after retries:', err);
             this.scheduleMaintenanceRetry(decision);
         } finally {
             this.isLoading = false;
+        }
+    },
+
+    async attemptVote(decision: 0 | 1, attempt: number): Promise<VoteResult> {
+        try {
+            const response = await window.axios.post(
+                clipVoteController.store().url,
+                { voted: decision },
+                {
+                    headers: { Accept: 'application/json' },
+                    timeout: REQUEST_TIMEOUT_MS,
+                },
+            );
+
+            if (typeof response.data === 'string') {
+                return { status: 'maintenance' };
+            }
+
+            if (response.data?.ban === true) {
+                return { status: 'banned' };
+            }
+
+            if (attempt > 0) {
+                console.debug(`vote attempt ${attempt + 1} successful`);
+            }
+
+            return {
+                status: 'ok',
+                clip: response.data as ClipVoteResource | null,
+            };
+        } catch (err: unknown) {
+            const hasServerResponse =
+                err != null &&
+                typeof err === 'object' &&
+                'response' in err &&
+                (err as { response?: unknown }).response != null;
+
+            if (!hasServerResponse && attempt < MAX_VOTE_RETRIES) {
+                const delay = VOTE_RETRY_DELAY_MS * (attempt + 1);
+                console.warn(
+                    `vote attempt ${attempt + 1} no response, retry in ${delay}ms`,
+                );
+                await new Promise<void>((res) => setTimeout(res, delay));
+                return this.attemptVote(decision, attempt + 1);
+            }
+
+            throw err;
         }
     },
 
@@ -227,7 +268,10 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 const response = await window.axios.post(
                     clipVoteController.store().url,
                     { voted: decision },
-                    { headers: { Accept: 'application/json' } },
+                    {
+                        headers: { Accept: 'application/json' },
+                        timeout: REQUEST_TIMEOUT_MS,
+                    },
                 );
                 if (typeof response.data !== 'string') {
                     window.location.reload();
