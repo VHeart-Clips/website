@@ -54,7 +54,7 @@ export interface ClipVoteData extends ClipVoteConfig {
     vote(decision: 0 | 1): Promise<void>;
     attemptVote(decision: 0 | 1, attempt: number): Promise<VoteResult>;
     isTextInput(el: HTMLElement | null): boolean;
-    scheduleMaintenanceRetry(decision: 0 | 1): void;
+    scheduleMaintenanceRetry(decision: 0 | 1, attempts?: number): void;
 }
 
 export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
@@ -259,9 +259,17 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
         }
     },
 
-    scheduleMaintenanceRetry(decision: 0 | 1) {
+    scheduleMaintenanceRetry(decision: 0 | 1, attempts) {
         this.isMaintenanceMode = true;
         this.armedButton = null;
+        attempts = (attempts || 0) + 1;
+
+        if (attempts > 10) {
+            // just reload after 10 attempts in case we got stuck somehow
+            window.location.reload();
+
+            return;
+        }
 
         if (this.maintenanceRetryTimeout)
             clearTimeout(this.maintenanceRetryTimeout);
@@ -282,12 +290,12 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 if (typeof response.data !== 'string') {
                     window.location.reload();
                 } else {
-                    this.scheduleMaintenanceRetry(decision);
+                    this.scheduleMaintenanceRetry(decision, attempts);
                 }
             } catch {
-                this.scheduleMaintenanceRetry(decision);
+                this.scheduleMaintenanceRetry(decision, attempts);
             }
-        }, 5000);
+        }, 6000);
     },
 
     isTextInput(el: HTMLElement | null) {
