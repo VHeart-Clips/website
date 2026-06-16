@@ -1,11 +1,11 @@
-@props(['items' => null, 'disabled' => false])
+@props(['items' => [], 'disabled' => false])
 
 <div
     {{ $attributes->twMerge('inline-block relative') }}
     x-data="reportButton({ items: @js($items, JSON_THROW_ON_ERROR), label: '{{ __('reports.modal.button', ['reportable' => '__REPORTABLE_LABEL__']) }}', disabled: {{ $disabled ? 'true' : 'false' }} })"
     x-modelable="items"
 >
-    <div x-show="disabled || items.length === 0">
+    <div x-show="disabled || items?.length === 0">
         <button
             type="button"
             disabled
@@ -15,7 +15,7 @@
         </button>
     </div>
 
-    <template x-if="!disabled && items.length > 0">
+    <template x-if="!disabled && items?.length > 0">
         <div>
             <template x-if="items.length === 1">
                 <button

@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Jobs\Reports;
 
+use App\Jobs\Discord\ReportWebhookJob;
 use App\Models\Report;
-use Exception;
-use Filament\Facades\Filament;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Support\Facades\Cache;
-use Spatie\DiscordAlerts\Facades\DiscordAlert;
 
 /**
  * Notify moderation team about new reports
@@ -38,20 +36,7 @@ class NotifyAboutReportsJob implements ShouldQueue
 
             Cache::put(self::NOTIFICATION_CACHE_KEY_PREFIX.$report->id, true, now()->addWeek());
 
-            $this->notifyDiscord($report);
+            ReportWebhookJob::dispatch($report);
         });
-    }
-
-    private function notifyDiscord(Report $report): void
-    {
-        try {
-            DiscordAlert::to('moderation')->message('<@&1494691682422226996>', [[
-                'title' => 'New Report ('.$report->reason->name.')',
-                'url' => Filament::getPanel('admin')->getResourceUrl($report, 'view'),
-                'color' => '#e71d73',
-            ]]);
-        } catch (Exception $exception) {
-            report($exception);
-        }
     }
 }

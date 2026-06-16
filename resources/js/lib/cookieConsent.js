@@ -2,19 +2,22 @@ class CookieConsent {
     constructor() {
         this.cookieName = 'vheart_cookie_consent';
         this.listeners = new Set();
-        this.check = this.#check.bind(this);
+        this.check = this.check.bind(this);
 
         this.intervalId = null;
 
-        this.state = this.#read();
-        this.#init();
+        this.state = this.read();
+        this.init();
 
         if (typeof window !== 'undefined') {
             window.CookieConsent = this;
         }
     }
 
-    #read() {
+    /**
+     * @private
+     */
+    read() {
         if (typeof document === 'undefined') return {};
 
         const match = document.cookie.match(
@@ -31,16 +34,22 @@ class CookieConsent {
         return {};
     }
 
-    #check() {
-        const currentState = this.#read();
+    /**
+     * @private
+     */
+    check() {
+        const currentState = this.read();
         if (JSON.stringify(currentState) !== JSON.stringify(this.state)) {
             this.state = currentState;
-            this.#clearDeniedCookies();
+            this.clearDeniedCookies();
             this.listeners.forEach((l) => l(this.state));
         }
     }
 
-    #init() {
+    /**
+     * @private
+     */
+    init() {
         if (typeof window === 'undefined') return;
 
         if ('cookieStore' in window) {
@@ -52,11 +61,11 @@ class CookieConsent {
                     (c) => c.name === this.cookieName,
                 );
 
-                if (changed || deleted) this.#check();
+                if (changed || deleted) this.check();
             });
         }
 
-        this.#clearDeniedCookies();
+        this.clearDeniedCookies();
     }
 
     /**
@@ -75,7 +84,7 @@ class CookieConsent {
             typeof window !== 'undefined' &&
             !('cookieStore' in window)
         ) {
-            this.intervalId = setInterval(this.#check.bind(this), 1000);
+            this.intervalId = setInterval(this.check.bind(this), 1000);
         }
 
         return () => {
@@ -95,7 +104,10 @@ class CookieConsent {
         return this.state;
     }
 
-    #clearDeniedCookies() {
+    /**
+     * @private
+     */
+    clearDeniedCookies() {
         if (typeof document === 'undefined' || !this.state) return;
 
         Object.keys(this.state).forEach((key) => {
