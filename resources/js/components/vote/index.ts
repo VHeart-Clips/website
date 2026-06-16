@@ -4,6 +4,9 @@ import { AlpineComponent } from 'alpinejs';
 
 const MINIMUM_RATE_LIMIT = 6;
 const INTERACTION_ARM_TIMEOUT = 3000;
+const MAX_VOTE_RETRIES = 3;
+const VOTE_RETRY_DELAY_MS = 1500;
+const REQUEST_TIMEOUT_MS = 8000;
 
 /**
  * @resource App\Http\Resources\Clip\ClipVoteResource
@@ -31,6 +34,9 @@ export interface ClipVoteConfig {
     reportItems: { type: string; id: number }[];
 }
 
+type VoteStatus = 'ok' | 'maintenance' | 'banned';
+type VoteResult = { status: VoteStatus; clip?: ClipVoteResource | null };
+
 export interface ClipVoteData extends ClipVoteConfig {
     timeLeft: number;
     isLoading: boolean;
@@ -46,8 +52,9 @@ export interface ClipVoteData extends ClipVoteConfig {
     startTimer(seconds: number): void;
     arm(type: 'like' | 'skip'): Promise<void>;
     vote(decision: 0 | 1): Promise<void>;
+    attemptVote(decision: 0 | 1, attempt: number): Promise<VoteResult>;
     isTextInput(el: HTMLElement | null): boolean;
-    scheduleMaintenanceRetry(decision: 0 | 1): void;
+    scheduleMaintenanceRetry(decision: 0 | 1, attempts?: number): void;
 }
 
 export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
@@ -160,27 +167,19 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
         this.reportItems = [];
 
         try {
-            const response = await window.axios.post(
-                clipVoteController.store().url,
-                {
-                    voted: decision,
-                },
-                {
-                    headers: { Accept: 'application/json' },
-                },
-            );
+            const result = await this.attemptVote(decision, 0);
 
-            if (typeof response.data === 'string') {
-                this.scheduleMaintenanceRetry(decision);
-                return;
-            }
-
-            if (response.data?.ban === true) {
+            if (result.status === 'banned') {
                 location.reload();
                 return;
             }
 
-            const nextClip: ClipVoteResource | null = response.data;
+            if (result.status === 'maintenance') {
+                this.scheduleMaintenanceRetry(decision);
+                return;
+            }
+
+            const nextClip = result.clip ?? null;
 
             if (nextClip?.id) {
                 this.hasClip = true;
@@ -202,16 +201,75 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 this.clipBroadcasterName = '';
                 this.hasBroadcaster = false;
             }
-        } catch {
+        } catch (err) {
+            console.error('vote failed after retries:', err);
             this.scheduleMaintenanceRetry(decision);
         } finally {
             this.isLoading = false;
         }
     },
 
-    scheduleMaintenanceRetry(decision: 0 | 1) {
+    async attemptVote(decision: 0 | 1, attempt: number): Promise<VoteResult> {
+        try {
+            const response = await window.axios.post(
+                clipVoteController.store().url,
+                {
+                    clip_id: this.clipId,
+                    voted: decision,
+                },
+                {
+                    headers: { Accept: 'application/json' },
+                    timeout: REQUEST_TIMEOUT_MS,
+                },
+            );
+
+            if (typeof response.data === 'string') {
+                return { status: 'maintenance' };
+            }
+
+            if (response.data?.ban === true) {
+                return { status: 'banned' };
+            }
+
+            if (attempt > 0) {
+                console.debug(`vote attempt ${attempt + 1} successful`);
+            }
+
+            return {
+                status: 'ok',
+                clip: response.data as ClipVoteResource | null,
+            };
+        } catch (err: unknown) {
+            const hasServerResponse =
+                err != null &&
+                typeof err === 'object' &&
+                'response' in err &&
+                (err as { response?: unknown }).response != null;
+
+            if (!hasServerResponse && attempt < MAX_VOTE_RETRIES) {
+                const delay = VOTE_RETRY_DELAY_MS * (attempt + 1);
+                console.warn(
+                    `vote attempt ${attempt + 1} no response, retry in ${delay}ms`,
+                );
+                await new Promise<void>((res) => setTimeout(res, delay));
+                return this.attemptVote(decision, attempt + 1);
+            }
+
+            throw err;
+        }
+    },
+
+    scheduleMaintenanceRetry(decision: 0 | 1, attempts) {
         this.isMaintenanceMode = true;
         this.armedButton = null;
+        attempts = (attempts || 0) + 1;
+
+        if (attempts > 10) {
+            // just reload after 10 attempts in case we got stuck somehow
+            window.location.reload();
+
+            return;
+        }
 
         if (this.maintenanceRetryTimeout)
             clearTimeout(this.maintenanceRetryTimeout);
@@ -220,18 +278,24 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
             try {
                 const response = await window.axios.post(
                     clipVoteController.store().url,
-                    { voted: decision },
-                    { headers: { Accept: 'application/json' } },
+                    {
+                        clip_id: this.clipId,
+                        voted: decision,
+                    },
+                    {
+                        headers: { Accept: 'application/json' },
+                        timeout: REQUEST_TIMEOUT_MS,
+                    },
                 );
                 if (typeof response.data !== 'string') {
                     window.location.reload();
                 } else {
-                    this.scheduleMaintenanceRetry(decision);
+                    this.scheduleMaintenanceRetry(decision, attempts);
                 }
             } catch {
-                this.scheduleMaintenanceRetry(decision);
+                this.scheduleMaintenanceRetry(decision, attempts);
             }
-        }, 5000);
+        }, 6000);
     },
 
     isTextInput(el: HTMLElement | null) {
