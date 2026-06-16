@@ -28,7 +28,7 @@ export interface ClipVoteConfig {
     hasBroadcaster: boolean;
     hasClip: boolean;
     initialDuration: number;
-    reportItems: { type: string; id: number }[] | null;
+    reportItems: { type: string; id: number }[];
 }
 
 export interface ClipVoteData extends ClipVoteConfig {
@@ -196,7 +196,7 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
                 this.hasClip = false;
                 this.clipTwitchId = '';
                 this.clipId = null;
-                this.reportItems = null;
+                this.reportItems = [];
                 this.clipBroadcasterAvatar = '';
                 this.clipBroadcasterUrl = '';
                 this.clipBroadcasterName = '';
