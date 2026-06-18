@@ -13,6 +13,7 @@ use Illuminate\Queue\Attributes\Delay;
 use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[Queue('moderation')]
@@ -22,7 +23,11 @@ class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUn
     public function __construct(
         private readonly int $messageId,
         public readonly ?Report $report = null,
-    ) {}
+    ) {
+        if ($this->report !== null && $this->report->discord_message_id !== $this->messageId) {
+            throw new InvalidArgumentException('Discord message id must belong to provided Report');
+        }
+    }
 
     public function uniqueId(): string
     {
