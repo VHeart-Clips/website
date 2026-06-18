@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Jobs\Discord;
 
+use App\Enums\Reports\ReportStatus;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -34,6 +35,24 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
     public function __construct(
         private readonly Report $report,
     ) {}
+
+    protected function shouldRun(): bool
+    {
+        $report = $this->report;
+
+        // We do not care about reports that got automatically resolved by system
+        if (
+            $report->status === ReportStatus::Resolved
+            && $report->discord_message_id === null
+            && $report->resolved_by === 0
+        ) {
+            Log::debug('Report got handled by System before we knew about it, ignoring.');
+
+            return false;
+        }
+
+        return true;
+    }
 
     protected function getRequest(): PendingRequest|Response
     {
