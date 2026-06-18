@@ -123,6 +123,18 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
     protected function handleResponse(Response $response): void {}
 
     /**
+     * Allows us to do stuff in in case the webhook died
+     *
+     * return `null` if you just want to do job related stuff without affecting the base webhook 404 handler
+     * - return `true` to still fail the job, but skip the 404 handler
+     * - return `false` to skip the 404 handler and prevent the job from failing
+     */
+    protected function handleWebhookNotFound(Response $response): ?bool
+    {
+        return null;
+    }
+
+    /**
      * In case we need a way to easily stop a job at handle time
      */
     protected function shouldRun(): bool
@@ -228,6 +240,11 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
     {
         if ($response->status() !== 404) {
             return false;
+        }
+
+        $customHandlerResult = $this->handleWebhookNotFound($response);
+        if ($customHandlerResult !== null) {
+            return $customHandlerResult;
         }
 
         $id = $this->getWebhookMessageId()
