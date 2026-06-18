@@ -36,6 +36,11 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
         private readonly Report $report,
     ) {}
 
+    public function debounceId(): string
+    {
+        return $this->cacheKey('debounce').':'.$this->report->id;
+    }
+
     protected function shouldRun(): bool
     {
         $report = $this->report;
