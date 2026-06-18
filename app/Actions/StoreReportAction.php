@@ -6,7 +6,6 @@ namespace App\Actions;
 
 use App\Enums\Reports\ReportReason;
 use App\Http\Requests\Reports\StoreReportRequest;
-use App\Jobs\Discord\ReportWebhookJob;
 use App\Jobs\Reports\CheckForRemovedClipJob;
 use App\Models\Clip;
 use App\Models\Report;
@@ -36,8 +35,6 @@ class StoreReportAction
             'reason' => $reason,
             'description' => $description,
         ]);
-
-        ReportWebhookJob::dispatch($report);
 
         $clip = $reportable instanceof Clip ? $reportable : null;
         if ($reason === ReportReason::ContentUnavailable && $clip instanceof Clip) {
