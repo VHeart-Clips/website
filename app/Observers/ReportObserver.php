@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
-use App\Jobs\Discord\ReportWebhookJob;
+use App\Jobs\Discord\Reports\ReportWebhookJob;
 use App\Models\Report;
 
 class ReportObserver

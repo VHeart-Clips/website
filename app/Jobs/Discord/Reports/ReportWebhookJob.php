@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs\Discord;
+namespace App\Jobs\Discord\Reports;
 
 use App\Enums\Reports\ReportStatus;
+use App\Jobs\Discord\BaseDiscordWebhookJob;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
