@@ -8,9 +8,11 @@ use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use Illuminate\Queue\Attributes\Queue;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JustinKluever\DiscordWebhookBuilder\Components\ActionRow;
@@ -20,7 +22,6 @@ use JustinKluever\DiscordWebhookBuilder\Components\Separator;
 use JustinKluever\DiscordWebhookBuilder\Components\TextDisplay;
 use JustinKluever\DiscordWebhookBuilder\Enums\Components\ButtonStyle;
 use JustinKluever\DiscordWebhookBuilder\Enums\Support\MessageFlag;
-use JustinKluever\DiscordWebhookBuilder\Support\Color;
 use JustinKluever\DiscordWebhookBuilder\Support\Webhook\AllowedMentions;
 use JustinKluever\DiscordWebhookBuilder\Webhook;
 
@@ -31,6 +32,15 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
     public function __construct(
         private readonly Report $report,
     ) {}
+
+    protected function getRequest(): PendingRequest|Response
+    {
+        if ($this->report->discord_message_id === null) {
+            return parent::getRequest();
+        }
+
+        return Http::timeout(5)->patch($this->getWebhook(), $this->getPayload());
+    }
 
     protected function getPayload(): Webhook
     {
@@ -52,7 +62,7 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
                     Separator::make(),
                     TextDisplay::make("-# $currentStatus • Created {$this->getDiscordTimestamp($this->report->created_at)} • <@&1494691682422226996>")
                 )
-                    ->accentColor(Color::fromHex('#e71d73')),
+                    ->accentColor($this->report->status->getDiscordColor()),
                 ActionRow::make(
                     Button::make()
                         ->label('View Report')
@@ -72,17 +82,38 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
 
     protected function handleResponse(Response $response): void
     {
-        $messageId = $response->json('id');
+        if ($this->report->discord_message_id !== null) {
+            return;
+        }
 
-        Log::debug('Discord webhook response for report', [
-            'report_id' => $this->report->id,
-            'message_id' => $messageId,
+        $messageId = (int) $response->json('id');
+
+        $this->report->update([
+            'discord_message_id' => $messageId,
         ]);
+    }
+
+    protected function handleWebhookNotFound(Response $response): ?bool
+    {
+        Log::debug('Report Message got removed', [
+            'webhook_id' => $this->getWebhookId(),
+            'message_id' => $this->getWebhookMessageId(),
+        ]);
+
+        $this->report->update([
+            'discord_message_id' => null,
+        ]);
+
+        return true;
     }
 
     protected function getWebhook(): string
     {
-        return config('services.discord.webhooks.moderation').'?with_components=true&wait=true';
+        $base = config('services.discord.webhooks.moderation');
+
+        return $this->report->discord_message_id === null
+            ? $base.'?with_components=true&wait=true'
+            : $base."/messages/{$this->report->discord_message_id}?with_components=true&wait=false";
     }
 
     private function getDiscordTimestamp(CarbonInterface $dateTime): string
