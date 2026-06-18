@@ -97,7 +97,7 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
 
     protected function handleWebhookNotFound(Response $response): ?bool
     {
-        Log::debug('Report Message got removed', [
+        Log::debug('Report Message got removed, defusing', [
             'webhook_id' => $this->getWebhookId(),
             'message_id' => $this->getWebhookMessageId(),
         ]);
