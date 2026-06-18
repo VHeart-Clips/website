@@ -139,6 +139,15 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
         return $match[1];
     }
 
+    protected function getWebhookMessageId(): ?string
+    {
+        if (! preg_match('/webhooks\/.*\/messages\/(\d+)/', $this->getWebhook(), $match)) {
+            return null;
+        }
+
+        return $match[1];
+    }
+
     protected function isWebhookInvalid(): bool
     {
         return Cache::has($this->cacheKey('invalid'));
@@ -146,6 +155,10 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
 
     protected function cacheKey(string $suffix): string
     {
+        if ($this->getWebhookMessageId()) {
+            return "discord:webhook:{$this->getWebhookId()}:{$this->getWebhookMessageId()}:$suffix";
+        }
+
         return "discord:webhook:{$this->getWebhookId()}:$suffix";
     }
 
@@ -217,8 +230,13 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
             return false;
         }
 
-        Log::info("Discord Webhook '{$this->getWebhookId()}' was not found on discord, discarding future attempts.", [
+        $id = $this->getWebhookMessageId()
+            ? $this->getWebhookId().'/'.$this->getWebhookMessageId()
+            : $this->getWebhookId();
+
+        Log::info("Discord Webhook '$id' was not found on discord, discarding future attempts.", [
             'webhook_id' => $this->getWebhookId(),
+            'message_id' => $this->getWebhookMessageId(),
         ]);
 
         Cache::put($this->cacheKey('invalid'), true, now()->addWeek());
