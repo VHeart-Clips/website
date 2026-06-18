@@ -10,6 +10,7 @@ use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
+use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Support\Facades\Http;
@@ -27,6 +28,7 @@ use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[DeleteWhenMissingModels]
 #[Queue('moderation')]
+#[DebounceFor(60)]
 class ReportWebhookJob extends BaseDiscordWebhookJob
 {
     public function __construct(
