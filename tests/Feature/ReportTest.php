@@ -6,10 +6,10 @@ use App\Jobs\Discord\Reports\DeleteReportWebhookJob;
 use App\Jobs\Discord\Reports\ReportWebhookJob;
 use App\Models\Report;
 use App\Models\User;
-use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
-beforeEach(fn () => Bus::fake([
+beforeEach(fn () => Queue::fake([
     ReportWebhookJob::class,
     DeleteReportWebhookJob::class,
 ]));
@@ -18,7 +18,7 @@ describe('ReportWebhookJob', function () {
     it('dispatches after report being created', function () {
         Report::factory()->create();
 
-        Bus::assertDispatched(ReportWebhookJob::class);
+        Queue::assertPushed(ReportWebhookJob::class);
     });
 
     it('dispatches after report being updated if we have a discord message id attached', function () {
@@ -29,7 +29,7 @@ describe('ReportWebhookJob', function () {
             'description' => Str::random(),
         ]);
 
-        Bus::assertDispatched(ReportWebhookJob::class);
+        Queue::assertPushed(ReportWebhookJob::class);
     });
 
     it('does not dispatch after report being updated if we dont have a discord message id attached', function () {
@@ -40,7 +40,7 @@ describe('ReportWebhookJob', function () {
             'description' => Str::random(),
         ]);
 
-        Bus::assertNotDispatched(ReportWebhookJob::class);
+        Queue::assertNotPushed(ReportWebhookJob::class);
     });
 });
 
@@ -49,21 +49,21 @@ describe('DeleteReportWebhookJob', function () {
         $report = Report::factory()->createQuietly(['discord_message_id' => 1]);
         $report->forceDelete();
 
-        Bus::assertDispatched(DeleteReportWebhookJob::class);
+        Queue::assertPushed(DeleteReportWebhookJob::class);
     });
 
     it('does not dispatch after report being deleted with a discord message id attached', function () {
         $report = Report::factory()->createQuietly(['discord_message_id' => 1]);
         $report->delete();
 
-        Bus::assertNotDispatched(DeleteReportWebhookJob::class);
+        Queue::assertNotPushed(DeleteReportWebhookJob::class);
     });
 
     it('does not dispatch after report being force deleted without discord message id attached', function () {
         $report = Report::factory()->createQuietly(['discord_message_id' => null]);
         $report->forceDelete();
 
-        Bus::assertNotDispatched(DeleteReportWebhookJob::class);
+        Queue::assertNotPushed(DeleteReportWebhookJob::class);
     });
 });
 
