@@ -9,7 +9,6 @@ use App\Models\Report;
 use Illuminate\Contracts\Broadcasting\ShouldBeUnique;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
-use Illuminate\Queue\Attributes\Delay;
 use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +16,6 @@ use InvalidArgumentException;
 use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[Queue('moderation')]
-#[Delay(60)]
 class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUnique
 {
     public function __construct(
