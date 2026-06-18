@@ -236,6 +236,11 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
         return false;
     }
 
+    protected function preventFutureAttempts(): void
+    {
+        Cache::put($this->cacheKey('invalid'), true, now()->addWeek());
+    }
+
     protected function failIfWebhookNotFound(Response $response): bool
     {
         if ($response->status() !== 404) {
@@ -256,7 +261,8 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
             'message_id' => $this->getWebhookMessageId(),
         ]);
 
-        Cache::put($this->cacheKey('invalid'), true, now()->addWeek());
+        $this->preventFutureAttempts();
+
         DiscordWebhookDied::dispatch($this->getWebhookId(), $this->getWebhook());
 
         $this->fail("Webhook '{$this->getWebhookId()}' was not found (404)");
