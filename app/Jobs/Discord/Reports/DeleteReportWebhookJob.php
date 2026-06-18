@@ -29,7 +29,7 @@ class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUn
 
     public function uniqueId(): string
     {
-        return $this->cacheKey('delete').':'.$this->getMessageId();
+        return $this->cacheKey('delete');
     }
 
     protected function getRequest(): PendingRequest|Response
