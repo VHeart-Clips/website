@@ -118,7 +118,7 @@ class ViewReport extends ViewRecord
                                 ->nullable()
                                 ->numeric(),
                         ])
-                        ->action(function (Report $record, array $data) {
+                        ->action(function (Report $record, array $data): void {
                             if (is_numeric($data['message_id'] ?? null)) {
                                 $record->update([
                                     'discord_message_id' => (int) $data['message_id'],
@@ -145,7 +145,7 @@ class ViewReport extends ViewRecord
 
                     Action::make('notification_update')
                         ->visible(fn (Report $record): bool => $record->discord_message_id !== null)
-                        ->action(function (Report $record) {
+                        ->action(function (Report $record): void {
                             ReportWebhookJob::dispatch($record);
 
                             Notification::make('discord_notification_scheduled_for_update')
@@ -161,7 +161,7 @@ class ViewReport extends ViewRecord
                     Action::make('notification_delete')
                         ->requiresConfirmation()
                         ->visible(fn (Report $record): bool => $record->discord_message_id !== null)
-                        ->action(function (Report $record) {
+                        ->action(function (Report $record): void {
                             DeleteReportWebhookJob::dispatch($record->discord_message_id, $record);
 
                             Notification::make('discord_notification_scheduled_for_removal')

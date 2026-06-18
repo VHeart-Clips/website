@@ -22,7 +22,7 @@ class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUn
         private readonly int $messageId,
         public readonly ?Report $report = null,
     ) {
-        if ($this->report !== null && $this->report->discord_message_id !== $this->messageId) {
+        if ($this->report instanceof Report && $this->report->discord_message_id !== $this->messageId) {
             throw new InvalidArgumentException('Discord message id must belong to provided Report');
         }
     }
