@@ -49,6 +49,8 @@ class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUn
         $this->report?->update([
             'discord_message_id' => null,
         ]);
+
+        $this->preventFutureAttempts();
     }
 
     protected function handleWebhookNotFound(Response $response): ?bool
@@ -61,6 +63,8 @@ class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUn
         $this->report?->update([
             'discord_message_id' => null,
         ]);
+
+        $this->preventFutureAttempts();
 
         return true;
     }
