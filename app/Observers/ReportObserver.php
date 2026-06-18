@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Observers;
 
+use App\Jobs\Discord\Reports\DeleteReportWebhookJob;
 use App\Jobs\Discord\Reports\ReportWebhookJob;
 use App\Models\Report;
 
@@ -33,8 +34,9 @@ class ReportObserver
 
     public function forceDeleted(Report $report): void
     {
-        // TODO: should probably delete the message "instantly" on force delete as we wont have the reference in the future
-        // also not possible to update the message at this point since we literally delete the model which causes the job to delete itself lol
+        if ($report->discord_message_id) {
+            DeleteReportWebhookJob::dispatch($report->discord_message_id, $report);
+        }
     }
 
     // Only update if we actually changed something important (and we still got the message id)
