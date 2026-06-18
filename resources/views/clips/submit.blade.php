@@ -71,7 +71,6 @@
                                     name="clip_url"
                                     value="{{ old('clip_url') }}"
                                     @input="handleInput"
-                                    @keydown.enter.prevent
                                     required
                                     placeholder="{{ __('clips.submit.form.fields.clip_url.placeholder') }}"
                                     autocomplete="off"
@@ -205,7 +204,7 @@
                     Alpine.data('clipPreview', () => ({
                         currentClipId: null,
                         timeout: null,
-                        selectedTags: [],
+                        selectedTags: @js(old('tags', []), JSON_THROW_ON_ERROR),
 
                         init() {
                             const initialUrl = document.getElementById('clip_url')?.value || '';

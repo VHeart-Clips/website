@@ -41,13 +41,13 @@ trait Bannable
     }
 
     #[Scope]
-    public function whereBanned(Builder $query): Builder
+    protected function whereBanned(Builder $query): Builder
     {
         return $query->whereHas('bans', fn (Builder $q): Builder => $q->whereActive());
     }
 
     #[Scope]
-    public function whereBannedBy(Builder $query, User|int $user): Builder
+    protected function whereBannedBy(Builder $query, User|int $user): Builder
     {
         return $query->whereHas('bans', fn (Builder $q): Builder => $q
             ->where('admin_id', $user instanceof User ? $user->id : $user)
@@ -55,7 +55,7 @@ trait Bannable
     }
 
     #[Scope]
-    public function whereUnbannedBy(Builder $query, User|int $user): Builder
+    protected function whereUnbannedBy(Builder $query, User|int $user): Builder
     {
         return $query->whereHas('bans', fn (Builder $q): Builder => $q
             ->where('unbanned_by', $user instanceof User ? $user->id : $user)
@@ -63,19 +63,19 @@ trait Bannable
     }
 
     #[Scope]
-    public function whereNotBanned(Builder $query): Builder
+    protected function whereNotBanned(Builder $query): Builder
     {
         return $query->whereDoesntHave('bans', fn (Builder $q): Builder => $q->whereActive());
     }
 
     #[Scope]
-    public function wherePermanentlyBanned(Builder $query): Builder
+    protected function wherePermanentlyBanned(Builder $query): Builder
     {
         return $query->whereHas('bans', fn (Builder $q): Builder => $q->whereActive()->wherePermanent());
     }
 
     #[Scope]
-    public function whereTemporarilyBanned(Builder $query): Builder
+    protected function whereTemporarilyBanned(Builder $query): Builder
     {
         return $query->whereHas('bans', fn (Builder $q): Builder => $q->whereActive()->whereTemporary());
     }
