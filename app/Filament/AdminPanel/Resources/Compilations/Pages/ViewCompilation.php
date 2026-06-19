@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 
+use App\Enums\Filament\LucideIcon;
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
 use App\Models\Clip;
 use App\Models\Clip\Compilation;
@@ -37,13 +38,16 @@ class ViewCompilation extends ViewRecord
             ActionGroup::make([
                 Action::make('yura-ist-faul')
                     ->label('Broadcaster List')
-                    ->icon('heroicon-o-clipboard-document-list')
+                    ->icon(LucideIcon::ClipboardCopy)
                     ->modalHeading('Broadcaster List')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
                     ->fillForm(function (Compilation $record): array {
                         $list = $record->clips()
+                            ->with('broadcaster')
+                            ->distinct('broadcaster_id')
                             ->get()
+                            ->sortBy(fn (Clip $clip): string => mb_strtolower($clip->broadcaster?->name ?? ''))
                             ->map(fn (Clip $clip): string => " - {$clip->broadcaster?->name} https://twitch.tv/".mb_strtolower($clip->broadcaster?->name ?? ''))
                             ->join("\n");
 
