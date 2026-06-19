@@ -414,7 +414,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         }
 
         return $query->whereDoesntHave('broadcaster',
-            fn (Builder $q) => $q->whereGaveNoConsent()
+            fn (Builder $q) => $q->whereHasGivenNoConsent()
         );
     }
 

@@ -194,7 +194,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
     }
 
     #[Scope]
-    protected function whereGaveNoConsent(Builder $query): Builder
+    protected function whereHasGivenNoConsent(Builder $query): Builder
     {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query->whereRaw('1 = 0');
