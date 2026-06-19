@@ -74,6 +74,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon(LucideIcon::LayoutDashboard)
                     ->sort(100),
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
