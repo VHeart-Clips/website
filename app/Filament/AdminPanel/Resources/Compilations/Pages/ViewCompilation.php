@@ -38,7 +38,7 @@ class ViewCompilation extends ViewRecord
             ActionGroup::make([
                 Action::make('yura-ist-faul')
                     ->label('Broadcaster List')
-                    ->icon('heroicon-o-clipboard-document-list')
+                    ->icon(LucideIcon::ClipboardCopy)
                     ->modalHeading('Broadcaster List')
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
