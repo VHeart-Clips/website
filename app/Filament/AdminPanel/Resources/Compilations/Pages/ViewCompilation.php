@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 
+use App\Enums\Filament\LucideIcon;
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
 use App\Models\Clip;
 use App\Models\Clip\Compilation;
@@ -43,6 +44,7 @@ class ViewCompilation extends ViewRecord
                     ->modalCancelActionLabel('Close')
                     ->fillForm(function (Compilation $record): array {
                         $list = $record->clips()
+                            ->distinct('broadcaster_id')
                             ->get()
                             ->map(fn (Clip $clip): string => " - {$clip->broadcaster?->name} https://twitch.tv/".mb_strtolower($clip->broadcaster?->name ?? ''))
                             ->join("\n");
