@@ -8,8 +8,10 @@ use App\Enums\Reports\ReportReason;
 use App\Enums\Reports\ReportStatus;
 use App\Enums\Reports\ResolveAction;
 use App\Models\Traits\Auditable;
+use App\Observers\ReportObserver;
 use App\Policies\ReportPolicy;
 use Database\Factories\ReportFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +24,7 @@ use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
 
 #[UsePolicy(ReportPolicy::class)]
+#[ObservedBy(ReportObserver::class)]
 class Report extends Model implements Commentable
 {
     /** @use HasFactory<ReportFactory> */

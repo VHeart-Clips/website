@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace App\Jobs\Discord;
+namespace App\Jobs\Discord\Reports;
 
+use App\Enums\Reports\ReportStatus;
+use App\Jobs\Discord\BaseDiscordWebhookJob;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
+use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use Illuminate\Queue\Attributes\Queue;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JustinKluever\DiscordWebhookBuilder\Components\ActionRow;
@@ -20,17 +25,49 @@ use JustinKluever\DiscordWebhookBuilder\Components\Separator;
 use JustinKluever\DiscordWebhookBuilder\Components\TextDisplay;
 use JustinKluever\DiscordWebhookBuilder\Enums\Components\ButtonStyle;
 use JustinKluever\DiscordWebhookBuilder\Enums\Support\MessageFlag;
-use JustinKluever\DiscordWebhookBuilder\Support\Color;
 use JustinKluever\DiscordWebhookBuilder\Support\Webhook\AllowedMentions;
 use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[DeleteWhenMissingModels]
 #[Queue('moderation')]
+#[DebounceFor(60)]
 class ReportWebhookJob extends BaseDiscordWebhookJob
 {
     public function __construct(
         private readonly Report $report,
     ) {}
+
+    public function debounceId(): string
+    {
+        return $this->cacheKey('debounce').':'.$this->report->id;
+    }
+
+    protected function shouldRun(): bool
+    {
+        $report = $this->report;
+
+        // We do not care about reports that got automatically resolved by system
+        if (
+            $report->status === ReportStatus::Resolved
+            && $report->discord_message_id === null
+            && $report->resolved_by === 0
+        ) {
+            Log::debug('Report got handled by System before we knew about it, ignoring.');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getRequest(): PendingRequest|Response
+    {
+        if ($this->report->discord_message_id === null) {
+            return parent::getRequest();
+        }
+
+        return Http::timeout(5)->patch($this->getWebhook(), $this->getPayload());
+    }
 
     protected function getPayload(): Webhook
     {
@@ -52,7 +89,7 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
                     Separator::make(),
                     TextDisplay::make("-# $currentStatus • Created {$this->getDiscordTimestamp($this->report->created_at)} • <@&1494691682422226996>")
                 )
-                    ->accentColor(Color::fromHex('#e71d73')),
+                    ->accentColor($this->report->status->getDiscordColor()),
                 ActionRow::make(
                     Button::make()
                         ->label('View Report')
@@ -72,17 +109,38 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
 
     protected function handleResponse(Response $response): void
     {
-        $messageId = $response->json('id');
+        if ($this->report->discord_message_id !== null) {
+            return;
+        }
 
-        Log::debug('Discord webhook response for report', [
-            'report_id' => $this->report->id,
-            'message_id' => $messageId,
+        $messageId = (int) $response->json('id');
+
+        $this->report->update([
+            'discord_message_id' => $messageId,
         ]);
+    }
+
+    protected function handleWebhookNotFound(Response $response): ?bool
+    {
+        Log::debug('Report Message got removed, defusing', [
+            'webhook_id' => $this->getWebhookId(),
+            'message_id' => $this->getWebhookMessageId(),
+        ]);
+
+        $this->report->update([
+            'discord_message_id' => null,
+        ]);
+
+        return true;
     }
 
     protected function getWebhook(): string
     {
-        return config('services.discord.webhooks.moderation').'?with_components=true&wait=true';
+        $base = config('services.discord.webhooks.moderation');
+
+        return $this->report->discord_message_id === null
+            ? $base.'?with_components=true&wait=true'
+            : $base."/messages/{$this->report->discord_message_id}?with_components=true&wait=false";
     }
 
     private function getDiscordTimestamp(CarbonInterface $dateTime): string

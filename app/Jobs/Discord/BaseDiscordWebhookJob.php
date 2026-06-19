@@ -123,6 +123,18 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
     protected function handleResponse(Response $response): void {}
 
     /**
+     * Allows us to do stuff in in case the webhook died
+     *
+     * return `null` if you just want to do job related stuff without affecting the base webhook 404 handler
+     * - return `true` to still fail the job, but skip the 404 handler
+     * - return `false` to skip the 404 handler and prevent the job from failing
+     */
+    protected function handleWebhookNotFound(Response $response): ?bool
+    {
+        return null;
+    }
+
+    /**
      * In case we need a way to easily stop a job at handle time
      */
     protected function shouldRun(): bool
@@ -139,6 +151,15 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
         return $match[1];
     }
 
+    protected function getWebhookMessageId(): ?string
+    {
+        if (! preg_match('/webhooks\/.*\/messages\/(\d+)/', $this->getWebhook(), $match)) {
+            return null;
+        }
+
+        return $match[1];
+    }
+
     protected function isWebhookInvalid(): bool
     {
         return Cache::has($this->cacheKey('invalid'));
@@ -146,6 +167,10 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
 
     protected function cacheKey(string $suffix): string
     {
+        if ($this->getWebhookMessageId()) {
+            return "discord:webhook:{$this->getWebhookId()}:{$this->getWebhookMessageId()}:$suffix";
+        }
+
         return "discord:webhook:{$this->getWebhookId()}:$suffix";
     }
 
@@ -211,17 +236,33 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
         return false;
     }
 
+    protected function preventFutureAttempts(): void
+    {
+        Cache::put($this->cacheKey('invalid'), true, now()->addWeek());
+    }
+
     protected function failIfWebhookNotFound(Response $response): bool
     {
         if ($response->status() !== 404) {
             return false;
         }
 
-        Log::info("Discord Webhook '{$this->getWebhookId()}' was not found on discord, discarding future attempts.", [
+        $customHandlerResult = $this->handleWebhookNotFound($response);
+        if ($customHandlerResult !== null) {
+            return $customHandlerResult;
+        }
+
+        $id = $this->getWebhookMessageId()
+            ? $this->getWebhookId().'/'.$this->getWebhookMessageId()
+            : $this->getWebhookId();
+
+        Log::info("Discord Webhook '$id' was not found on discord, discarding future attempts.", [
             'webhook_id' => $this->getWebhookId(),
+            'message_id' => $this->getWebhookMessageId(),
         ]);
 
-        Cache::put($this->cacheKey('invalid'), true, now()->addWeek());
+        $this->preventFutureAttempts();
+
         DiscordWebhookDied::dispatch($this->getWebhookId(), $this->getWebhook());
 
         $this->fail("Webhook '{$this->getWebhookId()}' was not found (404)");

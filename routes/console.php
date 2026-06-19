@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Console\Commands\ArchiveClipVotesCommand;
 use App\Console\Commands\CreateWeeklyEpisodesCommand;
+use App\Console\Commands\PruneReportWebhookMessagesCommand;
 use App\Console\Commands\RefreshClipsCommand;
 use App\Console\Commands\ReleaseStaleReportsCommand;
 use App\Console\Commands\SyncTopGamesCommand;
@@ -53,3 +54,4 @@ Schedule::command(CreateWeeklyEpisodesCommand::class)->onOneServer()->dailyAt('0
 Schedule::command(SyncTopGamesCommand::class)->onOneServer()->everyFourHours();
 Schedule::command(ReleaseStaleReportsCommand::class)->onOneServer()->hourly();
 Schedule::command(RefreshClipsCommand::class)->runInBackground()->onOneServer()->everyFiveMinutes();
+Schedule::command(PruneReportWebhookMessagesCommand::class)->runInBackground()->onOneServer()->everyFifteenMinutes();

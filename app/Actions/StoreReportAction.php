@@ -7,7 +7,6 @@ namespace App\Actions;
 use App\Enums\Reports\ReportReason;
 use App\Http\Requests\Reports\StoreReportRequest;
 use App\Jobs\Reports\CheckForRemovedClipJob;
-use App\Jobs\Reports\NotifyAboutReportsJob;
 use App\Models\Clip;
 use App\Models\Report;
 use App\Models\User;
@@ -36,8 +35,6 @@ class StoreReportAction
             'reason' => $reason,
             'description' => $description,
         ]);
-
-        NotifyAboutReportsJob::dispatch();
 
         $clip = $reportable instanceof Clip ? $reportable : null;
         if ($reason === ReportReason::ContentUnavailable && $clip instanceof Clip) {
