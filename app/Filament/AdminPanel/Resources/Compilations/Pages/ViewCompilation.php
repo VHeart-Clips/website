@@ -47,6 +47,7 @@ class ViewCompilation extends ViewRecord
                             ->with('broadcaster')
                             ->distinct('broadcaster_id')
                             ->get()
+                            ->sortBy(fn (Clip $clip): string => mb_strtolower($clip->broadcaster?->name ?? ''))
                             ->map(fn (Clip $clip): string => " - {$clip->broadcaster?->name} https://twitch.tv/".mb_strtolower($clip->broadcaster?->name ?? ''))
                             ->join("\n");
 
