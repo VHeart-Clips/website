@@ -8,7 +8,7 @@ use App\Models\Broadcaster\Broadcaster;
 use App\Models\User;
 use Pest\Expectation;
 
-describe('whereHasConsent scope', function () {
+describe('whereHasGivenConsent scope', function () {
     beforeEach(function () {
         Broadcaster::factory()
             ->recycle(User::factory()->create(['id' => 1]))
@@ -28,14 +28,14 @@ describe('whereHasConsent scope', function () {
     });
 
     it('should find any broadcaster with any consent if none was specified', function () {
-        $result = Broadcaster::query()->whereHasConsent()->get();
+        $result = Broadcaster::query()->whereHasGivenConsent()->get();
 
         expect($result)->toHaveCount(3)
             ->each(fn (Expectation $item) => $item->consent->not->toBeEmpty());
     });
 
     it('should not find any broadcaster if an empty input was specified', function (mixed $input) {
-        $result = Broadcaster::query()->whereHasConsent($input)->get();
+        $result = Broadcaster::query()->whereHasGivenConsent($input)->get();
 
         expect($result)->toHaveCount(1)
             ->first()->id->toBe(4);
@@ -46,7 +46,7 @@ describe('whereHasConsent scope', function () {
 
     it('allows the input to be a single enum object', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(BroadcasterConsent::Compilations, SetOperator::Any)
+            ->whereHasGivenConsent(BroadcasterConsent::Compilations, SetOperator::Any)
             ->get();
 
         expect($result)->toHaveCount(2)
@@ -55,7 +55,7 @@ describe('whereHasConsent scope', function () {
 
     it('allows the input to be a collection of enum objects', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(
+            ->whereHasGivenConsent(
                 collect([BroadcasterConsent::Compilations, BroadcasterConsent::Shorts]),
                 SetOperator::Any
             )->get();
@@ -66,7 +66,7 @@ describe('whereHasConsent scope', function () {
 
     it('finds broadcasters with at least one matching consent', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(BroadcasterConsent::Compilations, SetOperator::Any)
+            ->whereHasGivenConsent(BroadcasterConsent::Compilations, SetOperator::Any)
             ->get();
 
         expect($result)->toHaveCount(2)
@@ -75,7 +75,7 @@ describe('whereHasConsent scope', function () {
 
     it('finds broadcasters with some but not all consents', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(
+            ->whereHasGivenConsent(
                 [BroadcasterConsent::Compilations, BroadcasterConsent::Shorts],
                 SetOperator::AnyMissing
             )->get();
@@ -87,7 +87,7 @@ describe('whereHasConsent scope', function () {
 
     it('finds broadcasters with all matching consents', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(
+            ->whereHasGivenConsent(
                 [BroadcasterConsent::Compilations, BroadcasterConsent::Shorts],
                 SetOperator::All
             )->get();
@@ -98,7 +98,7 @@ describe('whereHasConsent scope', function () {
 
     it('finds broadcasters with no matching consents', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(
+            ->whereHasGivenConsent(
                 [BroadcasterConsent::Compilations, BroadcasterConsent::Shorts],
                 SetOperator::None
             )->get();
@@ -109,7 +109,7 @@ describe('whereHasConsent scope', function () {
 
     it('finds broadcasters with exactly matching consents', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent(
+            ->whereHasGivenConsent(
                 [BroadcasterConsent::Compilations, BroadcasterConsent::Shorts],
                 SetOperator::Exact
             )->get();
@@ -120,7 +120,7 @@ describe('whereHasConsent scope', function () {
 
     it('uses SetOperator::Exact by default', function () {
         $result = Broadcaster::query()
-            ->whereHasConsent([BroadcasterConsent::Compilations, BroadcasterConsent::Shorts])
+            ->whereHasGivenConsent([BroadcasterConsent::Compilations, BroadcasterConsent::Shorts])
             ->get();
 
         expect($result)->toHaveCount(1)

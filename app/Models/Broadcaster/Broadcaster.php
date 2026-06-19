@@ -200,7 +200,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
             return $query->whereRaw('1 = 0');
         }
 
-        return $query->whereHasConsent([], SetOperator::Exact);
+        return $query->whereHasGivenConsent([], SetOperator::Exact);
     }
 
     /**
@@ -220,7 +220,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
      * @throws JsonException
      */
     #[Scope]
-    protected function whereHasConsent(
+    protected function whereHasGivenConsent(
         Builder $query,
         BroadcasterConsent|Collection|array|null $consents = null,
         SetOperator $operator = SetOperator::Exact,
