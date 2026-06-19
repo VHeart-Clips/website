@@ -200,9 +200,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
             return $query->whereRaw('1 = 0');
         }
 
-        return $query->where(fn (Builder $query) => $query
-            ->whereJsonLength('consent', '=', '0')
-            ->orWhereNull('consent'));
+        return $query->whereHasConsent([], SetOperator::Exact);
     }
 
     /**

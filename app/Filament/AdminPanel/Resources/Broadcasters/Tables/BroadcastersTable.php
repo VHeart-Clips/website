@@ -96,7 +96,7 @@ class BroadcastersTable
             ->trueLabel('Gave Consent')
             ->falseLabel('No Consent')
             ->queries(
-                true: fn (Builder $q) => $q->whereGaveConsent(),
+                true: fn (Builder $q) => $q->whereHasConsent(),
                 false: fn (Builder $q) => $q->whereGaveNoConsent(),
             );
     }

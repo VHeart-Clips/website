@@ -20,7 +20,7 @@ readonly class BroadcasterConsentSubmissionRule implements ClipSubmissionRule
         if ($context->isSubmitterBroadcaster()) {
             if (! Broadcaster::query()
                 ->where('id', $context->submitter->id)
-                ->whereGaveConsent()
+                ->whereHasConsent()
                 ->exists()
             ) {
                 session()->flash('showTwitchPermissionsPrompt');
