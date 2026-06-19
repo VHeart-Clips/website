@@ -44,6 +44,7 @@ class ViewCompilation extends ViewRecord
                     ->modalCancelActionLabel('Close')
                     ->fillForm(function (Compilation $record): array {
                         $list = $record->clips()
+                            ->with('broadcaster')
                             ->distinct('broadcaster_id')
                             ->get()
                             ->map(fn (Clip $clip): string => " - {$clip->broadcaster?->name} https://twitch.tv/".mb_strtolower($clip->broadcaster?->name ?? ''))
