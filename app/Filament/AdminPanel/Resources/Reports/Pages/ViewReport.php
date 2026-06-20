@@ -24,9 +24,12 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 
 class ViewReport extends ViewRecord
 {
+    private const int FIRST_WEBHOOK_MESSAGE = 1494679660091539560;
+
     protected static string $resource = ReportResource::class;
 
     protected function getHeaderActions(): array
@@ -115,8 +118,14 @@ class ViewReport extends ViewRecord
                                 ->placeholder('1517223504511111339')
                                 ->label('Existing Message ID (optional)')
                                 ->minValue(0)
-                                ->nullable()
-                                ->numeric(),
+                                ->rule(
+                                    Rule::numeric()
+                                        ->integer()
+                                        ->min(self::FIRST_WEBHOOK_MESSAGE)
+                                        ->max(PHP_INT_MAX)
+                                )
+                                ->unique(column: 'discord_message_id')
+                                ->nullable(),
                         ])
                         ->action(function (Report $record, array $data): void {
                             if (is_numeric($data['message_id'] ?? null)) {
