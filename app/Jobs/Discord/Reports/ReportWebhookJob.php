@@ -73,6 +73,11 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
     protected function getPayload(): Webhook
     {
         $currentStatus = $this->report->status->name;
+        $this->report->loadMissing([
+            'resolver',
+            'claimer',
+            'reportable',
+        ]);
 
         if ($this->report->resolver instanceof User) {
             $currentStatus = 'Resolved by '.$this->report->resolver->name." ({$this->getDiscordTimestamp($this->report->resolved_at)})";
