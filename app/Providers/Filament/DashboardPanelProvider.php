@@ -26,11 +26,13 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\View\PanelsRenderHook;
+use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -109,6 +111,14 @@ class DashboardPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): string => '<script type="module" src="'.Vite::asset('resources/js/alpine.ts').'"></script>',
+            )
+            ->renderHook(
+                PanelsRenderHook::FOOTER,
+                fn (): View => view('filament.dashboard.components.footer'),
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => Blade::render("<svg hidden class='hidden'> @stack('bladeicons') </svg>")
             )
             ->authMiddleware([
                 Authenticate::class,
