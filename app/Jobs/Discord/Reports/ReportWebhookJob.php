@@ -33,7 +33,7 @@ use JustinKluever\DiscordWebhookBuilder\Webhook;
 #[DeleteWhenMissingModels]
 #[WithoutRelations]
 #[Queue('moderation')]
-#[DebounceFor(60)]
+#[DebounceFor(30)]
 class ReportWebhookJob extends BaseDiscordWebhookJob
 {
     public function __construct(
