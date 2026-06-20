@@ -7,6 +7,7 @@ namespace App\Models\Broadcaster;
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Clips\ClipStatus;
+use App\Enums\Eloquent\SetOperator;
 use App\Enums\FeatureFlag;
 use App\Models\Clip;
 use App\Models\Contracts\HasFilamentInfolistEntry;
@@ -36,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use JsonException;
 
 #[UsePolicy(BroadcasterPolicy::class)]
 #[WithoutIncrementing]
@@ -192,37 +194,80 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
     }
 
     #[Scope]
-    protected function whereGaveNoConsent(Builder $query): Builder
+    protected function whereHasGivenNoConsent(Builder $query): Builder
     {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query->whereRaw('1 = 0');
         }
 
-        return $query->where(fn (Builder $query) => $query
-            ->whereJsonLength('consent', '=', '0')
-            ->orWhereNull('consent'));
+        return $query->whereHasGivenConsent([], SetOperator::Exact);
     }
 
     /**
-     * check if the broadcaster has given the consents or when no consents provided check if any consent is given
+     * Will scope based on the Broadcaster consent column.
+     *
+     * This scope will include any Broadcaster with any consent if no input has been provided
+     *
+     * #### SetOperator Parameter:
+     * - {@see SetOperator::Any} Will include Broadcasters that have **any** of the input Consents
+     * - {@see SetOperator::AnyMissing} Will only include Broadcasters that does not have **all** of the input Consents
+     * - {@see SetOperator::All} Will only include Broadcasters that have **all** of the input Consents
+     * - {@see SetOperator::None} Will only include Broadcasters that have **none** of the input Consents
+     * - {@see SetOperator::Exact} Will only include Broadcasters who **exactly** have the input Consents
+     *
+     * @param  BroadcasterConsent|Collection<int, BroadcasterConsent>|array<BroadcasterConsent>|null  $consents
+     *
+     * @throws JsonException
      */
     #[Scope]
-    protected function whereGaveConsent(Builder $query, BroadcasterConsent|Collection|array|null $consents = null, string $boolean = 'and', bool $not = false): Builder
-    {
+    protected function whereHasGivenConsent(
+        Builder $query,
+        BroadcasterConsent|Collection|array|null $consents = null,
+        SetOperator $operator = SetOperator::Exact,
+    ): Builder {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query;
         }
 
-        if (! $consents) {
+        if ($consents === null) {
             return $query->whereJsonLength('consent', '>', '0');
         }
 
-        if ($consents instanceof BroadcasterConsent) {
-            $consents = [$consents];
-        }
+        $values = collect($consents)
+            ->filter()
+            ->map(fn (BroadcasterConsent $consent) => $consent->value);
+        $valueCount = $values->count();
 
-        return $query->whereJsonContains('consent', $consents, $boolean, $not);
+        return match ($operator) {
+            SetOperator::Any => $query
+                ->where(fn (Builder $subQuery): Builder => $values->reduce(
+                    fn (Builder $subSubQuery, $value) => $subSubQuery->orWhereJsonContains('consent', $value),
+                    $subQuery
+                )),
 
+            SetOperator::AnyMissing => $query
+                ->whereJsonLength('consent', '<', count(BroadcasterConsent::cases()))
+                ->where(fn (Builder $subQuery): Builder => $subQuery
+                    ->whereJsonContains('consent', $values, 'or')
+                    ->whereJsonDoesntContain('consent', $values, 'or')
+                ),
+
+            SetOperator::All => $query->whereJsonContains('consent', $values),
+
+            SetOperator::None => $query->where(fn (Builder $subQuery): Builder => $values->reduce(
+                fn (Builder $subSubQuery, $value) => $subSubQuery->whereJsonDoesntContain('consent', $value),
+                $subQuery
+            )),
+
+            SetOperator::Exact => $query
+                ->where(fn (Builder $subQuery): Builder => $subQuery
+                    ->whereJsonLength('consent', '=', $valueCount)
+                    ->when($values->isEmpty(), fn (Builder $whenEmptyQuery): Builder => $whenEmptyQuery
+                        ->orWhereNull('consent'))
+                    ->when($values->isNotEmpty(), fn (Builder $whenNotEmptyQuery): Builder => $whenNotEmptyQuery
+                        ->whereJsonContains('consent', $values))
+                ),
+        };
     }
 
     #[Scope]

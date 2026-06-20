@@ -45,7 +45,7 @@ class ClipSubmissionContext
         if ($this->broadcaster === false) {
             $this->broadcaster = Broadcaster::query()
                 ->where('id', $this->clip()?->broadcasterId)
-                ->whereGaveConsent()
+                ->whereHasGivenConsent()
                 ->with('filters')
                 ->first();
         }

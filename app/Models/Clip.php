@@ -9,6 +9,7 @@ use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\ClipVoteType;
+use App\Enums\Eloquent\SetOperator;
 use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Infolists\Components\TwitchEmbedEntry;
@@ -373,14 +374,17 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      * Include only Clips where the broadcaster has explicitly granted content use permission.
      */
     #[Scope]
-    protected function whereBroadcasterGavePermission(Builder $query, BroadcasterConsent|Collection|array|null $consents = null, string $boolean = 'and', bool $not = false): Builder
-    {
+    protected function whereBroadcasterGavePermission(
+        Builder $query,
+        BroadcasterConsent|Collection|array|null $consents = null,
+        SetOperator $operator = SetOperator::Exact,
+    ) {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query;
         }
 
         return $query->whereHas('broadcaster',
-            fn (Builder $q) => $q->whereGaveConsent($consents, $boolean, $not)
+            fn (Builder $q) => $q->whereHasGivenConsent($consents, $operator)
         );
     }
 
@@ -410,7 +414,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         }
 
         return $query->whereDoesntHave('broadcaster',
-            fn (Builder $q) => $q->whereGaveNoConsent()
+            fn (Builder $q) => $q->whereHasGivenNoConsent()
         );
     }
 

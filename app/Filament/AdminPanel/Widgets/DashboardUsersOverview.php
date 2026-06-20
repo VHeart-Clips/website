@@ -23,7 +23,7 @@ class DashboardUsersOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         $totalUsers = User::count();
-        $totalBroadcasters = Broadcaster::query()->whereGaveConsent()->count();
+        $totalBroadcasters = Broadcaster::query()->whereHasGivenConsent()->count();
 
         return [
             Stat::make('Total Users', number_format($totalUsers))
