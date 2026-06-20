@@ -32,6 +32,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\DevCommands;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Date;
@@ -174,6 +175,11 @@ class AppServiceProvider extends ServiceProvider
 
         Translatable::fallback('en');
         JsonResource::withoutWrapping();
+
+        DevCommands::except('server', 'queue');
+        DevCommands::register('php artisan queue:listen --tries=1 --timeout=0 --queue=moderation', 'queue-moderation');
+        DevCommands::register('php artisan queue:listen --tries=1 --timeout=0 --queue=default', 'queue-default');
+        DevCommands::register('php artisan queue:listen --tries=1 --timeout=0 --queue=discord-webhooks', 'queue-webhooks');
 
         Config::resolveCommentUrlUsing(function (Comment $comment) {
             $record = $comment->commentable;
