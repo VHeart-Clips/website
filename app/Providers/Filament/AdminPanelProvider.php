@@ -25,6 +25,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use LaraZeus\SpatieTranslatable\SpatieTranslatablePlugin;
@@ -93,6 +94,10 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): string => '<script type="module" src="'.Vite::asset('resources/js/alpine.ts').'"></script>',
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => Blade::render("<svg hidden class='hidden'> @stack('bladeicons') </svg>")
             );
     }
 }
