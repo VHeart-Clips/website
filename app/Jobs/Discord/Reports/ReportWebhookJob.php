@@ -16,6 +16,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use Illuminate\Queue\Attributes\Queue;
+use Illuminate\Queue\Attributes\WithoutRelations;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -30,6 +31,7 @@ use JustinKluever\DiscordWebhookBuilder\Support\Webhook\AllowedMentions;
 use JustinKluever\DiscordWebhookBuilder\Webhook;
 
 #[DeleteWhenMissingModels]
+#[WithoutRelations]
 #[Queue('moderation')]
 #[DebounceFor(60)]
 class ReportWebhookJob extends BaseDiscordWebhookJob
