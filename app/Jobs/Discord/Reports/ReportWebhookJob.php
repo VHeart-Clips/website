@@ -10,6 +10,7 @@ use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Queue\Attributes\DebounceFor;
@@ -91,18 +92,9 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
                 )
                     ->accentColor($this->report->status->getDiscordColor()),
                 ActionRow::make(
-                    Button::make()
-                        ->label('View Report')
-                        ->style(ButtonStyle::Link)
-                        ->url(Filament::getPanel('admin')->getResourceUrl($this->report, 'view')),
-                    Button::make()
-                        ->label('View '.Str::title($this->report->reportable_type))
-                        ->style(ButtonStyle::Link)
-                        ->url(Filament::getPanel('admin')->getResourceUrl($this->report->reportable, 'view')),
-                    Button::make()
-                        ->label('View All Reports')
-                        ->style(ButtonStyle::Link)
-                        ->url(Filament::getPanel('admin')->getResourceUrl($this->report))
+                    $this->makeViewReportButton(),
+                    $this->makeViewReportableButton(),
+                    $this->makeViewAllReportsButton(),
                 )
             );
     }
@@ -141,6 +133,42 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
         return $this->report->discord_message_id === null
             ? $base.'?with_components=true&wait=true'
             : $base."/messages/{$this->report->discord_message_id}?with_components=true&wait=false";
+    }
+
+    private function makeViewReportButton(): Button
+    {
+        return Button::make()
+            ->label('View Report')
+            ->style(ButtonStyle::Link)
+            ->url(Filament::getPanel('admin')->getResourceUrl($this->report, 'view'));
+    }
+
+    private function makeViewReportableButton(): Button
+    {
+        $reportable = (
+            $this->report->relationLoaded('reportable')
+            && $this->report->reportable instanceof Model
+        )
+            ? $this->report->reportable
+            : $this->report->reportable()->withTrashed()->first();
+
+        $url = $reportable
+            ? Filament::getPanel('admin')->getResourceUrl($reportable, 'view')
+            : null;
+
+        return Button::make()
+            ->label('View '.Str::title($this->report->reportable_type))
+            ->style(ButtonStyle::Link)
+            ->url($url ?? 'https://vheart.net')
+            ->disabled($url === null);
+    }
+
+    private function makeViewAllReportsButton(): Button
+    {
+        return Button::make()
+            ->label('View All Reports')
+            ->style(ButtonStyle::Link)
+            ->url(Filament::getPanel('admin')->getResourceUrl(Report::class));
     }
 
     private function getDiscordTimestamp(CarbonInterface $dateTime): string
