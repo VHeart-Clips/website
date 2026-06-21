@@ -105,7 +105,7 @@
             "npm run lint"
         ],
         "refactor": "rector",
-        "test:type-coverage": "pest --type-coverage --exact=100",
+        "test:type-coverage": "pest --type-coverage --exact=100 --compact",
         "test:lint": [
             "pint --test",
             "npm run test:lint"
