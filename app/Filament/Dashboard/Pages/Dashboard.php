@@ -20,7 +20,7 @@ class Dashboard extends BaseDashboard
     {
         return array_any(
             BroadcasterPermission::cases(),
-            fn ($permission) => Gate::allows('dashboardAccess', [Filament::getTenant(), $permission])
+            fn (BroadcasterPermission $permission) => Gate::allows('dashboardAccess', [Filament::getTenant(), $permission])
         );
     }
 
