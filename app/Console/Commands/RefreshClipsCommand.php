@@ -9,6 +9,7 @@ use App\Models\Clip;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 #[Signature('clips:refresh')]
@@ -24,7 +25,7 @@ class RefreshClipsCommand extends Command
             ->whereShouldRefresh()
             ->orderBy('next_refresh_after')
             ->select('id')
-            ->chunkById(100, function ($clips) use (&$jobCount, &$clipCount): void {
+            ->chunkById(100, function (Collection $clips) use (&$jobCount, &$clipCount): void {
                 $ids = $clips->pluck('id')->all();
 
                 DB::transaction(static function () use ($ids): void {

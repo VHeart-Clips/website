@@ -61,7 +61,7 @@ class RoleForm
     {
         return collect(Permission::cases())
             ->groupBy(fn (Permission $p): string => $p->getPermissionGroup())
-            ->map(fn (Collection $permissions, $group): Section => Section::make($group)
+            ->map(fn (Collection $permissions, string $group): Section => Section::make($group)
                 ->compact()
                 ->schema([
                     CheckboxList::make('permissions_'.Str::slug($group))
@@ -70,7 +70,7 @@ class RoleForm
                         ->dehydrated(false)
                         ->options($permissions->mapWithKeys(fn (Permission $p): array => [$p->value => $p->getLabel()]))
                         ->formatStateUsing(fn (?Role $record): array => self::loadGroupPermissions($record, $permissions))
-                        ->saveRelationshipsUsing(fn ($record, $state) => self::saveGroupPermissions($record, $state, $permissions))
+                        ->saveRelationshipsUsing(fn (?Role $record, ?array $state) => self::saveGroupPermissions($record, $state, $permissions))
                         ->columns()
                         ->gridDirection('row'),
                 ])
@@ -90,11 +90,11 @@ class RoleForm
             ->toArray();
     }
 
-    private static function saveGroupPermissions($record, $state, Collection $permissions): void
+    private static function saveGroupPermissions(Role $record, ?array $state, Collection $permissions): void
     {
         $currentUser = auth()->user();
         $submittedPermissions = collect($state ?? [])
-            ->map(fn ($p) => $p instanceof Permission ? $p->value : $p);
+            ->map(fn (Permission|string $p) => $p instanceof Permission ? $p->value : $p);
 
         $groupPermissions = $permissions->map(fn (Permission $p) => $p->value);
 
@@ -111,7 +111,7 @@ class RoleForm
         $mutablePermissions = $submittedPermissions->diff($immutablePermissions);
         $finalPermissions = $keepRestricted->merge($mutablePermissions)->unique();
 
-        $rows = $finalPermissions->map(fn ($permission): array => [
+        $rows = $finalPermissions->map(fn (string $permission): array => [
             'role_id' => $record->id,
             'permission' => $permission,
         ])->toArray();

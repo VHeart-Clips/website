@@ -56,7 +56,7 @@ class CategoryFiltersRelationManager extends BaseSubmissionFilterRelationManager
         return Select::make('filterable_id')
             ->getSearchResultsUsing(
                 fn (string $search) => Category::where('title', 'ilike', "%{$search}%")
-                    ->whereNotExists(function ($query): void {
+                    ->whereNotExists(function (Builder $query): void {
                         $query->from('broadcaster_submission_filters')
                             ->whereColumn('broadcaster_submission_filters.filterable_id', (new Category)->getTable().'.id')
                             ->where('broadcaster_submission_filters.filterable_type', $this->getMorphClass())
@@ -66,7 +66,7 @@ class CategoryFiltersRelationManager extends BaseSubmissionFilterRelationManager
                     ->pluck('title', 'id')
             )
             ->options(fn () => Category::query()
-                ->whereNotExists(function ($query): void {
+                ->whereNotExists(function (Builder $query): void {
                     $query->from('broadcaster_submission_filters')
                         ->whereColumn('broadcaster_submission_filters.filterable_id', (new Category)->getTable().'.id')
                         ->where('broadcaster_submission_filters.filterable_type', $this->getMorphClass())

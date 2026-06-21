@@ -6,10 +6,12 @@ namespace App\Filament\AdminPanel\Resources\Users\Widgets;
 
 use App\Enums\Permission;
 use App\Filament\AdminPanel\Widgets\Traits\HasBasicOverviewChartStuff;
+use App\Models\Clip;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +55,7 @@ class UserReportsCreatedWidget extends ChartWidget
                 'fill' => true,
                 'tension' => 0.4,
             ]],
-            'labels' => $results->map(fn ($v) => $labelFn($v->date))->toArray(),
+            'labels' => $results->map(fn (Clip $clip) => $labelFn($clip->date))->toArray(),
         ];
     }
 
@@ -74,7 +76,7 @@ class UserReportsCreatedWidget extends ChartWidget
             '{$interval}'::interval
         ) AS series_date"
         ))
-            ->leftJoin($table, function ($join) use ($truncUnit, $table, $submitterId): void {
+            ->leftJoin($table, function (JoinClause $join) use ($truncUnit, $table, $submitterId): void {
                 $join->on(
                     DB::raw("date_trunc('$truncUnit', $table.created_at)"),
                     '=',

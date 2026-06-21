@@ -140,7 +140,7 @@ class UserSelect extends Select
                 times: 3,
                 callback: static fn (): TwitchDtoInterface|Closure|null => Arr::first($twitchService->asSessionUser()->getUsers([$param => $value])),
                 sleepMilliseconds: 200,
-                when: static fn ($e): bool => $e instanceof ConnectionException,
+                when: static fn (Throwable $e): bool => $e instanceof ConnectionException,
             );
         } catch (Throwable $e) {
             report($e);

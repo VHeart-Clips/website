@@ -10,6 +10,7 @@ use App\Models\Clip;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -52,7 +53,7 @@ class UserSubmittedClipsWidget extends ChartWidget
                 'fill' => true,
                 'tension' => 0.4,
             ]],
-            'labels' => $results->map(fn ($v) => $labelFn($v->date))->toArray(),
+            'labels' => $results->map(fn (Clip $clip) => $labelFn($clip->date))->toArray(),
         ];
     }
 
@@ -73,7 +74,7 @@ class UserSubmittedClipsWidget extends ChartWidget
             '{$interval}'::interval
         ) AS series_date"
         ))
-            ->leftJoin($table, function ($join) use ($truncUnit, $table, $submitterId): void {
+            ->leftJoin($table, function (JoinClause $join) use ($truncUnit, $table, $submitterId): void {
                 $join->on(
                     DB::raw("date_trunc('$truncUnit', $table.created_at)"),
                     '=',

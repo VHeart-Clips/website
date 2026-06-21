@@ -32,6 +32,8 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\DevCommands;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -61,7 +63,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(CookiesManager::class, CustomCookiesManager::class);
 
-        $this->app->singleton(TailwindMerge::class, fn ($app): TailwindMerge => new TailwindMerge(cache: $app->make('cache.store')));
+        $this->app->singleton(TailwindMerge::class, fn (Application $app): TailwindMerge => new TailwindMerge(cache: $app->make('cache.store')));
     }
 
     /**
@@ -87,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
     private function configureGates(): void
     {
         // Check if $user has $ability in any of their roles
-        Gate::before(static function (User $user, $ability): ?bool {
+        Gate::before(static function (User $user, Permission|string $ability): ?bool {
             $requestedPermission = $ability instanceof Permission
                 ? $ability
                 : Permission::tryFrom($ability);
@@ -156,7 +158,7 @@ class AppServiceProvider extends ServiceProvider
                 Log::channel(config('logging.slow-queries-channel'))->warning("Database queries exceeded 5 seconds on {$connection->getName()}");
             });
 
-        DB::listen(static function ($query): void {
+        DB::listen(static function (QueryExecuted $query): void {
             if ($query->time > config('database.warn-threshold.slow-query')) {
                 Log::channel(config('logging.slow-queries-channel'))->warning('An individual database query exceeded 350 milliseconds.',
                     [

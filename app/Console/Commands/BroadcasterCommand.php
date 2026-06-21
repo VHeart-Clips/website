@@ -11,7 +11,6 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Command\Command as CommandAlias;
-
 use function Laravel\Prompts\multiselect;
 use function Laravel\Prompts\search;
 
@@ -64,7 +63,7 @@ class BroadcasterCommand extends Command
             'submit_mods_allowed' => 'Mods',
         ];
         $currentSelections = collect($booleanFields)
-            ->filter(fn ($label, $field): bool => $broadcaster->{$field} === true)
+            ->filter(fn (string $label, string $field): bool => $broadcaster->{$field} === true)
             ->keys()
             ->all();
 

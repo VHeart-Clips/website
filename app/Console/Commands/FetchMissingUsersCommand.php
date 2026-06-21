@@ -77,7 +77,7 @@ class FetchMissingUsersCommand extends Command
 
         $this->info("Fetched {$missingIds->count()} users.");
 
-        $total = Broadcaster::upsert($missingIds->map(fn ($id): array => ['id' => $id, 'consent' => '[0]'])->toArray(), ['id']);
+        $total = Broadcaster::upsert($missingIds->map(fn (int $id): array => ['id' => $id, 'consent' => '[0]'])->toArray(), ['id']);
         $this->info("Created {$total} broadcaster profiles.");
     }
 }

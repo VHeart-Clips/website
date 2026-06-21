@@ -378,7 +378,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         Builder $query,
         BroadcasterConsent|Collection|array|null $consents = null,
         SetOperator $operator = SetOperator::Exact,
-    ) {
+    ): Builder {
         if (Feature::isActive(FeatureFlag::IgnoreBroadcasterConsent)) {
             return $query;
         }

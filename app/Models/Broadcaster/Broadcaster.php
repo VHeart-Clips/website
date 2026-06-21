@@ -65,10 +65,10 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
     /**
      * Without this it is possible to trigger a 500 error from the dashboard with non-numeric tenant ids
      *
-     * @param  mixed  $value
+     * @param  string|int|null  $value
      * @param  string|null  $field
      */
-    public function resolveRouteBinding($value, $field = null): ?Model
+    public function resolveRouteBinding(mixed $value, mixed $field = null): ?Model
     {
         if (! is_numeric($value)) {
             return null;
@@ -241,7 +241,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
         return match ($operator) {
             SetOperator::Any => $query
                 ->where(fn (Builder $subQuery): Builder => $values->reduce(
-                    fn (Builder $subSubQuery, $value) => $subSubQuery->orWhereJsonContains('consent', $value),
+                    fn (Builder $subSubQuery, BroadcasterConsent $value) => $subSubQuery->orWhereJsonContains('consent', $value),
                     $subQuery
                 )),
 
@@ -255,7 +255,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
             SetOperator::All => $query->whereJsonContains('consent', $values),
 
             SetOperator::None => $query->where(fn (Builder $subQuery): Builder => $values->reduce(
-                fn (Builder $subSubQuery, $value) => $subSubQuery->whereJsonDoesntContain('consent', $value),
+                fn (Builder $subSubQuery, BroadcasterConsent $value) => $subSubQuery->whereJsonDoesntContain('consent', $value),
                 $subQuery
             )),
 
@@ -271,7 +271,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
     }
 
     #[Scope]
-    protected function whereGaveTwitchModPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null)
+    protected function whereGaveTwitchModPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null): Builder
     {
         if (! Feature::isActive(FeatureFlag::BroadcasterTenant)) {
             return $query->whereRaw(DB::raw('1 = 0'));

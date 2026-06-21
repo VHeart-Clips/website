@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Broadcasters\Schemas;
 
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Broadcaster\BroadcasterPermission;
+use App\Models\Broadcaster\Broadcaster;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -59,7 +60,7 @@ class BroadcasterInfolist
                             ->date(),
 
                         TextEntry::make('deleted_at')
-                            ->hidden(fn ($record): bool => $record->deleted_at === null)
+                            ->hidden(fn (Broadcaster $record): bool => $record->deleted_at === null)
                             ->placeholder('Active')
                             ->label('Deleted')
                             ->color('danger')

@@ -34,7 +34,7 @@ class UpdateClipStatusAction extends Action
                                 ? $case !== ClipStatus::Unknown || $clip->status === $case
                                 : ! in_array($case, [ClipStatus::Unknown, ClipStatus::NeedApproval], true) || $clip->status === $case
                             )
-                            ->mapWithKeys(fn ($case): array => [$case->value => $case->getLabel()])
+                            ->mapWithKeys(fn (ClipStatus $case): array => [$case->value => $case->getLabel()])
                     )
                     ->native(false)
                     ->label('filament/actions/tables.clips.update_clip_status.form.status')

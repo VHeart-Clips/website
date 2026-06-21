@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Operation;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class RemovalRequestForm
 {
@@ -37,7 +38,7 @@ class RemovalRequestForm
 
                 ClipSelect::make('clip_id')
                     ->disabledOn(Operation::Edit)
-                    ->modifyClipQueryUsing(fn ($query, ?string $search, Get $get) => filled($compilationId = $get('compilation_id'))
+                    ->modifyClipQueryUsing(fn (EloquentBuilder $query, ?string $search, Get $get): EloquentBuilder => filled($compilationId = $get('compilation_id'))
                         ? $query->whereHas('compilations', fn (Builder $q) => $q->whereIn('status', CompilationStatus::getVoteDisabledCases())->where('compilations.id', $compilationId))
                         : $query->whereHas('compilations', fn (Builder $q) => $q->whereIn('status', CompilationStatus::getVoteDisabledCases()))
                     )

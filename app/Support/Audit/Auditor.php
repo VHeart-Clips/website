@@ -49,11 +49,11 @@ class Auditor
         $changed = $originalCollection->keys()
             ->merge($updatedCollection->keys())
             ->unique()
-            ->filter(fn ($key): bool => $originalCollection->get($key) !== $updatedCollection->get($key));
+            ->filter(fn (mixed $key): bool => $originalCollection->get($key) !== $updatedCollection->get($key));
 
         return [
-            $changed->mapWithKeys(fn ($key): array => [$key => $originalCollection->get($key)])->toArray(),
-            $changed->mapWithKeys(fn ($key): array => [$key => $updatedCollection->get($key)])->toArray(),
+            $changed->mapWithKeys(fn (mixed $key): array => [$key => $originalCollection->get($key)])->toArray(),
+            $changed->mapWithKeys(fn (mixed $key): array => [$key => $updatedCollection->get($key)])->toArray(),
         ];
     }
 

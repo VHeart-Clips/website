@@ -148,7 +148,7 @@ class BroadcasterForm
                         $existingIds = User::whereHas('broadcaster')
                             ->whereIn('id', $channels->pluck('id'))
                             ->pluck('id')
-                            ->map(fn ($id): string => (string) $id)
+                            ->map(fn (int $id): string => (string) $id)
                             ->all();
 
                         return $channels

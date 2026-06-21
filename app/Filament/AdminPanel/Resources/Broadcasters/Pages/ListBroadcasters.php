@@ -40,7 +40,7 @@ class ListBroadcasters extends ListRecords
 
                     return $model::create($data);
                 })
-                ->after(fn (Broadcaster $record, $livewire) => $livewire->redirect(
+                ->after(fn (Broadcaster $record, self $livewire) => $livewire->redirect(
                     BroadcasterResource::getUrl('view', ['record' => $record])
                 )),
         ];

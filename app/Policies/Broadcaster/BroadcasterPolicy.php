@@ -69,7 +69,7 @@ class BroadcasterPolicy implements BannablePolicy
         return $user->can(Permission::ForceDeleteAnyBroadcaster);
     }
 
-    public function dashboardAccess(User $user, Broadcaster $broadcaster, ?BroadcasterPermission $permission = null)
+    public function dashboardAccess(User $user, Broadcaster $broadcaster, ?BroadcasterPermission $permission = null): bool
     {
         if ($broadcaster->id === $user->id) {
             return true;

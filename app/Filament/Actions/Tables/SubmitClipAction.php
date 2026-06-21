@@ -54,7 +54,7 @@ class SubmitClipAction extends Action
                     ->translateLabel()
                     ->placeholder('https://clips.twitch.tv/...')
                     ->rules([
-                        fn (TwitchService $twitchService): Closure => static function (string $attribute, $value, Closure $fail) use ($twitchService): void {
+                        fn (TwitchService $twitchService): Closure => static function (string $attribute, string $value, Closure $fail) use ($twitchService): void {
                             if (! $twitchService->parseClipId($value)) {
                                 $fail(__('clips.errors.clip_url_required'));
                             }

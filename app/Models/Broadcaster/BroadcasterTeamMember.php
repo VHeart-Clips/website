@@ -66,7 +66,7 @@ class BroadcasterTeamMember extends Model
     }
 
     #[Scope]
-    protected function whereHasPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null)
+    protected function whereHasPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null): Builder
     {
         if (! Feature::isActive(FeatureFlag::BroadcasterTenant)) {
             return $query->whereRaw(DB::raw('1 = 0'));

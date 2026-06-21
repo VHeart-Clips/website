@@ -49,8 +49,8 @@ class ResourceLinkAction extends Action
     protected function resolveUrl(Model $record): ?string
     {
         $related = value($this->via, $record)
-                |> (static fn ($rel): array => explode('.', (string) $rel))
-                |> (static fn ($segments) => array_reduce($segments, static fn ($carry, $segment) => $carry instanceof Model ? $carry->{$segment} : null, $record));
+                |> (static fn (string $rel): array => explode('.', $rel))
+                |> (static fn (array $segments) => array_reduce($segments, static fn (?Model $carry, string $segment) => $carry instanceof Model ? $carry->{$segment} : null, $record));
 
         if (! $related instanceof Model) {
             return null;

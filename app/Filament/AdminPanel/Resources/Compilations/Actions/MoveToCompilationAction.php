@@ -7,13 +7,13 @@ namespace App\Filament\AdminPanel\Resources\Compilations\Actions;
 use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\AdminPanel\Resources\Compilations\RelationManagers\ClipsRelationManager;
 use App\Models\Clip;
 use App\Support\Audit\Auditor;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Log;
@@ -26,7 +26,7 @@ class MoveToCompilationAction extends Action
         $this
             ->label('admin/resources/compilations.relation_managers.clips.actions.move_to_compilation')
             ->translateLabel()
-            ->authorize(fn (Clip $clip, $livewire): bool => $clip->claimed_by === null || ($clip->claimed_by === auth()->id() && $clip->status !== CompilationClipClaimStatus::Completed) || auth()->user()->can('update', $livewire->getOwnerRecord()))
+            ->authorize(fn (Clip $clip, ClipsRelationManager $livewire): bool => $clip->claimed_by === null || ($clip->claimed_by === auth()->id() && $clip->status !== CompilationClipClaimStatus::Completed) || auth()->user()->can('update', $livewire->getOwnerRecord()))
             ->icon(LucideIcon::ArrowRight)
             ->schema([
                 Select::make('compilation_id')
@@ -36,13 +36,13 @@ class MoveToCompilationAction extends Action
                         ->orderBy('created_at', 'desc')
                         ->whereNotIn('id', $record->compilations()->pluck('compilations.id'))
                         ->whereNotIn('compilations.status', CompilationStatus::getVoteDisabledCases())
-                        ->whereNot(fn (Builder $builder) => $builder->where('compilations.status', CompilationStatus::Internal)
+                        ->whereNot(fn (Builder $builder): Builder => $builder->where('compilations.status', CompilationStatus::Internal)
                             ->whereNot('compilations.user_id', auth()->id()))
                         ->pluck('title', 'id'))
                     ->preload()
                     ->required(),
             ])
-            ->action(function (Clip $record, array $data, RelationManager $livewire): void {
+            ->action(function (Clip $record, array $data, ClipsRelationManager $livewire): void {
                 $pivotAlreadyExists = Clip\CompilationClip::query()
                     ->where('compilation_id', $data['compilation_id'])
                     ->where('clip_id', $record->id)
