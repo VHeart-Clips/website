@@ -241,7 +241,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
         return match ($operator) {
             SetOperator::Any => $query
                 ->where(fn (Builder $subQuery): Builder => $values->reduce(
-                    fn (Builder $subSubQuery, BroadcasterConsent $value) => $subSubQuery->orWhereJsonContains('consent', $value),
+                    fn (Builder $subSubQuery, int $value) => $subSubQuery->orWhereJsonContains('consent', $value),
                     $subQuery
                 )),
 
@@ -255,7 +255,7 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
             SetOperator::All => $query->whereJsonContains('consent', $values),
 
             SetOperator::None => $query->where(fn (Builder $subQuery): Builder => $values->reduce(
-                fn (Builder $subSubQuery, BroadcasterConsent $value) => $subSubQuery->whereJsonDoesntContain('consent', $value),
+                fn (Builder $subSubQuery, int $value) => $subSubQuery->whereJsonDoesntContain('consent', $value),
                 $subQuery
             )),
 
