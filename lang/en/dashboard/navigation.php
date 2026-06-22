@@ -7,4 +7,8 @@ return [
     'clips' => 'Manage Clips',
     'permissions' => 'Permissions',
     'back-home' => 'Back to Homepage',
+    'change_tenant' => [
+        'single' => 'Your Channel',
+        'multiple' => 'Switch Channel',
+    ],
 ];
