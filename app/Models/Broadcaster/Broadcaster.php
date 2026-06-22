@@ -54,6 +54,28 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
     use Reportable;
     use SoftDeletes;
 
+    /**
+     * Creates a placeholder instance for the given user id we can use as a proxy
+     *
+     * Will not be stored in database unless you explicitly do so with something like `->save()`
+     */
+    public static function placeholder(?int $userId): self
+    {
+        return new self([
+            'id' => $userId,
+            'consent' => [],
+            'twitch_mod_permissions' => [],
+            'submit_user_allowed' => false,
+            'submit_mods_allowed' => false,
+            'submit_vip_allowed' => false,
+            'onboarded_at' => null,
+            'created_at' => now(),
+            'updated_at' => now(),
+            'deleted_at' => null,
+            'default_clip_status' => ClipStatus::Unknown,
+        ]);
+    }
+
     public static function getFilamentInfolistEntry(string $name): FilamentSchemaComponent
     {
         return User::getFilamentInfolistEntry($name);
