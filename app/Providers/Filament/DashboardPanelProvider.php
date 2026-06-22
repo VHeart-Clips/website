@@ -106,7 +106,7 @@ class DashboardPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 RequiresBroadcasterProfile::class,
             ])
-            ->resolveTenantUsing(function (string $key) {
+            ->resolveTenantUsing(function (string $key): Model {
                 $tenant = app(Filament::getTenantModel())
                     ->resolveRouteBinding($key);
 
