@@ -29,6 +29,7 @@ use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
@@ -104,6 +105,16 @@ class DashboardPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 RequiresBroadcasterProfile::class,
             ])
+            ->resolveTenantUsing(function (string $key) {
+                $tenant = app(Filament::getTenantModel())
+                    ->resolveRouteBinding($key);
+
+                if (! $tenant instanceof Model && $key === (string) auth()->id()) {
+                    return Broadcaster::placeholder(auth()->id());
+                }
+
+                return $tenant;
+            })
             ->renderHook(
                 PanelsRenderHook::PAGE_START,
                 fn (): ?HtmlString => $this->renderBanNotice(),
