@@ -30,6 +30,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
@@ -111,6 +112,10 @@ class DashboardPanelProvider extends PanelProvider
 
                 if (! $tenant instanceof Model && $key === (string) auth()->id()) {
                     return Broadcaster::placeholder(auth()->id());
+                }
+
+                if (! $tenant instanceof Model) {
+                    throw new ModelNotFoundException()->setModel(Filament::getTenantModel(), [$key]);
                 }
 
                 return $tenant;
