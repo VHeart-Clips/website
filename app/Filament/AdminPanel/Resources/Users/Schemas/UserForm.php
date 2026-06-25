@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Operation;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class UserForm
@@ -37,10 +38,10 @@ class UserForm
                             ->relationship(
                                 name: 'roles',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn ($query) => $query->orderByDesc('weight')
+                                modifyQueryUsing: fn (Builder $query): Builder => $query->orderByDesc('weight')
                             )
                             // Even though they are visible and selectable, make sure only roles below the user weight are mutable
-                            ->saveRelationshipsUsing(function (User $record, $state) use ($canIgnoreWeight, $userWeight, $roleWeights): void {
+                            ->saveRelationshipsUsing(function (User $record, array $state) use ($canIgnoreWeight, $userWeight, $roleWeights): void {
                                 $immutableRoles = $roleWeights
                                     ->filter(fn (int $weight): bool => ! $canIgnoreWeight && $weight >= $userWeight)
                                     ->keys();

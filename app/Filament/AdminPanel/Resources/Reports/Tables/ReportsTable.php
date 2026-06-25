@@ -18,6 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ReportsTable
 {
@@ -25,8 +26,8 @@ class ReportsTable
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
-                'reportable' => fn ($q) => $q->withTrashed(),
-                'reporter' => fn ($q) => $q->withTrashed(),
+                'reportable' => fn (Relation $q): Relation => $q->withTrashed(),
+                'reporter' => fn (Relation $q): Relation => $q->withTrashed(),
             ]))
             ->columns([
                 TextColumn::make('id')

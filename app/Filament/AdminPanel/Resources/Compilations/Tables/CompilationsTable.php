@@ -159,11 +159,11 @@ class CompilationsTable
                     ->query(fn (Builder $query, array $data): Builder => $query
                         ->when(
                             $data['created_from'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            fn (Builder $query, string $date): Builder => $query->whereDate('created_at', '>=', $date),
                         )
                         ->when(
                             $data['created_until'],
-                            fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            fn (Builder $query, string $date): Builder => $query->whereDate('created_at', '<=', $date),
                         )),
                 TernaryFilter::make('has_youtube')
                     ->label('admin/resources/compilations.table.filters.youtube_link')

@@ -9,6 +9,7 @@ use App\Filament\Actions\ResourceLinkAction;
 use App\Filament\Infolists\Components\MorphEntry;
 use App\Models\Report;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Group;
@@ -137,7 +138,7 @@ class ReportInfolist
                                         ->label('Claimed')
                                         ->dateTime()
                                         ->placeholder('-')
-                                        ->hint(fn ($record) => $record->claimed_at
+                                        ->hint(fn (Report $record) => $record->claimed_at
                                             ? $record->created_at->diffForHumans($record->claimed_at, true)
                                             : $record->created_at->diffForHumans(now(), true)
                                         )
@@ -148,8 +149,8 @@ class ReportInfolist
                                         ->label('Resolved')
                                         ->dateTime()
                                         ->placeholder('-')
-                                        ->color(fn ($state): string => $state ? 'success' : 'gray')
-                                        ->hint(fn ($record) => $record->resolved_at
+                                        ->color(fn (?CarbonInterface $state): string => $state instanceof CarbonInterface ? 'success' : 'gray')
+                                        ->hint(fn (Report $record) => $record->resolved_at
                                             ? $record->created_at->diffForHumans($record->resolved_at, true)
                                             : $record->created_at->diffForHumans(now(), true)
                                         )

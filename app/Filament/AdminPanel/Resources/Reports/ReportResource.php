@@ -17,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
@@ -70,8 +71,8 @@ class ReportResource extends Resource
         return parent::getRecordRouteBindingEloquentQuery()
             ->withoutGlobalScopes([SoftDeletingScope::class])
             ->with([
-                'reportable' => fn ($q) => $q->withTrashed(),
-                'reporter' => fn ($q) => $q->withTrashed(),
+                'reportable' => fn (Relation $q): Relation => $q->withTrashed(),
+                'reporter' => fn (Relation $q): Relation => $q->withTrashed(),
             ]);
     }
 }

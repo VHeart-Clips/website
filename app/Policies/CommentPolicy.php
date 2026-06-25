@@ -22,7 +22,7 @@ class CommentPolicy extends \Kirschbaum\Commentions\Policies\CommentPolicy
     /**
      * @param  Commenter  $user
      */
-    public function update($user, Comment $comment): bool
+    public function update(mixed $user, Comment $comment): bool
     {
         // Lock Comments that are over 1 day ago, enough time to fix typos or whatever
         if ($comment->getCreatedAt() < now()->subDay()) {
@@ -35,7 +35,7 @@ class CommentPolicy extends \Kirschbaum\Commentions\Policies\CommentPolicy
     /**
      * @param  Commenter  $user
      */
-    public function delete($user, Comment $comment): bool
+    public function delete(mixed $user, Comment $comment): bool
     {
         if ($user->can(Permission::DeleteAnyComment)) {
             return true;

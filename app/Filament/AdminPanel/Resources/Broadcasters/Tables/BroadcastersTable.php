@@ -143,8 +143,8 @@ class BroadcastersTable
                 ];
 
                 return collect($map)
-                    ->filter(fn ($_, $col): bool => $data[$col] ?? false)
-                    ->map(fn ($label, string|Closure|null $col): Indicator => Indicator::make("Can Submit: $label")->removeField($col))
+                    ->filter(fn (string $_, string $col): bool => $data[$col] ?? false)
+                    ->map(fn (string $label, string|Closure|null $col): Indicator => Indicator::make("Can Submit: $label")->removeField($col))
                     ->values()
                     ->all();
             });

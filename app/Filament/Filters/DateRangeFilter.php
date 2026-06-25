@@ -41,11 +41,11 @@ class DateRangeFilter extends Filter
                         ->translateLabel()
                         ->dehydrated(false)
                         ->options(fn (): array => collect($this->resolvePresets())
-                            ->mapWithKeys(fn ($preset, $key): array => [$key => $preset['label']])
+                            ->mapWithKeys(fn (array $preset, string $key): array => [$key => $preset['label']])
                             ->toArray())
                         ->live()
-                        ->afterStateUpdated(function ($state, Set $set): void {
-                            if (! $state) {
+                        ->afterStateUpdated(function (string $state, Set $set): void {
+                            if (blank($state)) {
                                 return;
                             }
 
@@ -101,11 +101,11 @@ class DateRangeFilter extends Filter
             ->query(fn (Builder $query, array $data): Builder => $query
                 ->when(
                     $data['from'],
-                    fn (Builder $query, $date): Builder => $query->whereDate($this->getName(), '>=', $date),
+                    fn (Builder $query, string $date): Builder => $query->whereDate($this->getName(), '>=', $date),
                 )
                 ->when(
                     $data['to'],
-                    fn (Builder $query, $date): Builder => $query->whereDate($this->getName(), '<=', $date),
+                    fn (Builder $query, string $date): Builder => $query->whereDate($this->getName(), '<=', $date),
                 ))
             ->indicateUsing(function (array $data): array {
                 $indicators = [];

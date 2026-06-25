@@ -75,7 +75,7 @@ class ClipsRelationManager extends RelationManager
                 Group::make('claimer')
                     ->label(__('admin/resources/compilations.relation_managers.clips.columns.claimer'))
                     ->collapsible()
-                    ->getTitleFromRecordUsing(fn ($record) => $record->claimer?->name ?? __('Unclaimed'))
+                    ->getTitleFromRecordUsing(fn (Clip $record) => $record->claimer?->name ?? __('Unclaimed'))
                     ->orderQueryUsing(fn (Builder $query, string $direction) => $query->leftJoin('users as claimer_user', 'claimer_user.id', '=', 'compilation_clip.claimed_by')
                         ->orderBy(DB::raw('LOWER(claimer_user.name)'), $direction)
                         ->orderBy('compilation_clip.claimed_by', $direction)

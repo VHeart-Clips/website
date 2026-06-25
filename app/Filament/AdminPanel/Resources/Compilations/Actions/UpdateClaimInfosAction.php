@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Compilations\Actions;
 
 use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\AdminPanel\Resources\Compilations\RelationManagers\ClipsRelationManager;
 use App\Models\Clip;
 use App\Support\Audit\Auditor;
 use Filament\Actions\Action;
@@ -19,8 +20,8 @@ class UpdateClaimInfosAction extends Action
         $this
             ->label('admin/resources/compilations.relation_managers.clips.actions.update_claim_infos')
             ->translateLabel()
-            ->authorize(fn (Clip $clip, $livewire): bool => auth()->user()->can('update', $livewire->getOwnerRecord()))
-            ->hidden(fn ($livewire): bool => $livewire->isReadOnly())
+            ->authorize(fn (Clip $clip, ClipsRelationManager $livewire): bool => auth()->user()->can('update', $livewire->getOwnerRecord()))
+            ->hidden(fn (ClipsRelationManager $livewire): bool => $livewire->isReadOnly())
             ->icon(LucideIcon::ClipboardEdit)
             ->color('danger')
             ->schema([
@@ -38,7 +39,7 @@ class UpdateClaimInfosAction extends Action
                         titleAttribute: 'name',
                     ),
             ])
-            ->action(function (Clip $record, array $data, $livewire): void {
+            ->action(function (Clip $record, array $data, ClipsRelationManager $livewire): void {
                 $updateData = [
                     'claimed_by' => $data['claimed_by'],
                     'claim_status' => $data['claim_status'],

@@ -99,7 +99,7 @@ class DataExportController extends Controller
     private function userTeams(User $user): Collection
     {
         return $user->broadcasterTeamMembers
-            ?->map(fn ($member): array => [
+            ?->map(fn (BroadcasterTeamMember $member): array => [
                 'broadcaster_id' => $member->broadcaster_id,
                 'permissions' => $member->permissions?->map->name,
                 'joined_at' => $member->created_at?->toIso8601ZuluString(),

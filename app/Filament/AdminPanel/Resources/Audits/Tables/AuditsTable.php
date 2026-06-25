@@ -18,6 +18,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 class AuditsTable
@@ -26,8 +27,8 @@ class AuditsTable
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
-                'causer' => fn ($q) => $q->withTrashed(),
-                'auditable' => fn ($q) => $q->withTrashed(),
+                'causer' => fn (Relation $q): Relation => $q->withTrashed(),
+                'auditable' => fn (Relation $q): Relation => $q->withTrashed(),
             ]))
             ->columns([
                 MorphColumn::make('causer')->placeholder(fn (Audit $audit): string => $audit->causer_type ? Str::title($audit->causer_type).'#'.$audit->causer_id : 'System'),
@@ -74,7 +75,7 @@ class AuditsTable
                     ->copyable(),
 
                 TextColumn::make('created_at')
-                    ->tooltip(fn ($record) => $record->created_at->format('d.m.Y H:i:s'))
+                    ->tooltip(fn (Audit $record) => $record->created_at->format('d.m.Y H:i:s'))
                     ->dateTime('d. M Y, H:i')
                     ->label('Timestamp')
                     ->sortable()

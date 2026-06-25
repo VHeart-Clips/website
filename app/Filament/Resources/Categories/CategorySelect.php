@@ -53,7 +53,7 @@ class CategorySelect extends Select
                             times: 3,
                             callback: static fn (): array => $twitchService->asSessionUser()->searchCategories($twitchQuery->join(' '), 100),
                             sleepMilliseconds: 200,
-                            when: static fn ($e): bool => $e instanceof ConnectionException,
+                            when: static fn (Throwable $e): bool => $e instanceof ConnectionException,
                         )));
 
                         $twitchResults->each(fn (CategoryDto $dto) => Cache::put("twitch:category:$dto->id", $dto, now()->addMinutes(30)));
@@ -118,7 +118,7 @@ class CategorySelect extends Select
                 times: 3,
                 callback: static fn (): ?GameDto => array_first($twitchService->collection(TwitchEndpoints::GetGames, ['id' => $id])),
                 sleepMilliseconds: 200,
-                when: static fn ($e): bool => $e instanceof ConnectionException,
+                when: static fn (Throwable $e): bool => $e instanceof ConnectionException,
             );
 
             return $importCategoryAction->execute($dto);

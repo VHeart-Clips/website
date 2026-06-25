@@ -37,7 +37,7 @@ class BroadcastersChartWidget extends ChartWidget
                 'fill' => true,
                 'tension' => 0.4,
             ]],
-            'labels' => $results->map(fn ($v) => $labelFn($v->date))->toArray(),
+            'labels' => $results->map(fn (mixed $clip) => $labelFn($clip->date))->toArray(),
         ];
     }
 }

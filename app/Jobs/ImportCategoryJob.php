@@ -19,6 +19,7 @@ use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\Middleware\RateLimited;
 use Illuminate\Queue\Middleware\ThrottlesExceptions;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 #[Tries(254)]
@@ -67,7 +68,7 @@ class ImportCategoryJob implements ShouldQueue
 
         $appTwitch = $twitchService->asApp();
 
-        $missingCategories->chunk(100)->each(function ($chunk) use ($appTwitch, $importCategoryAction): void {
+        $missingCategories->chunk(100)->each(function (Collection $chunk) use ($appTwitch, $importCategoryAction): void {
             $categories = $appTwitch->collection(TwitchEndpoints::GetGames, [
                 'id' => $chunk->values()->toArray(),
             ]);

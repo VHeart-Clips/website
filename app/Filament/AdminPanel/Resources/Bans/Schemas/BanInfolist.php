@@ -7,6 +7,7 @@ namespace App\Filament\AdminPanel\Resources\Bans\Schemas;
 use App\Enums\Filament\LucideIcon;
 use App\Enums\Permission;
 use App\Filament\Infolists\Components\MorphEntry;
+use App\Models\Ban;
 use App\Models\User;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
@@ -50,7 +51,7 @@ class BanInfolist
 
                                 Section::make('Unbanned By')
                                     ->icon(LucideIcon::LockOpen)
-                                    ->visible(fn ($record) => $record?->unbanned_at)
+                                    ->visible(fn (Ban $record) => $record?->unbanned_at)
                                     ->compact()
                                     ->schema([
                                         MorphEntry::make('unbannedBy')
@@ -62,7 +63,7 @@ class BanInfolist
                                     ->icon(LucideIcon::Calendar)
                                     ->schema([
                                         TextEntry::make('unbanned_at')
-                                            ->visible(fn ($record) => $record?->unbanned_at)
+                                            ->visible(fn (Ban $record) => $record?->unbanned_at)
                                             ->label('Unbanned')
                                             ->dateTimeTooltip()
                                             ->dateTime()

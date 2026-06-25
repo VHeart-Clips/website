@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Compilations\Actions;
 
 use App\Enums\Filament\LucideIcon;
+use App\Filament\AdminPanel\Resources\Compilations\RelationManagers\ClipsRelationManager;
 use App\Models\Clip;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -22,7 +23,7 @@ class CopyClipNameAction extends Action
             ->icon(LucideIcon::ClipboardList)
             ->color('gray')
             ->tooltip(__('admin/resources/compilations.relation_managers.clips.actions.copy_filename_tooltip'))
-            ->action(function (Clip $clip, $livewire): void {
+            ->action(function (Clip $clip, ClipsRelationManager $livewire): void {
                 if (! $clip->owner) {
                     Notification::make()
                         ->title(__('admin/resources/compilations.relation_managers.clips.notifications.filename_copy_failed_title'))
