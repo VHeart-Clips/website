@@ -12,6 +12,7 @@ use App\Filament\Dashboard\Resources\RemovalRequests\Pages\ListRemovalRequests;
 use App\Filament\Dashboard\Resources\RemovalRequests\Schemas\RemovalRequestForm;
 use App\Filament\Dashboard\Resources\RemovalRequests\Schemas\RemovalRequestInfolist;
 use App\Filament\Dashboard\Resources\RemovalRequests\Tables\RemovalRequestsTable;
+use App\Filament\Dashboard\Traits\DisabledNavigationUntilOnboarding;
 use App\Models\Broadcaster\RemovalRequest;
 use App\Support\FeatureFlag\Feature;
 use BackedEnum;
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Gate;
 
 class RemovalRequestResource extends Resource
 {
+    use DisabledNavigationUntilOnboarding;
+
     protected static bool $shouldSkipAuthorization = true;
 
     protected static ?string $model = RemovalRequest::class;
