@@ -17,9 +17,11 @@ use App\Models\Traits\Bannable;
 use App\Models\Traits\Reportable;
 use App\Models\User;
 use App\Policies\Broadcaster\BroadcasterPolicy;
+use App\Services\Twitch\TwitchService;
 use App\Support\FeatureFlag\Feature;
 use Database\Factories\Broadcaster\BroadcasterFactory;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasCurrentTenantLabel;
 use Filament\Schemas\Components\Component as FilamentSchemaComponent;
 use Filament\Tables\Columns\Column as FilamentTableColumn;
 use Filament\Tables\Columns\Layout\Component as FilamentTableComponent;
@@ -41,7 +43,7 @@ use JsonException;
 
 #[UsePolicy(BroadcasterPolicy::class)]
 #[WithoutIncrementing]
-class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, HasFilamentTableColumn
+class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, HasFilamentInfolistEntry, HasFilamentTableColumn
 {
     use Auditable;
     use Bannable;
@@ -133,6 +135,32 @@ class Broadcaster extends Model implements HasAvatar, HasFilamentInfolistEntry, 
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->proxiedContentUrl();
+    }
+
+    public function getCurrentTenantLabel(): string
+    {
+        return __(once(static function (): string {
+            $user = auth()->user();
+
+            $canAccessBroadcasters = $user->broadcasterTeamMembers()->exists();
+
+            if (! $canAccessBroadcasters) {
+                $twitchService = app(TwitchService::class);
+
+                $twitchModChannelsIds = $twitchService
+                    ->asSessionUser()
+                    ->getModeratedChannels();
+
+                $canAccessBroadcasters = self::query()
+                    ->whereGaveTwitchModPermission()
+                    ->whereIn('id', $twitchModChannelsIds)
+                    ->exists();
+            }
+
+            return $canAccessBroadcasters
+                ? 'dashboard/navigation.change_tenant.multiple'
+                : 'dashboard/navigation.change_tenant.single';
+        }));
     }
 
     protected static function booted(): void

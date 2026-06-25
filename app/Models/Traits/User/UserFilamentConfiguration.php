@@ -105,6 +105,8 @@ trait UserFilamentConfiguration
             Permission::ViewAnyShortUrl,
             Permission::ViewAnyTag,
             Permission::ViewAnyAudit,
+            Permission::ViewAnyBan,
+            Permission::ViewAnyRemovalRequest,
         ]);
     }
 
