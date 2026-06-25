@@ -14,6 +14,7 @@ use App\Http\Controllers\Legal\PrivacyController;
 use App\Http\Controllers\Legal\TermsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', IndexController::class)->name('home');
@@ -39,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::feature(FeatureFlag::Reports)->group(function () {
         Route::post('/reports', [ReportController::class, 'store'])->name('reports.store');
     });
+
+    Route::get('dashboard', static fn (Request $request) => redirect('dashboard/'.$request->user()->id));
 });
 
 require __DIR__.'/settings.php';
