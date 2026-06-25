@@ -67,19 +67,9 @@
 
                         <x-ui.dropdown.content align="right" class="min-w-42">
                             @feature(FeatureFlag::UserDashboard)
-                                @if(Broadcaster::where('id', auth()->id())->exists())
-                                    <x-ui.dropdown.item href="{{ Filament::getPanel('dashboard')->getUrl() }}">
-                                        {{ __('navigation.dashboard') }}
-                                    </x-ui.dropdown.item>
-                                @endif
-                            @endfeature
-
-                            @feature(FeatureFlag::BroadcasterOnboarding)
-                                @if(! Feature::isActive(FeatureFlag::UserDashboard) || ! Broadcaster::where('id', auth()->id())->exists())
-                                    <x-ui.dropdown.item href="{{ route('dashboard.onboarding') }}">
-                                        {{ __('navigation.onboarding') }}
-                                    </x-ui.dropdown.item>
-                                @endif
+                                <x-ui.dropdown.item href="{{ Filament::getPanel('dashboard')->getUrl(auth()->user()->broadcaster ?? Broadcaster::placeholder(auth()->id())) }}">
+                                    {{ __('navigation.dashboard') }}
+                                </x-ui.dropdown.item>
                             @endfeature
 
                             @feature(FeatureFlag::UserSettings)
@@ -88,7 +78,7 @@
                                 </x-ui.dropdown.item>
                             @endfeature
 
-                            @featureAny([FeatureFlag::UserDashboard, FeatureFlag::UserSettings, FeatureFlag::BroadcasterOnboarding])
+                            @featureAny([FeatureFlag::UserDashboard, FeatureFlag::UserSettings])
                                 <x-ui.dropdown.separator/>
                             @endfeatureAny
 
