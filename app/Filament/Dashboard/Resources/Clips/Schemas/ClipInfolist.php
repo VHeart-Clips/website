@@ -75,6 +75,13 @@ class ClipInfolist
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('gray'),
+                                TextEntry::make('status')
+                                    ->label('dashboard/resources/clips.table.columns.status')
+                                    ->tooltip(__('dashboard/resources/clips.table.columns.status'))
+                                    ->size(TextSize::Medium)
+                                    ->icon(LucideIcon::Clipboard)
+                                    ->badge()
+                                    ->translateLabel(),
                                 TextEntry::make('absolute_votes')
                                     ->label(__('dashboard/resources/clips.table.columns.votes'))
                                     ->icon(LucideIcon::Users)
@@ -89,13 +96,6 @@ class ClipInfolist
                                     ->default(0)
                                     ->badge()
                                     ->color('info'),
-                                TextEntry::make('status')
-                                    ->label('dashboard/resources/clips.table.columns.status')
-                                    ->tooltip(__('dashboard/resources/clips.table.columns.status'))
-                                    ->size(TextSize::Medium)
-                                    ->icon(LucideIcon::Clipboard)
-                                    ->badge()
-                                    ->translateLabel(),
                             ]),
 
                         Grid::make(2)
