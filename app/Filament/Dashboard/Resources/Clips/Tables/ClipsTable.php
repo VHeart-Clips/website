@@ -33,7 +33,10 @@ class ClipsTable
                 'broadcaster',
                 'creator',
                 'submitter',
-            ])->withAbsoluteVoteCount())
+            ])
+                ->withAbsoluteVoteCount()
+                ->withAbsoluteImpressionCount()
+            )
             ->columns([
                 Split::make([
                     Stack::make([
@@ -51,6 +54,9 @@ class ClipsTable
                             ClipColumns::publicVotes('absolute_votes')
                                 ->label(__('dashboard/resources/clips.table.columns.votes'))
                                 ->tooltip(__('dashboard/resources/clips.table.columns.votes')),
+                            ClipColumns::impressions()
+                                ->label(__('dashboard/resources/clips.table.columns.impressions'))
+                                ->tooltip(__('dashboard/resources/clips.table.columns.impressions')),
                             ClipColumns::status()
                                 ->label('dashboard/resources/clips.table.columns.status')
                                 ->tooltip(__('dashboard/resources/clips.table.columns.status')),

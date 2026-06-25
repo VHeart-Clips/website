@@ -36,6 +36,7 @@ return [
             'category' => 'Kategorie',
             'duration' => 'Länge',
             'status' => 'Status',
+            'impressions' => 'Ansichten',
             'votes' => 'Stimmen',
             'submitted_at' => 'Eingesendet Am',
             'created_at' => 'Clip Erstellt am',

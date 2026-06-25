@@ -64,7 +64,7 @@ class ClipInfolist
                             ])
                             ->relationship('category'),
 
-                        Grid::make(3)
+                        Grid::make()
                             ->schema([
                                 TextEntry::make('duration')
                                     ->label(__('dashboard/resources/clips.table.columns.duration'))
@@ -75,13 +75,6 @@ class ClipInfolist
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('gray'),
-                                TextEntry::make('absolute_votes')
-                                    ->label(__('dashboard/resources/clips.table.columns.votes'))
-                                    ->icon(LucideIcon::Users)
-                                    ->size(TextSize::Medium)
-                                    ->default(0)
-                                    ->badge()
-                                    ->color('success'),
                                 TextEntry::make('status')
                                     ->label('dashboard/resources/clips.table.columns.status')
                                     ->tooltip(__('dashboard/resources/clips.table.columns.status'))
@@ -89,6 +82,20 @@ class ClipInfolist
                                     ->icon(LucideIcon::Clipboard)
                                     ->badge()
                                     ->translateLabel(),
+                                TextEntry::make('absolute_votes')
+                                    ->label(__('dashboard/resources/clips.table.columns.votes'))
+                                    ->icon(LucideIcon::Users)
+                                    ->size(TextSize::Medium)
+                                    ->default(0)
+                                    ->badge()
+                                    ->color('success'),
+                                TextEntry::make('absolute_impressions')
+                                    ->label(__('dashboard/resources/clips.table.columns.impressions'))
+                                    ->icon(LucideIcon::Eye)
+                                    ->size(TextSize::Medium)
+                                    ->default(0)
+                                    ->badge()
+                                    ->color('info'),
                             ]),
 
                         Grid::make(2)
