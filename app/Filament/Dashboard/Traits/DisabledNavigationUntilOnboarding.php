@@ -26,7 +26,7 @@ trait DisabledNavigationUntilOnboarding
         }
 
         return collect($items)
-            ->map(fn (NavigationItem $item) => $item
+            ->map(fn (NavigationItem $item): NavigationItem => $item
                 ->extraAttributes([
                     'class' => 'opacity-40 cursor-not-allowed select-none [&_a]:pointer-events-none',
                     'aria-label' => __('dashboard/navigation.locked'),
