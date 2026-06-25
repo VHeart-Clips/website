@@ -49,12 +49,12 @@ class Onboarding extends Page implements HasForms
 
     public function getHeading(): string|Htmlable|null
     {
-        return __('onboarding.heading', ['username' => auth()->user()->name]);
+        return __('dashboard/onboarding.heading', ['username' => auth()->user()->name]);
     }
 
     public function getSubheading(): string|Htmlable|null
     {
-        return __('onboarding.setup.heading');
+        return __('dashboard/onboarding.setup.heading');
     }
 
     public function mount(): void
@@ -80,7 +80,7 @@ class Onboarding extends Page implements HasForms
                 ->footer([
                     Actions::make([
                         Action::make('save')
-                            ->label(__('onboarding.setup.submit'))
+                            ->label(__('dashboard/onboarding.setup.submit'))
                             ->keyBindings(['mod+s'])
                             ->submit('save'),
                     ])
@@ -98,16 +98,16 @@ class Onboarding extends Page implements HasForms
         return $schema
             ->statePath('formData')
             ->schema([
-                Section::make(__('onboarding.setup.consent.heading'))
-                    ->description(__('onboarding.setup.consent.subheading'))
+                Section::make(__('dashboard/onboarding.setup.consent.heading'))
+                    ->description(__('dashboard/onboarding.setup.consent.subheading'))
                     ->schema([
                         CheckboxList::make('consent')
                             ->options(BroadcasterConsent::class)
                             ->hiddenLabel(),
                     ]),
 
-                Section::make(__('onboarding.setup.default_clip_status.heading'))
-                    ->description(__('onboarding.setup.default_clip_status.subheading'))
+                Section::make(__('dashboard/onboarding.setup.default_clip_status.heading'))
+                    ->description(__('dashboard/onboarding.setup.default_clip_status.subheading'))
                     ->schema([
                         Radio::make('default_clip_status')
                             ->options(
@@ -118,7 +118,7 @@ class Onboarding extends Page implements HasForms
                             ->descriptions(
                                 collect(ClipStatus::defaultableOptions())
                                     ->mapWithKeys(fn (ClipStatus $status): array => [
-                                        $status->value => __('onboarding.setup.default_clip_status.options.'.Str::snake($status->name)),
+                                        $status->value => __('dashboard/onboarding.setup.default_clip_status.options.'.Str::snake($status->name)),
                                     ])
                                     ->toArray()
                             )
@@ -127,8 +127,8 @@ class Onboarding extends Page implements HasForms
                             ->required(),
                     ]),
 
-                Section::make(__('onboarding.setup.submissions.heading'))
-                    ->description(__('onboarding.setup.submissions.subheading'))
+                Section::make(__('dashboard/onboarding.setup.submissions.heading'))
+                    ->description(__('dashboard/onboarding.setup.submissions.subheading'))
                     ->schema([
                         Toggle::make('submit_user_allowed')
                             ->afterStateUpdated(function (bool $state, Set $set): void {
@@ -137,8 +137,8 @@ class Onboarding extends Page implements HasForms
                                 }
                             })
                             ->extraAlpineAttributes(['x-on:change' => 'console.log(1)'])
-                            ->helperText(__('onboarding.setup.submissions.options.everyone.description'))
-                            ->label(__('onboarding.setup.submissions.options.everyone.label'))
+                            ->helperText(__('dashboard/onboarding.setup.submissions.options.everyone.description'))
+                            ->label(__('dashboard/onboarding.setup.submissions.options.everyone.label'))
                             ->default(true)
                             ->live(),
 
@@ -148,8 +148,8 @@ class Onboarding extends Page implements HasForms
                                     $set('submit_user_allowed', false);
                                 }
                             })
-                            ->helperText(__('onboarding.setup.submissions.options.mods.description'))
-                            ->label(__('onboarding.setup.submissions.options.mods.label'))
+                            ->helperText(__('dashboard/onboarding.setup.submissions.options.mods.description'))
+                            ->label(__('dashboard/onboarding.setup.submissions.options.mods.label'))
                             ->default(true)
                             ->live(),
                     ]),
