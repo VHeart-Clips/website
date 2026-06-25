@@ -9,7 +9,9 @@ use App\Enums\Permission;
 use App\Http\Resources\Role\RoleResource;
 use App\Models\Traits\Auditable;
 use App\Policies\RolePolicy;
+use Database\Factories\RoleFactory;
 use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\UseResource;
 use Illuminate\Database\Eloquent\Builder;
@@ -22,6 +24,7 @@ use Illuminate\Support\Collection;
 use Spatie\Translatable\HasTranslations;
 
 #[UseResource(RoleResource::class)]
+#[UseFactory(RoleFactory::class)]
 #[UsePolicy(RolePolicy::class)]
 class Role extends Model
 {
