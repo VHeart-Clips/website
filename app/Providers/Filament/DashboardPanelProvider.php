@@ -120,6 +120,14 @@ class DashboardPanelProvider extends PanelProvider
                 PanelsRenderHook::BODY_END,
                 fn () => Blade::render("<svg hidden class='hidden'> @stack('bladeicons') </svg>")
             )
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn () => Blade::render('@cookieconsentscripts')
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_END,
+                fn () => Blade::render('@cookieconsentview')
+            )
             ->authMiddleware([
                 Authenticate::class,
                 StagingGateMiddleware::class,
