@@ -36,6 +36,7 @@ return [
             'category' => 'Category',
             'duration' => 'Duration',
             'status' => 'Status',
+            'impressions' => 'Impressions',
             'votes' => 'Votes',
             'submitted_at' => 'Submitted At',
             'created_at' => 'Created At',

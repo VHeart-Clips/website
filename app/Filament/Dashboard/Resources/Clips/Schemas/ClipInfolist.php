@@ -64,7 +64,7 @@ class ClipInfolist
                             ])
                             ->relationship('category'),
 
-                        Grid::make(3)
+                        Grid::make()
                             ->schema([
                                 TextEntry::make('duration')
                                     ->label(__('dashboard/resources/clips.table.columns.duration'))
@@ -82,6 +82,13 @@ class ClipInfolist
                                     ->default(0)
                                     ->badge()
                                     ->color('success'),
+                                TextEntry::make('absolute_impressions')
+                                    ->label(__('dashboard/resources/clips.table.columns.impressions'))
+                                    ->icon(LucideIcon::Eye)
+                                    ->size(TextSize::Medium)
+                                    ->default(0)
+                                    ->badge()
+                                    ->color('info'),
                                 TextEntry::make('status')
                                     ->label('dashboard/resources/clips.table.columns.status')
                                     ->tooltip(__('dashboard/resources/clips.table.columns.status'))
