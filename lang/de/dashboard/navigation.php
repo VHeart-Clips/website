@@ -11,4 +11,5 @@ return [
         'single' => 'Dein Kanal',
         'multiple' => 'Kanal Wechseln',
     ],
+    'locked' => 'Bitte vorher das Onboarding abschließen',
 ];
