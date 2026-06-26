@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 
 class TeamController extends Controller
@@ -19,7 +19,7 @@ class TeamController extends Controller
             ->orderBy('id')
             ->with([
                 // i think this is the fairest way to sort it
-                'users' => fn (Builder $builder): Builder => $builder->orderBy('id')]
+                'users' => fn (Relation $builder): Relation => $builder->orderBy('id')]
             )
             ->get();
 
