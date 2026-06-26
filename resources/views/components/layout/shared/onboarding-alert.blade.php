@@ -1,4 +1,3 @@
-@feature(App\Enums\FeatureFlag::BroadcasterOnboarding)
 @if (session('showTwitchPermissionsPrompt'))
     <div
         class="sticky top-16 md:top-18 z-100"
@@ -40,4 +39,3 @@
         </x-ui.alert>
     </div>
 @endif
-@endfeature

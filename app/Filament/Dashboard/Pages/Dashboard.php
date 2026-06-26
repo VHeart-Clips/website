@@ -6,6 +6,7 @@ namespace App\Filament\Dashboard\Pages;
 
 use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\Dashboard\Traits\DisabledNavigationUntilOnboarding;
 use BackedEnum;
 use Filament\Facades\Filament;
 use Filament\Pages\Dashboard as BaseDashboard;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Gate;
 
 class Dashboard extends BaseDashboard
 {
+    use DisabledNavigationUntilOnboarding;
+
     protected static string|BackedEnum|null $navigationIcon = LucideIcon::House;
 
     public static function canAccess(): bool

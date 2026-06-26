@@ -11,4 +11,5 @@ return [
         'single' => 'Your Channel',
         'multiple' => 'Switch Channel',
     ],
+    'locked' => 'Please finish Onboarding first',
 ];

@@ -145,10 +145,6 @@ trait UserFilamentConfiguration
         }
 
         $broadcasterIds = $this->broadcasterTeamMembers()->pluck('broadcaster_id');
-        if ($this->broadcaster) {
-            $broadcasterIds->add($this->broadcaster->id);
-        }
-
         $twitchService = app(TwitchService::class);
 
         $twitchModChannelsIds = $twitchService
@@ -162,7 +158,10 @@ trait UserFilamentConfiguration
 
         $broadcasterIds = $broadcasterIds->merge($allowedBroadcasters);
 
-        return Broadcaster::findMany($broadcasterIds->unique());
+        return [
+            $this->broadcaster ?? Broadcaster::placeholder($this->id),
+            ...Broadcaster::findMany($broadcasterIds->unique()),
+        ];
     }
 
     public function getDefaultTenant(Panel $panel): ?Model

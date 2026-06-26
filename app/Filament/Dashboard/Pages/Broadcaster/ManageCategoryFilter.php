@@ -8,6 +8,7 @@ use App\Enums\Broadcaster\BroadcasterPermission;
 use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\Dashboard\Traits\DisabledNavigationUntilOnboarding;
 use App\Filament\Resources\Categories\CategorySelect;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\Broadcaster\BroadcasterSubmissionFilter;
@@ -36,6 +37,7 @@ use UnitEnum;
 
 class ManageCategoryFilter extends Page implements HasTable
 {
+    use DisabledNavigationUntilOnboarding;
     use InteractsWithActions;
     use InteractsWithSchemas;
     use InteractsWithTable;

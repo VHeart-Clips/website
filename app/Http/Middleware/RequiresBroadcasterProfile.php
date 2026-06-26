@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Filament\Dashboard\Pages\Onboarding;
 use App\Models\Broadcaster\Broadcaster;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * If the user has no broadcaster profile setup this will redirect them to the onboarding instead (remembering the intended route)
+ * Redirect the user to their own broadcaster onboarding if they try to access their own stuff without being onboarded
  */
 class RequiresBroadcasterProfile
 {
@@ -19,16 +20,20 @@ class RequiresBroadcasterProfile
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->routeIs('dashboard.onboarding')) {
+        if ($request->routeIs(Onboarding::getRouteName())) {
+            return $next($request);
+        }
+
+        if ($request->route('tenant') !== (string) auth()->id()) {
             return $next($request);
         }
 
         $user = $request->user();
-        $tenantId = $request->route('tenant');
-        $isSelfTenant = ((int) $tenantId) === $user?->id;
 
-        if ((! $tenantId || $isSelfTenant) && ! Broadcaster::where('id', $user?->id)->whereOnboarded()->exists()) {
-            return redirect()->guest(route('dashboard.onboarding'));
+        if (Broadcaster::where('id', $user->id)->whereOnboarded()->doesntExist()) {
+            return redirect()->guest(
+                Onboarding::getUrl(panel: 'dashboard', tenant: Broadcaster::placeholder($user->id)),
+            );
         }
 
         return $next($request);

@@ -13,6 +13,7 @@ use App\Filament\Dashboard\Resources\Clips\RelationManagers\CompilationsRelation
 use App\Filament\Dashboard\Resources\Clips\Schemas\ClipForm;
 use App\Filament\Dashboard\Resources\Clips\Schemas\ClipInfolist;
 use App\Filament\Dashboard\Resources\Clips\Tables\ClipsTable;
+use App\Filament\Dashboard\Traits\DisabledNavigationUntilOnboarding;
 use App\Models\Clip;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Gate;
 
 class ClipResource extends Resource
 {
+    use DisabledNavigationUntilOnboarding;
+
     protected static bool $shouldSkipAuthorization = true;
 
     protected static ?string $model = Clip::class;

@@ -11,6 +11,7 @@ use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Dashboard\Actions\ApplyDefaultStatusAction;
+use App\Filament\Dashboard\Traits\DisabledNavigationUntilOnboarding;
 use App\Models\Broadcaster\Broadcaster;
 use BackedEnum;
 use Filament\Facades\Filament;
@@ -35,6 +36,7 @@ use UnitEnum;
  */
 class GeneralSettings extends Page implements HasForms
 {
+    use DisabledNavigationUntilOnboarding;
     use InteractsWithForms;
 
     /** @var array<string, mixed>|null */

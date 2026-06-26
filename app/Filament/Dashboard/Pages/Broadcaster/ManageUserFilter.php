@@ -9,6 +9,7 @@ use App\Enums\Broadcaster\DashboardNavigationGroup;
 use App\Enums\Broadcaster\DashboardNavigationItem;
 use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\Dashboard\Traits\DisabledNavigationUntilOnboarding;
 use App\Filament\Resources\Users\UserSelect;
 use App\Models\Broadcaster\Broadcaster;
 use App\Models\User;
@@ -38,6 +39,7 @@ use UnitEnum;
 
 class ManageUserFilter extends Page implements HasTable
 {
+    use DisabledNavigationUntilOnboarding;
     use InteractsWithActions;
     use InteractsWithSchemas;
     use InteractsWithTable;
