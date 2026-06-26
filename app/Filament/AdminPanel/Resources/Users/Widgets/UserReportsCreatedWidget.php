@@ -6,7 +6,6 @@ namespace App\Filament\AdminPanel\Resources\Users\Widgets;
 
 use App\Enums\Permission;
 use App\Filament\AdminPanel\Widgets\Traits\HasBasicOverviewChartStuff;
-use App\Models\Clip;
 use App\Models\Report;
 use App\Models\User;
 use Carbon\CarbonInterface;
@@ -55,7 +54,7 @@ class UserReportsCreatedWidget extends ChartWidget
                 'fill' => true,
                 'tension' => 0.4,
             ]],
-            'labels' => $results->map(fn (Clip $clip) => $labelFn($clip->date))->toArray(),
+            'labels' => $results->map(fn (mixed $clip) => $labelFn($clip->date))->toArray(),
         ];
     }
 
