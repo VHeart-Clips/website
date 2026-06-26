@@ -53,7 +53,7 @@ class UserSubmittedClipsWidget extends ChartWidget
                 'fill' => true,
                 'tension' => 0.4,
             ]],
-            'labels' => $results->map(fn (Clip $clip) => $labelFn($clip->date))->toArray(),
+            'labels' => $results->map(fn (mixed $clip) => $labelFn($clip->date))->toArray(),
         ];
     }
 
