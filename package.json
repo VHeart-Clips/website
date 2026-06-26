@@ -22,7 +22,7 @@
         "@types/alpinejs__anchor": "^3.13.1",
         "@types/alpinejs__intersect": "^3.13.4",
         "@types/async-alpine": "^2.0.0",
-        "@types/node": "^25.9.3",
+        "@types/node": "^26.0.0",
         "eslint": "^9.39.4",
         "concurrently": "^10.0.3",
         "eslint-config-prettier": "^10.1.8",
