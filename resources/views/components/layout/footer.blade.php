@@ -49,7 +49,7 @@
             <div class="flex flex-col items-center gap-6 border-t border-gray-200 dark:border-white/5 px-6 py-8 animate-in fade-in slide-in-from-bottom-4 duration-300">
                 <nav class="flex flex-wrap justify-center gap-x-6 gap-y-2">
                     @foreach($navs as $key => $path)
-                        <x-layout.shared.link :href="$path">
+                        <x-layout.shared.link :href="route($path)">
                             {{ __('footer.' . $key) }}
                         </x-layout.shared.link>
                     @endforeach
