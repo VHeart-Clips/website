@@ -12,16 +12,16 @@
 
                 <div>
                     <x-ui.alert.title>
-                        {{ __('onboarding.alert.heading') }}
+                        {{ __('dashboard/onboarding.alert.heading') }}
                     </x-ui.alert.title>
 
                     <x-ui.alert.description>
-                        <p>{{ __('onboarding.alert.description') }}</p>
+                        <p>{{ __('dashboard/onboarding.alert.description') }}</p>
                         <x-ui.button
                             variant="link"
                             href="{{ Onboarding::getUrl(panel: 'dashboard', tenant: Broadcaster::placeholder(auth()->id())) }}"
                         >
-                            {{ __('onboarding.alert.cta') }}
+                            {{ __('dashboard/onboarding.alert.cta') }}
                         </x-ui.button>
                     </x-ui.alert.description>
                 </div>
@@ -35,7 +35,7 @@
                 type="button"
                 @click="dismissed = true"
             >
-                <span class="sr-only">{{ __('onboarding.alert.dismiss') }}</span>
+                <span class="sr-only">{{ __('dashboard/onboarding.alert.dismiss') }}</span>
                 <x-lucide-x defer class="size-6"/>
             </x-ui.button>
         </x-ui.alert>
