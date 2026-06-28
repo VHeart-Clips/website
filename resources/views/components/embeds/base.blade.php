@@ -64,6 +64,7 @@
                     <iframe
                         :src="url"
                         :title="title"
+                        onload="this.dataset.loaded = '1'"
                         @load="handleIframeLoad()"
                         class="h-full w-full border-0 transition-opacity duration-500"
                         :class="isLoading ? 'opacity-0' : 'opacity-100'"
