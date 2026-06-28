@@ -100,7 +100,7 @@ class GeneralSettings extends Page implements HasForms
                         )
                         ->descriptions(
                             collect(ClipStatus::defaultableOptions())
-                                ->mapWithKeys(fn (ClipStatus $status): array => [$status->value => __('onboarding.setup.default_clip_status.options.'.Str::snake($status->name))])
+                                ->mapWithKeys(fn (ClipStatus $status): array => [$status->value => __('dashboard/onboarding.setup.default_clip_status.options.'.Str::snake($status->name))])
                                 ->toArray()
                         ),
                 ])
