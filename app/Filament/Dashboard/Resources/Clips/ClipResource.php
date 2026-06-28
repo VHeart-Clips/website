@@ -69,9 +69,10 @@ class ClipResource extends Resource
         ];
     }
 
-    public static function getRecordRouteBindingEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
-        return parent::getRecordRouteBindingEloquentQuery()
-            ->withAbsoluteVoteCount();
+        return parent::getEloquentQuery()
+            ->withAbsoluteVoteCount()
+            ->withAbsoluteImpressionCount();
     }
 }

@@ -34,8 +34,6 @@ class ClipsTable
                 'creator',
                 'submitter',
             ])
-                ->withAbsoluteVoteCount()
-                ->withAbsoluteImpressionCount()
             )
             ->columns([
                 Split::make([
