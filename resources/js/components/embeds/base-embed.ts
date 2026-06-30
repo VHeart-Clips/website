@@ -1,6 +1,6 @@
-import { AlpineComponent } from 'alpinejs';
-import { checkInView } from '@/lib/utils';
 import CookieManager from '@/lib/cookieManager';
+import { checkInView } from '@/lib/utils';
+import { AlpineComponent } from 'alpinejs';
 
 const ViewportBuffer = 100;
 
@@ -24,6 +24,7 @@ export interface GenericEmbedData {
     hasConsent(): boolean;
     accept(): void;
     handleIframeLoad(): void;
+    checkIframeLoaded(): void;
     init(): void;
     setVisible(): void;
     cookieManager: CookieManager | null;
@@ -69,6 +70,7 @@ export default (
             }
         });
 
+        this.checkIframeLoaded();
         this.cookieManager?.consentManager.subscribe(() => {
             if (this.cookieManager && this.cookieManager.hasConsent === false) {
                 this.hasConsentGiven = false;
@@ -100,5 +102,33 @@ export default (
     },
     handleIframeLoad() {
         this.isLoading = false;
+    },
+
+    /**
+     * because of a (maybe possible) edge case with very fast load times we will just check every frame
+     * for a few ms if the iframe has been loaded outside of alpines lifecycle somehow
+     * if we cannot load within the 250ms time frame we should be able to assume that
+     * the @load event will actually fire anyway in the future, this is really just
+     * for the edgcase where it would be too fast lol
+     */
+    checkIframeLoaded() {
+        const start = Date.now();
+        let iframe: HTMLIFrameElement;
+
+        const poll = () => {
+            // $ref is not reliable in this case from what i tried
+            const found = this.$el.querySelector('iframe') as HTMLIFrameElement;
+            if (found) iframe = found;
+
+            if (iframe?.dataset.loaded) {
+                this.handleIframeLoad();
+                return;
+            }
+
+            if (this.isLoading && Date.now() - start < 250) {
+                requestAnimationFrame(poll);
+            }
+        };
+        poll();
     },
 });
