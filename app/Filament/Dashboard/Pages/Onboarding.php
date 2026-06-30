@@ -136,7 +136,6 @@ class Onboarding extends Page implements HasForms
                                     $set('submit_mods_allowed', true);
                                 }
                             })
-                            ->extraAlpineAttributes(['x-on:change' => 'console.log(1)'])
                             ->helperText(__('dashboard/onboarding.setup.submissions.options.everyone.description'))
                             ->label(__('dashboard/onboarding.setup.submissions.options.everyone.label'))
                             ->default(true)
