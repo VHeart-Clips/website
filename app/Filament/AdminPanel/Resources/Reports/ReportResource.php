@@ -11,6 +11,7 @@ use App\Filament\AdminPanel\Resources\Reports\Pages\ListReports;
 use App\Filament\AdminPanel\Resources\Reports\Pages\ViewReport;
 use App\Filament\AdminPanel\Resources\Reports\Schemas\ReportInfolist;
 use App\Filament\AdminPanel\Resources\Reports\Tables\ReportsTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Report;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -56,6 +57,13 @@ class ReportResource extends Resource
     public static function table(Table $table): Table
     {
         return ReportsTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            AuditsRelationManager::make(),
+        ];
     }
 
     public static function getPages(): array

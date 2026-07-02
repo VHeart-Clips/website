@@ -15,6 +15,7 @@ use App\Filament\AdminPanel\Resources\Broadcasters\RelationManagers\UserFiltersR
 use App\Filament\AdminPanel\Resources\Broadcasters\Schemas\BroadcasterForm;
 use App\Filament\AdminPanel\Resources\Broadcasters\Schemas\BroadcasterInfolist;
 use App\Filament\AdminPanel\Resources\Broadcasters\Tables\BroadcastersTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Broadcaster\Broadcaster;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -62,6 +63,7 @@ class BroadcasterResource extends Resource
             CategoryFiltersRelationManager::make(),
             ConsentLogsRelationManager::make(),
             MembersRelationManager::make(),
+            AuditsRelationManager::make(),
         ];
     }
 

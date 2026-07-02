@@ -13,6 +13,7 @@ use App\Filament\AdminPanel\Resources\Compilations\RelationManagers\ClipsRelatio
 use App\Filament\AdminPanel\Resources\Compilations\Schemas\CompilationForm;
 use App\Filament\AdminPanel\Resources\Compilations\Schemas\CompilationInfoList;
 use App\Filament\AdminPanel\Resources\Compilations\Tables\CompilationsTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Clip\Compilation;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -48,6 +49,7 @@ class CompilationResource extends Resource
     {
         return [
             ClipsRelationManager::class,
+            AuditsRelationManager::make(),
         ];
     }
 

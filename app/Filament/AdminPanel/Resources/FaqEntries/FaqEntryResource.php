@@ -10,6 +10,7 @@ use App\Filament\AdminPanel\Resources\FaqEntries\Pages\ListFaqEntries;
 use App\Filament\AdminPanel\Resources\FaqEntries\Schemas\FaqEntryForm;
 use App\Filament\AdminPanel\Resources\FaqEntries\Schemas\FaqEntryInfolist;
 use App\Filament\AdminPanel\Resources\FaqEntries\Tables\FaqEntriesTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Faq\FaqEntry;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -50,7 +51,7 @@ class FaqEntryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuditsRelationManager::make(),
         ];
     }
 
