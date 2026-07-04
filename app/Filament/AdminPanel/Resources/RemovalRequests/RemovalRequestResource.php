@@ -12,6 +12,7 @@ use App\Filament\AdminPanel\Resources\RemovalRequests\Pages\ViewRemovalRequest;
 use App\Filament\AdminPanel\Resources\RemovalRequests\RelationManagers\RemovalRequestCompilationsRelationManager;
 use App\Filament\AdminPanel\Resources\RemovalRequests\Schemas\RemovalRequestInfolist;
 use App\Filament\AdminPanel\Resources\RemovalRequests\Tables\RemovalRequestsTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Broadcaster\RemovalRequest;
 use BackedEnum;
 use Filament\Actions\ActionGroup;
@@ -52,6 +53,7 @@ class RemovalRequestResource extends Resource
     {
         return [
             RemovalRequestCompilationsRelationManager::class,
+            AuditsRelationManager::make(),
         ];
     }
 

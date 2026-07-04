@@ -13,6 +13,7 @@ use App\Filament\AdminPanel\Resources\Roles\Pages\ViewRole;
 use App\Filament\AdminPanel\Resources\Roles\Schemas\RoleForm;
 use App\Filament\AdminPanel\Resources\Roles\Schemas\RoleInfolist;
 use App\Filament\AdminPanel\Resources\Roles\Tables\RolesTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Role;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -51,7 +52,7 @@ class RoleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuditsRelationManager::make(),
         ];
     }
 

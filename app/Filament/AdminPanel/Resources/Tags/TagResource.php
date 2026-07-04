@@ -9,6 +9,7 @@ use App\Enums\NavigationGroup;
 use App\Filament\AdminPanel\Resources\Tags\Pages\ListTags;
 use App\Filament\AdminPanel\Resources\Tags\Schemas\TagForm;
 use App\Filament\AdminPanel\Resources\Tags\Tables\TagsTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Models\Clip\Tag;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -44,7 +45,7 @@ class TagResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            AuditsRelationManager::make(),
         ];
     }
 

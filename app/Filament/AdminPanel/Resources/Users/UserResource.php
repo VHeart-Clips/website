@@ -15,6 +15,7 @@ use App\Filament\AdminPanel\Resources\Users\RelationManagers\SubmittedClipsRelat
 use App\Filament\AdminPanel\Resources\Users\Schemas\UserForm;
 use App\Filament\AdminPanel\Resources\Users\Schemas\UserInfolist;
 use App\Filament\AdminPanel\Resources\Users\Tables\UsersTable;
+use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
 use App\Filament\AdminPanel\SharedRelationManagers\BansRelationManager;
 use App\Models\User;
 use BackedEnum;
@@ -55,6 +56,7 @@ class UserResource extends Resource
             BroadcastedClipsRelationManager::make(),
             CreatedClipsRelationManager::make(),
             SubmittedClipsRelationManager::make(),
+            AuditsRelationManager::make(),
         ];
     }
 
