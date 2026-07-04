@@ -16,6 +16,7 @@ use App\Filament\AdminPanel\Resources\Broadcasters\Schemas\BroadcasterForm;
 use App\Filament\AdminPanel\Resources\Broadcasters\Schemas\BroadcasterInfolist;
 use App\Filament\AdminPanel\Resources\Broadcasters\Tables\BroadcastersTable;
 use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
+use App\Filament\AdminPanel\SharedRelationManagers\BansRelationManager;
 use App\Models\Broadcaster\Broadcaster;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -59,6 +60,7 @@ class BroadcasterResource extends Resource
     public static function getRelations(): array
     {
         return [
+            BansRelationManager::make(),
             UserFiltersRelationManager::make(),
             CategoryFiltersRelationManager::make(),
             ConsentLogsRelationManager::make(),

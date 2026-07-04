@@ -16,6 +16,7 @@ use App\Filament\AdminPanel\Resources\Users\Schemas\UserForm;
 use App\Filament\AdminPanel\Resources\Users\Schemas\UserInfolist;
 use App\Filament\AdminPanel\Resources\Users\Tables\UsersTable;
 use App\Filament\AdminPanel\SharedRelationManagers\AuditsRelationManager;
+use App\Filament\AdminPanel\SharedRelationManagers\BansRelationManager;
 use App\Models\User;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -51,6 +52,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
+            BansRelationManager::make(),
             BroadcastedClipsRelationManager::make(),
             CreatedClipsRelationManager::make(),
             SubmittedClipsRelationManager::make(),
