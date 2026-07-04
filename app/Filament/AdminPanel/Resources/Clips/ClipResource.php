@@ -9,6 +9,7 @@ use App\Filament\AdminPanel\Resources\Clips\Pages\EditClip;
 use App\Filament\AdminPanel\Resources\Clips\Pages\ListClips;
 use App\Filament\AdminPanel\Resources\Clips\Pages\ViewClip;
 use App\Filament\AdminPanel\Resources\Clips\RelationManagers\CompilationsRelationManager;
+use App\Filament\AdminPanel\Resources\Clips\RelationManagers\ReportsRelationManager;
 use App\Filament\AdminPanel\Resources\Clips\Schemas\ClipForm;
 use App\Filament\AdminPanel\Resources\Clips\Schemas\ClipInfolist;
 use App\Filament\AdminPanel\Resources\Clips\Tables\ClipsTable;
@@ -46,6 +47,7 @@ class ClipResource extends Resource
     public static function getRelations(): array
     {
         return [
+            ReportsRelationManager::class,
             CompilationsRelationManager::class,
         ];
     }
