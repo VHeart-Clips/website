@@ -20,6 +20,7 @@ class RolesTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('weight', 'desc')
             ->columns([
                 TextColumn::make('name')
                     ->label('admin/resources/roles.table.columns.name')
