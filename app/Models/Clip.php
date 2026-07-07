@@ -425,10 +425,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     protected function whereNotPublished(Builder $query): Builder
     {
         return $query->whereDoesntHave('compilations', function (Builder $q): void {
-            $q->whereIn('compilations.status', array_merge(
-                CompilationStatus::getPublicCases(),
-                [CompilationStatus::Scheduled]
-            ));
+            $q->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases());
         });
     }
 
