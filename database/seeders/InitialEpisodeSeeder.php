@@ -939,8 +939,6 @@ class InitialEpisodeSeeder extends Seeder
 
                 return;
             }
-
-            sleep(1);
         });
 
         DB::transaction(fn () => $twitchClips->each(function (ClipDto $clip) use ($systemUser, $importClipAction): void {
