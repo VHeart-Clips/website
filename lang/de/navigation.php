@@ -30,4 +30,5 @@ return [
     'team_dashboard' => 'Team Dashboard',
     'settings' => 'Einstellungen',
     'logout' => 'Abmelden',
+    'statistics' => 'Statistiken',
 ];

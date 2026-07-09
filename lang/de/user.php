@@ -33,4 +33,37 @@ return [
             'submit' => 'Konto Löschen',
         ],
     ],
+    'statistics' => [
+        'title' => 'Deine Statistiken',
+        'heading' => 'Deine Statistiken',
+        'subheading' => '',
+        'description' => '',
+        'stats' => [
+            'clips-submitted' => [
+                'title' => 'Eingereichte Clips',
+                'details' => 'Eingereichte Clips Anzeigen',
+            ],
+            'votes' => [
+                'title' => 'Votes',
+                'details' => 'Votes Anzeigen',
+            ],
+            'votes-30days' => [
+                'title' => 'Votes Last 30 Days',
+                'details' => 'Votes Anzeigen',
+            ],
+        ],
+    ],
+    'statistics_details' => [
+        'infinite-loader' => [
+            'no-more' => 'Keine weiteren :name verfügbar',
+            'nothing-found' => 'Keine :name gefunden',
+            'nothing-found-subtext' => 'Gerade sind keine :name verfügbar.',
+        ],
+        'votes' => [
+            'name' => 'Votes',
+            'heading' => 'Deine Votes',
+            'subheading' => '',
+            'description' => '',
+        ],
+    ],
 ];

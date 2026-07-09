@@ -33,4 +33,37 @@ return [
             'submit' => 'Delete Account',
         ],
     ],
+    'statistics' => [
+        'title' => 'Account Statistics',
+        'heading' => 'Your Statistics',
+        'subheading' => '',
+        'description' => '',
+        'stats' => [
+            'clips-submitted' => [
+                'title' => 'Submitted Clips',
+                'details' => 'View Submitted Clips',
+            ],
+            'votes' => [
+                'title' => 'Votes',
+                'details' => 'View Votes',
+            ],
+            'votes-30days' => [
+                'title' => 'Votes Last 30 Days',
+                'details' => 'View Votes',
+            ],
+        ],
+    ],
+    'statistics_details' => [
+        'infinite-loader' => [
+            'no-more' => 'There are no more :name',
+            'nothing-found' => 'No :name found',
+            'nothing-found-subtext' => 'There are no :name available right now.',
+        ],
+        'votes' => [
+            'name' => 'Votes',
+            'heading' => 'Your Votes',
+            'subheading' => '',
+            'description' => '',
+        ],
+    ],
 ];
