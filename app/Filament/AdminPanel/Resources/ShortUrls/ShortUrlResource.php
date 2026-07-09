@@ -41,7 +41,6 @@ class ShortUrlResource extends Resource
                     ->required(),
                 TextInput::make('url')
                     ->maxLength(2048)
-                    ->activeUrl()
                     ->required()
                     ->url(),
             ]);
