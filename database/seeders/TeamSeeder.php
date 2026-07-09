@@ -22,15 +22,12 @@ class TeamSeeder extends Seeder
         98217515, // https://www.twitch.tv/dasonkeelchen
         430455268, // https://www.twitch.tv/silentpandavt
         814959034, // https://www.twitch.tv/yurayami
-        1300415386, // https://www.twitch.tv/meynhero
     ];
 
     protected array $moderators = [
         253386707, // https://www.twitch.tv/xayriee
-        256185531, // https://www.twitch.tv/kawaiidesunevt
         417367938, // https://www.twitch.tv/einfachtamtam
         442243239, // https://www.twitch.tv/sirchaos_1337
-        457724393, // https://www.twitch.tv/kayaba_sama
         734502184, // https://www.twitch.tv/stresstiantogo
         1122025118, // https://www.twitch.tv/gianthwro20
         922504633, // https://www.twitch.tv/dragonsebiii
@@ -43,23 +40,16 @@ class TeamSeeder extends Seeder
     ];
 
     protected array $cutter = [
-        87918397, // https://www.twitch.tv/thefluuf
         98217515, // https://www.twitch.tv/dasonkeelchen
-        127357369, // https://www.twitch.tv/ventylos
         145960906, // https://www.twitch.tv/heijmdall
-        146350225, // https://www.twitch.tv/onkel_noxy
         444845317, // https://www.twitch.tv/einmauvt
-        460292967, // https://www.twitch.tv/doktor_seb0
         814959034, // https://www.twitch.tv/yurayami
-        1072060211, // https://www.twitch.tv/offscreenkill
         1181232263, // https://www.twitch.tv/einfachoka
         1300415386, // https://www.twitch.tv/meynhero
         747332255, // https://www.twitch.tv/lokinson_vtube
         165813695, // https://www.twitch.tv/sandari_exe
         817951552, // https://www.twitch.tv/keylamgracelight
         769996920, // https://www.twitch.tv/lordwobbly
-        11840166, // https://www.twitch.tv/raffophantom
-        868365565, // https://www.twitch.tv/shortysan
         85293388, // https://www.twitch.tv/vaenlytas
         182832594, // https://www.twitch.tv/hikavt
         882479348, // https://www.twitch.tv/xkokitv
@@ -67,8 +57,6 @@ class TeamSeeder extends Seeder
         446743173, // https://www.twitch.tv/twitchlezz
         688340656, // https://www.twitch.tv/svipure
         39355546, // https://www.twitch.tv/drwurstpeter
-        410735255, // https://www.twitch.tv/momotschie
-        243827916, // https://www.twitch.tv/solomon_h0d
         141788057, // https://www.twitch.tv/sgtdoubleu
         739357338, // https://www.twitch.tv/zelu_melu
         123880694, // https://www.twitch.tv/liveplayer_
@@ -87,6 +75,15 @@ class TeamSeeder extends Seeder
     protected array $contributors = [
         756841354, // https://www.twitch.tv/dotgyy
         1353141462, // https://www.twitch.tv/nythnea
+        1300415386, // https://www.twitch.tv/meynhero
+        457724393, // https://www.twitch.tv/kayaba_sama
+        256185531, // https://www.twitch.tv/kawaiidesunevt
+        87918397, // https://www.twitch.tv/thefluuf
+        127357369, // https://www.twitch.tv/ventylos
+        146350225, // https://www.twitch.tv/onkel_noxy
+        460292967, // https://www.twitch.tv/doktor_seb0
+        1072060211, // https://www.twitch.tv/offscreenkill
+        11840166, // https://www.twitch.tv/raffophantom
     ];
 
     public function run(TwitchService $twitchService): void
