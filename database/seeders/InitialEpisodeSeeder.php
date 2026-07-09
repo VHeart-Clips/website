@@ -939,51 +939,51 @@ class InitialEpisodeSeeder extends Seeder
 
                 return;
             }
-
-            sleep(1);
         });
 
-        $twitchClips->each(function (ClipDto $clip) use ($systemUser, $importClipAction): void {
-            $importClipAction->execute($clip, $systemUser);
-        });
-
-        Log::notice("{$twitchClips->count()} Clips have been imported.");
-
-        foreach (self::Episodes as $episodeData) {
-            /** @var Compilation $compilation */
-            $compilation = Compilation::create([
-                'user_id' => 0,
-                'title' => $episodeData['title'],
-                'slug' => $episodeData['slug'],
-                'status' => $episodeData['status'],
-                'type' => CompilationType::LongVideo,
-                'youtube_url' => $episodeData['youtube_url'],
-                'created_at' => $episodeData['created_at'] ?? now(),
-                'updated_at' => now(),
-            ]);
-
-            $clips = Clip::query()
-                ->withoutGlobalScope(ClipPermissionScope::class)
-                ->whereIn('twitch_id', $episodeData['clips'])
-                ->pluck('id')
-                ->map(fn (int $id): array => [
-                    'clip_id' => $id,
-                    'added_by' => 0,
-                    'claim_status' => CompilationClipClaimStatus::Completed,
-                ]);
-
-            $compilation->clips()->sync($clips);
-
-            $clips->each(function (array $clip): void {
-                DB::table('clips')->where('id', $clip['clip_id'])->update(['status' => ClipStatus::Approved]);
+        DB::transaction(function () use ($importClipAction, $twitchClips, $systemUser): void {
+            $twitchClips->each(function (ClipDto $clip) use ($systemUser, $importClipAction): void {
+                $importClipAction->execute($clip, $systemUser);
             });
 
-            $compilation->comments()->create([
-                'body' => "Compilation with {$clips->count()} clips has been imported.",
-                'author_id' => $systemUser->getKey(),
-                'author_type' => $systemUser->getMorphClass(),
-            ]);
-        }
+            Log::notice("{$twitchClips->count()} Clips have been imported.");
+
+            foreach (self::Episodes as $episodeData) {
+                /** @var Compilation $compilation */
+                $compilation = Compilation::create([
+                    'user_id' => 0,
+                    'title' => $episodeData['title'],
+                    'slug' => $episodeData['slug'],
+                    'status' => $episodeData['status'],
+                    'type' => CompilationType::LongVideo,
+                    'youtube_url' => $episodeData['youtube_url'],
+                    'created_at' => $episodeData['created_at'] ?? now(),
+                    'updated_at' => now(),
+                ]);
+
+                $clips = Clip::query()
+                    ->withoutGlobalScope(ClipPermissionScope::class)
+                    ->whereIn('twitch_id', $episodeData['clips'])
+                    ->pluck('id')
+                    ->map(fn (int $id): array => [
+                        'clip_id' => $id,
+                        'added_by' => 0,
+                        'claim_status' => CompilationClipClaimStatus::Completed,
+                    ]);
+
+                $compilation->clips()->sync($clips);
+
+                $clips->each(function (array $clip): void {
+                    DB::table('clips')->where('id', $clip['clip_id'])->update(['status' => ClipStatus::Approved]);
+                });
+
+                $compilation->comments()->create([
+                    'body' => "Compilation with {$clips->count()} clips has been imported.",
+                    'author_id' => $systemUser->getKey(),
+                    'author_type' => $systemUser->getMorphClass(),
+                ]);
+            }
+        });
 
         // Force-run the import Job because we are lazy
         ImportCategoryJob::dispatchSync([]);
