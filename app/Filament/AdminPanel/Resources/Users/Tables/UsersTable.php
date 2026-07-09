@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Users\Tables;
 
 use App\Filament\AdminPanel\Actions\Ban\BanAction;
 use App\Models\User;
+use Carbon\CarbonInterval;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -28,6 +29,9 @@ class UsersTable
     {
         return $table
             ->modifyQueryUsing(function (Builder $query, Table $table): void {
+                /** @var CarbonInterval $after */
+                $after = now()->sub(config('vheart.clips.voting.maximum_age'));
+
                 $sortColumn = $table->getSortColumn();
                 $showCount = $sortColumn === 'votes_count' || ! $table->getColumn('votes_count')->isToggledHidden();
                 $showDay = $sortColumn === 'votes_per_day' || ! $table->getColumn('votes_per_day')->isToggledHidden();
@@ -38,6 +42,7 @@ class UsersTable
                     ->fromSub(fn (BuilderContract $subQuery): BuilderContract => $subQuery
                         ->selectRaw('count(*) as count')
                         ->from('votes')
+                        ->where('created_at', '>=', $after)
                         ->whereColumn('votes.user_id', 'users.id')
                         ->groupByRaw("date_trunc('$interval', votes.created_at)"), 'interval_groups');
 
@@ -46,7 +51,9 @@ class UsersTable
                     ->whereNot('users.id', 0);
 
                 if ($showCount) {
-                    $query->withCount('votes');
+                    $query->withCount([
+                        'votes' => fn (Builder $q) => $q->where('created_at', '>=', $after),
+                    ]);
                 } else {
                     $query->selectSub('0', 'votes_count');
                 }
