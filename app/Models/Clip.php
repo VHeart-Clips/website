@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Casts\TwitchClipThumbnailCast;
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Clips\ClipStatus;
+use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\ClipVoteType;
 use App\Enums\Eloquent\SetOperator;
@@ -419,16 +420,21 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     }
 
     /**
-     * Exclude Clips that are attached to a published or scheduled Compilation
+     * Exclude Clips that are considered published
      */
     #[Scope]
     protected function whereNotPublished(Builder $query): Builder
     {
-        return $query->whereDoesntHave('compilations', function (Builder $q): void {
-            $q->whereIn('compilations.status', array_merge(
-                CompilationStatus::getPublicCases(),
-                [CompilationStatus::Scheduled]
-            ));
+        return $query->whereDoesntHave('compilations', function (Builder $baseQuery): void {
+            $baseQuery
+                ->where(fn (Builder $whereQuery) => $whereQuery
+                    ->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases())
+                    // we can assume that completed clips within a system owned compilation will be published anyway
+                    ->orWhere(fn (Builder $orWhereQuery) => $orWhereQuery
+                        ->where('compilations.user_id', 0)
+                        ->where('compilation_clip.claim_status', CompilationClipClaimStatus::Completed)
+                    )
+                );
         });
     }
 
