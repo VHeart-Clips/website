@@ -14,9 +14,9 @@
         <x-ui.card.content class="overflow-hidden">
             <x-clips.preview :clip="$vote->clip" class="aspect-video"></x-clips.preview>
         </x-ui.card.content>
-        <x-ui.card.footer class="flex-col gap-4 p-1 md:p-1 xl:p-1">
+        <x-ui.card.footer class="flex-col gap-4 py-1 md:py-1 xl:py-1">
             <section
-                    class="sticky gap-1 bottom-18 w-full max-w-3xl mx-auto px-3 flex flex-row justify-center items-center rounded-2xl"
+                    class="sticky gap-1 bottom-18 w-full max-w-3xl mx-auto flex flex-row justify-center items-center rounded-2xl"
                 >
 
                 <div class="flex shrink-0 items-center justify-center gap-3 py-2 px-3 sm:gap-4 sm:py-3 border-muted rounded-full bg-white/75 dark:bg-black/80 ring-black/5 ring-1 dark:ring-0">
