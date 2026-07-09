@@ -28,9 +28,10 @@ class UsersTable
     {
         return $table
             ->modifyQueryUsing(function (Builder $query, Table $table): void {
-                $showCount = ! $table->getColumn('votes_count')->isToggledHidden();
-                $showDay = ! $table->getColumn('votes_per_day')->isToggledHidden();
-                $showWeek = ! $table->getColumn('votes_per_week')->isToggledHidden();
+                $sortColumn = $table->getSortColumn();
+                $showCount = $sortColumn === 'votes_count' || ! $table->getColumn('votes_count')->isToggledHidden();
+                $showDay = $sortColumn === 'votes_per_day' || ! $table->getColumn('votes_per_day')->isToggledHidden();
+                $showWeek = $sortColumn === 'votes_per_week' || ! $table->getColumn('votes_per_week')->isToggledHidden();
 
                 $avgVotes = static fn (string $interval): Builder => User::query()
                     ->selectRaw('round(coalesce(avg(interval_groups.count), 0), 2)')
