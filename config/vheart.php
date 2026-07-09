@@ -24,6 +24,8 @@ return [
             // as the clip with the most, we can still configure later though if we need to.
             // https://www.desmos.com/calculator/pu5hu8bpev
             'interaction_boost_exponent' => (int) env('VHEART_CLIPS_VOTING_INTERACTION_BOOST_EXPONENT', 4),
+
+            'maximum_change_age' => CarbonInterval::fromString((string) env('VHEART_CLIPS_VOTING_MAXIMUM_CHANGE_AGE', '5 minutes')),
         ],
         'scoring' => [
             'jury_weight' => (int) env('VHEART_CLIPS_SCORING_JURY_WEIGHT', 10),
