@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Users\Tables;
 
 use App\Filament\AdminPanel\Actions\Ban\BanAction;
+use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -18,6 +19,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Database\Query\Builder as BuilderContract;
 use Illuminate\Database\Eloquent\Builder;
 
 class UsersTable
@@ -26,7 +28,19 @@ class UsersTable
     {
         return $table
             ->modifyQueryUsing(function (Builder $query): void {
-                $query->whereNot('id', 0);
+                $avgVotes = static fn (string $interval): Builder => User::query()
+                    ->selectRaw('round(coalesce(avg(interval_groups.count), 0), 2)')
+                    ->fromSub(fn (BuilderContract $subQuery): BuilderContract => $subQuery
+                        ->selectRaw('count(*) as count')
+                        ->from('votes')
+                        ->whereColumn('votes.user_id', 'users.id')
+                        ->groupByRaw("date_trunc('$interval', votes.created_at)"), 'interval_groups');
+
+                $query
+                    ->whereNot('id', 0)
+                    ->withCount('votes')
+                    ->selectSub($avgVotes('day'), 'votes_per_day')
+                    ->selectSub($avgVotes('week'), 'votes_per_week');
             })
             ->columns([
                 TextColumn::make('id')
@@ -40,7 +54,23 @@ class UsersTable
                 TextColumn::make('name')
                     ->searchable()
                     ->label('Name'),
-                TextColumn::make('roles.name')->label('Roles')->toggleable()->badge(),
+                TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->toggleable()
+                    ->badge(),
+                TextColumn::make('votes_count')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
+
+                TextColumn::make('votes_per_day')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Votes per Day')
+                    ->sortable(),
+
+                TextColumn::make('votes_per_week')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->label('Votes per Week')
+                    ->sortable(),
             ])
             ->filters([
                 TrashedFilter::make(),
