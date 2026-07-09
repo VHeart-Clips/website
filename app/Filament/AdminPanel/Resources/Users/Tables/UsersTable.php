@@ -27,7 +27,11 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): void {
+            ->modifyQueryUsing(function (Builder $query, Table $table): void {
+                $showCount = ! $table->getColumn('votes_count')->isToggledHidden();
+                $showDay = ! $table->getColumn('votes_per_day')->isToggledHidden();
+                $showWeek = ! $table->getColumn('votes_per_week')->isToggledHidden();
+
                 $avgVotes = static fn (string $interval): Builder => User::query()
                     ->selectRaw('round(coalesce(avg(interval_groups.count), 0), 2)')
                     ->fromSub(fn (BuilderContract $subQuery): BuilderContract => $subQuery
@@ -37,10 +41,18 @@ class UsersTable
                         ->groupByRaw("date_trunc('$interval', votes.created_at)"), 'interval_groups');
 
                 $query
-                    ->whereNot('id', 0)
-                    ->withCount('votes')
-                    ->selectSub($avgVotes('day'), 'votes_per_day')
-                    ->selectSub($avgVotes('week'), 'votes_per_week');
+                    ->select('users.*')
+                    ->whereNot('users.id', 0);
+
+                if ($showCount) {
+                    $query->withCount('votes');
+                } else {
+                    $query->selectSub('0', 'votes_count');
+                }
+
+                $query
+                    ->selectSub($showDay ? $avgVotes('day') : '0', 'votes_per_day')
+                    ->selectSub($showWeek ? $avgVotes('week') : '0', 'votes_per_week');
             })
             ->columns([
                 TextColumn::make('id')
