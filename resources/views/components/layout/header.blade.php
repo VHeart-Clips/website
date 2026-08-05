@@ -78,7 +78,13 @@
                                 </x-ui.dropdown.item>
                             @endfeature
 
-                            @featureAny([FeatureFlag::UserDashboard, FeatureFlag::UserSettings])
+                            @feature(FeatureFlag::UserStatistics)
+                                <x-ui.dropdown.item href="{{ route('user.statistics') }}">
+                                    {{ __('navigation.statistics') }}
+                                </x-ui.dropdown.item>
+                            @endfeature
+
+                            @featureAny([FeatureFlag::UserDashboard, FeatureFlag::UserSettings,FeatureFlag::UserStatistics])
                                 <x-ui.dropdown.separator/>
                             @endfeatureAny
 
