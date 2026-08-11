@@ -23,6 +23,14 @@ class StatisticsController extends Controller
                 ->submittedClips()
                 ->count()
         );
+        $clipsSubmittedWeek = Cache::remember(
+            $cacheKey.'.clipsSubmittedWeek',
+            now()->addMinute(),
+            fn () => $user
+                ->submittedClips()
+                ->where('created_at', '>=', now()->startOfWeek())
+                ->count()
+        );
 
         $votes = Cache::remember(
             $cacheKey.'.votes',
@@ -31,6 +39,16 @@ class StatisticsController extends Controller
                 ->votes()
                 ->count()
         );
+
+        $votesWeek = Cache::remember(
+            $cacheKey.'.votesWeek',
+            now()->addMinute(),
+            fn () => $user
+                ->votes()
+                ->where('created_at', '>=', now()->startOfWeek())
+                ->count()
+        );
+
         $votes30Days = Cache::remember(
             $cacheKey.'.votes30Days',
             now()->addMinute(),
@@ -42,7 +60,9 @@ class StatisticsController extends Controller
 
         return view('statistics', [
             'clipsSubmitted' => $clipsSubmitted,
+            'clipsSubmittedWeek' => $clipsSubmittedWeek,
             'votes' => $votes,
+            'votesWeek' => $votesWeek,
             'votes30Days' => $votes30Days,
         ]);
     }

@@ -42,14 +42,19 @@ return [
             'clips-submitted' => [
                 'title' => 'Submitted Clips',
                 'details' => 'View Submitted Clips',
+                'stats' => [
+                    'total' => 'Total',
+                    'week' => 'This Week',
+                ],
             ],
             'votes' => [
                 'title' => 'Votes',
                 'details' => 'View Votes',
-            ],
-            'votes-30days' => [
-                'title' => 'Votes Last 30 Days',
-                'details' => 'View Votes',
+                'stats' => [
+                    'total' => 'Total',
+                    'week' => 'This Week',
+                    '30days' => 'Last 30 Days',
+                ],
             ],
         ],
     ],

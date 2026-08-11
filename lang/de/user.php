@@ -42,14 +42,19 @@ return [
             'clips-submitted' => [
                 'title' => 'Eingereichte Clips',
                 'details' => 'Eingereichte Clips Anzeigen',
+                'stats' => [
+                    'total' => 'Total',
+                    'week' => 'Diese Woche',
+                ],
             ],
             'votes' => [
                 'title' => 'Votes',
                 'details' => 'Votes Anzeigen',
-            ],
-            'votes-30days' => [
-                'title' => 'Votes Last 30 Days',
-                'details' => 'Votes Anzeigen',
+                'stats' => [
+                    'total' => 'Total',
+                    'week' => 'Diese Woche',
+                    '30days' => 'Letzte 30 Tage',
+                ],
             ],
         ],
     ],
