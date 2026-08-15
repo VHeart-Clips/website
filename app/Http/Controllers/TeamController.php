@@ -19,7 +19,7 @@ class TeamController extends Controller
             ->orderBy('id')
             ->with([
                 // i think this is the fairest way to sort it
-                'users' => fn (Relation $builder): Relation => $builder->orderBy('id')]
+                'users' => fn (Relation $builder): Relation => $builder->orderByRaw('LOWER(name)')]
             )
             ->get();
 
