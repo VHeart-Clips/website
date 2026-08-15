@@ -8,6 +8,8 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant landscape-voting (@media (max-height: 560px) and (orientation: landscape));
+@custom-variant too-small-voting (@media ((max-height: 250px) or (max-aspect-ratio: 2/1)) and ((max-height: 560px) and (orientation: landscape)));
 
 @layer base {
     * {
