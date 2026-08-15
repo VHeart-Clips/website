@@ -22,7 +22,7 @@
         "laravel/octane": "^2.17",
         "laravel/tinker": "^3.0.0",
         "laravel/wayfinder": "^0.1.15",
-        "mallardduck/blade-lucide-icons": "^1.26",
+        "mallardduck/blade-lucide-icons": "^2.0",
         "outhebox/blade-flags": "^1.7",
         "sentry/sentry-laravel": "^4.24",
         "socialiteproviders/twitch": "^5.4",
