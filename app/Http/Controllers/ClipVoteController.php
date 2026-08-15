@@ -7,9 +7,11 @@ namespace App\Http\Controllers;
 use App\Actions\GenerateVotingQueueAction;
 use App\Enums\ClipVoteType;
 use App\Enums\Permission;
+use App\Http\Requests\VoteChangeRequest;
 use App\Http\Resources\Clip\ClipVoteResource;
 use App\Models\Clip;
 use App\Models\Scopes\ClipPermissionScope;
+use App\Models\Vote;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,7 +19,7 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-#[Middleware('throttle:10,1', only: ['store'])]
+#[Middleware('throttle:10,1', only: ['store', 'update'])]
 class ClipVoteController extends Controller
 {
     private const string SESSION_QUEUE_KEY = 'CLIP_VOTE_QUEUE';
@@ -95,6 +97,24 @@ class ClipVoteController extends Controller
         $nextClip = $this->resolveNextClip($request);
 
         return new JsonResponse($nextClip?->toResource(ClipVoteResource::class));
+    }
+
+    public function update(VoteChangeRequest $request): SymfonyResponse
+    {
+        $voteId = $request->integer('voteId');
+        $voted = $request->boolean('voted');
+
+        $vote = Vote::find($voteId);
+
+        $vote->update([
+            'voted' => $voted,
+        ]);
+
+        if (! $request->expectsJson()) {
+            return back(fallback: route('user.statistics.votes'));
+        }
+
+        return new JsonResponse(true);
     }
 
     protected function resolveNextClip(Request $request): ?Clip

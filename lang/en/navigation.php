@@ -31,4 +31,5 @@ return [
     'team_dashboard' => 'Team Dashboard',
     'settings' => 'Settings',
     'logout' => 'Logout',
+    'statistics' => 'Statistics',
 ];
