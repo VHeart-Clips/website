@@ -23,4 +23,13 @@ class Vote extends Model
     {
         return $this->BelongsTo(User::class);
     }
+
+    #[Scope]
+    protected function whereConsideredStable(Builder $query): Builder
+    {
+        /** @var CarbonInterval $maxAge */
+        $maxAge = config('vheart.clips.voting.maximum_age');
+
+        return $query->where('created_at', '>=', now()->sub($maxAge));
+    }
 }

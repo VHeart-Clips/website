@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use Carbon\CarbonInterval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -37,6 +36,7 @@ class StatisticsController extends Controller
             now()->addMinute(),
             fn () => $user
                 ->votes()
+                ->whereConsideredStable()
                 ->count()
         );
 
@@ -45,6 +45,7 @@ class StatisticsController extends Controller
             now()->addMinute(),
             fn () => $user
                 ->votes()
+                ->whereConsideredStable()
                 ->where('created_at', '>=', now()->startOfWeek())
                 ->count()
         );
@@ -54,7 +55,8 @@ class StatisticsController extends Controller
             now()->addMinute(),
             fn () => $user
                 ->votes()
-                ->where('created_at', '>=', now()->sub(CarbonInterval::fromString(('30 days'))))
+                ->whereConsideredStable()
+                ->where('created_at', '>=', now()->subDays(30))
                 ->count()
         );
 
