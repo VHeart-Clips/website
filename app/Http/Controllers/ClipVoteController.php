@@ -19,8 +19,7 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-#[Middleware('throttle:10,1', only: ['store'])]
-#[Middleware('throttle:10,1', only: ['update'])]
+#[Middleware('throttle:10,1', only: ['store', 'update'])]
 class ClipVoteController extends Controller
 {
     private const string SESSION_QUEUE_KEY = 'CLIP_VOTE_QUEUE';
