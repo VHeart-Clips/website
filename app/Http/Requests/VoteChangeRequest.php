@@ -50,7 +50,7 @@ class VoteChangeRequest extends FormRequest
                     ->orderByDesc('id')
                     ->first() ?? null;
 
-                if ($allowedVoteToChange === null || $allowedVoteToChange->id !== $voteId) {
+                if ($allowedVoteToChange?->id !== $voteId) {
 
                     $validator->errors()->add('voteId', __('vote.errors.change_not_allowed'));
 
