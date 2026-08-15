@@ -75,6 +75,10 @@ return [
         'aside' => [
             'total_votes' => 'Total votes for this Clip so far',
             'nothing_left' => 'We can\'t find any Clips for you to vote. Please come back later.',
+            'screen_not_supported' => [
+                'message' => 'Not enough space, rotate your device or use a larger screen.',
+                'try_fullscreen' => 'Try in Fullscreen',
+            ],
         ],
         'maintenance' => 'Updating, hold a moment...',
         'ban' => [
