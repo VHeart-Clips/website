@@ -36,8 +36,10 @@ export interface ClipVoteConfig {
 
 type VoteStatus = 'ok' | 'maintenance' | 'banned';
 type VoteResult = { status: VoteStatus; clip?: ClipVoteResource | null };
+type VoteBarSide = 'left' | 'right';
 
 export interface ClipVoteData extends ClipVoteConfig {
+    barSide: VoteBarSide;
     timeLeft: number;
     isLoading: boolean;
     isMaintenanceMode: boolean;
@@ -59,6 +61,7 @@ export interface ClipVoteData extends ClipVoteConfig {
 
 export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
     ...config,
+    barSide: 'right',
     timeLeft: 0,
     isLoading: false,
     isMaintenanceMode: false,
