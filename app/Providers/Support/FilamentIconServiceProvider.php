@@ -238,6 +238,7 @@ class FilamentIconServiceProvider extends ServiceProvider
     {
         FilamentIcon::register([
             WidgetsIconAlias::CHART_WIDGET_FILTER => LucideIcon::Funnel,
+            WidgetsIconAlias::CHART_WIDGET_EMPTY_STATE => LucideIcon::XCircle,
         ]);
     }
 
