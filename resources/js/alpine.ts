@@ -41,6 +41,7 @@ document.addEventListener('alpine:init', () => {
             () => import('@/components/filament/clip-overlay'),
         ],
         ['clipVote', () => import('@/components/vote')],
+        ['fullscreenToggle', () => import('@/components/fullscreen-toggle')],
     ];
 
     asyncComponents.forEach(([componentName, importFn]) => {

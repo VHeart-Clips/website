@@ -75,6 +75,10 @@ return [
         'aside' => [
             'total_votes' => 'Bisherige stimmen für diesen Clip',
             'nothing_left' => 'Wir finden gerade nix was du Voten könntest. Komme bitte später nochmal vorbei!',
+            'screen_not_supported' => [
+                'message' => 'Zu wenig platz, versuche dein Gerät zu drehen oder versuche es auf einem anderen Bildschirm.',
+                'try_fullscreen' => 'Versuche den Vollbild modus',
+            ],
         ],
         'maintenance' => 'Wird aktualisiert, gleich geht es weiter...',
         'ban' => [
