@@ -73,7 +73,7 @@
 
             </section>
 
-            @if ($allowVoteTochange)
+            @if ($allowVoteTochange||$vote->id == old('voteId'))
                 <x-ui.input.error>
                     @error('voteId') {{ $message }} @enderror
                 </x-ui.input.error>
