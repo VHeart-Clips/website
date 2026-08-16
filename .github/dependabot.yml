@@ -49,6 +49,10 @@ updates:
         update-types:
           - "minor"
           - "patch"
+      composer-rector:
+        dependency-type: development
+        patterns:
+          - 'rector/rector'
       composer-dev:
         dependency-type: "development"
         update-types:
