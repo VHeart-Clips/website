@@ -1,6 +1,6 @@
 <x-layout
 class="max-w-5xl w-full mx-auto space-y-6"
-:title="__('user.statistics.title')"
+:title="__('user.statistics_details.title',['name' => __('user.statistics_details.votes.name')])"
 >
 
     <div class="m-auto py-8">
