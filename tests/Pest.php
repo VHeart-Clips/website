@@ -19,6 +19,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithCachedRoutes;
 use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\ServiceProvider as AbstractServiceProvider;
@@ -26,6 +27,8 @@ use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider as AbstractSocialiteProvider;
 use Tests\TestCase;
+
+pest()->use(WithCachedRoutes::class);
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
