@@ -5,7 +5,7 @@
     @endphp
 
     @if ($allowVoteTochange)
-        <form action="{{ route('user.statistics.votes') }}" method="POST">
+        <form action="{{ route('user.statistics.votes.update') }}" method="POST">
             <input type="hidden" value="{{ $vote->id }}" name="voteId">
             <input type="hidden" value="{{ $vote->voted ? '0' : '1' }}" name="voted">
     @endif
