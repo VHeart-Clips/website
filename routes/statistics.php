@@ -15,5 +15,5 @@ Route::middleware(['auth', FeatureFlagGuard::of(FeatureFlag::UserStatistics)])
     ->group(function () {
         Route::get('/', StatisticsController::class);
         Route::get('/votes', VotesController::class)->name('.votes');
-        Route::post('/votes', [ClipVoteController::class, 'update'])->name('.votes');
+        Route::post('/votes', [ClipVoteController::class, 'update'])->name('.votes.update');
     });
