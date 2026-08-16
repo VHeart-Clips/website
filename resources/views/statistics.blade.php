@@ -47,7 +47,10 @@
                 </table>
             </x-ui.card.content>
             <x-ui.card.footer>
-
+                <x-ui.button variant="ghost" href="{{ route('user.statistics.clips') }}" class="border border-gray-200 dark:border-white/20">
+                    <x-lucide-info/>
+                    {{ __('user.statistics.stats.clips-submitted.details') }}
+                </x-ui.button>
             </x-ui.card.footer>
         </x-ui.card>
         <x-ui.card variant="glass">

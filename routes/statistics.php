@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\FeatureFlag;
 use App\Http\Controllers\ClipVoteController;
+use App\Http\Controllers\Statistics\SubmittedClipsController;
 use App\Http\Controllers\Statistics\VotesController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Middleware\FeatureFlagGuard;
@@ -16,4 +17,5 @@ Route::middleware(['auth', FeatureFlagGuard::of(FeatureFlag::UserStatistics)])
         Route::get('/', StatisticsController::class);
         Route::get('/votes', VotesController::class)->name('.votes');
         Route::post('/votes', [ClipVoteController::class, 'update'])->name('.votes.update');
+        Route::get('/clips', SubmittedClipsController::class)->name('.clips');
     });

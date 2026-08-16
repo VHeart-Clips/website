@@ -59,6 +59,7 @@ return [
         ],
     ],
     'statistics_details' => [
+        'title' => 'Account Statistics - :name',
         'infinite-loader' => [
             'no-more' => 'There are no more :name',
             'nothing-found' => 'No :name found',
@@ -67,6 +68,12 @@ return [
         'votes' => [
             'name' => 'Votes',
             'heading' => 'Your Votes',
+            'subheading' => '',
+            'description' => '',
+        ],
+        'submitted-clips' => [
+            'name' => 'Submitted Clips',
+            'heading' => 'Your Submitted Clips',
             'subheading' => '',
             'description' => '',
         ],
