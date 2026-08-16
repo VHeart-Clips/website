@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8bf0061cc99afb64a6af583640c3288a",
+    "content-hash": "d505423a4f012e0acf8cefd9037b6b41",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -9983,22 +9983,21 @@
         },
         {
             "name": "tales-from-a-dev/tailwind-merge-php",
-            "version": "v0.3.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tales-from-a-dev/tailwind-merge-php.git",
-                "reference": "48ecbb5c87ebcc521a344a6d3bfeec9720af00da"
+                "reference": "d20c0f87dd70207170903e4af5e8ee6a26cc8a7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tales-from-a-dev/tailwind-merge-php/zipball/48ecbb5c87ebcc521a344a6d3bfeec9720af00da",
-                "reference": "48ecbb5c87ebcc521a344a6d3bfeec9720af00da",
+                "url": "https://api.github.com/repos/tales-from-a-dev/tailwind-merge-php/zipball/d20c0f87dd70207170903e4af5e8ee6a26cc8a7c",
+                "reference": "d20c0f87dd70207170903e4af5e8ee6a26cc8a7c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
-                "psr/simple-cache": "^3.0",
-                "symfony/string": "^6.4 || ^7.0 || ^8.0"
+                "psr/simple-cache": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.89",
@@ -10035,9 +10034,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tales-from-a-dev/tailwind-merge-php/issues",
-                "source": "https://github.com/tales-from-a-dev/tailwind-merge-php/tree/v0.3.0"
+                "source": "https://github.com/tales-from-a-dev/tailwind-merge-php/tree/v0.4.0"
             },
-            "time": "2026-05-11T09:52:11+00:00"
+            "time": "2026-08-14T11:26:04+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
