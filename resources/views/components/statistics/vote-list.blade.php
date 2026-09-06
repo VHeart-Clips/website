@@ -56,7 +56,7 @@
 
                 <div class="flex justify-end gap-4 items-center w-100 mr-0.5" >
                     <x-ui.report.button
-                        :items="[[ 'type' => 'clip','id' => '$vote->clip->id' ]]"
+                        :items="[[ 'type' => 'clip','id' => $vote->clip->id ]]"
                     />
                     <div class="flex justify-end gap-2 items-center">
                         <x-ui.tooltip>
