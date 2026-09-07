@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
+use App\Notifications\Admin\UserMentionedInCommentNotification;
+use Kirschbaum\Commentions\Comment;
+use Kirschbaum\Commentions\Listeners\SendUserMentionedNotification;
+use Kirschbaum\Commentions\Policies\CommentPolicy;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -12,6 +18,7 @@ return [
         'comments' => 'comments',
         'comment_reactions' => 'comment_reactions',
         'comment_subscriptions' => 'comment_subscriptions',
+        'comment_attachments' => 'comment_attachments',
     ],
 
     /*
@@ -20,7 +27,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'commenter' => [
-        'model' => App\Models\User::class,
+        'model' => User::class,
     ],
 
     /*
@@ -29,8 +36,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'comment' => [
-        'model' => Kirschbaum\Commentions\Comment::class,
-        'policy' => App\Policies\CommentPolicy::class,
+        'model' => Comment::class,
+        'policy' => CommentPolicy::class,
     ],
 
     /*
@@ -40,6 +47,99 @@ return [
     */
     'reactions' => [
         'allowed' => ['👍', '❤️', '😂', '😮', '😢', '🤔'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Ratings
+    |--------------------------------------------------------------------------
+    |
+    | Allow a star rating to be attached to a comment. Disabled by default;
+    | enable globally here or per component with
+    | CommentsEntry::make()->enableRatings().
+    |
+    */
+    'ratings' => [
+        'enabled' => env('COMMENTIONS_RATINGS_ENABLED', false),
+
+        'max' => (int) env('COMMENTIONS_RATINGS_MAX', 5),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Editor toolbar
+    |--------------------------------------------------------------------------
+    |
+    | The formatting toolbar shown above the comment editor. Set `enabled` to
+    | false to hide it globally, or override the buttons per component with
+    | CommentsEntry::make()->toolbarButtons([...]). Buttons may be a flat list
+    | or grouped into arrays to render visual separators between groups.
+    |
+    | Available buttons: bold, italic, underline, strike, h1, h2, h3,
+    | blockquote, bulletList, orderedList, code, link.
+    |
+    */
+    'toolbar' => [
+        'enabled' => env('COMMENTIONS_TOOLBAR_ENABLED', false),
+
+        'buttons' => [
+            ['bold', 'italic', 'underline'],
+            ['bulletList', 'orderedList'],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Avatar provider
+    |--------------------------------------------------------------------------
+    |
+    | Class name of a Filament-compatible avatar provider used to resolve a
+    | URL for the comment author when the user does not implement HasAvatar.
+    | Must expose a `get(Model|Authenticatable $user): string` method.
+    | Examples: Filament\AvatarProviders\UiAvatarsProvider::class,
+    | Choose a 3rd party Filament Gravatar plugin and register it on the panel
+    |
+    | When null, Commentions falls back to the active Filament panel's
+    | default avatar provider (if any), and finally to ui-avatars.com.
+    |
+    */
+    'avatar_provider' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attachments
+    |--------------------------------------------------------------------------
+    |
+    | File attachments on comments. Disabled by default; enable globally here
+    | or per component with CommentsEntry::make()->enableAttachments(). Files
+    | are stored on the configured filesystem disk.
+    |
+    */
+    'attachments' => [
+        'enabled' => env('COMMENTIONS_ATTACHMENTS_ENABLED', false),
+
+        'disk' => env('COMMENTIONS_ATTACHMENTS_DISK', 'public'),
+
+        'directory' => env('COMMENTIONS_ATTACHMENTS_DIRECTORY', 'commentions-attachments'),
+
+        // Maximum size per file, in kilobytes.
+        'max_size' => (int) env('COMMENTIONS_ATTACHMENTS_MAX_SIZE', 10240),
+
+        // Maximum number of files per comment.
+        'max_files' => (int) env('COMMENTIONS_ATTACHMENTS_MAX_FILES', 5),
+
+        // Accepted MIME types, validated against the file's actual contents.
+        // The defaults below cover common images and documents. Setting this
+        // to an empty array allows ANY file type — avoid this on a public
+        // disk, since it permits files browsers execute in-origin (such as
+        // image/svg+xml or text/html) to be served from your app's URL.
+        'accepted_mime_types' => [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+            'text/plain',
+        ],
     ],
 
     /*
@@ -76,8 +176,8 @@ return [
 
             'channels' => explode(',', env('COMMENTIONS_NOTIFICATIONS_MENTIONS_CHANNELS', 'database')),
 
-            'listener' => Kirschbaum\Commentions\Listeners\SendUserMentionedNotification::class,
-            'notification' => App\Notifications\Admin\UserMentionedInCommentNotification::class,
+            'listener' => SendUserMentionedNotification::class,
+            'notification' => UserMentionedInCommentNotification::class,
 
             'mail' => [
                 'subject' => env('COMMENTIONS_NOTIFICATIONS_MENTIONS_MAIL_SUBJECT', 'You were mentioned in a comment'),
