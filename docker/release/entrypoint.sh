@@ -45,7 +45,11 @@ if [ "$INSTANCE" = "web" ]; then
     /app/artisan storage:link --force
 
     echo "[Entrypoint] Cache Routes..."
-    /app/artisan route:cache
+    # we rather want a slow production than no production at all lol
+    if ! /app/artisan route:cache; then
+        echo "[Entrypoint] Could not build Route cache 💀"
+        /app/artisan route:clear || true # just in case
+    fi
 
     echo "[Entrypoint] Starting FrankenPHP..."
     exec php -d variables_order=EGPCS /app/artisan octane:start \
