@@ -120,7 +120,7 @@ return [
 
         'disk' => env('COMMENTIONS_ATTACHMENTS_DISK', 'public'),
 
-        'directory' => env('COMMENTIONS_ATTACHMENTS_DIRECTORY', 'commentions-attachments'),
+        'directory' => env('COMMENTIONS_ATTACHMENTS_DIRECTORY', 'commentions/attachments'),
 
         // Maximum size per file, in kilobytes.
         'max_size' => (int) env('COMMENTIONS_ATTACHMENTS_MAX_SIZE', 10240),
