@@ -4187,16 +4187,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "2.0.10",
+            "version": "2.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "8cf8d24063935ced8a03a2498a492595f17c454c"
+                "reference": "51b3b2bc9c369108f7049b820c685136d73702ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/8cf8d24063935ced8a03a2498a492595f17c454c",
-                "reference": "8cf8d24063935ced8a03a2498a492595f17c454c",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/51b3b2bc9c369108f7049b820c685136d73702ff",
+                "reference": "51b3b2bc9c369108f7049b820c685136d73702ff",
                 "shasum": ""
             },
             "require": {
@@ -4241,9 +4241,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.10"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.12"
             },
-            "time": "2026-09-01T03:20:48+00:00"
+            "time": "2026-09-04T02:42:23+00:00"
         },
         {
             "name": "monolog/monolog",
