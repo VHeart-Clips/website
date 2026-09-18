@@ -93,6 +93,7 @@ class BanInfolist
                     ]),
 
                 CommentsEntry::make('discussion')
+                    ->enableAttachments()
                     ->mentionables(fn (Model $record) => User::query()
                         ->whereHas('roles', fn (Builder $q): Builder => $q
                             ->whereHas(

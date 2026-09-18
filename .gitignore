@@ -5,11 +5,9 @@
 /public/hot
 /public/storage
 /public/locales
-/public/css/filament
-/public/css/kirschbaum-development
-/public/fonts/filament
-/public/js/filament
-/public/js/kirschbaum-development
+/public/css
+/public/fonts
+/public/js
 /resources/js/actions
 /resources/js/routes
 /resources/js/wayfinder
