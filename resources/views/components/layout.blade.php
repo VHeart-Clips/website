@@ -4,7 +4,8 @@
     "description" => null,
     'ogImage' => null,
     'background' => true,
-    "robots" => "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    "robots" => "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    "discordEmbedUrl" => route('embed.discord.default')
 ])
 @php
     $title ??= config('app.name', 'Laravel') . ' - Streamer Clip Compilations für den Tierschutz.';
@@ -29,6 +30,7 @@
 
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
+    <link rel="discord:component-embed" type="application/json" href="{{ $discordEmbedUrl }}">
     <link rel="canonical" href="{{ request()->has('cursor') ? url()->full() : url()->current() }}">
     <link rel="author" href="{{ route('team') }}">
 
