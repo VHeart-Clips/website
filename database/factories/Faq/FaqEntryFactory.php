@@ -21,15 +21,15 @@ class FaqEntryFactory extends Factory
     {
         return [
             'title' => $this->translations(['en', 'de'], [
-                $this->faker->unique()->sentence(),
-                $this->faker->unique()->sentence(),
+                fake()->unique()->sentence(),
+                fake()->unique()->sentence(),
             ]),
             'body' => $this->translations(['en', 'de'], [
-                $this->faker->paragraph(),
-                $this->faker->paragraph(),
+                fake()->paragraph(),
+                fake()->paragraph(),
             ]),
-            'order' => $this->faker->numberBetween(1, 10),
-            'published_at' => $this->faker->date(),
+            'order' => fake()->numberBetween(1, 10),
+            'published_at' => fake()->date(),
         ];
     }
 }

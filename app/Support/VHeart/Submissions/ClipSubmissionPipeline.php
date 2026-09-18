@@ -44,7 +44,6 @@ readonly class ClipSubmissionPipeline
 
     /**
      * @param  class-string<ClipSubmissionRule>|array<class-string<ClipSubmissionRule>>  $rules  Rules to remove based on a condition
-     * @return $this
      */
     public function withoutIf(string|array $rules, bool $condition): static
     {
@@ -61,7 +60,6 @@ readonly class ClipSubmissionPipeline
 
     /**
      * @param  ClipSubmissionRule|ClipSubmissionRule[]  $rules  Rules to add based on a condition
-     * @return $this
      */
     public function withIf(ClipSubmissionRule|array $rules, bool $condition = true): static
     {

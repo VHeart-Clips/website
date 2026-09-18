@@ -24,7 +24,7 @@ class ReportFactory extends Factory
      */
     public function definition(): array
     {
-        $reportable = $this->faker->randomElement([
+        $reportable = fake()->randomElement([
             User::factory(),
             Clip::factory(),
         ])->create();
@@ -33,8 +33,8 @@ class ReportFactory extends Factory
             'user_id' => User::factory(),
             'reportable_id' => $reportable->id,
             'reportable_type' => $reportable->getMorphClass(),
-            'reason' => $this->faker->randomElement(ReportReason::cases()),
-            'description' => $this->faker->paragraph(),
+            'reason' => fake()->randomElement(ReportReason::cases()),
+            'description' => fake()->paragraph(),
             'status' => ReportStatus::Pending,
             'resolve_action' => null,
             'claimed_by' => null,
@@ -62,7 +62,7 @@ class ReportFactory extends Factory
     {
         return $this->state(fn (array $attributes): array => [
             'status' => ReportStatus::Resolved,
-            'resolve_action' => $resolveAction ?? $this->faker->randomElement(ResolveAction::cases()),
+            'resolve_action' => $resolveAction ?? fake()->randomElement(ResolveAction::cases()),
             'resolved_by' => $user ?? User::factory(),
             'resolved_at' => now(),
             'deleted_at' => now(),

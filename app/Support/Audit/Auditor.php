@@ -120,7 +120,7 @@ class Auditor
         $ip = Request::ip();
         $ua = Request::userAgent();
 
-        if ($this->anonymize && $this->causer) {
+        if ($this->anonymize && $this->causer instanceof Model) {
             $ip = $this->maskIp($ip);
             $ua = $ua ? hash('sha256', $ua) : null;
         } elseif (! $this->causer instanceof Model) {

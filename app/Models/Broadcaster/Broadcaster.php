@@ -237,12 +237,20 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
         ];
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereOnboarded(Builder $query): Builder
     {
         return $query->whereNotNull('onboarded_at');
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereHasGivenNoConsent(Builder $query): Builder
     {
@@ -267,7 +275,9 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
      *
      * @param  BroadcasterConsent|Collection<int, BroadcasterConsent>|array<BroadcasterConsent>|null  $consents
      *
-     * @throws JsonException
+     * @param Builder<static> $query
+     * @return Builder<static>
+     *@throws JsonException
      */
     #[Scope]
     protected function whereHasGivenConsent(
@@ -320,6 +330,10 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
         };
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereGaveTwitchModPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null): Builder
     {

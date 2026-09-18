@@ -59,7 +59,7 @@ class ReportAction extends Action
         $this->disabled(function (?Model $record): bool {
             $target = $this->resolveReportable($record);
 
-            if (! $target || ! method_exists($target, 'reports')) {
+            if (! $target instanceof Model || ! method_exists($target, 'reports')) {
                 return true;
             }
 

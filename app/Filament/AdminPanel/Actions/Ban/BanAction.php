@@ -110,7 +110,7 @@ class BanAction extends Action
 
         $target = $related instanceof Model ? $related : $record;
 
-        if ($target && ! in_array(Bannable::class, class_uses_recursive($target))) {
+        if ($target instanceof Model && ! in_array(Bannable::class, class_uses_recursive($target))) {
             if (app()->isLocal()) {
                 $class = $target::class;
                 $recordClass = $record::class;

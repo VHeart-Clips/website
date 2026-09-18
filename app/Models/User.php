@@ -29,6 +29,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -101,9 +102,9 @@ class User extends Authenticatable implements Commentable, Commenter, FilamentUs
         return parent::hasVerifiedEmail();
     }
 
-    public function getPasswordAttribute(): ?string
+    protected function password(): Attribute
     {
-        return null;
+        return Attribute::make(get: static fn (): null => null);
     }
 
     /**

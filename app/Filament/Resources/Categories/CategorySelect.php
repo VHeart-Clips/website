@@ -90,7 +90,7 @@ class CategorySelect extends Select
             ->getOptionLabelUsing(function (string $value, TwitchService $twitchService, ImportCategoryAction $importCategoryAction): ?string {
                 $resolved = $this->resolveCategory((int) $value, $twitchService, $importCategoryAction);
 
-                if (! $resolved || $resolved->id === 0) {
+                if (! $resolved instanceof Category || $resolved->id === 0) {
                     return null;
                 }
 

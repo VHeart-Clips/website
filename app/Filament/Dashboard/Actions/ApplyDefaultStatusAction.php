@@ -48,7 +48,7 @@ class ApplyDefaultStatusAction extends Action
             ->color('warning')
             ->modalIcon(LucideIcon::TriangleAlert)
             ->modalWidth(Width::Prose)
-            ->disabled(fn (): bool => ! $this->resolveDefaultClipStatus()
+            ->disabled(fn (): bool => ! $this->resolveDefaultClipStatus() instanceof ClipStatus
                 || RateLimiter::tooManyAttempts($this->getRateLimitKey(), self::RATE_LIMIT_MAX_ATTEMPTS)
                 || $this->clipsEligibleForReset()->exists() === false
             )

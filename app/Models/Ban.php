@@ -72,18 +72,30 @@ class Ban extends Model
         return $this->unbanned_at?->isNowOrPast() ?? false;
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     public function wherePermanent(Builder $query): Builder
     {
         return $query->whereNull('banned_until');
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     public function whereTemporary(Builder $query): Builder
     {
         return $query->whereNotNull('banned_until');
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereActive(Builder $query): Builder
     {
@@ -95,6 +107,10 @@ class Ban extends Model
             );
     }
 
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereExpired(Builder $query): Builder
     {
