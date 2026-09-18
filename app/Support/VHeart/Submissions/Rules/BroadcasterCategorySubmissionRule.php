@@ -26,6 +26,7 @@ readonly class BroadcasterCategorySubmissionRule implements ClipSubmissionRule
         if ($this->hasEmptyCategoryAllowlist($context->broadcaster())) {
             return true;
         }
+
         return $this->hasAllowedCategory($context->broadcaster(), $gameId);
     }
 

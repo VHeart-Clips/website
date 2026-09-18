@@ -64,7 +64,7 @@ class Role extends Model
 
     /**
      * @param  Permission|Collection<int, Permission>|array<Permission>  $permissions
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     #[Scope]

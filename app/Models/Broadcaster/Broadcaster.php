@@ -238,7 +238,7 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     #[Scope]
@@ -248,7 +248,7 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     #[Scope]
@@ -274,10 +274,10 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
      * - {@see SetOperator::Exact} Will only include Broadcasters who **exactly** have the input Consents
      *
      * @param  BroadcasterConsent|Collection<int, BroadcasterConsent>|array<BroadcasterConsent>|null  $consents
-     *
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
-     *@throws JsonException
+     *
+     * @throws JsonException
      */
     #[Scope]
     protected function whereHasGivenConsent(
@@ -331,7 +331,7 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     #[Scope]

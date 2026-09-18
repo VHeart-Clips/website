@@ -66,7 +66,7 @@ class BroadcasterTeamMember extends Model
     }
 
     /**
-     * @param Builder<static> $query
+     * @param  Builder<static>  $query
      * @return Builder<static>
      */
     #[Scope]

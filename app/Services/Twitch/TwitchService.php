@@ -61,8 +61,7 @@ class TwitchService
         #[SensitiveParameter] ?string $refreshToken = null,
         #[SensitiveParameter] ?string $accessToken = null,
         ?Closure $onRefresh = null
-    ): self
-    {
+    ): self {
         if ($user instanceof User && ! $refreshToken) {
             $refreshToken = $user->twitch_refresh_token;
         }

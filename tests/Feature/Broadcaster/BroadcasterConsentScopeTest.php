@@ -80,7 +80,6 @@ describe('whereHasGivenConsent scope', function () {
                 SetOperator::AnyMissing
             )->get();
 
-
         expect($result)->toHaveCount(3)
             ->pluck('id')->all()->toEqual([1, 2, 4]);
     });

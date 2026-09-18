@@ -7,6 +7,7 @@ namespace App\Jobs\Discord;
 use App\Events\Discord\DiscordWebhookDied;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
@@ -27,7 +28,7 @@ use JustinKluever\DiscordWebhookBuilder\Webhook;
 #[Queue('discord-webhooks')]
 abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
 {
-    use \Illuminate\Foundation\Queue\Queueable;
+    use Queueable;
 
     /**
      * The Webhook Payload we should send to discord
