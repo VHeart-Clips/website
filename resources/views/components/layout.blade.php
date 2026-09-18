@@ -78,6 +78,9 @@
     <meta name="twitter:description" content="{{ $description }}">
     <meta name="twitter:image" content="{{ $ogImage }}">
     <meta name="twitter:image:alt" content="{{ $title }}">
+
+    {{ $meta ?? '' }}
+
     {{-- Performance related stuff, i would like to use preconnect but that would bypass our cookie stuff, dns prefetch should be fine though --}}
     <link rel="dns-prefetch" href="https://clips.twitch.tv">
     <link rel="dns-prefetch" href="https://clips-media-assets2.twitch.tv">
