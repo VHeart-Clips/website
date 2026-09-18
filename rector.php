@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector;
+use Rector\Php85\Rector\Property\AddOverrideAttributeToOverriddenPropertiesRector;
 use RectorLaravel\Set\LaravelSetList;
-use RectorLaravel\Set\LaravelSetProvider;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -14,8 +15,8 @@ return RectorConfig::configure()
         __DIR__.'/public',
     ])
     ->withSkip([
-        Rector\Php83\Rector\ClassMethod\AddOverrideAttributeToOverriddenMethodsRector::class,
-        Rector\Php85\Rector\Property\AddOverrideAttributeToOverriddenPropertiesRector::class,
+        AddOverrideAttributeToOverriddenMethodsRector::class,
+        AddOverrideAttributeToOverriddenPropertiesRector::class,
     ])
     ->withPreparedSets(
         deadCode: true,
@@ -23,9 +24,6 @@ return RectorConfig::configure()
         typeDeclarations: true,
         privatization: true,
         earlyReturn: true,
-    )
-    ->withSetProviders(
-        LaravelSetProvider::class
     )
     ->withComposerBased(laravel: true)
     ->withSets([
