@@ -10,8 +10,8 @@ use SensitiveParameter;
 readonly class TwitchUserContext
 {
     /**
-     * @param positive-int $userId
-     * @param (Closure(string $accessToken, string $refreshToken, int $expiresIn): void)|null $onRefresh
+     * @param  positive-int  $userId
+     * @param  (Closure(string $accessToken, string $refreshToken, int $expiresIn): void)|null  $onRefresh
      */
     public function __construct(
         public int $userId,
@@ -31,8 +31,7 @@ readonly class TwitchUserContext
         int $userId,
         #[SensitiveParameter] string $refreshToken,
         #[SensitiveParameter] ?string $accessToken = null
-    ): self
-    {
+    ): self {
         return new self(
             userId: $userId,
             accessToken: $accessToken,
@@ -47,8 +46,7 @@ readonly class TwitchUserContext
     public function withTokens(
         #[SensitiveParameter] string $accessToken,
         #[SensitiveParameter] string $refreshToken
-    ): self
-    {
+    ): self {
         return clone ($this, [
             'accessToken' => $accessToken,
             'refreshToken' => $refreshToken,

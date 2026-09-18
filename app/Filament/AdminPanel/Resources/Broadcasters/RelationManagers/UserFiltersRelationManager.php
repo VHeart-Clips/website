@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Broadcasters\RelationManagers;
 
 use App\Filament\Resources\Users\UserSelect;
-use App\Models\Broadcaster\BroadcasterSubmissionFilter;
 use App\Models\User;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Operation;

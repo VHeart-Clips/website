@@ -27,6 +27,10 @@ class Vote extends Model
         return $this->BelongsTo(User::class);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereConsideredStable(Builder $query): Builder
     {

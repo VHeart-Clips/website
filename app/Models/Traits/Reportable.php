@@ -6,8 +6,8 @@ namespace App\Models\Traits;
 
 use App\Enums\Reports\ReportStatus;
 use App\Models\Report;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**

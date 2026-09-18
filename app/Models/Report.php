@@ -59,24 +59,36 @@ class Report extends Model implements Commentable
         return $this->morphTo();
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function unclaimed(Builder $query): void
     {
         $query->whereNull('claimed_by');
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function claimed(Builder $query): void
     {
         $query->whereNotNull('claimed_by');
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function claimedBy(Builder $query, User|int $user): void
     {
         $query->where('claimed_by', $user instanceof User ? $user->id : $user);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function claimedByMe(Builder $query): void
     {

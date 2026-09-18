@@ -237,12 +237,20 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
         ];
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereOnboarded(Builder $query): Builder
     {
         return $query->whereNotNull('onboarded_at');
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereHasGivenNoConsent(Builder $query): Builder
     {
@@ -266,6 +274,8 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
      * - {@see SetOperator::Exact} Will only include Broadcasters who **exactly** have the input Consents
      *
      * @param  BroadcasterConsent|Collection<int, BroadcasterConsent>|array<BroadcasterConsent>|null  $consents
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      *
      * @throws JsonException
      */
@@ -320,6 +330,10 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
         };
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereGaveTwitchModPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null): Builder
     {

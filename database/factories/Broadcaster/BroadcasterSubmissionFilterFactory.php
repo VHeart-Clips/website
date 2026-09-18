@@ -23,7 +23,7 @@ class BroadcasterSubmissionFilterFactory extends Factory
      */
     public function definition(): array
     {
-        $filterableClass = $this->faker->randomElement([
+        $filterableClass = fake()->randomElement([
             User::class,
             Category::class,
         ]);
@@ -32,7 +32,7 @@ class BroadcasterSubmissionFilterFactory extends Factory
             'broadcaster_id' => Broadcaster::factory(),
             'filterable_id' => $filterableClass::factory(),
             'filterable_type' => (new $filterableClass)->getMorphClass(),
-            'state' => $this->faker->randomElement([true, false]),
+            'state' => fake()->randomElement([true, false]),
         ];
     }
 
@@ -68,8 +68,6 @@ class BroadcasterSubmissionFilterFactory extends Factory
 
     /**
      * Allows you to set any model, make sure its implementing the HasFactory trait lol
-     *
-     * @return $this
      */
     public function filterModel(Model $model): static
     {

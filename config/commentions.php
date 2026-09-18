@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
+use App\Notifications\Admin\UserMentionedInCommentNotification;
+use App\Policies\CommentPolicy;
+use Kirschbaum\Commentions\Comment;
+use Kirschbaum\Commentions\Listeners\SendUserMentionedNotification;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -20,7 +26,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'commenter' => [
-        'model' => App\Models\User::class,
+        'model' => User::class,
     ],
 
     /*
@@ -29,8 +35,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'comment' => [
-        'model' => Kirschbaum\Commentions\Comment::class,
-        'policy' => App\Policies\CommentPolicy::class,
+        'model' => Comment::class,
+        'policy' => CommentPolicy::class,
     ],
 
     /*
@@ -76,8 +82,8 @@ return [
 
             'channels' => explode(',', env('COMMENTIONS_NOTIFICATIONS_MENTIONS_CHANNELS', 'database')),
 
-            'listener' => Kirschbaum\Commentions\Listeners\SendUserMentionedNotification::class,
-            'notification' => App\Notifications\Admin\UserMentionedInCommentNotification::class,
+            'listener' => SendUserMentionedNotification::class,
+            'notification' => UserMentionedInCommentNotification::class,
 
             'mail' => [
                 'subject' => env('COMMENTIONS_NOTIFICATIONS_MENTIONS_MAIL_SUBJECT', 'You were mentioned in a comment'),

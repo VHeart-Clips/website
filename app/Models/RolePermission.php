@@ -16,7 +16,10 @@ class RolePermission extends Pivot
 {
     use HasFactory;
 
-    protected $casts = [
-        'permission' => Permission::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'permission' => Permission::class,
+        ];
+    }
 }

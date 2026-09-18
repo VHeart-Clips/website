@@ -65,6 +65,10 @@ class BroadcasterTeamMember extends Model
         ];
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereHasPermission(Builder $query, BroadcasterPermission|Collection|array|null $permissions = null): Builder
     {

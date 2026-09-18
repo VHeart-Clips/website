@@ -12,6 +12,7 @@
         "php": "^8.5",
         "ext-mbstring": "*",
         "ext-zip": "*",
+        "ext-pdo": "*",
         "blade-ui-kit/blade-icons": "^1.9",
         "filament/filament": "^5.4",
         "flowframe/laravel-trend": "^0.5.0",

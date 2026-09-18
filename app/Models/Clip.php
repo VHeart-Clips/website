@@ -45,6 +45,7 @@ use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Attributes\UseResource;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -258,9 +259,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         return $this->belongsTo(User::class, 'added_by');
     }
 
-    public function getReportableTitleAttribute(): string
+    protected function reportableTitle(): Attribute
     {
-        return 'title';
+        return Attribute::make(get: static fn (): string => 'title');
     }
 
     protected function casts(): array
@@ -275,6 +276,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * add rules/filters here to limit what can be voted on.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereEligibleForVoting(Builder $query, ?User $user = null): Builder
@@ -303,24 +307,40 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             );
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereArchived(Builder $query): Builder
     {
         return $query->whereNotNull(['final_jury_votes', 'final_public_votes', 'final_score']);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereNotBlocked(Builder $query): Builder
     {
         return $query->whereNot('status', ClipStatus::Blocked);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereNotArchived(Builder $query): Builder
     {
         return $query->whereNull(['final_jury_votes', 'final_public_votes', 'final_score']);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
     #[Scope]
     protected function whereShouldRefresh(Builder $query): Builder
     {
@@ -333,6 +353,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      * Get Clips that should be archived
      *
      * We will allow a 1 week buffer before we permanently archive clips though, just in case something changes
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereEligibleForArchival(Builder $query): Builder
@@ -355,6 +378,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips that has been Submitted before a date
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereSubmittedAfter(Builder $query, DateTimeInterface $dateTime): Builder
@@ -364,6 +390,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips that has been Clipped before a date
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereClippedAfter(Builder $query, DateTimeInterface $dateTime): Builder
@@ -373,6 +402,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Include only Clips where the broadcaster has explicitly granted content use permission.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereBroadcasterGavePermission(
@@ -391,6 +423,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips where the Broadcaster (and related user) have active bans
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereBroadcasterHasNoActiveBans(Builder $query): Builder
@@ -406,6 +441,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips where the broadcaster has not granted content use permission.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereBroadcasterDeniedPermission(Builder $query): Builder
@@ -421,6 +459,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips that are considered published
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereNotPublished(Builder $query): Builder
@@ -440,6 +481,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips that user has voted on
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereNoVotesFrom(Builder $query, User|int $userOrId): Builder
@@ -451,6 +495,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Include only Clips that user has voted on
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereVotesFrom(Builder $query, User|int $userOrId): Builder
@@ -462,6 +509,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips the user has Broadcasted
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereNotBroadcastBy(Builder $query, User|int $userOrId): Builder
@@ -473,6 +523,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips the user has Created/Clipped
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereNotCreatedBy(Builder $query, User|int $userOrId): Builder
@@ -484,6 +537,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Exclude Clips the user has Submitted
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereNotSubmittedBy(Builder $query, User|int $userOrId): Builder
@@ -495,6 +551,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Include only Clips the user has Broadcasted
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereBroadcastBy(Builder $query, User|int $userOrId): Builder
@@ -506,6 +565,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Counts absolute votes as `absolute_votes`
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function withAbsoluteVoteCount(Builder $query): Builder
@@ -525,6 +587,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Counts absolute impressions as `absolute_impressions`
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function withAbsoluteImpressionCount(Builder $query): Builder
@@ -543,6 +608,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Calculates the Clip Score as `score`
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function withScore(Builder $query): Builder
@@ -582,6 +650,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Counts public votes as `public_votes`.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function withPublicVoteCount(Builder $query): Builder
@@ -602,6 +673,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
     /**
      * Counts jury votes as `jury_votes`.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function withJuryVoteCount(Builder $query): Builder
@@ -624,6 +698,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      * Counts Votes
      * - Jury votes as `jury_votes`
      * - Public votes as `public_votes`
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function withVoteCount(Builder $query): Builder
