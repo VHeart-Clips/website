@@ -34,6 +34,7 @@ class ViewUser extends ViewRecord
             CommentsAction::make()
                 ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
                 ->authorize('comment')
+                ->enableAttachments()
                 ->perPage(4)
                 ->loadMoreIncrementsBy(8)
                 ->modalWidth(Width::SevenExtraLarge),

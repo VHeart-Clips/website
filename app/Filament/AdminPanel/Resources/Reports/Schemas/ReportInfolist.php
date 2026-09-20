@@ -170,6 +170,7 @@ class ReportInfolist
                     ->schema([
                         CommentsEntry::make('comments')
                             ->hiddenLabel()
+                            ->enableAttachments()
                             ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get()),
                     ]),
             ]);
