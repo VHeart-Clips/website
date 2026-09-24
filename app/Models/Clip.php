@@ -627,25 +627,48 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             ->selectRaw('COUNT(*)')
             ->whereColumn('clip_id', 'clips.id');
 
-        return $query->selectSub(
-            Vote::query()
-                ->selectRaw(
-                    'COALESCE(
-                        final_score,
-                        ROUND(
-                            POWER(
-                                COUNT(*) FILTER (WHERE voted = true)::float
-                                / NULLIF(('.$impressionsSub->toSql().')::float, 0),
-                                ?
-                            ) * SUM(CASE WHEN type = ?::integer THEN ?::integer ELSE ?::integer END) FILTER (WHERE voted = true)
-                        )::integer,
-                        0
-                    )',
-                    [$impressionRatioExponent, ClipVoteType::Jury->value, $juryWeight, $publicWeight]
+        $base = '
+            COALESCE(
+                final_score,
+                ROUND(
+                    POWER(
+                        COUNT(*) FILTER (WHERE voted = true)::float
+                        / NULLIF(('.$impressionsSub->toSql().')::float, 0),
+                        ?
+                    ) * SUM(CASE WHEN type = ?::integer THEN ?::integer ELSE ?::integer END) FILTER (WHERE voted = true)
+                )::integer,
+                0
+            )';
+        $baseBindings = [$impressionRatioExponent, ClipVoteType::Jury->value, $juryWeight, $publicWeight];
+
+        if (! Feature::isActive(FeatureFlag::ClipScoreTimeDecay)) {
+            return $query->selectSub(
+                Vote::query()->selectRaw($base, $baseBindings)->whereColumn('clip_id', 'clips.id'),
+                'score'
+            );
+        }
+
+        $sql = "
+        (
+            SELECT ROUND(
+                s.base * GREATEST(
+                    POWER(0.5, EXTRACT(EPOCH FROM (NOW() - s.ref)) / 86400.0 / ?),
+                    ?
                 )
-                ->whereColumn('clip_id', 'clips.id'),
-            'score'
-        );
+            )::integer
+            FROM (
+                SELECT $base AS base,
+                    COALESCE(MAX(votes.created_at) FILTER (WHERE voted = true), clips.created_at) AS ref
+                FROM votes
+                WHERE votes.clip_id = clips.id
+            ) s
+        ) AS score";
+
+        return $query->selectRaw($sql, [
+            max(0.1, (float) config('vheart.clips.scoring.decay.half_life_days', 60)),
+            clamp((float) config('vheart.clips.scoring.decay.floor_ratio', 0.1), 0.0, 1.0),
+            ...$baseBindings,
+        ]);
     }
 
     /**

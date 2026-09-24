@@ -68,4 +68,8 @@ enum FeatureFlag: string implements HasLabel
     #[Description('Allows the broadcasters to submit removal requests from their dashboard')]
     #[DefaultFeatureFlagState(true)]
     case BroadcasterRemovalRequestsDashboard = 'broadcaster_removal_requests_dashboard';
+
+    #[Description('If enabled, Clip Scores will be decayed over time based on the last positive interaction with the clip.')]
+    #[DefaultFeatureFlagState(true)]
+    case ClipScoreTimeDecay = 'clip_score_time_decay';
 }

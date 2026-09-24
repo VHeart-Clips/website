@@ -31,6 +31,13 @@ return [
             'jury_weight' => (int) env('VHEART_CLIPS_SCORING_JURY_WEIGHT', 10),
             'public_weight' => (int) env('VHEART_CLIPS_SCORING_PUBLIC_WEIGHT', 1),
             'impression_ratio_exponent' => (float) env('VHEART_CLIPS_SCORING_IMPRESSION_EXPONENT', 1),
+            'decay' => [
+                // by default clips with a score of 100 will decay to 50 after 60 days and 25 after 120 based on the last positive interaction
+                'half_life_days' => (float) env('VHEART_CLIP_DECAY_HALF_LIFE_DAYS', 60),
+                // we want to keep the relative sorting as much as possible so we dont go lover than x%
+                // by default this will keep the 100 score clip to a minimum of 10 even after years of decay
+                'floor_ratio' => (float) env('VHEART_CLIP_DECAY_FLOOR_RATIO', 0.1),
+            ],
         ],
     ],
 ];
