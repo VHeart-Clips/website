@@ -1,2 +1,17 @@
 User-agent: *
-Disallow:
+Disallow: /admin$
+Disallow: /admin/
+Disallow: /dashboard$
+Disallow: /dashboard/
+Disallow: /login$
+Disallow: /auth/
+Disallow: /settings$
+Disallow: /settings/
+Disallow: /statistics$
+Disallow: /statistics/
+Disallow: /email/
+Disallow: /cookie-consent/
+Disallow: /filament/
+Disallow: /locales$
+
+Sitemap: https://vheart.net/sitemap.xml
