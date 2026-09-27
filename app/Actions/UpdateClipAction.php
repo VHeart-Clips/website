@@ -27,7 +27,7 @@ class UpdateClipAction
 
         $updates = array_filter(
             $updates,
-            static fn (mixed $value, string $key): bool => $clip->getOriginal($key) !== $value,
+            static fn (mixed $value, string $key): bool => ! array_key_exists($key, $clip->getAttributes()) || $clip->getOriginal($key) !== $value,
             ARRAY_FILTER_USE_BOTH
         );
 
