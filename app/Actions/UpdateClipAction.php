@@ -25,6 +25,12 @@ class UpdateClipAction
             $updates = array_filter($updates, static fn (mixed $value): bool => $value !== null);
         }
 
+        $updates = array_filter(
+            $updates,
+            static fn (mixed $value, string $key): bool => $clip->getOriginal($key) !== $value,
+            ARRAY_FILTER_USE_BOTH
+        );
+
         Log::debug('Updating Clip', [
             'clip_id' => $clip->id,
             'clip_slug' => $clip->twitch_id,
