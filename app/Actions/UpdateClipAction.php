@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\Models\Clip;
 use App\Services\Twitch\Data\ClipDto;
+use Illuminate\Support\Facades\Log;
 
 class UpdateClipAction
 {
@@ -23,6 +24,12 @@ class UpdateClipAction
         if ($ignoreNullValues) {
             $updates = array_filter($updates, static fn (mixed $value): bool => $value !== null);
         }
+
+        Log::debug('Updating Clip', [
+            'clip_id' => $clip->id,
+            'clip_slug' => $clip->twitch_id,
+            'updated' => array_keys($updates),
+        ]);
 
         if ($updateNextRefreshAfter) {
             $updates['next_refresh_after'] = $clip->getNextRefreshAfter();
