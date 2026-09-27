@@ -25,6 +25,7 @@ class UpdateClipAction
             $updates = array_filter($updates, static fn (mixed $value): bool => $value !== null);
         }
 
+        // if we have the original state to compare with omit the attribute from the update array if both are the same
         $updates = array_filter(
             $updates,
             static fn (mixed $value, string $key): bool => ! array_key_exists($key, $clip->getAttributes()) || $clip->getOriginal($key) !== $value,
