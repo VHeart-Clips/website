@@ -69,7 +69,7 @@ class UpdateClipsBatchJob implements ShouldQueue
         $clips = Clip::query()
             ->withoutGlobalScope(ClipPermissionScope::class)
             ->whereIn('id', $this->clipIds)
-            ->get(['id', 'date', 'twitch_id']);
+            ->get(['id', 'date', 'twitch_id', 'title', 'thumbnail_url', 'vod_id', 'vod_offset']);
 
         if ($clips->isEmpty()) {
             return;
