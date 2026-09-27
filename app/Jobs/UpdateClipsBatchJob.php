@@ -91,6 +91,8 @@ class UpdateClipsBatchJob implements ShouldQueue
                 $updateClipAction->execute($clip, $clipDto, $this->columnsToUpdate ?? [
                     'title',
                     'thumbnail_url',
+                    'vod_id',
+                    'vod_offset',
                 ], updateNextRefreshAfter: $this->shouldUpdateNextRefreshAfter);
             }
         });
