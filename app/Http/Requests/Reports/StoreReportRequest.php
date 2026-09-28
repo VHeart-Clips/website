@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Reports;
 
-use App\Enums\Reports\ReportReason;
+use App\Enums\Reports\ReportCategoryDetailsType;
+use App\Models\ReportCategory;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,12 +42,16 @@ class StoreReportRequest extends FormRequest
             ],
             'reason' => [
                 'required',
-                Rule::enum(ReportReason::class),
+                'integer',
+                Rule::exists('report_categories', 'id'),
             ],
             'description' => [
                 'nullable',
                 Rule::requiredIf(
-                    fn (): bool => $this->enum('reason', ReportReason::class) === ReportReason::Other,
+                    fn (): bool => ReportCategory::query()
+                        ->where('id', $this->integer('reason'))
+                        ->where('details_type', ReportCategoryDetailsType::Required)
+                        ->exists(),
                 ),
                 'string',
                 'max:1000',
