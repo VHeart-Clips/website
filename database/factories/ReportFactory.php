@@ -33,7 +33,7 @@ class ReportFactory extends Factory
             'user_id' => User::factory(),
             'reportable_id' => $reportable->id,
             'reportable_type' => $reportable->getMorphClass(),
-            'category' => ReportCategory::factory(),
+            'category_id' => ReportCategory::factory(),
             'description' => fake()->paragraph(),
             'status' => ReportStatus::Pending,
             'resolve_action' => null,
