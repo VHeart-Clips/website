@@ -28,6 +28,14 @@ enum Permission: string implements HasLabel
     case RestoreAnyReport = 'restore_any_report';
     case ForceDeleteAnyReport = 'force_delete_any_report';
 
+    // ReportCategory
+    case ViewAnyReportCategory = 'view_any_report_category';
+    case CreateReportCategory = 'create_report_category';
+    case UpdateAnyReportCategory = 'update_any_report_category';
+    case DeleteAnyReportCategory = 'delete_any_report_category';
+    case RestoreAnyReportCategory = 'restore_any_report_category';
+    case ForceDeleteAnyReportCategory = 'force_delete_any_report_category';
+
     // Compilation
     case ViewAnyCompilation = 'view_any_compilation';
     case CreateCompilation = 'create_compilation';
