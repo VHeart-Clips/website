@@ -35,6 +35,7 @@ class ReportCategoryFactory extends Factory
             'reportable_types' => null,
             'is_note' => false,
             'details_type' => ReportCategoryDetailsType::Optional,
+            'sort_order' => 0,
         ];
     }
 
