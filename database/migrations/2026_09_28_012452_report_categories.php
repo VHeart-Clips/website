@@ -29,5 +29,19 @@ return new class extends Migration
 
             $table->index(['parent_id', 'sort_order']);
         });
+
+        Schema::table('reports', function (Blueprint $table): void {
+            $table->foreignId('category_id')
+                ->nullable() // TODO: make sure to remove the nullable state in future migrations after everything is properly migrated
+                ->after('user_id')
+                ->constrained('report_categories')
+                ->restrictOnDelete();
+
+            // TODO: make sure to remove in the future
+            $table->unsignedInteger('reason')
+                ->nullable()
+                ->comment('deprecated by category_id, will be removed in future migrations')
+                ->change();
+        });
     }
 };

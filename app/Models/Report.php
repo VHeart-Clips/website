@@ -59,6 +59,11 @@ class Report extends Model implements Commentable
         return $this->morphTo();
     }
 
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ReportCategory::class);
+    }
+
     /**
      * @param  Builder<static>  $query
      */

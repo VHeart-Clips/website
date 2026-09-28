@@ -7,6 +7,9 @@ namespace App\Enums\Reports;
 use App\Enums\Traits\HasTranslatedLabel;
 use Filament\Support\Contracts\HasLabel;
 
+/**
+ * @deprecated Replaced by Report Categories, will be removed in the future
+ */
 enum ReportReason: int implements HasLabel
 {
     use HasTranslatedLabel;
