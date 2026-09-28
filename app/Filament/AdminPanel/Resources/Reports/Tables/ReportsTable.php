@@ -27,6 +27,7 @@ class ReportsTable
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
                 'reportable' => fn (Relation $q): Relation => $q->withTrashed(),
                 'reporter' => fn (Relation $q): Relation => $q->withTrashed(),
+                'category' => fn (Relation $q): Relation => $q->withTrashed(),
             ]))
             ->columns([
                 TextColumn::make('id')
