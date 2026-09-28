@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -124,7 +125,7 @@ class ReportAction extends Action
             Select::make('category_id')
                 ->label('reports.modal.inputs.reason.label')
                 ->options(fn (?Model $record): Collection => ReportCategory::query()
-                    ->where(fn ($q) => $q
+                    ->where(fn (Builder $q) => $q
                         ->whereNull('reportable_types')
                         ->orWhereJsonContains('reportable_types', $record?->getMorphClass()))
                     ->orderBy('sort_order')

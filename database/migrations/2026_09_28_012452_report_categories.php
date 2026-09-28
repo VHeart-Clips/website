@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('report_categories', function (Blueprint $table) {
+        Schema::create('report_categories', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('parent_id')
                 ->nullable()

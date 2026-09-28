@@ -40,7 +40,7 @@ class ReportCategoryFactory extends Factory
 
     public function childOf(ReportCategory|int|null|self $parent = null): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'parent_id' => $parent ?? ReportCategory::factory(),
         ]);
     }
@@ -50,6 +50,6 @@ class ReportCategoryFactory extends Factory
      */
     public function forTypes(array $types): static
     {
-        return $this->state(fn () => ['reportable_types' => $types]);
+        return $this->state(fn (): array => ['reportable_types' => $types]);
     }
 }

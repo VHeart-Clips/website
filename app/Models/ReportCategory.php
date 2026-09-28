@@ -31,11 +31,17 @@ class ReportCategory extends Model
         'description',
     ];
 
+    /**
+     * @return BelongsTo<ReportCategory, $this>
+     */
     public function parentCategory(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
+    /**
+     * @return HasMany<ReportCategory, $this>
+     */
     public function subCategories(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id')
@@ -43,11 +49,17 @@ class ReportCategory extends Model
             ->orderBy('id');
     }
 
+    /**
+     * @return HasMany<Report, $this>
+     */
     public function reports(): HasMany
     {
         return $this->hasMany(Report::class, 'category_id');
     }
 
+    /**
+     * @return HasManyThrough<Report, ReportCategory, $this>
+     */
     public function subCategoryReports(): HasManyThrough
     {
         return $this->hasManyThrough(Report::class, self::class, 'parent_id', 'category_id');
