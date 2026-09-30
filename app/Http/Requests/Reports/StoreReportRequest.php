@@ -63,6 +63,13 @@ class StoreReportRequest extends FormRequest
                         ->where('details_type', ReportCategoryDetailsType::Required)
                         ->exists(),
                 ),
+                // TODO: uncomment if frontend has been refactored to support this flag properly
+                // Rule::prohibitedIf(
+                //     fn (): bool => ReportCategory::query()
+                //         ->where('id', $this->integer('reason'))
+                //         ->where('details_type', ReportCategoryDetailsType::Disabled)
+                //         ->exists(),
+                // ),
                 'string',
                 'max:1000',
             ],
