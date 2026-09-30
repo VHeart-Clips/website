@@ -1,4 +1,10 @@
 @use(App\Models\ReportCategory)
+@php
+    $categories = ReportCategory::query()
+        ->orderBy('sort_order')
+        ->orderBy('id')
+        ->get()
+@endphp
 <x-ui.modal
     id="report-modal"
     component="reportModal('{{ __('reports.modal.title', ['reportable' => '__REPORTABLE_LABEL__']) }}')"
@@ -42,7 +48,7 @@
                         required
                         class="mt-2 flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none dark:border-gray-700 dark:bg-gray-800"
                     >
-                        @foreach (ReportCategory::query()->orderBy('sort_order')->orderBy('id')->get() as $category)
+                        @foreach ($categories as $category)
                             <option data-details="{{ $category->details_type->value }}" value="{{ $category->id }}">{{ $category->name }}</option>
                         @endforeach
                     </select>
