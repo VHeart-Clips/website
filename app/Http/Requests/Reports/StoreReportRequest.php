@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Requests\Reports;
 
 use App\Enums\Reports\ReportCategoryDetailsType;
+use App\Enums\Reports\ReportCategoryReportableType;
 use App\Models\ReportCategory;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,24 +30,32 @@ class StoreReportRequest extends FormRequest
      */
     public function rules(): array
     {
-        $morphKeys = array_keys(Relation::morphMap());
+        $reportableType = $this->enum('reportable_type', ReportCategoryReportableType::class);
 
         return [
             'reportable_type' => [
-                'bail',
                 'required',
-                Rule::in($morphKeys),
+                Rule::enum(ReportCategoryReportableType::class),
             ],
             'reportable_id' => [
                 'required',
-                Rule::exists(Relation::getMorphedModel($this->input('reportable_type')), 'id'),
+                Rule::exists(Relation::getMorphedModel($reportableType?->value), 'id'),
             ],
             'reason' => [
+                'bail',
                 'required',
                 'integer',
-                Rule::exists('report_categories', 'id'),
+                Rule::exists('report_categories', 'id')->where(
+                    fn (Builder $query) => $query->where(
+                        fn (Builder $query) => $query
+                            ->whereNull('reportable_types')
+                            ->orWhereJsonLength('reportable_types', 0)
+                            ->orWhereJsonContains('reportable_types', $reportableType),
+                    ),
+                ),
             ],
             'description' => [
+                'bail',
                 'nullable',
                 Rule::requiredIf(
                     fn (): bool => ReportCategory::query()
