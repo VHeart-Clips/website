@@ -42,7 +42,10 @@ class ReportCategoryPolicy
 
     public function forceDelete(User $user, ReportCategory $reportCategory): bool
     {
-        if ($reportCategory->subCategories()->count() > 0 || $reportCategory->reports()->count() > 0) {
+        if (
+            $reportCategory->subCategories()->withTrashed()->count() > 0
+            || $reportCategory->reports()->withTrashed()->count() > 0
+        ) {
             return false;
         }
 
