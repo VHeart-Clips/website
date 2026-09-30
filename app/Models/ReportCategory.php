@@ -8,6 +8,8 @@ use App\Enums\Reports\ReportCategoryDetailsType;
 use App\Enums\Reports\ReportCategoryReportableType;
 use App\Models\Traits\Auditable;
 use Database\Factories\ReportCategoryFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 use Spatie\Translatable\HasTranslations;
 
 class ReportCategory extends Model
@@ -71,6 +74,25 @@ class ReportCategory extends Model
     {
         static::creating(static function (self $category): void {
             $category->sort_order ??= (static::withTrashed()->max('sort_order') ?? -1) + 1;
+        });
+    }
+
+    /**
+     * @param  Builder<self>  $query
+     * @param  ReportCategoryReportableType|string|array<int, ReportCategoryReportableType|string>  $types
+     */
+    #[Scope]
+    protected function whereAppliesToReportableType(Builder $query, ReportCategoryReportableType|array|string $types): void
+    {
+        $types = Arr::wrap($types);
+
+        $query->where(function (Builder $query) use ($types) {
+            $query->whereNull('reportable_types')
+                ->orWhereJsonLength('reportable_types', 0);
+
+            foreach ($types as $type) {
+                $query->orWhereJsonContains('reportable_types', $type);
+            }
         });
     }
 
