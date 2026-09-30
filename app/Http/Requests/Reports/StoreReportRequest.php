@@ -47,6 +47,12 @@ class StoreReportRequest extends FormRequest
                 'bail',
                 'required',
                 'integer',
+                Rule::prohibitedIf(
+                    fn (): bool => ReportCategory::query()
+                        ->where('id', $this->integer('reason'))
+                        ->whereIsNote(true)
+                        ->exists(),
+                ),
                 Rule::exists('report_categories', 'id')->where(
                     fn (Builder $query) => $query->where(
                         fn (Builder $query) => $query
