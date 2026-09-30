@@ -1,6 +1,7 @@
 @use(App\Models\ReportCategory)
 @php
     $categories = ReportCategory::query()
+        ->whereIsNote(false)
         ->orderBy('parent_id')
         ->orderBy('sort_order')
         ->orderBy('id')
