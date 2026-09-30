@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\Reports\ReportCategoryDetailsType;
+use App\Enums\Reports\ReportCategoryReportableType;
 use App\Models\Traits\Auditable;
 use Database\Factories\ReportCategoryFactory;
+use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -79,7 +81,7 @@ class ReportCategory extends Model
             'summary' => 'json:unicode',
             'description' => 'json:unicode',
             'details_type' => ReportCategoryDetailsType::class,
-            'reportable_types' => 'json',
+            'reportable_types' => AsEnumCollection::of(ReportCategoryReportableType::class),
             'is_note' => 'boolean',
             'sort_order' => 'integer',
         ];
