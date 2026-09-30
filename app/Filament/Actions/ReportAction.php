@@ -16,7 +16,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -32,7 +31,7 @@ class ReportAction extends Action
 
         $this->icon(LucideIcon::Flag)
             ->color('danger')
-            ->schema($this::getReportModalSchema())
+            ->schema($this->getReportModalSchema())
             ->label(function (?Model $record): string {
                 $target = $this->resolveReportable($record);
 
@@ -119,19 +118,22 @@ class ReportAction extends Action
         return $record;
     }
 
-    private static function getReportModalSchema(): array
+    private function getReportModalSchema(): array
     {
         return [
             Select::make('category_id')
                 ->label('reports.modal.inputs.reason.label')
-                ->options(fn (?Model $record): Collection => ReportCategory::query()
-                    ->where(fn (Builder $q) => $q
-                        ->whereNull('reportable_types')
-                        ->orWhereJsonContains('reportable_types', $record?->getMorphClass()))
-                    ->orderBy('sort_order')
-                    ->orderBy('id')
-                    ->get()
-                    ->mapWithKeys(fn (ReportCategory $c): array => [$c->id => $c->name]))
+                ->options(function (?Model $record): Collection {
+                    $target = $this->resolveReportable($record);
+
+                    return ReportCategory::query()
+                        ->whereIsNote(false)
+                        ->when($target, fn ($query) => $query->whereAppliesToReportableType($target->getMorphClass()))
+                        ->orderBy('sort_order')
+                        ->orderBy('id')
+                        ->get()
+                        ->mapWithKeys(fn (ReportCategory $c): array => [$c->id => $c->name]);
+                })
                 ->searchable()
                 ->live()
                 ->translateLabel()
