@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Enums\Reports\ReportCategoryDetailsType;
+use App\Enums\Reports\ReportCategoryReportableType;
 use App\Enums\Reports\ReportReason;
 use App\Models\Report;
 use App\Models\ReportCategory;
@@ -70,6 +71,10 @@ class ReportCategorySeeder extends Seeder
                     'en' => 'The streamer uses AI-generated content, e.g. for their avatar, overlay, or background.',
                 ],
                 'details_type' => ReportCategoryDetailsType::Required,
+                'reportable_types' => [
+                    ReportCategoryReportableType::Clip,
+                    ReportCategoryReportableType::Broadcaster,
+                ],
                 'sort_order' => 3,
             ]);
 
@@ -83,6 +88,9 @@ class ReportCategorySeeder extends Seeder
                     'en' => 'The clip has been removed on Twitch and can no longer be played.',
                 ],
                 'details_type' => ReportCategoryDetailsType::Disabled,
+                'reportable_types' => [
+                    ReportCategoryReportableType::Clip,
+                ],
                 'sort_order' => 4,
             ]);
 
