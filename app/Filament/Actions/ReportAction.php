@@ -132,9 +132,16 @@ class ReportAction extends Action
                         ->orderBy('sort_order')
                         ->orderBy('id')
                         ->get()
-                        ->mapWithKeys(fn (ReportCategory $c): array => [$c->id => $c->name]);
+                        ->mapWithKeys(fn (ReportCategory $c): array => [
+                            $c->id => '<div class="font-medium text-gray-950 dark:text-white">'.e($c->name).'</div>'
+                                .($c->summary
+                                    ? '<div class="text-xs text-gray-600 dark:text-gray-400">'.e($c->summary).'</div>'
+                                    : ''
+                                ),
+                        ]);
                 })
                 ->searchable()
+                ->allowHtml()
                 ->live()
                 ->translateLabel()
                 ->required(),
