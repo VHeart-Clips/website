@@ -78,7 +78,7 @@ class ReportCategory extends Model
     }
 
     /**
-     * @param  Builder<self>  $query
+     * @param  Builder<static>  $query
      * @param  ReportCategoryReportableType|string|array<int, ReportCategoryReportableType|string>  $types
      */
     #[Scope]
@@ -86,7 +86,7 @@ class ReportCategory extends Model
     {
         $types = Arr::wrap($types);
 
-        $query->where(function (Builder $query) use ($types) {
+        $query->where(function (Builder $query) use ($types): void {
             $query->whereNull('reportable_types')
                 ->orWhereJsonLength('reportable_types', 0);
 
