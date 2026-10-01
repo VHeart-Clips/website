@@ -19,15 +19,6 @@ class VotesChartWidget extends ChartWidget
         return auth()->user()->can(Permission::ViewAnyUser);
     }
 
-    protected function getFilters(): ?array
-    {
-        return [
-            'day' => 'Last 24 Hours',
-            'week' => 'Last 7 days',
-            'month' => 'Last 30 days',
-        ];
-    }
-
     protected function getData(): array
     {
         [$start, $interval, $labelFn] = $this->getCurrentFilter();
