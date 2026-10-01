@@ -44,11 +44,6 @@ class UserVotesWidget extends ChartWidget
     protected function getCurrentFilter(): array
     {
         return match ($this->filter ?? 'day') {
-            'day' => [
-                now()->subDay()->startOfHour(),
-                'perHour',
-                fn (string $d): string => Carbon::parse($d)->format('H:i'),
-            ],
             'week' => [
                 now()->subDays(6)->startOfDay(),
                 'perDay',
@@ -70,10 +65,10 @@ class UserVotesWidget extends ChartWidget
                 fn (string $d): string => Carbon::parse($d)->format('M Y'),
             ],
             default => [
-                now()->subDays(6)->startOfDay(),
-                'perDay',
-                fn (string $d): string => Carbon::parse($d)->format('D'),
-            ],
+                now()->subDay()->startOfHour(),
+                'perHour',
+                fn (string $d): string => Carbon::parse($d)->format('H:i'),
+            ]
         };
     }
 
