@@ -15,6 +15,8 @@ class UserVotesWidget extends ChartWidget
 {
     public ?Model $record = null;
 
+    public ?string $filter = 'day';
+
     protected ?string $maxHeight = '200px';
 
     protected int|string|array $columnSpan = 2;
@@ -31,20 +33,52 @@ class UserVotesWidget extends ChartWidget
     protected function getFilters(): ?array
     {
         return [
+            'day' => 'Last 24 Hours',
             'week' => 'Last 7 days',
             'month' => 'Last 30 days',
+            'year' => 'Last year',
+            'all' => 'All time',
         ];
+    }
+
+    protected function getCurrentFilter(): array
+    {
+        return match ($this->filter ?? 'day') {
+            'week' => [
+                now()->subDays(6)->startOfDay(),
+                'perDay',
+                fn (string $d): string => Carbon::parse($d)->format('D'),
+            ],
+            'month' => [
+                now()->subDays(29)->startOfDay(),
+                'perDay',
+                fn (string $d): string => Carbon::parse($d)->format('d M'),
+            ],
+            'year' => [
+                now()->subMonths(11)->startOfMonth(),
+                'perMonth',
+                fn (string $d): string => Carbon::parse($d)->format('M Y'),
+            ],
+            'all' => [
+                Carbon::parse('01.04.2026'), // we just hardcode the release month for simplicity haha
+                'perMonth',
+                fn (string $d): string => Carbon::parse($d)->format('M Y'),
+            ],
+            default => [
+                now()->subDay()->startOfHour(),
+                'perHour',
+                fn (string $d): string => Carbon::parse($d)->format('H:i'),
+            ]
+        };
     }
 
     protected function getData(): array
     {
-        [$start, $perPeriod, $labelFn] = match ($this->filter ?? 'week') {
-            'month' => [now()->subDays(29)->startOfDay(), 'perDay', fn (string $d): string => Carbon::parse($d)->format('d M')],
-            default => [now()->subDays(6)->startOfDay(), 'perDay', fn (string $d): string => Carbon::parse($d)->format('D')],
-        };
+        [$start, $perPeriod, $labelFn] = $this->getCurrentFilter();
+        $end = $this->filter === 'day' ? now()->endOfHour() : now()->endOfDay();
 
         $trend = Trend::query(Vote::query()->where('user_id', $this->record->getKey()))
-            ->between(start: $start, end: now()->endOfDay())
+            ->between(start: $start, end: $end)
             ->{$perPeriod}()
             ->count();
 
