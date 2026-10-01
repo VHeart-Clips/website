@@ -49,6 +49,11 @@ class UserVotesWidget extends ChartWidget
                 'perHour',
                 fn (string $d): string => Carbon::parse($d)->format('H:i'),
             ],
+            'week' => [
+                now()->subDays(6)->startOfDay(),
+                'perDay',
+                fn (string $d): string => Carbon::parse($d)->format('D'),
+            ],
             'month' => [
                 now()->subDays(29)->startOfDay(),
                 'perDay',
