@@ -15,6 +15,8 @@ class UserVotesWidget extends ChartWidget
 {
     public ?Model $record = null;
 
+    public ?string $filter = 'day';
+
     protected ?string $maxHeight = '200px';
 
     protected int|string|array $columnSpan = 2;
@@ -73,9 +75,10 @@ class UserVotesWidget extends ChartWidget
     protected function getData(): array
     {
         [$start, $perPeriod, $labelFn] = $this->getCurrentFilter();
+        $end = $this->filter === 'day' ? now()->endOfHour() : now()->endOfDay();
 
         $trend = Trend::query(Vote::query()->where('user_id', $this->record->getKey()))
-            ->between(start: $start, end: now()->endOfDay())
+            ->between(start: $start, end: $end)
             ->{$perPeriod}()
             ->count();
 
