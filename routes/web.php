@@ -14,6 +14,9 @@ use App\Http\Controllers\Legal\PrivacyController;
 use App\Http\Controllers\Legal\TermsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +28,45 @@ Route::get('faq', FaqController::class)->name('faq');
 Route::get('team', TeamController::class)->name('team');
 Route::get('about-us', AboutUsController::class)->name('about');
 Route::get('locales', ChangeLanguageController::class)->name('locales');
+
+Route::get('leaderboard', function () {
+
+    $start = Carbon::parse('last week thursday at 00:00');
+    $end = Carbon::parse('this week thursday at 00:00');
+
+    $topSubmitters = User::query()
+        ->where('id', '!=', 0)
+        ->withCount([
+            'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+        ])
+        ->withMax([
+            'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+        ], 'created_at')
+        ->orderBy('submitted_clips_count', 'desc')
+        ->orderBy('submitted_clips_max_created_at', 'asc')
+        // ->whereHas('submittedClips', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
+        ->limit(10)
+        ->get();
+
+    $topVoters = User::query()
+        ->where('id', '!=', 0)
+        ->withCount([
+            'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+        ])
+        ->withMax([
+            'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+        ], 'created_at')
+        ->orderBy('votes_count', 'desc')
+        ->orderBy('votes_max_created_at', 'asc')
+        // ->whereHas('votes', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
+        ->limit(10)
+        ->get();
+
+    return view('leaderboard', [
+        'topSubmitters' => $topSubmitters,
+        'topVoters' => $topVoters,
+    ]);
+})->name('leaderboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::feature(FeatureFlag::ClipSubmission)->group(function () {
