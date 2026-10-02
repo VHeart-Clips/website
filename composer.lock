@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ddb93b3587524b7b8d45ff4f13c6db7c",
+    "content-hash": "e0c58440d073e92e33558f861eddbc97",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4342,16 +4342,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "2.0.20",
+            "version": "2.0.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "8fa1c7cb38c384a04efcac8aceaf0c5269a90a7d"
+                "reference": "d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/8fa1c7cb38c384a04efcac8aceaf0c5269a90a7d",
-                "reference": "8fa1c7cb38c384a04efcac8aceaf0c5269a90a7d",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9",
+                "reference": "d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9",
                 "shasum": ""
             },
             "require": {
@@ -4396,9 +4396,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.20"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.21"
             },
-            "time": "2026-09-25T03:13:33+00:00"
+            "time": "2026-09-30T03:46:54+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10259,16 +10259,16 @@
         },
         {
             "name": "ublabs/blade-simple-icons",
-            "version": "0.212.0",
+            "version": "0.213.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ublabs/blade-simple-icons.git",
-                "reference": "a1451c6382802c5c5b0cd5e6e9ab0275f3719357"
+                "reference": "7d48222eca97335d680e7a6850548233ae511989"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ublabs/blade-simple-icons/zipball/a1451c6382802c5c5b0cd5e6e9ab0275f3719357",
-                "reference": "a1451c6382802c5c5b0cd5e6e9ab0275f3719357",
+                "url": "https://api.github.com/repos/ublabs/blade-simple-icons/zipball/7d48222eca97335d680e7a6850548233ae511989",
+                "reference": "7d48222eca97335d680e7a6850548233ae511989",
                 "shasum": ""
             },
             "require": {
@@ -10312,7 +10312,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ublabs/blade-simple-icons/issues",
-                "source": "https://github.com/ublabs/blade-simple-icons/tree/0.212.0"
+                "source": "https://github.com/ublabs/blade-simple-icons/tree/0.213.0"
             },
             "funding": [
                 {
@@ -10320,7 +10320,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-20T17:08:35+00:00"
+            "time": "2026-09-27T17:59:30+00:00"
         },
         {
             "name": "ueberdosis/tiptap-php",
