@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Reports\Tables;
 
 use App\Enums\Filament\LucideIcon;
-use App\Enums\Reports\ReportReason;
 use App\Enums\Reports\ReportStatus;
 use App\Enums\Reports\ResolveAction;
 use App\Filament\Actions\ResourceLinkAction;
@@ -28,6 +27,7 @@ class ReportsTable
             ->modifyQueryUsing(fn (Builder $query): Builder => $query->with([
                 'reportable' => fn (Relation $q): Relation => $q->withTrashed(),
                 'reporter' => fn (Relation $q): Relation => $q->withTrashed(),
+                'category' => fn (Relation $q): Relation => $q->withTrashed(),
             ]))
             ->columns([
                 TextColumn::make('id')
@@ -38,7 +38,7 @@ class ReportsTable
                     ->badge()
                     ->color('gray')
                     ->sortable(),
-                TextColumn::make('reason')
+                TextColumn::make('category.name')
                     ->wrap()
                     ->limit(50)
                     ->badge()
@@ -69,8 +69,8 @@ class ReportsTable
                 SelectFilter::make('status')
                     ->options(ReportStatus::class),
 
-                SelectFilter::make('reason')
-                    ->options(ReportReason::class),
+                SelectFilter::make('category')
+                    ->relationship('category', 'name'),
 
                 SelectFilter::make('resolve_action')
                     ->options(ResolveAction::class),

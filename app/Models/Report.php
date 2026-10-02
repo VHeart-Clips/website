@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\Reports\ReportReason;
 use App\Enums\Reports\ReportStatus;
 use App\Enums\Reports\ResolveAction;
 use App\Models\Traits\Auditable;
@@ -60,6 +59,14 @@ class Report extends Model implements Commentable
     }
 
     /**
+     * @return BelongsTo<ReportCategory, $this>
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ReportCategory::class);
+    }
+
+    /**
      * @param  Builder<static>  $query
      */
     #[Scope]
@@ -101,7 +108,6 @@ class Report extends Model implements Commentable
             'resolved_at' => 'datetime',
             'claimed_at' => 'datetime',
             'status' => ReportStatus::class,
-            'reason' => ReportReason::class,
             'resolve_action' => ResolveAction::class,
         ];
     }

@@ -19,6 +19,7 @@ use App\Models\Clip\CompilationClip;
 use App\Models\Contracts\FilamentResourceful;
 use App\Models\Faq\FaqEntry;
 use App\Models\Report;
+use App\Models\ReportCategory;
 use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\ShortUrl;
@@ -141,6 +142,7 @@ class AppServiceProvider extends ServiceProvider
             'category' => Category::class,
             'clip' => Clip::class,
             'report' => Report::class,
+            'report_category' => ReportCategory::class,
             'role' => Role::class,
             'role_permission' => RolePermission::class,
             'short_url' => ShortUrl::class,
