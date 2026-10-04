@@ -34,6 +34,9 @@ class CompilationClip extends Pivot
             'claim_status',
             'claimed_at',
             'removed_at',
+            'file_path',
+            'file_size',
+            'file_duration',
         ];
     }
 
@@ -60,6 +63,9 @@ class CompilationClip extends Pivot
             'added_at' => 'datetime',
             'claimed_at' => 'datetime',
             'removed_at' => 'datetime',
+            'file_size' => 'integer',
+            'file_duration' => 'integer',
+            'file_metadata' => 'array',
         ];
     }
 }
