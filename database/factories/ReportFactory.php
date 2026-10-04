@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Enums\Reports\ReportReason;
 use App\Enums\Reports\ReportStatus;
 use App\Enums\Reports\ResolveAction;
 use App\Models\Clip;
 use App\Models\Report;
+use App\Models\ReportCategory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Attributes\UseModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -33,7 +33,7 @@ class ReportFactory extends Factory
             'user_id' => User::factory(),
             'reportable_id' => $reportable->id,
             'reportable_type' => $reportable->getMorphClass(),
-            'reason' => fake()->randomElement(ReportReason::cases()),
+            'category_id' => ReportCategory::factory(),
             'description' => fake()->paragraph(),
             'status' => ReportStatus::Pending,
             'resolve_action' => null,

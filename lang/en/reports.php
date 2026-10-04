@@ -18,6 +18,11 @@ return [
             'ai-content' => 'AI Content',
             'content-unavailable' => 'Content Unavailable',
         ],
+        'report-category-details-type' => [
+            'disabled' => 'Disabled',
+            'optional' => 'Optional',
+            'required' => 'Required',
+        ],
         'resolve-action' => [
             'other' => 'Other',
             'dismissed' => 'Report Dismissed',

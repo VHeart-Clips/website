@@ -81,6 +81,7 @@ class ReportResource extends Resource
             ->with([
                 'reportable' => fn (Relation $q): Relation => $q->withTrashed(),
                 'reporter' => fn (Relation $q): Relation => $q->withTrashed(),
+                'category' => fn (Relation $q): Relation => $q->withTrashed(),
             ]);
     }
 }

@@ -34,8 +34,8 @@ class ReportInfolist
                                 ->icon(LucideIcon::Text)
                                 ->schema([
                                     Grid::make(2)->schema([
-                                        TextEntry::make('reason')
-                                            ->label('Reason')
+                                        TextEntry::make('category.name')
+                                            ->label('Category')
                                             ->badge()
                                             ->size(TextSize::Large)
                                             ->color('danger'),

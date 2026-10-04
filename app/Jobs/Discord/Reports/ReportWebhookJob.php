@@ -92,7 +92,7 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
             ->allowedMentions(AllowedMentions::none()->roles('1494691682422226996'))
             ->component(
                 Container::make(
-                    TextDisplay::make("### Report of type `{$this->report->reason->name}`"),
+                    TextDisplay::make("### Report of Category `{$this->report->category->name}`"),
                     TextDisplay::make($this->report->description ?? 'No Details'),
                     Separator::make(),
                     TextDisplay::make("-# $currentStatus • Created {$this->getDiscordTimestamp($this->report->created_at)} • <@&1494691682422226996>")

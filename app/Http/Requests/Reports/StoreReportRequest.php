@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Reports;
 
-use App\Enums\Reports\ReportReason;
+use App\Enums\Reports\ReportCategoryDetailsType;
+use App\Enums\Reports\ReportCategoryReportableType;
+use App\Models\ReportCategory;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Foundation\Http\Attributes\StopOnFirstFailure;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+#[StopOnFirstFailure]
 class StoreReportRequest extends FormRequest
 {
     /**
@@ -27,27 +32,52 @@ class StoreReportRequest extends FormRequest
      */
     public function rules(): array
     {
-        $morphKeys = array_keys(Relation::morphMap());
+        $reportableType = $this->enum('reportable_type', ReportCategoryReportableType::class);
 
         return [
             'reportable_type' => [
-                'bail',
                 'required',
-                Rule::in($morphKeys),
+                Rule::enum(ReportCategoryReportableType::class),
             ],
             'reportable_id' => [
                 'required',
-                Rule::exists(Relation::getMorphedModel($this->input('reportable_type')), 'id'),
+                Rule::exists(Relation::getMorphedModel($reportableType?->value), 'id'),
             ],
             'reason' => [
+                'bail',
                 'required',
-                Rule::enum(ReportReason::class),
+                'integer',
+                Rule::prohibitedIf(
+                    fn (): bool => ReportCategory::query()
+                        ->where('id', $this->integer('reason'))
+                        ->whereIsNote(true)
+                        ->exists(),
+                ),
+                Rule::exists('report_categories', 'id')->where(
+                    fn (Builder $query) => $query->where(
+                        fn (Builder $query) => $query
+                            ->whereNull('reportable_types')
+                            ->orWhereJsonLength('reportable_types', 0)
+                            ->orWhereJsonContains('reportable_types', $reportableType),
+                    ),
+                ),
             ],
             'description' => [
+                'bail',
                 'nullable',
                 Rule::requiredIf(
-                    fn (): bool => $this->enum('reason', ReportReason::class) === ReportReason::Other,
+                    fn (): bool => ReportCategory::query()
+                        ->where('id', $this->integer('reason'))
+                        ->where('details_type', ReportCategoryDetailsType::Required)
+                        ->exists(),
                 ),
+                // TODO: uncomment if frontend has been refactored to support this flag properly
+                // Rule::prohibitedIf(
+                //     fn (): bool => ReportCategory::query()
+                //         ->where('id', $this->integer('reason'))
+                //         ->where('details_type', ReportCategoryDetailsType::Disabled)
+                //         ->exists(),
+                // ),
                 'string',
                 'max:1000',
             ],
