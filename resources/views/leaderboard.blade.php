@@ -30,7 +30,7 @@
                                 <span
                                     class="hidden text-sm font-medium xl:inline"
                                 >
-                                    {{ now()->previous(Carbon::THURSDAY)->format('d.m.Y') }} - {{ now()->next(Carbon::THURSDAY)->format('d.m.Y') }}
+                                    {{ $selectedRange->getLabel() }}: {{ $selectedRange->getTimestampFrom()->format('d.m.Y') }} - {{ $selectedRange->getTimestampTo()->format('d.m.Y') }}
                                 </span>
 
                                 <x-lucide-chevron-down
@@ -45,8 +45,8 @@
 
                             @foreach ($ranges as $range)
 
-                                <x-ui.dropdown.item>
-                                    {{$range['name']}}
+                                <x-ui.dropdown.item :href="route('leaderboard',['range' => $range])">
+                                    {{$range->getLabel()}}
                                 </x-ui.dropdown.item>
                             @endforeach
 
@@ -119,7 +119,7 @@
                                     {{ $topSubmitter->name }}
                                 </div>
                                 <div class="text-muted-foreground text-sm">
-                                    {{ $topSubmitter->submitted_clips_count }} leaderboard.submitter.count
+                                    {{ $topSubmitter->submitted_clips_count }} {{ __('leaderboard.submitter.count') }}
                                 </div>
                             </div>
                     </x-ui.card.content>
@@ -188,7 +188,7 @@
                                     {{ $topVoter->name }}
                                 </div>
                                 <div class="text-muted-foreground text-sm">
-                                    {{ $topVoter->votes_count }} leaderboard.voter.count
+                                    {{ $topVoter->votes_count }} {{ __('leaderboard.voter.count') }}
                                 </div>
                             </div>
                     </x-ui.card.content>
