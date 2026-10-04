@@ -48,7 +48,7 @@ arch()->preset()->php();
 // It ensures we are not using code that could lead to security vulnerabilities.
 // We may use sha1 for cache keys though
 // https://github.com/pestphp/pest/blob/4.x/src/ArchPresets/Security.php
-arch()->preset()->security()->ignoring('sha1');
+arch()->preset()->security()->ignoring(['sha1','md5']);
 
 // It ensures the projects structure is following the well-known Laravel conventions
 // https://github.com/pestphp/pest/blob/4.x/src/ArchPresets/Laravel.php
