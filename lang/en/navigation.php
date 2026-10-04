@@ -8,6 +8,7 @@ return [
     'submit_clips' => 'Submit Clips',
     'evaluate_clips' => 'Evaluate Clips',
     'login' => 'Login',
+    'leaderboard' => 'Leaderboard',
 
     // Footer navigation
     'team' => 'Team',
