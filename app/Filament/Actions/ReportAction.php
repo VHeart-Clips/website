@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -128,7 +129,7 @@ class ReportAction extends Action
 
                     return ReportCategory::query()
                         ->whereIsNote(false)
-                        ->when($target, fn ($query) => $query->whereAppliesToReportableType($target->getMorphClass()))
+                        ->when($target, fn (Builder $query): Builder => $query->whereAppliesToReportableType($target->getMorphClass()))
                         ->orderBy('sort_order')
                         ->orderBy('id')
                         ->get()
