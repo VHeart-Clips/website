@@ -3,18 +3,23 @@
 declare(strict_types=1);
 
 use App\Enums\FeatureFlag;
+use App\Enums\Leaderboard\LeaderboardRange;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\ChangeLanguageController;
 use App\Http\Controllers\ClipSubmitController;
 use App\Http\Controllers\ClipVoteController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\IndexController;
+use App\Http\Controllers\Leaderboard;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\Legal\ImprintController;
 use App\Http\Controllers\Legal\PrivacyController;
 use App\Http\Controllers\Legal\TermsController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TeamController;
 use App\Models\User;
+use App\Queries\Leaderboard\UserLeaderboardSubmitterQuery;
+use App\Queries\Leaderboard\UserLeaderboardVoteQuery;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -30,85 +35,7 @@ Route::get('team', TeamController::class)->name('team');
 Route::get('about-us', AboutUsController::class)->name('about');
 Route::get('locales', ChangeLanguageController::class)->name('locales');
 
-Route::get('leaderboard', function () {
-
-    $ranges = [
-        [
-            'name' => __('leaderboard.range.this_week'),
-            'start' => now()->previous(Carbon::THURSDAY),
-            'end' => now()->next(Carbon::THURSDAY),
-        ],
-        [
-            'name' => __('leaderboard.range.last_week'),
-            'start' => now()->previous(Carbon::THURSDAY),
-            'end' => now()->next(Carbon::THURSDAY),
-        ],
-        [
-            'name' => __('leaderboard.range.this_month'),
-            'start' => now()->previous(Carbon::THURSDAY),
-            'end' => now()->next(Carbon::THURSDAY),
-        ],
-        [
-            'name' => __('leaderboard.range.last_month'),
-            'start' => now()->previous(Carbon::THURSDAY),
-            'end' => now()->next(Carbon::THURSDAY),
-        ],
-        [
-            'name' => __('leaderboard.range.this_year'),
-            'start' => now()->previous(Carbon::THURSDAY),
-            'end' => now()->next(Carbon::THURSDAY),
-        ],
-    ];
-
-    $start = now()->previous(Carbon::THURSDAY);
-    $end = now()->next(Carbon::THURSDAY);
-
-    $topSubmitters = Cache::remember(
-        'leaderboard.top.submitter',
-        now()->addHour(),
-        fn () => [
-            'timestamp' => now(),
-            'users' => User::query()
-                ->where('id', '!=', 0)
-                ->withCount([
-                    'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-                ])
-                ->withMax([
-                    'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-                ], 'created_at')
-                ->orderBy('submitted_clips_count', 'desc')
-                ->orderBy('submitted_clips_max_created_at', 'asc')
-                ->whereHas('submittedClips', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
-                ->limit(10)
-                ->get()]
-    );
-
-    $topVoters = Cache::remember(
-        'leaderboard.top.voter',
-        now()->addHour(),
-        fn () => [
-            'timestamp' => now(),
-            'users' => User::query()
-                ->where('id', '!=', 0)
-                ->withCount([
-                    'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-                ])
-                ->withMax([
-                    'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-                ], 'created_at')
-                ->orderBy('votes_count', 'desc')
-                ->orderBy('votes_max_created_at', 'asc')
-                ->whereHas('votes', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
-                ->limit(10)
-                ->get(),
-        ]);
-
-    return view('leaderboard', [
-        'ranges' => $ranges,
-        'topSubmitters' => $topSubmitters,
-        'topVoters' => $topVoters,
-    ]);
-})->name('leaderboard');
+Route::get('leaderboard', LeaderboardController::class)->name('leaderboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::feature(FeatureFlag::ClipSubmission)->group(function () {
