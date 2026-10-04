@@ -56,6 +56,22 @@ class CompilationClip extends Pivot
     }
 
     /**
+     * @return BelongsTo<Clip, $this>
+     */
+    public function clip(): BelongsTo
+    {
+        return $this->belongsTo(Clip::class);
+    }
+
+    /**
+     * @return BelongsTo<Compilation, $this>
+     */
+    public function compilation(): BelongsTo
+    {
+        return $this->belongsTo(Compilation::class);
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function claimer(): BelongsTo
