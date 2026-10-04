@@ -22,7 +22,7 @@ class LeaderboardController extends Controller
     $topSubmitters = Cache::remember(
         'leaderboard.top.submitter.'.$selectedRange->getCacheKey(),
         now()->addHour(),
-        fn () => [
+        fn (): array => [
             'timestamp' => now(),
             'users' => new UserLeaderboardSubmitterQuery()->handle($start,$end)
         ]
@@ -31,7 +31,7 @@ class LeaderboardController extends Controller
     $topVoters = Cache::remember(
         'leaderboard.top.voter.'.$selectedRange->getCacheKey(),
         now()->addHour(),
-        fn () => [
+        fn (): array => [
             'timestamp' => now(),
             'users' =>  new UserLeaderboardVoteQuery()->handle($start,$end),
         ]);
