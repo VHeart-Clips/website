@@ -31,38 +31,79 @@ Route::get('locales', ChangeLanguageController::class)->name('locales');
 
 Route::get('leaderboard', function () {
 
-    $start = Carbon::parse('last week thursday at 00:00');
-    $end = Carbon::parse('this week thursday at 00:00');
+    $ranges = [
+        [
+            'name' => __('leaderboard.range.this_week'),
+            'start' => now()->previous(Carbon::THURSDAY),
+            'end' => now()->next(Carbon::THURSDAY),
+        ],
+        [
+            'name' => __('leaderboard.range.last_week'),
+            'start' => now()->previous(Carbon::THURSDAY),
+            'end' => now()->next(Carbon::THURSDAY),
+        ],
+        [
+            'name' => __('leaderboard.range.this_month'),
+            'start' => now()->previous(Carbon::THURSDAY),
+            'end' => now()->next(Carbon::THURSDAY),
+        ],
+        [
+            'name' => __('leaderboard.range.last_month'),
+            'start' => now()->previous(Carbon::THURSDAY),
+            'end' => now()->next(Carbon::THURSDAY),
+        ],
+        [
+            'name' => __('leaderboard.range.this_year'),
+            'start' => now()->previous(Carbon::THURSDAY),
+            'end' => now()->next(Carbon::THURSDAY),
+        ],
+    ];
 
-    $topSubmitters = User::query()
-        ->where('id', '!=', 0)
-        ->withCount([
-            'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-        ])
-        ->withMax([
-            'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-        ], 'created_at')
-        ->orderBy('submitted_clips_count', 'desc')
-        ->orderBy('submitted_clips_max_created_at', 'asc')
-        // ->whereHas('submittedClips', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
-        ->limit(10)
-        ->get();
+    $start = now()->previous(Carbon::THURSDAY);
+    $end = now()->next(Carbon::THURSDAY);
 
-    $topVoters = User::query()
-        ->where('id', '!=', 0)
-        ->withCount([
-            'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-        ])
-        ->withMax([
-            'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
-        ], 'created_at')
-        ->orderBy('votes_count', 'desc')
-        ->orderBy('votes_max_created_at', 'asc')
-        // ->whereHas('votes', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
-        ->limit(10)
-        ->get();
+    $topSubmitters = Cache::remember(
+        'leaderboard.top.submitter',
+        now()->addHour(),
+        fn () => [
+            'timestamp' => now(),
+            'users' => User::query()
+                ->where('id', '!=', 0)
+                ->withCount([
+                    'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+                ])
+                ->withMax([
+                    'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+                ], 'created_at')
+                ->orderBy('submitted_clips_count', 'desc')
+                ->orderBy('submitted_clips_max_created_at', 'asc')
+                ->whereHas('submittedClips', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
+                ->limit(10)
+                ->get()]
+    );
+
+    $topVoters = Cache::remember(
+        'leaderboard.top.voter',
+        now()->addHour(),
+        fn () => [
+            'timestamp' => now(),
+            'users' => User::query()
+                ->where('id', '!=', 0)
+                ->withCount([
+                    'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+                ])
+                ->withMax([
+                    'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$start, $end]),
+                ], 'created_at')
+                ->orderBy('votes_count', 'desc')
+                ->orderBy('votes_max_created_at', 'asc')
+                ->whereHas('votes', fn (Builder $q): Builder => $q->whereBetween('created_at', [$start, $end]))
+                ->limit(10)
+                ->get(),
+        ]);
 
     return view('leaderboard', [
+        'ranges' => $ranges,
         'topSubmitters' => $topSubmitters,
         'topVoters' => $topVoters,
     ]);
