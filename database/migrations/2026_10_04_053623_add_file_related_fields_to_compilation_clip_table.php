@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('compilation_clip', function (Blueprint $table) {
+        Schema::table('compilation_clip', function (Blueprint $table): void {
             $table->string('file_path')->nullable();
             $table->unsignedBigInteger('file_size')->nullable()->index();
             $table->unsignedBigInteger('file_duration')->nullable()->index();
