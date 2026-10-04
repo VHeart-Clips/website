@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\Leaderboard\LeaderboardRange;
@@ -24,7 +26,7 @@ class LeaderboardController extends Controller
         now()->addHour(),
         fn (): array => [
             'timestamp' => now(),
-            'users' => new UserLeaderboardSubmitterQuery()->handle($start,$end)
+            'users' => new UserLeaderboardSubmitterQuery()->handle($start,$end,config("vheart.leaderboards.submitter.limit"))
         ]
     );
 
@@ -33,7 +35,7 @@ class LeaderboardController extends Controller
         now()->addHour(),
         fn (): array => [
             'timestamp' => now(),
-            'users' =>  new UserLeaderboardVoteQuery()->handle($start,$end),
+            'users' =>  new UserLeaderboardVoteQuery()->handle($start,$end,config("vheart.leaderboards.submitter.limit")),
         ]);
 
     return view('leaderboard', [
