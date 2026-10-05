@@ -327,6 +327,7 @@ class ClipsRelationManager extends RelationManager
                     ->perPage(4)
                     ->loadMoreIncrementsBy(8)
                     ->modalWidth(Width::SevenExtraLarge),
+                $this->makeDownloadClipAction(),
                 ActionGroup::make([
                     Action::make('claim')
                         ->disabled(fn (): bool => $this->isCompilationReadOnly())
@@ -514,5 +515,28 @@ class ClipsRelationManager extends RelationManager
         }
 
         return null;
+    }
+
+    private function makeDownloadClipAction(): DownloadAction
+    {
+        return DownloadAction::make('file_path')
+            ->tooltip(fn (Clip $record): string => (empty($record->pivot->file_path) || $record->pivot->claim_status !== CompilationClipClaimStatus::Completed) ? 'Download not Available' : 'Download Finished Clip')
+            ->disabled(fn (Clip $record): bool => empty($record->pivot->file_path) || $record->pivot->claim_status !== CompilationClipClaimStatus::Completed)
+            ->getFileNameUsing(fn (Clip $record): string => Clip\CompilationClip::recommendedFileName($record, $this->getOwnerRecord(), $record->pivot->claimer))
+            ->after(fn (Clip $record): Audit => Auditor::make()
+                ->event('compilation.clip.download')
+                ->old([
+                    'clip_id' => $record->id,
+                    'compilation_id' => $record->pivot->compilation_id,
+                ])
+                ->new([
+                    'clip_id' => $record->id,
+                    'compilation_id' => $record->pivot->compilation_id,
+                ])
+                ->on($this->getOwnerRecord())
+                ->save())
+            ->disk('compilation_clips_archive')
+            ->appendExtension()
+            ->iconButton();
     }
 }
