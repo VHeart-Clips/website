@@ -113,29 +113,12 @@
 
             <div class="flex flex-col gap-4">
                 @foreach ($topSubmitters['users']->skip(3) as $topSubmitter)
-                <x-ui.card variant="glassNoShadow">
-                    <x-ui.card.content class="ms-2 p-2 md:p-2 xl:p-2 flex items-center gap-2 ">
-
-                            <div class="text-center text-2xl w-[3ch]">
-                                {{ $loop->index + 4 }}.
-                            </div>
-
-                            <x-ui.avatar
-                                class="h-14 w-14 shrink-0 border-2 border-white shadow-sm dark:border-white/10"
-                                :force="true"
-                                :src="Cookies::hasConsentFor('external-services') ? $topSubmitter->avatar_url : null"
-                                :name="$topSubmitter->name ?? 'Unknown User'"
-                            />
-                            <div>
-                                <div class="font-bold">
-                                    {{ $topSubmitter->name }}
-                                </div>
-                                <div class="text-muted-foreground text-sm">
-                                    {{ $topSubmitter->submitted_clips_count }} {{ __('leaderboard.submitter.count') }}
-                                </div>
-                            </div>
-                    </x-ui.card.content>
-                </x-ui.card>
+                    <x-leaderboard.rankuser
+                        :user="$topSubmitter"
+                        :count="$topSubmitter->submitted_clips_count ?? 0"
+                        :countLabel="__('leaderboard.submitter.count')"
+                        :rank="$loop->index + 4"
+                    ></x-leaderboard.rankuser>
                 @endforeach
             </div>
         </div>
@@ -193,29 +176,12 @@
 
             <div class="flex flex-col gap-4">
                 @foreach ($topVoters["users"]->skip(3) as $topVoter)
-                <x-ui.card variant="glassNoShadow">
-                    <x-ui.card.content class="ms-2 p-4 md:p-2 xl:p-2 flex items-center gap-2 ">
-
-                            <div class="text-center text-2xl w-[3ch]">
-                                {{ $loop->index + 4 }}.
-                            </div>
-
-                            <x-ui.avatar
-                                class="h-14 w-14 shrink-0 border-2 border-white shadow-sm dark:border-white/10"
-                                :force="true"
-                                :src="Cookies::hasConsentFor('external-services') ? $topVoter->avatar_url : null"
-                                :name="$topVoter->name ?? 'Unknown User'"
-                            />
-                            <div>
-                                <div class="font-bold">
-                                    {{ $topVoter->name }}
-                                </div>
-                                <div class="text-muted-foreground text-sm">
-                                    {{ $topVoter->votes_count }} {{ __('leaderboard.voter.count') }}
-                                </div>
-                            </div>
-                    </x-ui.card.content>
-                </x-ui.card>
+                    <x-leaderboard.rankuser
+                        :user="$topVoter"
+                        :count="$topVoter->votes_count ?? 0"
+                        :countLabel="__('leaderboard.voter.count')"
+                        :rank="$loop->index + 4"
+                    ></x-leaderboard.rankuser>
                 @endforeach
             </div>
         </div>
