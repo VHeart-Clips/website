@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'page_title' => 'Leaderboards',
+    'free' => 'Free',
     'top' => [
         'heading' => 'Leaderboards',
         'subheading' => '',
