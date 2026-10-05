@@ -103,7 +103,7 @@
 
 
             <div class="flex flex-col mt-18">
-                @foreach ($topSubmitters['users']->skip(0) as $topSubmitter)
+                @foreach ($topSubmitters['users']->skip(3) as $topSubmitter)
                     <x-leaderboard.rankuser
                         :user="$topSubmitter"
                         :count="$topSubmitter->count ?? 0"
