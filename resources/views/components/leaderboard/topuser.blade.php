@@ -1,6 +1,6 @@
 @props(['user' => null, 'count' => 0, 'countLabel' => '','croneColor' => 'text-primary'])
 <div class="flex justify-center mb-1 {{ $croneColor }}">
-    <x-lucide-crown class="size-12" defer />
+    <x-lucide-crown class="size-12 drop-shadow-md drop-shadow-black/42" defer />
 </div>
 <x-ui.card variant="glass">
     <x-ui.card.content class="p-2 md:p-2 xl:p-2 flex flex-col justify-center items-center gap-3 ">
