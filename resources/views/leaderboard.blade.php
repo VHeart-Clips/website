@@ -11,8 +11,8 @@
                 </x-ui.card.title>
             </x-ui.card.header>
 
-            <x-ui.card.content class="p-4 md:p-4 xl:p-4 space-y-8">
-                <div class="space-y-1">
+            <x-ui.card.content class="p-2 md:p-2 xl:p-2 space-y-2">
+                <div class="space-y-1 px-4">
                     <h3 class="text-base font-semibold text-foreground">
                         {{ __('leaderboard.top.subheading') }}
                     </h3>
@@ -22,7 +22,7 @@
                 </div>
             </x-ui.card.content>
 
-            <x-ui.card.footer class="p-2 md:p-2 xl:p-2 pe-2 justify-end">
+            <x-ui.card.footer class="p-1 md:p-1 xl:p-1 pe-2 justify-end">
                 <x-ui.dropdown>
                     <x-ui.dropdown.trigger>
                         <button
@@ -59,17 +59,17 @@
 
     <div class="mx-auto grid grid-cols-1 items-start gap-8 lg:grid-cols-2 lg:gap-12 mb-8">
 
-        <div class="grid grid-cols-1 gap-4">
-            <x-ui.card variant="glass">
-                <x-ui.card.header class="pb-6">
-                    <x-ui.card.title class="flex justify-center items-center gap-2 text-2xl font-bold tracking-tight">
+        <div class="grid grid-cols-1">
+            <div class="inline-flex w-full flex-col justify-center">
+                <div>
+                    <div class="flex justify-center items-center gap-2 text-2xl font-bold tracking-tight">
                         <x-lucide-send class="size-6" defer />
-                        <h1>{{ __('leaderboard.submitter.heading') }}</h1>
-                    </x-ui.card.title>
-                </x-ui.card.header>
+                        <h2>{{ __('leaderboard.submitter.heading') }}</h2>
+                    </div>
+                </div>
 
-                <x-ui.card.footer class="p-2 md:p-2 xl:p-2 pe-5">
-                    <div class="text-xs text-muted-foreground w-full flex justify-end gap-2 items-center">
+                <div>
+                    <div class="text-xs text-muted-foreground w-full inline-flex justify-center gap-2 items-center">
                         <x-ui.tooltip>
                             <x-ui.tooltip.trigger>
                                 {{ $topSubmitters['timestamp']->diffForHumans() }}
@@ -80,8 +80,8 @@
                         </x-ui.tooltip>
                         <x-lucide-clock class="size-3" defer/>
                     </div>
-                </x-ui.card.footer>
-            </x-ui.card>
+                </div>
+            </div>
 
             <div class="grid grid-cols-3 grid-rows-1 gap-4 pt-10">
                 <div class="col-start-2 row-start-1 animate-float">
@@ -124,16 +124,16 @@
         </div>
 
         <div class="grid grid-cols-1 gap-4">
-            <x-ui.card variant="glass">
-                <x-ui.card.header class="pb-6">
-                    <x-ui.card.title class="flex justify-center items-center gap-2 text-2xl font-bold tracking-tight">
+            <div class="inline-flex w-full flex-col justify-center">
+                <div>
+                    <div class="flex justify-center items-center gap-2 text-2xl font-bold tracking-tight">
                         <x-lucide-thumbs-up class="size-6" defer />
-                        <h1>{{ __('leaderboard.voter.heading') }}</h1>
-                    </x-ui.card.title>
-                </x-ui.card.header>
+                        <h2>{{ __('leaderboard.voter.heading') }}</h2>
+                    </div>
+                </div>
 
-                <x-ui.card.footer class="p-2 md:p-2 xl:p-2 pe-5">
-                    <div class="text-xs text-muted-foreground w-full flex justify-end gap-2 items-center">
+                <div>
+                    <div class="text-xs text-muted-foreground w-full inline-flex justify-center gap-2 items-center">
                         <x-ui.tooltip>
                             <x-ui.tooltip.trigger>
                                 {{ $topVoters['timestamp']->diffForHumans() }}
@@ -144,8 +144,8 @@
                         </x-ui.tooltip>
                         <x-lucide-clock class="size-3" defer/>
                     </div>
-                </x-ui.card.footer>
-            </x-ui.card>
+                </div>
+            </div>
 
             <div class="grid grid-cols-3 grid-rows-1 gap-4 pt-10  animate-float">
                 <div class="col-start-2 row-start-1">
