@@ -14,8 +14,10 @@ use App\Events\Admin\Compilations\CompilationClipUnclaimed;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Management\GenerateClipOverlayAction;
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
+use App\Filament\AdminPanel\Resources\Compilations\Actions\DownloadAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\UpdateClaimInfosAction;
+use App\Filament\Forms\Components\CustomFileUpload;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
 use App\Models\Audit;
 use App\Models\Clip;
@@ -30,6 +32,7 @@ use Filament\Actions\DetachBulkAction;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
@@ -380,19 +383,29 @@ class ClipsRelationManager extends RelationManager
                         ->authorize('update')
                         ->fillForm(fn (Clip $record): array => [
                             'status' => $record->pivot->claim_status,
+                            'file_path' => $record->pivot->file_path,
                         ])
                         ->schema([
                             Select::make('status')
                                 ->hiddenLabel()
                                 ->options(CompilationClipClaimStatus::class)
                                 ->default(CompilationClipClaimStatus::Pending)
+                                ->live()
                                 ->required(),
+                            CustomFileUpload::make('file_path')
+                                ->disk('compilation_clips_archive')
+                                ->maxSize(257 * 1024)
+                                ->required(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
+                                ->visible(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
+                                ->acceptedFileTypes(['video/mp4' => 'mp4']),
                         ])
                         ->action(function (Clip $clip, array $data): void {
                             $oldStatus = $clip->pivot->claim_status;
+                            $oldFile = $clip->pivot->file_path;
 
                             $clip->pivot->update([
                                 'claim_status' => $data['status'],
+                                'file_path' => $data['file_path'] ?? $oldFile,
                             ]);
 
                             CompilationClipStatusUpdated::dispatch($this->getOwnerRecord(), auth()->user(), $clip, $oldStatus, $data['status']);
@@ -401,11 +414,15 @@ class ClipsRelationManager extends RelationManager
                                 ->event('compilation.clip.updated')
                                 ->old([
                                     'clip_id' => $clip->id,
+                                    'compilation_id' => $clip->pivot->compilation_id,
                                     'claim_status' => $oldStatus,
+                                    'file_path' => $oldFile,
                                 ])
                                 ->new([
                                     'clip_id' => $clip->id,
+                                    'compilation_id' => $clip->pivot->compilation_id,
                                     'claim_status' => $data['status'],
+                                    'file_path' => $data['file_path'],
                                 ])
                                 ->on($this->getOwnerRecord())
                                 ->save();
