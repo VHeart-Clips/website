@@ -26,6 +26,7 @@ final readonly class UserLeaderboardSubmitterQuery
             ->orderBy('id')
             ->whereHas('submittedClips', fn (Builder $q): Builder => $q->whereBetween('created_at', [$from, $to]))
             ->limit($limit)
-            ->get();
+            ->get()
+            ->map(fn (User $user): array => ['id' => $user->id, 'count' => $user->submitted_clips_count]);
     }
 }
