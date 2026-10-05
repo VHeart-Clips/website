@@ -5,5 +5,6 @@ declare global {
     interface Window {
         Alpine: Alpine;
         axios: axios;
+        FilamentNotification: typeof import('../../vendor/filament/notifications/dist/index').Notification;
     }
 }
