@@ -7,7 +7,7 @@ return [
     'top' => [
         'heading' => 'Rangliste',
         'subheading' => '',
-        'description' => ''
+        'description' => '',
     ],
     'enums' => [
         'leaderboard-range' => [
@@ -15,19 +15,19 @@ return [
             'last-week' => 'Letzte Woche',
             'month' => 'Monat',
             'last-month' => 'Letzter Monat',
-            'year' => 'Jahr'
-        ]
+            'year' => 'Jahr',
+        ],
     ],
     'submitter' => [
         'heading' => 'Top Einsender',
         'subheading' => '',
         'description' => '',
-        'count' => 'Einsendungen'
+        'count' => 'Einsendungen',
     ],
     'voter' => [
         'heading' => 'Top Bewerter',
         'subheading' => '',
         'description' => '',
-        'count' => 'Bewertungen'
+        'count' => 'Bewertungen',
     ],
 ];

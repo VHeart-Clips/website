@@ -7,7 +7,7 @@ return [
     'top' => [
         'heading' => 'Leaderboards',
         'subheading' => '',
-        'description' => ''
+        'description' => '',
     ],
     'enums' => [
         'leaderboard-range' => [
@@ -15,19 +15,19 @@ return [
             'last-week' => 'Last Week',
             'month' => 'Month',
             'last-month' => 'Last Month',
-            'year' => 'Year'
-        ]
+            'year' => 'Year',
+        ],
     ],
     'submitter' => [
         'heading' => 'Top Submitter',
         'subheading' => '',
         'description' => '',
-        'count' => 'Submissions'
+        'count' => 'Submissions',
     ],
     'voter' => [
         'heading' => 'Top Voter',
         'subheading' => '',
         'description' => '',
-        'count' => 'Votes'
+        'count' => 'Votes',
     ],
 ];
