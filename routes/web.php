@@ -44,7 +44,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('dashboard', static fn (Request $request) => redirect('dashboard/'.$request->user()->id));
 
-    Route::post('/storage/clip-presign', ClipUploadPresignController::class)->name('clip.presign');
+    Route::feature(FeatureFlag::ClipUpload)->group(function () {
+        Route::post('/storage/clip-presign', ClipUploadPresignController::class)->name('clip.presign');
+    });
 });
 
 require __DIR__.'/settings.php';

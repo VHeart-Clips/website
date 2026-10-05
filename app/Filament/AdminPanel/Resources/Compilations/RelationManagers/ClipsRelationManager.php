@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Compilations\RelationManagers;
 
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationClipClaimStatus;
+use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Enums\Permission;
 use App\Events\Admin\Compilations\CompilationClipClaimed;
@@ -23,6 +24,7 @@ use App\Models\Audit;
 use App\Models\Clip;
 use App\Models\User;
 use App\Support\Audit\Auditor;
+use App\Support\FeatureFlag\Feature;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\AttachAction;
@@ -398,11 +400,16 @@ class ClipsRelationManager extends RelationManager
                                 ->maxSize(257 * 1024)
                                 ->required(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
                                 ->visible(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
+                                ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
                                 ->acceptedFileTypes(['video/mp4' => 'mp4']),
                         ])
                         ->action(function (Clip $clip, array $data): void {
                             $oldStatus = $clip->pivot->claim_status;
                             $oldFile = $clip->pivot->file_path;
+
+                            if (! Feature::isActive(FeatureFlag::ClipUpload)) {
+                                $data['file_path'] = $oldFile;
+                            }
 
                             $clip->pivot->update([
                                 'claim_status' => $data['status'],
@@ -423,7 +430,7 @@ class ClipsRelationManager extends RelationManager
                                     'clip_id' => $clip->id,
                                     'compilation_id' => $clip->pivot->compilation_id,
                                     'claim_status' => $data['status'],
-                                    'file_path' => $data['file_path'],
+                                    'file_path' => $data['file_path'] ?? null,
                                 ])
                                 ->on($this->getOwnerRecord())
                                 ->save();
@@ -523,6 +530,7 @@ class ClipsRelationManager extends RelationManager
             ->tooltip(fn (Clip $record): string => (empty($record->pivot->file_path) || $record->pivot->claim_status !== CompilationClipClaimStatus::Completed) ? 'Download not Available' : 'Download Finished Clip')
             ->disabled(fn (Clip $record): bool => empty($record->pivot->file_path) || $record->pivot->claim_status !== CompilationClipClaimStatus::Completed)
             ->getFileNameUsing(fn (Clip $record): string => Clip\CompilationClip::recommendedFileName($record, $this->getOwnerRecord(), $record->pivot->claimer))
+            ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
             ->after(fn (Clip $record): Audit => Auditor::make()
                 ->event('compilation.clip.download')
                 ->old([
