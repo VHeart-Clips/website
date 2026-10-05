@@ -6,6 +6,7 @@ use App\Enums\FeatureFlag;
 use App\Http\Controllers\AboutUsController;
 use App\Http\Controllers\ChangeLanguageController;
 use App\Http\Controllers\ClipSubmitController;
+use App\Http\Controllers\ClipUploadPresignController;
 use App\Http\Controllers\ClipVoteController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\IndexController;
@@ -42,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('dashboard', static fn (Request $request) => redirect('dashboard/'.$request->user()->id));
+
+    Route::post('/storage/clip-presign', ClipUploadPresignController::class)->name('clip.presign');
 });
 
 require __DIR__.'/settings.php';
