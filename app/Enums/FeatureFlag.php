@@ -72,4 +72,8 @@ enum FeatureFlag: string implements HasLabel
     #[Description('If enabled, Clip Scores will be decayed over time based on the last positive interaction with the clip.')]
     #[DefaultFeatureFlagState(true)]
     case ClipScoreTimeDecay = 'clip_score_time_decay';
+
+    #[Description('Allows people to upload clips to compilation related clips')]
+    #[DefaultFeatureFlagState(true)]
+    case ClipUpload = 'clip_upload';
 }

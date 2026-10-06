@@ -39,6 +39,11 @@ return [
                 'floor_ratio' => (float) env('VHEART_CLIP_DECAY_FLOOR_RATIO', 0.1),
             ],
         ],
+        's3-storage' => [
+            'remote' => env('VHEART_CLIP_STORAGE_REMOTE', env('AWS_ENDPOINT')),
+            'token' => env('VHEART_CLIP_STORAGE_GET_BUCKET_INFO_TOKEN'),
+            'bucket_id' => env('VHEART_CLIP_STORAGE_BUCKET_ID'),
+        ],
     ],
     'leaderboards' => [
         'voter' => [

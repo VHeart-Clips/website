@@ -7,11 +7,11 @@ import anchor from '@alpinejs/anchor';
 import intersect from '@alpinejs/intersect';
 import AsyncAlpine from 'async-alpine';
 
+import baseEmbed from '@/components/embeds/base-embed';
+import twitchEmbed from '@/components/embeds/twitch-embed';
 import youtubeEmbed from '@/components/embeds/youtube-embed';
 import image from '@/components/image';
 import reportButton from '@/components/ui/report/button';
-import baseEmbed from '@/components/embeds/base-embed';
-import twitchEmbed from '@/components/embeds/twitch-embed';
 
 document.addEventListener('alpine:init', () => {
     const Alpine = window.Alpine;
@@ -42,6 +42,10 @@ document.addEventListener('alpine:init', () => {
         ],
         ['clipVote', () => import('@/components/vote')],
         ['fullscreenToggle', () => import('@/components/fullscreen-toggle')],
+        [
+            'customFileUpload',
+            () => import('@/components/filament/custom-file-upload'),
+        ],
     ];
 
     asyncComponents.forEach(([componentName, importFn]) => {
