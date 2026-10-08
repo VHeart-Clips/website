@@ -50,7 +50,7 @@ class LeaderboardController extends Controller
             $data->count = $user['count'];
 
             return (object) $data->toArray();
-        });
+        })->values();
 
         $topVoters['users'] = $topVoters['users']
         ->reject(fn(array $user): bool => !$users->contains('id',$user['id']))->map(function (array $user) use ($users): stdClass {
@@ -59,7 +59,7 @@ class LeaderboardController extends Controller
             $data->count = $user['count'];
 
             return (object) $data->toArray();
-        });
+        })->values();
 
         return view('leaderboard', [
             'ranges' => LeaderboardRange::cases(),
