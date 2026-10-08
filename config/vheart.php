@@ -45,4 +45,12 @@ return [
             'bucket_id' => env('VHEART_CLIP_STORAGE_BUCKET_ID'),
         ],
     ],
+    'leaderboards' => [
+        'voter' => [
+            'limit' => (int) env('VHEART_LEADERBOARD_VOTER_LIMIT', env('VHEART_LEADERBOARD_LIMIT',10))
+        ],
+        'submitter' => [
+            'limit' => (int) env('VHEART_LEADERBOARD_SUBMITTER_LIMIT', env('VHEART_LEADERBOARD_LIMIT',10))
+        ]
+    ]
 ];

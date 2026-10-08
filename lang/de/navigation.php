@@ -7,6 +7,7 @@ return [
     'dashboard' => 'Dashboard',
     'submit_clips' => 'Clips einreichen',
     'evaluate_clips' => 'Clips bewerten',
+    'leaderboard' => 'Rangliste',
 
     // Footer navigation
     'team' => 'Team',

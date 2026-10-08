@@ -17,6 +17,15 @@
         </div>
 
         <div class="flex gap-1 lg:gap-1.5">
+
+                <x-layout.shared.link href="{{ route('leaderboard') }}" :active="request()->routeIs('leaderboard')">
+                    <x-slot:icon>
+                        <x-lucide-trophy defer />
+                    </x-slot:icon>
+
+                    {{ __('navigation.leaderboard') }}
+                </x-layout.shared.link>
+
             @feature(FeatureFlag::ClipSubmission)
                 <x-layout.shared.link href="{{ route('submitclip.create') }}" :active="request()->routeIs('submitclip.create')">
                     <x-slot:icon>
