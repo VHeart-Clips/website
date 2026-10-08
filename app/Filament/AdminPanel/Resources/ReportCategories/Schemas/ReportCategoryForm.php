@@ -83,7 +83,7 @@ class ReportCategoryForm
                                                     ->orderBy('id'),
                                                 ignoreRecord: true
                                             )
-                                            ->disabled(fn (?ReportCategory $record, Get $get) => $record?->subCategories()->withTrashed()->exists() && empty($get('parent_id')))
+                                            ->disabled(fn (?ReportCategory $record, Get $get): bool => $record?->subCategories()->withTrashed()->exists() && empty($get('parent_id')))
                                             ->rules([
                                                 fn (?ReportCategory $record): Closure => static function (string $attribute, mixed $value, Closure $fail) use ($record): void {
                                                     if ($record?->subCategories()->withTrashed()->exists()) {
