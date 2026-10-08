@@ -36,7 +36,7 @@ class LeaderboardController extends Controller
             now()->addHour(),
             fn (): array => [
                 'timestamp' => now(),
-                'users' => new UserLeaderboardVoteQuery()->handle($start, $end, config('vheart.leaderboards.submitter.limit')),
+                'users' => new UserLeaderboardVoteQuery()->handle($start, $end, config('vheart.leaderboards.voter.limit')),
             ]);
 
         $ids = collect($topSubmitters['users']->pluck('id'))->merge($topVoters['users']->pluck('id'))->unique()->values();
