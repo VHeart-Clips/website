@@ -122,7 +122,7 @@ class ReportCategoryForm
 
                                         CheckboxList::make('reportable_types')
                                             ->options(ReportCategoryReportableType::class)
-                                            ->helperText('Limits this category to specific types of reportable content, leave empty to allow everything')
+                                            ->helperText('Limits this category to specific types of reportable content, leave unchecked to allow everything')
                                             ->columns(2),
 
                                         TextInput::make('sort_order')
