@@ -27,6 +27,16 @@ class ReportCategoriesTable
         return $table
             ->reorderable('sort_order')
             ->defaultSort('sort_order')
+            ->modifyQueryUsing(function (Builder $query, Table $table): void {
+                if (
+                    $table->getSortColumn() === 'reports_count'
+                    || ! $table->getColumn('reports_count')->isToggledHidden()
+                ) {
+                    $query->withCount([
+                        'reports' => fn (Builder $q) => $q->withTrashed(),
+                    ]);
+                }
+            })
             ->groups([
                 Group::make('parent_id')
                     ->label('Parent Category')
@@ -61,6 +71,13 @@ class ReportCategoriesTable
                     ->badge(),
                 TextColumn::make('sort_order')
                     ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable()
+                    ->numeric(),
+                TextColumn::make('reports_count')
+                    ->label('Reports')
+                    ->state(fn (ReportCategory $record): int => $record->reports_count ?? 0)
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->alignCenter()
                     ->sortable()
                     ->numeric(),
 
