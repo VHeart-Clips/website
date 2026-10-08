@@ -40,7 +40,6 @@ class LeaderboardController extends Controller
             ]);
 
         $ids = $topSubmitters['users']->pluck('id')->merge($topVoters['users']->pluck('id'))->unique()->values();
-        dd($ids);
 
         $users = User::whereIn('id', $ids)->get(['id', 'name', 'avatar_url']);
 
