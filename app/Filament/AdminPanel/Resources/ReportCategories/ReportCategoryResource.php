@@ -10,6 +10,7 @@ use App\Filament\AdminPanel\Resources\ReportCategories\Pages\CreateReportCategor
 use App\Filament\AdminPanel\Resources\ReportCategories\Pages\EditReportCategory;
 use App\Filament\AdminPanel\Resources\ReportCategories\Pages\ListReportCategories;
 use App\Filament\AdminPanel\Resources\ReportCategories\Pages\ViewReportCategory;
+use App\Filament\AdminPanel\Resources\ReportCategories\RelationManagers\ReportsRelationManager;
 use App\Filament\AdminPanel\Resources\ReportCategories\RelationManagers\SubCategoriesRelationManager;
 use App\Filament\AdminPanel\Resources\ReportCategories\Schemas\ReportCategoryForm;
 use App\Filament\AdminPanel\Resources\ReportCategories\Schemas\ReportCategoryInfolist;
@@ -55,6 +56,7 @@ class ReportCategoryResource extends Resource
     {
         return [
             SubCategoriesRelationManager::make(),
+            ReportsRelationManager::make(),
             AuditsRelationManager::make(),
         ];
     }
