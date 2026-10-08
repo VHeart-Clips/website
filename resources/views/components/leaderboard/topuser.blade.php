@@ -1,5 +1,5 @@
-@props(['user' => null, 'count' => 0, 'countLabel' => '','croneColor' => 'text-primary', 'anonym' => false])
-<div class="flex justify-center mb-1 {{ $croneColor }}">
+@props(['user' => null, 'count' => 0, 'countLabel' => '','crownColor' => 'text-primary', 'anonym' => false])
+<div {{ $attributes->merge(['class' => "flex justify-center mb-1  $crownColor"]) }}>
     <x-lucide-crown class="size-9 lg:size-12 drop-shadow-md drop-shadow-black/42" defer />
 </div>
 <x-ui.card variant="glass">

@@ -80,7 +80,7 @@
                             :user="$topSubmitters['users'][0] ?? null"
                             :count="$topSubmitters['users'][0]->count ?? 0"
                             :countLabel="__('leaderboard.submitter.count')"
-                            croneColor="text-amber-300"
+                            crownColor="text-amber-300"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-1 lg:row-start-1 mt-3 lg:mt-12 lg:animate-float" style='animation-delay: -250ms;'>
@@ -88,7 +88,7 @@
                             :user="$topSubmitters['users'][1] ?? null"
                             :count="$topSubmitters['users'][1]->count ?? 0"
                             :countLabel="__('leaderboard.submitter.count')"
-                            croneColor="text-neutral-400"
+                            crownColor="text-neutral-400"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-3 lg:row-start-1 mt-3 lg:mt-24 lg:animate-float" style='animation-delay: -750ms;'>
@@ -96,7 +96,7 @@
                             :user="$topSubmitters['users'][2] ?? null"
                             :count="$topSubmitters['users'][2]->count ?? 0"
                             :countLabel="__('leaderboard.submitter.count')"
-                            croneColor="text-amber-900"
+                            crownColor="text-amber-900"
                     ></x-leaderboard.topuser>
                 </div>
             </div>
@@ -144,7 +144,7 @@
                             :user="$topVoters['users'][0] ?? null"
                             :count="$topVoters['users'][0]->count ?? 0"
                             :countLabel="__('leaderboard.voter.count')"
-                            croneColor="text-amber-300"
+                            crownColor="text-amber-300"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-1 lg:row-start-1 mt-3 lg:mt-12 lg:animate-float" style='animation-delay: -250ms;'>
@@ -152,7 +152,7 @@
                             :user="$topVoters['users'][1] ?? null"
                             :count="$topVoters['users'][1]->count ?? 0"
                             :countLabel="__('leaderboard.voter.count')"
-                            croneColor="text-neutral-400"
+                            crownColor="text-neutral-400"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-3 lg:row-start-1 mt-3 lg:mt-24 lg:animate-float" style='animation-delay: -750ms;'>
@@ -160,7 +160,7 @@
                             :user="$topVoters['users'][2] ?? null"
                             :count="$topVoters['users'][2]->count ?? 0"
                             :countLabel="__('leaderboard.voter.count')"
-                            croneColor="text-amber-900"
+                            crownColor="text-amber-900"
                     ></x-leaderboard.topuser>
                 </div>
             </div>
