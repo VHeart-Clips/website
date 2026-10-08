@@ -78,21 +78,21 @@
                 <div class="lg:col-start-2 lg:row-start-1">
                     <x-leaderboard.topuser
                             :user="$topSubmitters['users'][0] ?? null"
-                            :countLabel="($topSubmitters['users'][0]->count ?? 0 ) . ' ' . __(($topSubmitters['users'][0]->count ?? 0 ) > 1 ? 'leaderboard.submitter.count.plural' : 'leaderboard.submitter.count.singular')"
+                            :countLabel="trans_choice('leaderboard.submitter.count',$topSubmitters['users'][0]->count ?? 0,['count' => $topSubmitters['users'][0]->count ?? 0])"
                             crownColor="text-amber-300"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-1 lg:row-start-1 mt-3 lg:mt-12 lg:animate-float" style='animation-delay: -250ms;'>
                     <x-leaderboard.topuser
                             :user="$topSubmitters['users'][1] ?? null"
-                            :countLabel="($topSubmitters['users'][1]->count ?? 0 ) . ' ' . __(($topSubmitters['users'][1]->count ?? 0 ) > 1 ? 'leaderboard.submitter.count.plural' : 'leaderboard.submitter.count.singular')"
+                            :countLabel="trans_choice('leaderboard.submitter.count',$topSubmitters['users'][1]->count ?? 0,['count' => $topSubmitters['users'][1]->count ?? 0])"
                             crownColor="text-neutral-400"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-3 lg:row-start-1 mt-3 lg:mt-24 lg:animate-float" style='animation-delay: -750ms;'>
                     <x-leaderboard.topuser
                             :user="$topSubmitters['users'][2] ?? null"
-                            :countLabel="($topSubmitters['users'][2]->count ?? 0 ). ' ' . __(($topSubmitters['users'][2]->count ?? 0 ) ? 'leaderboard.submitter.count.plural' : 'leaderboard.submitter.count.singular')"
+                            :countLabel="trans_choice('leaderboard.submitter.count',$topSubmitters['users'][2]->count ?? 0,['count' => $topSubmitters['users'][2]->count ?? 0])"
                             crownColor="text-amber-900"
                     ></x-leaderboard.topuser>
                 </div>
@@ -103,7 +103,7 @@
                 @foreach ($topSubmitters['users']->skip(3) as $topSubmitter)
                     <x-leaderboard.rankuser
                         :user="$topSubmitter"
-                        :countLabel="$topSubmitter->count . ' ' . __($topSubmitter->count > 1 ? 'leaderboard.submitter.count.plural' : 'leaderboard.submitter.count.singular')"
+                        :countLabel="trans_choice('leaderboard.submitter.count',$topSubmitter->count ?? 0,['count' => $topSubmitter->count ?? 0])"
                         :rank="$loop->index + 4"
                     ></x-leaderboard.rankuser>
                 @endforeach
@@ -138,21 +138,21 @@
                 <div class="lg:col-start-2 lg:row-start-1">
                     <x-leaderboard.topuser
                             :user="$topVoters['users'][0] ?? null"
-                            :countLabel="($topVoters['users'][0]->count ?? 0) . ' ' . __(($topVoters['users'][0]->count ?? 0) > 1 ? 'leaderboard.voter.count.plural' : 'leaderboard.voter.count.singular')"
+                            :countLabel="trans_choice('leaderboard.voter.count',$topVoters['users'][0]->count ?? 0,['count' => $topVoters['users'][0]->count ?? 0])"
                             crownColor="text-amber-300"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-1 lg:row-start-1 mt-3 lg:mt-12 lg:animate-float" style='animation-delay: -250ms;'>
                     <x-leaderboard.topuser
                             :user="$topVoters['users'][1] ?? null"
-                            :countLabel="($topVoters['users'][1]->count ?? 0) . ' ' . __(($topVoters['users'][1]->count ?? 0) > 1 ? 'leaderboard.voter.count.plural' : 'leaderboard.voter.count.singular')"
+                            :countLabel="trans_choice('leaderboard.voter.count',$topVoters['users'][1]->count ?? 0,['count' => $topVoters['users'][1]->count ?? 0])"
                             crownColor="text-neutral-400"
                     ></x-leaderboard.topuser>
                 </div>
                 <div class="lg:col-start-3 lg:row-start-1 mt-3 lg:mt-24 lg:animate-float" style='animation-delay: -750ms;'>
                     <x-leaderboard.topuser
                             :user="$topVoters['users'][2] ?? null"
-                            :countLabel="($topVoters['users'][2]->count ?? 0) . ' ' . __(($topVoters['users'][2]->count ?? 0) > 1 ? 'leaderboard.voter.count.plural' : 'leaderboard.voter.count.singular')"
+                            :countLabel="trans_choice('leaderboard.voter.count',$topVoters['users'][2]->count ?? 0,['count' => $topVoters['users'][2]->count ?? 0])"
                             crownColor="text-amber-900"
                     ></x-leaderboard.topuser>
                 </div>
@@ -162,7 +162,7 @@
                 @foreach ($topVoters["users"]->skip(3) as $topVoter)
                     <x-leaderboard.rankuser
                         :user="$topVoter"
-                        :countLabel="$topVoter->count . ' ' . __($topVoter->count > 1 ? 'leaderboard.voter.count.plural' : 'leaderboard.voter.count.singular')"
+                        :countLabel="trans_choice('leaderboard.voter.count',$topVoter->count ?? 0,['count' => $topVoter->count ?? 0])"
                         :rank="$loop->index + 4"
                     ></x-leaderboard.rankuser>
                 @endforeach
