@@ -21,7 +21,17 @@ class ReportsRelationManager extends RelationManager
      */
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return $ownerRecord->parent_id === null && $pageClass === ViewReportCategory::class;
+        if ($pageClass !== ViewReportCategory::class) {
+            return false;
+        }
+
+        if ($ownerRecord->parent_id !== null) {
+            return true;
+        }
+
+        // unless the category has reports itself we just hide it for main categories
+        // and yes filament caches this before anyone asks why i didnt use once()
+        return $ownerRecord->reports()->exists();
     }
 
     public function isReadOnly(): bool
