@@ -1,4 +1,4 @@
-@props(['user' => null, 'count' => 0, 'countLabel' => '','crownColor' => 'text-primary', 'anonym' => false])
+@props(['user' => null, 'countLabel' => '','crownColor' => 'text-primary', 'anonym' => false])
 <div {{ $attributes->merge(['class' => "flex justify-center mb-1  $crownColor"]) }}>
     <x-lucide-crown class="size-9 lg:size-12 drop-shadow-md drop-shadow-black/42" defer />
 </div>
@@ -48,7 +48,7 @@
             </div>
                 @if (isset($user))
                     <div class="text-muted-foreground text-sm">
-                        {{ $count }} {{ __($countLabel . ($count > 1 ? '.plural' : '.singular')) }}
+                        {{ $countLabel }}
                     </div>
                 @else
                     <div class="text-muted-foreground text-sm opacity-0 select-none" aria-hidden="true">

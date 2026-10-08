@@ -1,4 +1,4 @@
-@props(['user' => null, 'count' => 0, 'countLabel' => '','rank' => '-', 'anonym' =>  false])
+@props(['user' => null, 'countLabel' => '','rank' => '-', 'anonym' =>  false])
 <div class="py-2">
     <div class="ms-2 p-2 md:p-2 xl:p-2 flex items-center gap-2 ">
 
@@ -27,7 +27,7 @@
                     @endif
                 </div>
                 <div class="text-muted-foreground text-sm">
-                    {{ $count }} {{ __($countLabel . ($count > 1 ? '.plural' : '.singular')) }}
+                    {{ $countLabel }}
                 </div>
             </div>
     </div>
