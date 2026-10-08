@@ -52,7 +52,7 @@
                     </div>
                 @else
                     <div class="text-muted-foreground text-sm opacity-0 select-none" aria-hidden="true">
-                        No {{ $countLabel }}
+                        {{ __('leaderboard.free') }}
                     </div>
                 @endif
             </div>
