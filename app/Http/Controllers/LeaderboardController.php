@@ -43,7 +43,8 @@ class LeaderboardController extends Controller
 
         $users = User::whereIn('id', $ids)->get(['id', 'name', 'avatar_url']);
 
-        $topSubmitters['users'] = $topSubmitters['users']->map(function (array $user) use ($users): stdClass {
+        $topSubmitters['users'] = $topSubmitters['users']
+        ->reject(fn(array $user): bool => !$users->contains('id',$user['id']))->map(function (array $user) use ($users): stdClass {
             $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
 
             $data->count = $user['count'];
@@ -51,7 +52,8 @@ class LeaderboardController extends Controller
             return (object) $data->toArray();
         });
 
-        $topVoters['users'] = $topVoters['users']->map(function (array $user) use ($users): stdClass {
+        $topVoters['users'] = $topVoters['users']
+        ->reject(fn(array $user): bool => !$users->contains('id',$user['id']))->map(function (array $user) use ($users): stdClass {
             $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
 
             $data->count = $user['count'];
