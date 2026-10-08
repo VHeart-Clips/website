@@ -23,12 +23,18 @@ return [
         'heading' => 'Top Submitter',
         'subheading' => '',
         'description' => '',
-        'count' => 'Submissions',
+        'count' => [
+            'singular' => 'Submission',
+            'plural' => 'Submissions',
+        ],
     ],
     'voter' => [
         'heading' => 'Top Voter',
         'subheading' => '',
         'description' => '',
-        'count' => 'Votes',
+        'count' => [
+            'singular' => 'Vote',
+            'plural' => 'Votes',
+        ],
     ],
 ];

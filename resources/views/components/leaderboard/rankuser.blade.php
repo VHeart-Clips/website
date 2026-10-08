@@ -27,7 +27,7 @@
                     @endif
                 </div>
                 <div class="text-muted-foreground text-sm">
-                    {{ $count }} {{ $countLabel }}
+                    {{ $count }} {{ __($countLabel . ($count > 1 ? '.plural' : '.singular')) }}
                 </div>
             </div>
     </div>

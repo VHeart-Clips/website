@@ -79,7 +79,7 @@
                     <x-leaderboard.topuser
                             :user="$topSubmitters['users'][0] ?? null"
                             :count="$topSubmitters['users'][0]->count ?? 0"
-                            :countLabel="__('leaderboard.submitter.count')"
+                            countLabel="leaderboard.submitter.count"
                             crownColor="text-amber-300"
                     ></x-leaderboard.topuser>
                 </div>
@@ -87,7 +87,7 @@
                     <x-leaderboard.topuser
                             :user="$topSubmitters['users'][1] ?? null"
                             :count="$topSubmitters['users'][1]->count ?? 0"
-                            :countLabel="__('leaderboard.submitter.count')"
+                            countLabel="leaderboard.submitter.count"
                             crownColor="text-neutral-400"
                     ></x-leaderboard.topuser>
                 </div>
@@ -95,7 +95,7 @@
                     <x-leaderboard.topuser
                             :user="$topSubmitters['users'][2] ?? null"
                             :count="$topSubmitters['users'][2]->count ?? 0"
-                            :countLabel="__('leaderboard.submitter.count')"
+                            countLabel="leaderboard.submitter.count"
                             crownColor="text-amber-900"
                     ></x-leaderboard.topuser>
                 </div>
@@ -107,7 +107,7 @@
                     <x-leaderboard.rankuser
                         :user="$topSubmitter"
                         :count="$topSubmitter->count ?? 0"
-                        :countLabel="__('leaderboard.submitter.count')"
+                        countLabel="leaderboard.submitter.count"
                         :rank="$loop->index + 4"
                     ></x-leaderboard.rankuser>
                 @endforeach
@@ -143,7 +143,7 @@
                     <x-leaderboard.topuser
                             :user="$topVoters['users'][0] ?? null"
                             :count="$topVoters['users'][0]->count ?? 0"
-                            :countLabel="__('leaderboard.voter.count')"
+                            countLabel="leaderboard.voter.count"
                             crownColor="text-amber-300"
                     ></x-leaderboard.topuser>
                 </div>
@@ -151,7 +151,7 @@
                     <x-leaderboard.topuser
                             :user="$topVoters['users'][1] ?? null"
                             :count="$topVoters['users'][1]->count ?? 0"
-                            :countLabel="__('leaderboard.voter.count')"
+                            countLabel="leaderboard.voter.count"
                             crownColor="text-neutral-400"
                     ></x-leaderboard.topuser>
                 </div>
@@ -159,7 +159,7 @@
                     <x-leaderboard.topuser
                             :user="$topVoters['users'][2] ?? null"
                             :count="$topVoters['users'][2]->count ?? 0"
-                            :countLabel="__('leaderboard.voter.count')"
+                            countLabel="leaderboard.voter.count"
                             crownColor="text-amber-900"
                     ></x-leaderboard.topuser>
                 </div>
@@ -170,7 +170,7 @@
                     <x-leaderboard.rankuser
                         :user="$topVoter"
                         :count="$topVoter->count ?? 0"
-                        :countLabel="__('leaderboard.voter.count')"
+                        countLabel="leaderboard.voter.count"
                         :rank="$loop->index + 4"
                     ></x-leaderboard.rankuser>
                 @endforeach

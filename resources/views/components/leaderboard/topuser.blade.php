@@ -48,7 +48,7 @@
             </div>
                 @if (isset($user) )
                     <div class="text-muted-foreground text-sm">
-                        {{ $count }} {{ $countLabel }}
+                        {{ $count }} {{ __($countLabel . ($count > 1 ? '.plural' : '.singular')) }}
                     </div>
                 @else
                     <div class="text-muted-foreground text-sm opacity-0 select-none" aria-hidden="true">

@@ -23,12 +23,18 @@ return [
         'heading' => 'Top Einsender',
         'subheading' => '',
         'description' => '',
-        'count' => 'Einsendungen',
+        'count' => [
+            'singular' => 'Einsendung',
+            'plural' => 'Einsendungen',
+        ],
     ],
     'voter' => [
         'heading' => 'Top Bewerter',
         'subheading' => '',
         'description' => '',
-        'count' => 'Bewertungen',
+        'count' => [
+            'singular' => 'Bewertung',
+            'plural' => 'Bewertungen',
+        ],
     ],
 ];
