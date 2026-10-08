@@ -74,23 +74,23 @@ class ReportCategoryInfolist
                                         TextEntry::make('sort_order')
                                             ->numeric(),
                                     ]),
-                            ]),
-                    ]),
 
-                Section::make('Metadata')
-                    ->icon(LucideIcon::Clock)
-                    ->compact()
-                    ->collapsed()
-                    ->columnSpanFull()
-                    ->columns(3)
-                    ->schema([
-                        TextEntry::make('created_at')
-                            ->dateTime(),
-                        TextEntry::make('updated_at')
-                            ->dateTime(),
-                        TextEntry::make('deleted_at')
-                            ->dateTime()
-                            ->visible(fn (ReportCategory $record): bool => $record->trashed()),
+                                Section::make('Metadata')
+                                    ->icon(LucideIcon::Clock)
+                                    ->compact()
+                                    ->collapsed()
+                                    ->columnSpanFull()
+                                    ->columns(3)
+                                    ->schema([
+                                        TextEntry::make('created_at')
+                                            ->dateTime(),
+                                        TextEntry::make('updated_at')
+                                            ->dateTime(),
+                                        TextEntry::make('deleted_at')
+                                            ->dateTime()
+                                            ->visible(fn (ReportCategory $record): bool => $record->trashed()),
+                                    ]),
+                            ]),
                     ]),
             ]);
     }
