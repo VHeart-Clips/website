@@ -35,7 +35,6 @@ Route::get('faq', FaqController::class)->name('faq');
 Route::get('team', TeamController::class)->name('team');
 Route::get('about-us', AboutUsController::class)->name('about');
 Route::get('locales', ChangeLanguageController::class)->name('locales');
-
 Route::get('leaderboard', LeaderboardController::class)->name('leaderboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
