@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "582d48194215f6f765782399ff6ba7ad",
+    "content-hash": "031cd1b622203fcb749839e48b3b8258",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4548,16 +4548,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "2.0.21",
+            "version": "2.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9"
+                "reference": "48c478b85c46c06029e3788fdea467e7dd738076"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9",
-                "reference": "d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/48c478b85c46c06029e3788fdea467e7dd738076",
+                "reference": "48c478b85c46c06029e3788fdea467e7dd738076",
                 "shasum": ""
             },
             "require": {
@@ -4602,9 +4602,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.21"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.24"
             },
-            "time": "2026-09-30T03:46:54+00:00"
+            "time": "2026-10-05T03:50:16+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10490,16 +10490,16 @@
         },
         {
             "name": "tales-from-a-dev/tailwind-merge-php",
-            "version": "v0.4.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tales-from-a-dev/tailwind-merge-php.git",
-                "reference": "d20c0f87dd70207170903e4af5e8ee6a26cc8a7c"
+                "reference": "61cbc85c3ced1b5724c816d101bc910f0cf8cc10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tales-from-a-dev/tailwind-merge-php/zipball/d20c0f87dd70207170903e4af5e8ee6a26cc8a7c",
-                "reference": "d20c0f87dd70207170903e4af5e8ee6a26cc8a7c",
+                "url": "https://api.github.com/repos/tales-from-a-dev/tailwind-merge-php/zipball/61cbc85c3ced1b5724c816d101bc910f0cf8cc10",
+                "reference": "61cbc85c3ced1b5724c816d101bc910f0cf8cc10",
                 "shasum": ""
             },
             "require": {
@@ -10541,9 +10541,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tales-from-a-dev/tailwind-merge-php/issues",
-                "source": "https://github.com/tales-from-a-dev/tailwind-merge-php/tree/v0.4.0"
+                "source": "https://github.com/tales-from-a-dev/tailwind-merge-php/tree/v0.5.0"
             },
-            "time": "2026-08-14T11:26:04+00:00"
+            "time": "2026-10-04T11:35:09+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -10602,16 +10602,16 @@
         },
         {
             "name": "ublabs/blade-simple-icons",
-            "version": "0.213.0",
+            "version": "0.214.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ublabs/blade-simple-icons.git",
-                "reference": "7d48222eca97335d680e7a6850548233ae511989"
+                "reference": "f71dd344a678d225a3b459e95db2bb51dbfab8fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ublabs/blade-simple-icons/zipball/7d48222eca97335d680e7a6850548233ae511989",
-                "reference": "7d48222eca97335d680e7a6850548233ae511989",
+                "url": "https://api.github.com/repos/ublabs/blade-simple-icons/zipball/f71dd344a678d225a3b459e95db2bb51dbfab8fa",
+                "reference": "f71dd344a678d225a3b459e95db2bb51dbfab8fa",
                 "shasum": ""
             },
             "require": {
@@ -10655,7 +10655,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ublabs/blade-simple-icons/issues",
-                "source": "https://github.com/ublabs/blade-simple-icons/tree/0.213.0"
+                "source": "https://github.com/ublabs/blade-simple-icons/tree/0.214.0"
             },
             "funding": [
                 {
@@ -10663,7 +10663,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-27T17:59:30+00:00"
+            "time": "2026-10-04T17:54:58+00:00"
         },
         {
             "name": "ueberdosis/tiptap-php",
