@@ -41,7 +41,7 @@ class TeamController extends Controller
      *
      * @param  Collection<Role>  $roles
      */
-    public function getTeamSchema(Collection $roles): array
+    private function getTeamSchema(Collection $roles): array
     {
         $schemaItems = [];
         $rolePosition = 1;
