@@ -17,7 +17,7 @@ class CustomFileUpload extends Field
 
     protected string $view = 'filament.forms.components.custom-file-upload';
 
-    protected string $directory = '';
+    protected Closure|string $directory = '';
 
     protected string $disk = 's3';
 
@@ -143,11 +143,16 @@ class CustomFileUpload extends Field
         return Str::isMatch('/^[0-9a-f-]{36}\.[a-z0-9]{1,8}$/i', Str::after($key, $prefix));
     }
 
-    public function directory(string $directory): static
+    public function getDirectoryUsing(Closure|string $directory): static
     {
         $this->directory = $directory;
 
         return $this;
+    }
+
+    public function getDirectory(): string
+    {
+        return (string) $this->evaluate($this->directory);
     }
 
     public function disk(string $disk): static
@@ -208,7 +213,7 @@ class CustomFileUpload extends Field
     {
         abort_unless(self::isTemporaryPrefixOf($tmpKey, auth()->id()), 422);
 
-        $final = mb_trim(mb_trim($this->directory, '/').'/'.basename($tmpKey), '/');
+        $final = mb_trim(mb_trim($this->getDirectory(), '/').'/'.basename($tmpKey), '/');
 
         Log::debug('Moving uploaded file', [
             'old' => $tmpKey,
