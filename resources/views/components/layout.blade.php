@@ -46,6 +46,7 @@
         {
             "@@context": "https://schema.org",
             "@type": "Organization",
+            "@id": "https://vheart.net/#organization",
             "name": "{{ config('app.name') }}",
             "url": "{{ route('home') }}",
             "logo": "{{ Vite::asset('resources/images/svg/logo-light.svg') }}",
