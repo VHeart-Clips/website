@@ -98,7 +98,7 @@ class ReportCategoryForm
                                                     ->icon(LucideIcon::Wrench)
                                                     ->color('danger')
                                                     ->requiresConfirmation()
-                                                    ->visible(fn (ReportCategory $record): bool => $record->parent_id !== null
+                                                    ->visible(fn (?ReportCategory $record): bool => $record instanceof ReportCategory && $record->parent_id !== null
                                                         && $record->parentCategory()->withTrashed()->value('parent_id') === $record->getKey())
                                                     ->action(function (ReportCategory $record, Set $set): void {
                                                         DB::transaction(function () use ($record): void {
