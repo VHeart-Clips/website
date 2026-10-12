@@ -1,4 +1,7 @@
-<x-layout title="Startseite">
+<x-layout
+    :robots="request()->has('cursor') ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'"
+    :canonical="url()->current()"
+>
     <div class="m-auto px-4 py-8">
         <section
             style="--base-w: 32rem; --growth: 24; --max-w: 80rem;"
