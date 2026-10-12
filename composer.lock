@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "582d48194215f6f765782399ff6ba7ad",
+    "content-hash": "031cd1b622203fcb749839e48b3b8258",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4548,16 +4548,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "2.0.21",
+            "version": "2.0.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9"
+                "reference": "48c478b85c46c06029e3788fdea467e7dd738076"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9",
-                "reference": "d981d174ccfcf95b7a7cf2cd01427e1c68d5bef9",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/48c478b85c46c06029e3788fdea467e7dd738076",
+                "reference": "48c478b85c46c06029e3788fdea467e7dd738076",
                 "shasum": ""
             },
             "require": {
@@ -4602,9 +4602,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.21"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.24"
             },
-            "time": "2026-09-30T03:46:54+00:00"
+            "time": "2026-10-05T03:50:16+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -10490,16 +10490,16 @@
         },
         {
             "name": "tales-from-a-dev/tailwind-merge-php",
-            "version": "v0.4.0",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tales-from-a-dev/tailwind-merge-php.git",
-                "reference": "d20c0f87dd70207170903e4af5e8ee6a26cc8a7c"
+                "reference": "61cbc85c3ced1b5724c816d101bc910f0cf8cc10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tales-from-a-dev/tailwind-merge-php/zipball/d20c0f87dd70207170903e4af5e8ee6a26cc8a7c",
-                "reference": "d20c0f87dd70207170903e4af5e8ee6a26cc8a7c",
+                "url": "https://api.github.com/repos/tales-from-a-dev/tailwind-merge-php/zipball/61cbc85c3ced1b5724c816d101bc910f0cf8cc10",
+                "reference": "61cbc85c3ced1b5724c816d101bc910f0cf8cc10",
                 "shasum": ""
             },
             "require": {
@@ -10541,9 +10541,9 @@
             ],
             "support": {
                 "issues": "https://github.com/tales-from-a-dev/tailwind-merge-php/issues",
-                "source": "https://github.com/tales-from-a-dev/tailwind-merge-php/tree/v0.4.0"
+                "source": "https://github.com/tales-from-a-dev/tailwind-merge-php/tree/v0.5.0"
             },
-            "time": "2026-08-14T11:26:04+00:00"
+            "time": "2026-10-04T11:35:09+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
@@ -10602,16 +10602,16 @@
         },
         {
             "name": "ublabs/blade-simple-icons",
-            "version": "0.213.0",
+            "version": "0.214.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ublabs/blade-simple-icons.git",
-                "reference": "7d48222eca97335d680e7a6850548233ae511989"
+                "reference": "f71dd344a678d225a3b459e95db2bb51dbfab8fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ublabs/blade-simple-icons/zipball/7d48222eca97335d680e7a6850548233ae511989",
-                "reference": "7d48222eca97335d680e7a6850548233ae511989",
+                "url": "https://api.github.com/repos/ublabs/blade-simple-icons/zipball/f71dd344a678d225a3b459e95db2bb51dbfab8fa",
+                "reference": "f71dd344a678d225a3b459e95db2bb51dbfab8fa",
                 "shasum": ""
             },
             "require": {
@@ -10655,7 +10655,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ublabs/blade-simple-icons/issues",
-                "source": "https://github.com/ublabs/blade-simple-icons/tree/0.213.0"
+                "source": "https://github.com/ublabs/blade-simple-icons/tree/0.214.0"
             },
             "funding": [
                 {
@@ -10663,7 +10663,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-27T17:59:30+00:00"
+            "time": "2026-10-04T17:54:58+00:00"
         },
         {
             "name": "ueberdosis/tiptap-php",
@@ -13110,16 +13110,16 @@
         },
         {
             "name": "larastan/larastan",
-            "version": "v3.12.2",
+            "version": "v3.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/larastan/larastan.git",
-                "reference": "c328727e6103c1147d1c64cc96b3aedfda26bc20"
+                "reference": "792628d803d92fb154d6909d7e8d5862d81741f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/larastan/larastan/zipball/c328727e6103c1147d1c64cc96b3aedfda26bc20",
-                "reference": "c328727e6103c1147d1c64cc96b3aedfda26bc20",
+                "url": "https://api.github.com/repos/larastan/larastan/zipball/792628d803d92fb154d6909d7e8d5862d81741f1",
+                "reference": "792628d803d92fb154d6909d7e8d5862d81741f1",
                 "shasum": ""
             },
             "require": {
@@ -13187,7 +13187,7 @@
             ],
             "support": {
                 "issues": "https://github.com/larastan/larastan/issues",
-                "source": "https://github.com/larastan/larastan/tree/v3.12.2"
+                "source": "https://github.com/larastan/larastan/tree/v3.12.3"
             },
             "funding": [
                 {
@@ -13195,7 +13195,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-19T10:46:58+00:00"
+            "time": "2026-10-04T20:01:26+00:00"
         },
         {
             "name": "laravel/pail",
@@ -14939,11 +14939,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.2.16",
+            "version": "2.3.1",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/46a6d9060e5a7763adfcc21ebcb8b504ebdbcb92",
-                "reference": "46a6d9060e5a7763adfcc21ebcb8b504ebdbcb92",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/6155239b488e95d26d1ebd95c6b4bb294d7f09db",
+                "reference": "6155239b488e95d26d1ebd95c6b4bb294d7f09db",
                 "shasum": ""
             },
             "require": {
@@ -14999,7 +14999,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-25T09:31:51+00:00"
+            "time": "2026-10-08T21:09:11+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -15438,21 +15438,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "2.6.7",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "f4aa224edb9b0630fb43826d4cb6a49b62e48d4c"
+                "reference": "4d6a39b7fff302cac0ce90cd959a53c2f6a32776"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f4aa224edb9b0630fb43826d4cb6a49b62e48d4c",
-                "reference": "f4aa224edb9b0630fb43826d4cb6a49b62e48d4c",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/4d6a39b7fff302cac0ce90cd959a53c2f6a32776",
+                "reference": "4d6a39b7fff302cac0ce90cd959a53c2f6a32776",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.4|^8.0",
-                "phpstan/phpstan": "^2.2.14"
+                "phpstan/phpstan": "^2.3.0"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -15483,7 +15483,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/2.6.7"
+                "source": "https://github.com/rectorphp/rector/tree/2.7.0"
             },
             "funding": [
                 {
@@ -15491,7 +15491,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-09-13T20:17:44+00:00"
+            "time": "2026-10-06T08:46:45+00:00"
         },
         {
             "name": "revolt/event-loop",
