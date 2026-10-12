@@ -66,7 +66,7 @@ class TeamController extends Controller
                 ];
             }
 
-            if (empty($members)) {
+            if ($members === []) {
                 continue;
             }
 
