@@ -1,6 +1,6 @@
 @use(App\Enums\UserSettings\LanguagePreference)
 @php
-    $currentLanguage = LanguagePreference::tryFrom(app()->getLocale()) ?? LanguagePreference::tryFrom(app()->getFallbackLocale());
+    $currentLanguage = LanguagePreference::tryFrom(app()->currentLocale()) ?? LanguagePreference::tryFrom(app()->getFallbackLocale());
 @endphp
 <x-ui.dropdown>
     <x-ui.dropdown.trigger>
