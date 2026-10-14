@@ -16,7 +16,6 @@ class ChangeLanguageController extends Controller
         $lang = $request->enum(
             'locale',
             LanguagePreference::class,
-            LanguagePreference::tryFrom(app()->getFallbackLocale())
         );
 
         if ($lang === null) {
