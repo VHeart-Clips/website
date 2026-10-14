@@ -322,8 +322,12 @@ class ClipsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
-                GenerateClipOverlayAction::make(),
+                GenerateClipOverlayAction::make()
+                    ->tooltip('Generate Overlay')
+                    ->iconButton(),
                 CommentsAction::make()
+                    ->tooltip(__('commentions::comments.label'))
+                    ->iconButton()
                     ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
                     ->authorize('comment')
                     ->perPage(4)
