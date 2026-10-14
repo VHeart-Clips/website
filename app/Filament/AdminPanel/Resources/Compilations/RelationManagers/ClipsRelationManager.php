@@ -401,6 +401,7 @@ class ClipsRelationManager extends RelationManager
                                 ->required(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
                                 ->visible(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
                                 ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
+                                ->getDirectoryUsing(fn (Clip $clip): int => $clip->pivot->compilation_id)
                                 ->acceptedFileTypes(['video/mp4' => 'mp4']),
                         ])
                         ->action(function (Clip $clip, array $data): void {

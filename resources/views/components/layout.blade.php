@@ -5,6 +5,7 @@
     'ogImage' => null,
     'background' => true,
     "robots" => "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+    "canonical" => url()->full(),
     "discordEmbedUrl" => route('embed.discord.default')
 ])
 @php
@@ -31,7 +32,7 @@
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
     <link rel="discord:component-embed" type="application/json" href="{{ $discordEmbedUrl }}">
-    <link rel="canonical" href="{{ request()->has('cursor') ? url()->full() : url()->current() }}">
+    <link rel="canonical" href="{{ $canonical }}">
     <link rel="author" href="{{ route('team') }}">
 
     <script type="application/ld+json">
