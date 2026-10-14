@@ -23,7 +23,7 @@ class ExportTranslationsCommand extends Command
         $targetRoot = public_path('locales');
         $processedPaths = [];
 
-        if (empty($locales)) {
+        if ($locales === []) {
             $this->warn('No locales found in configuration.');
 
             return;
