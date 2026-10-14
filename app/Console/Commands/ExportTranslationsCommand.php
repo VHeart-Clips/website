@@ -19,7 +19,7 @@ class ExportTranslationsCommand extends Command
     {
         $this->info('Starting translation export...');
 
-        $locales = collect(array_column(LanguagePreference::cases(), 'value'))->toArray();
+        $locales = array_column(LanguagePreference::cases(), 'value');
         $targetRoot = public_path('locales');
         $processedPaths = [];
 
