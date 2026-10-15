@@ -14,11 +14,9 @@ enum TopOverlayType: string
 
     public function getQueryClass(): string
     {
-        $queryClass = match ($this) {
+        return match ($this) {
             self::Votes => UserLeaderboardVoteQuery::class,
             self::Submits => UserLeaderboardSubmitterQuery::class
         };
-
-        return $queryClass;
     }
 }
