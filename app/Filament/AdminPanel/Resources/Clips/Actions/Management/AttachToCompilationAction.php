@@ -86,7 +86,7 @@ class AttachToCompilationAction extends Action
                     'added_by' => auth()->id(),
                     'claim_status' => $data['status'] ?? CompilationClipClaimStatus::Pending,
                     'claimed_by' => $data['claim'] ? auth()->id() : null,
-                    'claimed_at' => now(),
+                    'claimed_at' => $data['claim'] ? now() : null,
                 ];
 
                 $record->compilations()->attach($compilation, $pivotData);
