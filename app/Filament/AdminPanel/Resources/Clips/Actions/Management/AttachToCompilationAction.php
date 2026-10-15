@@ -6,9 +6,12 @@ namespace App\Filament\AdminPanel\Resources\Clips\Actions\Management;
 
 use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
+use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
+use App\Filament\Forms\Components\CustomFileUpload;
 use App\Models\Clip;
 use App\Support\Audit\Auditor;
+use App\Support\FeatureFlag\Feature;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -38,20 +41,31 @@ class AttachToCompilationAction extends Action
                             ->whereNot('compilations.user_id', auth()->id()))
                         ->pluck('title', 'id'))
                     ->preload()
+                    ->live()
                     ->required(),
                 Fieldset::make()
+                    ->visible(fn (Get $get): bool => $get('compilation_id') !== null)
                     ->schema([
                         Toggle::make('claim')
                             ->reactive()
                             ->label('admin/resources/clips.actions.attach_to_compilation.claim')
                             ->translateLabel(),
                         Select::make('status')
+                            ->live(condition: fn (): bool => Feature::isActive(FeatureFlag::ClipUpload))
                             ->disabled(fn (Get $get): bool => $get('claim') !== true)
                             ->label('admin/resources/clips.actions.attach_to_compilation.status')
                             ->translateLabel()
                             ->options(CompilationClipClaimStatus::class)
                             ->default(CompilationClipClaimStatus::Pending)
                             ->required(),
+                        CustomFileUpload::make('file_path')
+                            ->disk('compilation_clips_archive')
+                            ->maxSize(257 * 1024)
+                            ->required(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
+                            ->visible(fn (Get $get): bool => $get('status') === CompilationClipClaimStatus::Completed)
+                            ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
+                            ->getDirectoryUsing(fn (Get $get): int => $get('compilation_id'))
+                            ->acceptedFileTypes(['video/mp4' => 'mp4']),
                     ])->columns(1),
             ])
             ->action(function (Clip $record, array $data): void {
@@ -61,6 +75,10 @@ class AttachToCompilationAction extends Action
                     'claimed_by' => $data['claim'] ? auth()->id() : null,
                     'claimed_at' => now(),
                 ];
+
+                if (Feature::isActive(FeatureFlag::ClipUpload)) {
+                    $pivotData['file_path'] = $data['file_path'];
+                }
 
                 $record->compilations()->attach($data['compilation_id'], $pivotData);
 

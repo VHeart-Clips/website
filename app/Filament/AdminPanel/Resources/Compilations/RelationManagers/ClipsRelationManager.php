@@ -68,6 +68,7 @@ class ClipsRelationManager extends RelationManager
                 'submitter',
                 'claimer',
             ])
+                ->withCount('comments')
                 ->withScore()
                 ->withAbsoluteImpressionCount()
                 ->withPublicVoteCount()
@@ -322,8 +323,13 @@ class ClipsRelationManager extends RelationManager
                     }),
             ])
             ->recordActions([
-                GenerateClipOverlayAction::make(),
+                GenerateClipOverlayAction::make()
+                    ->tooltip('Generate Overlay')
+                    ->iconButton(),
                 CommentsAction::make()
+                    ->tooltip(__('commentions::comments.label'))
+                    ->iconButton()
+                    ->badge(fn (Clip $record) => $record->comments_count > 0 ? $record->comments_count : null)
                     ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
                     ->authorize('comment')
                     ->perPage(4)
