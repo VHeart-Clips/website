@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Clips\Actions\Management;
 
 use App\Enums\Clips\CompilationClipClaimStatus;
-use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Models\Clip;
 use App\Support\Audit\Auditor;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,13 +30,19 @@ class AttachToCompilationAction extends Action
                 Select::make('compilation_id')
                     ->label('Compilation')
                     ->searchable()
-                    ->options(fn (Clip $record) => Clip\Compilation::query()
+                    ->options(fn (Clip $record) => $this->attachableCompilations($record)
                         ->orderBy('created_at', 'desc')
-                        ->whereNotIn('id', $record->compilations()->pluck('compilations.id'))
-                        ->whereNotIn('compilations.status', CompilationStatus::getVoteDisabledCases())
-                        ->whereNot(fn (Builder $builder) => $builder->where('compilations.status', CompilationStatus::Internal)
-                            ->whereNot('compilations.user_id', auth()->id()))
                         ->pluck('title', 'id'))
+                    ->default(function (Page $livewire): ?int {
+                        $id = $livewire->tableFilters['unique_broadcaster_compilation']['compilation_id'] ?? null;
+
+                        /** @var Clip $record */
+                        $record = $this->getRecord();
+
+                        return filled($id) && $this->attachableCompilations($record)->whereKey($id)->exists()
+                            ? (int) $id
+                            : null;
+                    })
                     ->preload()
                     ->required(),
                 Fieldset::make()
@@ -76,5 +82,12 @@ class AttachToCompilationAction extends Action
     public static function getDefaultName(): ?string
     {
         return 'attachToCompilation';
+    }
+
+    protected function attachableCompilations(Clip $record): Builder
+    {
+        return Clip\Compilation::query()
+            ->whereAttachable()
+            ->whereNotIn('compilations.id', $record->compilations()->pluck('compilations.id'));
     }
 }
