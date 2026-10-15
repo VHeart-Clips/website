@@ -11,6 +11,7 @@ use App\Support\Audit\Auditor;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
@@ -60,7 +61,27 @@ class AttachToCompilationAction extends Action
                             ->required(),
                     ])->columns(1),
             ])
-            ->action(function (Clip $record, array $data): void {
+            ->action(function (Clip $record, array $data, Action $action, Page $livewire): void {
+                /** @var Clip\Compilation $compilation */
+                $compilation = Clip\Compilation::findOrFail($data['compilation_id']);
+                $filtered = filled($livewire->tableFilters['unique_broadcaster_compilation']['compilation_id'] ?? null);
+
+                if (
+                    $filtered
+                    && $compilation->clips()
+                        ->where('clips.broadcaster_id', $record->broadcaster_id)
+                        ->whereKeyNot($record->getKey())
+                        ->exists()
+                ) {
+                    Notification::make()
+                        ->danger()
+                        ->title('Broadcaster already in Compilation')
+                        ->body('This compilation already contains a clip from this broadcaster, try again or remove compilation filter.')
+                        ->send();
+
+                    $action->halt();
+                }
+
                 $pivotData = [
                     'added_by' => auth()->id(),
                     'claim_status' => $data['status'] ?? CompilationClipClaimStatus::Pending,
@@ -68,12 +89,12 @@ class AttachToCompilationAction extends Action
                     'claimed_at' => now(),
                 ];
 
-                $record->compilations()->attach($data['compilation_id'], $pivotData);
+                $record->compilations()->attach($compilation, $pivotData);
 
                 Auditor::make()
                     ->event('compilation.clip.attached')
                     ->new($pivotData)
-                    ->on(Clip\Compilation::find($data['compilation_id']))
+                    ->on($compilation)
                     ->save();
             })
             ->successNotificationTitle(__('admin/resources/clips.notifications.actions.attached_to_compilation'));
