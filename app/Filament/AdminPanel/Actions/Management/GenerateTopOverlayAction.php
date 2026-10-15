@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Actions\Management;
 
 use App\Enums\Filament\LucideIcon;
+use App\Enums\Filament\TopOverlayType;
 use App\Models\User;
-use App\Queries\Leaderboard\UserLeaderboardVoteQuery;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
@@ -35,7 +35,7 @@ class GenerateTopOverlayAction extends Action
             ->modalSubmitActionLabel('Close')
             ->modalCancelAction(false)
             ->fillForm(fn (): array => [
-                'type' => 'votes',
+                'type' => TopOverlayType::Votes,
                 'show_background' => true,
                 'from' => now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY),
                 'to' => now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY),
@@ -55,10 +55,7 @@ class GenerateTopOverlayAction extends Action
                 Select::make('type')
                     ->label('Type')
                     ->translateLabel()
-                    ->options([
-                        'votes' => 'Votes',
-                        'submits' => 'Submit',
-                    ])
+                    ->options(TopOverlayType::class)
                     ->live()
                     ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
                 Toggle::make('show_background')
@@ -70,11 +67,11 @@ class GenerateTopOverlayAction extends Action
                 'filament.actions.generate-top-overlay',
                 [
                     'initialState' => [
-                        'type' => 'votes',
-                        'users' => $this->getUsers('votes', now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY), now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY)),
+                        'type' => TopOverlayType::Votes,
+                        'users' => $this->getUsers(TopOverlayType::Votes, now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY), now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY)),
                         'show_background' => true,
                     ],
-                    'identifier' => 'votes',
+                    'identifier' => TopOverlayType::Votes,
                 ]
             ))
             ->action(null);
@@ -95,9 +92,10 @@ class GenerateTopOverlayAction extends Action
         ]];
     }
 
-    private function getUsers(string $type, CarbonInterface $start, CarbonInterface $end): array
+    private function getUsers(TopOverlayType $type, CarbonInterface $start, CarbonInterface $end): array
     {
-        $leaderBoardUsers = new UserLeaderboardVoteQuery()->handle($start, $end, 5);
+        $queryClass = $type->getQueryClass();
+        $leaderBoardUsers = new $queryClass()->handle($start, $end, 5);
         $users = User::whereIn('id', $leaderBoardUsers->pluck('id'))->get(['id', 'name', 'avatar_url']);
 
         $leaderBoardUsers = $leaderBoardUsers->reject(fn (array $user): bool => ! $users->contains('id', $user['id']))
