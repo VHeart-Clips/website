@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Clips\Actions\Management;
 
 use App\Enums\Clips\CompilationClipClaimStatus;
-use App\Enums\Clips\CompilationStatus;
 use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\Forms\Components\CustomFileUpload;
@@ -104,13 +103,11 @@ class AttachToCompilationAction extends Action
                     'claimed_at' => $data['claim'] ? now() : null,
                 ];
 
-
                 if (Feature::isActive(FeatureFlag::ClipUpload)) {
                     $pivotData['file_path'] = $data['file_path'];
                 }
 
                 $record->compilations()->attach($compilation, $pivotData);
-
 
                 Auditor::make()
                     ->event('compilation.clip.attached')
