@@ -488,21 +488,6 @@ class ClipsRelationManager extends RelationManager
             ->openRecordUrlInNewTab();
     }
 
-    protected function getTableHeaderActions(): array
-    {
-        return [
-            Action::make('findClips')
-                ->label('Find clips')
-                ->icon(LucideIcon::Search)
-                ->openUrlInNewTab()
-                ->url(fn (): string => ClipResource::getUrl('index', [
-                    'filters' => [
-                        'unique_broadcaster_compilation' => ['compilation_id' => $this->getOwnerRecord()->getKey()],
-                    ],
-                ])),
-        ];
-    }
-
     private function isCompilationReadOnly(): bool
     {
         if (auth()->user()->id === $this->getOwnerRecord()->user_id || auth()->user()->can(Permission::UpdateAnyCompilation)) {
