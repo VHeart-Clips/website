@@ -76,7 +76,7 @@ class AttachToCompilationAction extends Action
                     'claimed_at' => now(),
                 ];
 
-                if (Feature::isActive(FeatureFlag::ClipUpload)) {
+                if (Feature::isActive(FeatureFlag::ClipUpload) && array_key_exists('file_path', $data)) {
                     $pivotData['file_path'] = $data['file_path'];
                 }
 
