@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class ReportCategoryForm
@@ -74,7 +75,7 @@ class ReportCategoryForm
                                             ->relationship(
                                                 name: 'parentCategory',
                                                 titleAttribute: 'name',
-                                                modifyQueryUsing: fn ($query, ?ReportCategory $record) => $query
+                                                modifyQueryUsing: fn (Builder $query, ?ReportCategory $record) => $query
                                                     // for now we dont allow deep parenting (if you can call it that)
                                                     // as this would expose us to a ton of recursive issues lol
                                                     ->whereNull('parent_id')
