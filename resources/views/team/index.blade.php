@@ -1,4 +1,7 @@
 <x-layout :title="__('team.page_title')">
+    <x-slot:meta>
+        <script type="application/ld+json">{!! $teamSchema !!}</script>
+    </x-slot:meta>
     <div class="mx-auto px-4 py-16 sm:py-24">
         <div class="mb-24 text-center">
             <h1 class="mb-6 text-6xl font-black tracking-tighter sm:text-7xl md:text-8xl">
