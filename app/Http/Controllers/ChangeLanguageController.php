@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserSettings\LanguagePreference;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Config;
 
 class ChangeLanguageController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse|RedirectResponse
     {
-        $lang = $request->input('locale', 'en');
+        $lang = $request->enum(
+            'locale',
+            LanguagePreference::class,
+        );
 
-        if (! array_key_exists((string) $lang, Config::get('app.locales'))) {
+        if ($lang === null) {
             if (! $request->expectsJson()) {
                 return redirect()->back()->withErrors([
                     'locale' => 'Invalid locale selected',
@@ -24,8 +28,8 @@ class ChangeLanguageController extends Controller
             abort(422);
         }
 
-        app()->setLocale($lang);
-        session()?->put('locale', $lang);
+        app()->setLocale($lang->value);
+        session()?->put('locale', $lang->value);
 
         if ($request->expectsJson()) {
             return new JsonResponse([

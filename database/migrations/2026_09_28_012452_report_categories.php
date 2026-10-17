@@ -37,7 +37,6 @@ return new class extends Migration
                 ->constrained('report_categories')
                 ->restrictOnDelete();
 
-            // TODO: make sure to remove in the future
             $table->unsignedInteger('reason')
                 ->nullable()
                 ->comment('deprecated by category_id, will be removed in future migrations')

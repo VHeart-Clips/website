@@ -8,4 +8,9 @@ return [
         'moderation' => 'Moderation',
         'management' => 'Verwaltung',
     ],
+    'theme-preference' => [
+        'system' => 'Automatisch',
+        'light' => 'Hell',
+        'dark' => 'Dunkel',
+    ],
 ];

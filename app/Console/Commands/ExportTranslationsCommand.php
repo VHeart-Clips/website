@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Enums\UserSettings\LanguagePreference;
 use Exception;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
@@ -18,11 +19,11 @@ class ExportTranslationsCommand extends Command
     {
         $this->info('Starting translation export...');
 
-        $locales = collect(config('app.locales', []))->pluck('locale')->toArray();
+        $locales = array_column(LanguagePreference::cases(), 'value');
         $targetRoot = public_path('locales');
         $processedPaths = [];
 
-        if (empty($locales)) {
+        if ($locales === []) {
             $this->warn('No locales found in configuration.');
 
             return;
