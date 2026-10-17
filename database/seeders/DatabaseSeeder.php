@@ -50,7 +50,6 @@ class DatabaseSeeder extends Seeder
             FaqSeeder::class,
             FeatureFlagSeeder::class,
             RolePermissionSeeder::class,
-            ReportCategorySeeder::class,
         ]);
     }
 }
