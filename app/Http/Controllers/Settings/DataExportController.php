@@ -159,8 +159,8 @@ class DataExportController extends Controller
             ->get()
             ->map(fn (Report $report): array => [
                 'id' => $report->id,
-                'reason' => $report->reason->value,
-                'reason_text' => $report->reason->getLabel(),
+                'category_id' => $report->category->id,
+                'category_name' => $report->category->name,
                 'description' => $report->description,
                 'status' => $report->status->value,
                 'status_text' => $report->status->getLabel(),
