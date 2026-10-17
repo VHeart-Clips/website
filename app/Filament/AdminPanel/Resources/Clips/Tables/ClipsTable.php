@@ -7,25 +7,31 @@ namespace App\Filament\AdminPanel\Resources\Clips\Tables;
 use App\Enums\Broadcaster\BroadcasterConsent;
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationStatus;
+use App\Enums\Filament\LucideIcon;
 use App\Filament\Actions\Tables\UpdateClipStatusAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Management\AttachToCompilationAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Management\ClipFeedbackAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\FlagClipAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\UnflagClipAction;
+use App\Filament\AdminPanel\Resources\Clips\Pages\ListClips;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Resources\Clips\ClipActions;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
+use App\Models\Clip\Compilation;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class ClipsTable
 {
@@ -80,6 +86,8 @@ class ClipsTable
                 ])->from('lg'),
             ])
             ->filters([
+                self::makeCompilationUniqueBroadcasterFilter(),
+
                 SelectFilter::make('broadcaster')
                     ->relationship('owner', 'name', fn (Builder $query): Builder => $query->whereHas('broadcastedClips'))
                     ->searchable()
@@ -212,5 +220,60 @@ class ClipsTable
                     EditAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * Allows the user to hide clips by broadcasters that are already within the selected Compilation
+     */
+    private static function makeCompilationUniqueBroadcasterFilter(): Filter
+    {
+        return Filter::make('unique_broadcaster_compilation')
+            ->schema([
+                Select::make('compilation_id')
+                    ->label('Unique by Compilation')
+                    ->hintIcon(LucideIcon::CircleQuestionMark, 'Hides any broadcaster who is already within the selected Compilation')
+                    ->options(fn () => Compilation::query()
+                        ->orderByDesc('created_at')
+                        ->pluck('title', 'id'))
+                    ->optionsLimit(5)
+                    ->searchable()
+                    ->preload(),
+            ])
+            ->query(function (Builder $query, array $data, ListClips $livewire): Builder {
+                /** @var ?string $compilationId */
+                $compilationId = $data['compilation_id'] ?? null;
+
+                if (blank($compilationId)) {
+                    return $query;
+                }
+
+                if (! is_numeric($compilationId) || Compilation::whereKey($compilationId)->doesntExist()) {
+                    // removeTableFilter() doesnt update the url or filter input so we get a weird state
+                    // setting the filter manually to null on the array itself will properly update though
+                    $livewire->tableFilters['unique_broadcaster_compilation'] = null;
+
+                    return $query;
+                }
+
+                return $query->whereNotIn('broadcaster_id', function (QueryBuilder $sub) use ($compilationId): void {
+                    $sub->select('clips.broadcaster_id')
+                        ->from('clips')
+                        ->join('compilation_clip', 'clips.id', '=', 'compilation_clip.clip_id')
+                        ->where('compilation_clip.compilation_id', $compilationId);
+                });
+            })
+            ->indicateUsing(function (array $data): array {
+                $compilationId = $data['compilation_id'] ?? null;
+
+                if (! is_numeric($compilationId) || blank($compilationId)) {
+                    return [];
+                }
+
+                $title = Compilation::whereKey($compilationId)->value('title');
+
+                return $title ? [
+                    'Not In Compilation: '.$title,
+                ] : [];
+            });
     }
 }
