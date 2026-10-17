@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Enums\UserSettings\LanguagePreference;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,13 +13,13 @@ class Localization
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $availableLocales = config('app.locales', []);
+        $availableLocales = array_column(LanguagePreference::cases(), 'value');
 
         // TODO: should we store that in the database?
         /*
         $user = $request->user();
         if ($user && ($userLang = $user->language)) {
-            if (array_key_exists($userLang, $availableLocales)) {
+            if (in_array($userLang, $availableLocales, true)) {
                 session()->put('locale', $userLang);
             }
         }
@@ -28,7 +29,7 @@ class Localization
         if (session()?->has('locale')) {
             $locale = session('locale');
 
-            if (array_key_exists((string) $locale, $availableLocales)) {
+            if (in_array($locale, $availableLocales, true)) {
                 app()->setLocale($locale);
                 $request->setLocale($locale);
 
@@ -37,7 +38,7 @@ class Localization
         }
 
         // Try guessing based on browser headers
-        $locale = $request->getPreferredLanguage(array_keys($availableLocales));
+        $locale = $request->getPreferredLanguage($availableLocales);
 
         if ($locale) {
             app()->setLocale($locale);
