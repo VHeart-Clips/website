@@ -46,6 +46,10 @@ document.addEventListener('alpine:init', () => {
             'customFileUpload',
             () => import('@/components/filament/custom-file-upload'),
         ],
+        [
+            'filamentTopOverlay',
+            () => import('@/components/filament/top-overlay'),
+        ],
     ];
 
     asyncComponents.forEach(([componentName, importFn]) => {

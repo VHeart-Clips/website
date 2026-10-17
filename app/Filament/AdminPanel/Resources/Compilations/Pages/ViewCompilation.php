@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 
 use App\Enums\Filament\LucideIcon;
+use App\Filament\AdminPanel\Actions\Management\GenerateTopOverlayAction;
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
 use App\Models\Clip;
 use App\Models\Clip\Compilation;
@@ -60,6 +61,7 @@ class ViewCompilation extends ViewRecord
                             ->readOnly()
                             ->extraAttributes(['class' => 'font-mono text-sm']),
                     ]),
+                GenerateTopOverlayAction::make(),
             ])
                 ->button()
                 ->label('Für Yura'),
