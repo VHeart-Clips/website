@@ -11,7 +11,7 @@
         </x-slot:placeholder>
 
         <x-slot:consent>
-            <x-lucide-cookie class="size-12 opacity-60" />
+            <x-lucide-cookie defer class="size-12 opacity-60" />
             <p class="text-xs md:text-md text-center px-6 leading-relaxed md:opacity-0 group-hover:opacity-100 transition-all">
                 {{ __('clips.preview.consent-required') }}
             </p>

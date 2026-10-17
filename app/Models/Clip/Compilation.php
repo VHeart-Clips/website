@@ -12,7 +12,9 @@ use App\Models\Traits\Auditable;
 use App\Models\User;
 use App\Policies\CompilationPolicy;
 use Database\Factories\Clip\CompilationFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -58,6 +60,20 @@ class Compilation extends Model implements Commentable, FilamentResourceful
         }
 
         return $this->status->isPublic();
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function whereAttachable(Builder $query): Builder
+    {
+        return $query
+            ->whereNotIn('compilations.status', CompilationStatus::getVoteDisabledCases())
+            ->whereNot(fn (Builder $builder) => $builder
+                ->where('compilations.status', CompilationStatus::Internal)
+                ->whereNot('compilations.user_id', auth()->id()));
     }
 
     protected function casts(): array

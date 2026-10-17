@@ -1,4 +1,14 @@
-<x-layout :title="__('faq.title')">
+<x-layout
+    :title="__('faq.title')"
+    :robots="$isSearch ? 'noindex, follow' : null"
+    :canonical="$isSearch ? null : url()->current()"
+>
+    @if($schema)
+        <x-slot:meta>
+            <script type="application/ld+json">{!! $schema !!}</script>
+        </x-slot:meta>
+    @endif
+
     <x-ui.card>
         <x-ui.card.header>
             <x-ui.card.title>
@@ -11,7 +21,7 @@
             x-data="faqSearch"
             class="space-y-6"
         >
-            @if($questions->isNotEmpty() || request('search') !== null)
+            @if($isSearch || $questions->isNotEmpty())
                 <form method="GET" @submit.prevent>
                     <div class="relative">
                         <x-lucide-search class="size-5 text-muted-foreground pointer-events-none absolute inset-y-0 left-4 self-center" aria-hidden="true"/>

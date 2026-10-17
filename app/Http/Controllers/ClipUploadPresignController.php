@@ -58,7 +58,7 @@ class ClipUploadPresignController
             'url' => $signed['url'],
             'headers' => collect($signed['headers'])
                 ->except(['Host', 'Content-Length'])
-                ->map(fn ($v): string => implode(',', (array) $v)),
+                ->map(fn (array $v): string => implode(',', $v)),
         ];
     }
 
