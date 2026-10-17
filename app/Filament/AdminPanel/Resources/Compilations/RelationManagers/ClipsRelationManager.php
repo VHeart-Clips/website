@@ -27,7 +27,6 @@ use App\Support\Audit\Auditor;
 use App\Support\FeatureFlag\Feature;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\AttachAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
@@ -68,6 +67,7 @@ class ClipsRelationManager extends RelationManager
                 'submitter',
                 'claimer',
             ])
+                ->withCount('comments')
                 ->withScore()
                 ->withAbsoluteImpressionCount()
                 ->withPublicVoteCount()
@@ -292,38 +292,25 @@ class ClipsRelationManager extends RelationManager
             ])
             ->filtersFormColumns(2)
             ->headerActions([
-                AttachAction::make()
-                    ->recordSelectSearchColumns(['title', 'id'])
-                    ->recordTitle(fn (Clip $clip): string => "[$clip->id] $clip->title")
-                    ->preloadRecordSelect()
-                    ->schema(fn (AttachAction $action): array => [
-                        $action->getRecordSelect(),
-                        Select::make('claim_status')
-                            ->label('admin/resources/compilations.relation_managers.clips.actions.attach_clip.status')
-                            ->translateLabel()
-                            ->options(CompilationClipClaimStatus::class)
-                            ->default(CompilationClipClaimStatus::Pending)
-                            ->required(),
-                    ])
-                    ->after(fn (Model $record, array $data, RelationManager $livewire): Audit => Auditor::make()
-                        ->event('compilation.clip.attached')
-                        ->new([
-                            'clip_id' => $record->id,
-                            'claim_status' => $data['claim_status'],
-                            'added_by' => auth()->id(),
-                        ])
-                        ->on($livewire->getOwnerRecord())
-                        ->save()
-                    )
-                    ->mutateDataUsing(function (array $data): array {
-                        $data['added_by'] = auth()->id();
-
-                        return $data;
-                    }),
+                Action::make('findClips')
+                    ->label('Find clips')
+                    ->outlined()
+                    ->icon(LucideIcon::FolderSearch)
+                    ->openUrlInNewTab()
+                    ->url(fn (): string => ClipResource::getUrl('index', [
+                        'filters' => [
+                            'unique_broadcaster_compilation' => ['compilation_id' => $this->getOwnerRecord()->getKey()],
+                        ],
+                    ])),
             ])
             ->recordActions([
-                GenerateClipOverlayAction::make(),
+                GenerateClipOverlayAction::make()
+                    ->tooltip('Generate Overlay')
+                    ->iconButton(),
                 CommentsAction::make()
+                    ->tooltip(__('commentions::comments.label'))
+                    ->iconButton()
+                    ->badge(fn (Clip $record) => $record->comments_count > 0 ? $record->comments_count : null)
                     ->mentionables(fn (Model $record) => User::query()->whereHas('roles')->get())
                     ->authorize('comment')
                     ->perPage(4)
