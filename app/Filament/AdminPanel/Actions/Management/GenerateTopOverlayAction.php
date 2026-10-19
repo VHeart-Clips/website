@@ -29,6 +29,9 @@ class GenerateTopOverlayAction extends Action
     {
         parent::setUp();
 
+        $startWeekDate = now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY);
+        $endWeekDate = $startWeekDate->next(Carbon::THURSDAY);
+
         $this
             ->label('Generate Top Overlay')
             ->icon(LucideIcon::Image)
@@ -40,8 +43,8 @@ class GenerateTopOverlayAction extends Action
             ->fillForm(fn (): array => [
                 'type' => TopOverlayType::Votes,
                 'show_background' => true,
-                'from' => now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY),
-                'to' => now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY),
+                'from' => $startWeekDate,
+                'to' => $endWeekDate,
             ])->schema([
                 FusedGroup::make()
                     ->schema([
@@ -61,9 +64,9 @@ class GenerateTopOverlayAction extends Action
                     ->afterLabel(Schema::end([
                         Action::make('this_week')
                             ->label('This Week')
-                            ->action(function (Set $set): void {
-                                $set('from', now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY));
-                                $set('to', now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY));
+                            ->action(function (Set $set) use ($startWeekDate, $endWeekDate): void {
+                                $set('from', $startWeekDate);
+                                $set('to', $endWeekDate);
                             }),
                         Icon::make(LucideIcon::CircleQuestionMark)->tooltip('The Week For a Compilation goes from last Week Thursday to currents Week Thursday at 00:00'),
                     ])->gap())
@@ -84,7 +87,7 @@ class GenerateTopOverlayAction extends Action
                 [
                     'initialState' => [
                         'type' => TopOverlayType::Votes,
-                        'users' => $this->getUsers(TopOverlayType::Votes, now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY), now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY)),
+                        'users' => $this->getUsers(TopOverlayType::Votes, $startWeekDate, $endWeekDate),
                         'show_background' => true,
                     ],
                     'identifier' => TopOverlayType::Votes,
