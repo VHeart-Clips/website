@@ -58,12 +58,13 @@ class GenerateTopOverlayAction extends Action
                             ->live()
                             ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
                     ])->columns(2)
-                    ->belowContent([])
                     ->afterLabel(Schema::end([
-                        Action::make('this_week')->label('This Week')->action(function (Set $set) {
-                            $set('from', now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY));
-                            $set('to', now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY));
-                        }),
+                        Action::make('this_week')
+                            ->label('This Week')
+                            ->action(function (Set $set) {
+                                $set('from', now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY));
+                                $set('to', now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY));
+                            }),
                         Icon::make(LucideIcon::CircleQuestionMark)->tooltip('The Week For a Compilation goes from last Week Thursday to currents Week Thursday at 00:00'),
                     ])->gap())
                     ->label('Range'),
