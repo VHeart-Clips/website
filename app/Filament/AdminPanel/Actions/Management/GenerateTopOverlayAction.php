@@ -51,26 +51,30 @@ class GenerateTopOverlayAction extends Action
                         DatePicker::make('from')
                             ->hintIcon(LucideIcon::CircleQuestionMark, 'The Week for Compilations starts at Thursday 00:00 from the previews Week of the Compilations')
                             ->native(false)
-                            ->closeOnDateSelection()
-                            ->live()
-                            ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
+                            ->closeOnDateSelection(),
                         DatePicker::make('to')
                             ->hintIcon(LucideIcon::CircleQuestionMark, 'The Week for Compilations ends at Thursday 00:00 from the current Week of the Compilations')
                             ->native(false)
-                            ->closeOnDateSelection()
-                            ->live()
-                            ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
+                            ->closeOnDateSelection(),
                     ])->columns(2)
                     ->afterLabel(Schema::end([
+                        Action::make('this_year')
+                            ->label('This Year')
+                            ->action(function (Set $set) use ($startWeekDate, $endWeekDate): void {
+                                $set('from', $startWeekDate->startOfYear());
+                                $set('to', $endWeekDate->endOfYear(), false, true);
+                            }),
                         Action::make('this_week')
                             ->label('This Week')
                             ->action(function (Set $set) use ($startWeekDate, $endWeekDate): void {
                                 $set('from', $startWeekDate);
-                                $set('to', $endWeekDate);
+                                $set('to', $endWeekDate, false, true);
                             }),
                         Icon::make(LucideIcon::CircleQuestionMark)->tooltip('The Week For a Compilation goes from last Week Thursday to currents Week Thursday at 00:00'),
                     ])->gap())
-                    ->label('Range'),
+                    ->label('Range')
+                    ->live()
+                    ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
                 Select::make('type')
                     ->label('Type')
                     ->translateLabel()
@@ -103,7 +107,6 @@ class GenerateTopOverlayAction extends Action
 
     private function buildOverlayState(Get $get): array
     {
-
         return [[
             'type' => $get('type'),
             'show_background' => $get('show_background'),
