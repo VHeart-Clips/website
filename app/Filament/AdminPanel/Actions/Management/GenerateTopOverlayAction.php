@@ -13,8 +13,11 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\FusedGroup;
+use Filament\Schemas\Components\Icon;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -40,18 +43,30 @@ class GenerateTopOverlayAction extends Action
                 'from' => now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY),
                 'to' => now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY),
             ])->schema([
-
-                Grid::make()
+                FusedGroup::make()
                     ->schema([
                         DatePicker::make('from')
                             ->hintIcon(LucideIcon::CircleQuestionMark, 'The Week for Compilations starts at Thursday 00:00 from the previews Week of the Compilations')
+                            ->native(false)
+                            ->closeOnDateSelection()
                             ->live()
                             ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
                         DatePicker::make('to')
                             ->hintIcon(LucideIcon::CircleQuestionMark, 'The Week for Compilations ends at Thursday 00:00 from the current Week of the Compilations')
+                            ->native(false)
+                            ->closeOnDateSelection()
                             ->live()
                             ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
-                    ]),
+                    ])->columns(2)
+                    ->belowContent([])
+                    ->afterLabel(Schema::end([
+                        Action::make('this_week')->label('This Week')->action(function (Set $set) {
+                            $set('from', now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY));
+                            $set('to', now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY));
+                        }),
+                        Icon::make(LucideIcon::CircleQuestionMark)->tooltip('The Week For a Compilation goes from last Week Thursday to currents Week Thursday at 00:00'),
+                    ])->gap())
+                    ->label('Range'),
                 Select::make('type')
                     ->label('Type')
                     ->translateLabel()
