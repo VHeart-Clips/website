@@ -49,11 +49,9 @@ class GenerateTopOverlayAction extends Action
                 FusedGroup::make()
                     ->schema([
                         DatePicker::make('from')
-                            ->hintIcon(LucideIcon::CircleQuestionMark, 'The Week for Compilations starts at Thursday 00:00 from the previews Week of the Compilations')
                             ->native(false)
                             ->closeOnDateSelection(),
                         DatePicker::make('to')
-                            ->hintIcon(LucideIcon::CircleQuestionMark, 'The Week for Compilations ends at Thursday 00:00 from the current Week of the Compilations')
                             ->native(false)
                             ->closeOnDateSelection(),
                     ])->columns(2)
