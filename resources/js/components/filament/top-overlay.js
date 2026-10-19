@@ -101,7 +101,7 @@ export default ($initialState, identifier) => ({
             userDetails.textContent = ""
         } else {
             card.style.display = 'flex';
-            if (user.avatar_url) {
+            if (user.avatar_url && !user.anonym) {
                 if (avatarImg.getAttribute('src') !== user.avatar_url) {
                     await new Promise((resolve) => {
                         avatarImg.onload = resolve;
@@ -115,7 +115,7 @@ export default ($initialState, identifier) => ({
                 avatarImg.style.display = 'none';
                 avatarFallback.style.display = 'block';
             }
-            userName.textContent = user.name
+            userName.textContent = !user.anonym ? user.name : 'Anonymer User '
             userDetails.textContent = user.count + " " + countSuffix
         }
     },
