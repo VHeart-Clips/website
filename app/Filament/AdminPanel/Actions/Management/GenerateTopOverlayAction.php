@@ -61,7 +61,7 @@ class GenerateTopOverlayAction extends Action
                     ->afterLabel(Schema::end([
                         Action::make('this_week')
                             ->label('This Week')
-                            ->action(function (Set $set) {
+                            ->action(function (Set $set): void {
                                 $set('from', now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY));
                                 $set('to', now()->startOfWeek(Carbon::MONDAY)->next(Carbon::THURSDAY));
                             }),
