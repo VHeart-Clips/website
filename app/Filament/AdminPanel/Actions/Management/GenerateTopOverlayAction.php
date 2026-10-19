@@ -122,7 +122,7 @@ class GenerateTopOverlayAction extends Action
                 $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
 
                 $data->count = $user['count'];
-                $data->anonym = false; // nneed to be replaced later with the user setting if we can show the user or not
+                $data->anonym = false; // TODO:need to be replaced later with the user setting if we can show the user or not
 
                 return (object) $data->toArray();
             })->values();
