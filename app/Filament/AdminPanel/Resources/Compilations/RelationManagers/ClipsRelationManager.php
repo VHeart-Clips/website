@@ -30,6 +30,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -483,6 +484,7 @@ class ClipsRelationManager extends RelationManager
                             ->on($livewire->getOwnerRecord())
                             ->save()
                         ),
+                    ViewAction::make(),
                 ]),
             ])
             ->toolbarActions([
