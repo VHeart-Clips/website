@@ -77,6 +77,7 @@ class GenerateTopOverlayAction extends Action
                     ->label('Type')
                     ->translateLabel()
                     ->options(TopOverlayType::class)
+                    ->selectablePlaceholder(false)
                     ->live()
                     ->afterStateUpdated(fn (Get $get, Component $livewire) => $livewire->dispatch('top-overlay-updated', ...$this->buildOverlayState($get))),
                 Toggle::make('show_background')
