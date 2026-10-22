@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Actions\Management;
 
 use App\Enums\Filament\LucideIcon;
 use App\Enums\Filament\TopOverlayType;
+use App\Enums\Leaderboard\LeaderboardRange;
 use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -29,8 +30,8 @@ class GenerateTopOverlayAction extends Action
     {
         parent::setUp();
 
-        $startWeekDate = now()->startOfWeek(Carbon::MONDAY)->previous(Carbon::THURSDAY);
-        $endWeekDate = $startWeekDate->next(Carbon::THURSDAY);
+        $startWeekDate = LeaderboardRange::LastWeek->getTimestampFrom();
+        $endWeekDate = LeaderboardRange::LastWeek->getTimestampTo();
 
         $this
             ->label('Generate Top Overlay')
@@ -68,7 +69,7 @@ class GenerateTopOverlayAction extends Action
                                 $set('from', $startWeekDate);
                                 $set('to', $endWeekDate, false, true);
                             }),
-                        Icon::make(LucideIcon::CircleQuestionMark)->tooltip('The Week For a Compilation goes from last Week Thursday to currents Week Thursday at 00:00'),
+                        Icon::make(LucideIcon::CircleQuestionMark)->tooltip('The Week For a Compilation goes from last Week Thursday 00:00 to currents Week Wednesday at 23:59'),
                     ])->gap())
                     ->label('Range')
                     ->live()
