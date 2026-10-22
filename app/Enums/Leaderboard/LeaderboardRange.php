@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums\Leaderboard;
 
 use App\Enums\Traits\HasTranslatedLabel;
@@ -17,10 +19,9 @@ enum LeaderboardRange: string implements HasLabel
     case LastMonth = 'last_month';
     case Year = 'year';
 
-
     public function getTimestampFrom(): CarbonImmutable
     {
-        $timestamp = match($this) {
+        $timestamp = match ($this) {
             self::ThisWeek => now()->previous(Carbon::THURSDAY),
             self::LastWeek => now()->previous(Carbon::THURSDAY)->previous(Carbon::THURSDAY),
             self::Month => now()->subMonthNoOverflow(),
@@ -33,7 +34,7 @@ enum LeaderboardRange: string implements HasLabel
 
     public function getTimestampTo(): CarbonImmutable
     {
-        return match($this) {
+        return match ($this) {
             self::ThisWeek => now()->next(Carbon::THURSDAY)->startOfDay(),
             self::LastWeek => now()->previous(Carbon::THURSDAY)->startOfDay(),
             self::Month => now()->endOfDay(),
@@ -44,7 +45,7 @@ enum LeaderboardRange: string implements HasLabel
 
     public function getCacheKey(): string
     {
-        return md5($this->getTimestampFrom()->toISOString()."-".$this->getTimestampTo()->toISOString());
+        return md5($this->getTimestampFrom()->toISOString().'-'.$this->getTimestampTo()->toISOString());
     }
 
     private function getTranslatableEnumLabelPrefix(): string
