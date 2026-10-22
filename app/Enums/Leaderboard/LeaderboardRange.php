@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Enums\Leaderboard;
 
 use App\Enums\Traits\HasTranslatedLabel;
-use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Carbon\Constants\UnitValue;
 use Filament\Support\Contracts\HasLabel;
 
 enum LeaderboardRange: string implements HasLabel
@@ -22,8 +22,8 @@ enum LeaderboardRange: string implements HasLabel
     public function getTimestampFrom(): CarbonImmutable
     {
         $timestamp = match ($this) {
-            self::ThisWeek => now()->previous(Carbon::THURSDAY),
-            self::LastWeek => now()->previous(Carbon::THURSDAY)->previous(Carbon::THURSDAY),
+            self::ThisWeek => now()->previous(UnitValue::THURSDAY),
+            self::LastWeek => now()->previous(UnitValue::THURSDAY)->previous(UnitValue::THURSDAY),
             self::Month => now()->subMonthNoOverflow(),
             self::LastMonth => now()->subMonthNoOverflow()->startOfMonth(),
             self::Year => now()->subYearNoOverflow(),
@@ -35,8 +35,8 @@ enum LeaderboardRange: string implements HasLabel
     public function getTimestampTo(): CarbonImmutable
     {
         return match ($this) {
-            self::ThisWeek => now()->next(Carbon::THURSDAY)->startOfDay(),
-            self::LastWeek => now()->previous(Carbon::THURSDAY)->startOfDay(),
+            self::ThisWeek => now()->next(UnitValue::THURSDAY)->startOfDay(),
+            self::LastWeek => now()->previous(UnitValue::THURSDAY)->startOfDay(),
             self::Month => now()->endOfDay(),
             self::LastMonth => now()->subMonthNoOverflow()->endOfMonth()->endOfDay(),
             self::Year => now()->endOfDay(),
