@@ -201,7 +201,7 @@
     <x-lucide-crown class="icon"/>
     <div class="overlay-avatar-wrap">
         <img class="overlay-avatar-img" alt="" crossorigin="anonymous" />
-        <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
+        <img src="{{ Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
     </div>
     <div class="overlay-text-container">
         <div class="overlay-user"></div>
@@ -215,7 +215,7 @@
     <x-lucide-crown class="icon"/>
     <div class="overlay-avatar-wrap">
         <img class="overlay-avatar-img" alt="" crossorigin="anonymous" />
-        <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
+        <img src="{{ Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
     </div>
     <div class="overlay-text-container">
         <div class="overlay-user"></div>
@@ -228,7 +228,7 @@
 <div class="overlay-card" id="place-4" style="display: none;">
     <div class="overlay-avatar-wrap">
         <img class="overlay-avatar-img" alt="" crossorigin="anonymous" />
-        <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
+        <img src="{{ Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
     </div>
     <div class="overlay-text-container">
         <div class="overlay-user"></div>
@@ -241,7 +241,7 @@
 <div class="overlay-card" id="place-5" style="display: none;">
     <div class="overlay-avatar-wrap">
         <img class="overlay-avatar-img" alt="" crossorigin="anonymous" />
-        <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
+        <img src="{{ Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
     </div>
     <div class="overlay-text-container">
         <div class="overlay-user"></div>
