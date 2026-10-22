@@ -21,25 +21,26 @@ enum LeaderboardRange: string implements HasLabel
 
     public function getTimestampFrom(): CarbonImmutable
     {
-        $timestamp = match ($this) {
-            self::ThisWeek => now()->previous(UnitValue::THURSDAY),
-            self::LastWeek => now()->previous(UnitValue::THURSDAY)->previous(UnitValue::THURSDAY),
-            self::Month => now()->subMonthNoOverflow(),
-            self::LastMonth => now()->subMonthNoOverflow()->startOfMonth(),
-            self::Year => now()->subYearNoOverflow(),
-        };
+        $now = CarbonImmutable::now();
 
-        return $timestamp->startOfDay();
+        return match ($this) {
+            self::ThisWeek => $now->startOfWeek(UnitValue::THURSDAY),
+            self::LastWeek => $now->subWeek()->startOfWeek(UnitValue::THURSDAY),
+            self::Month => $now->subMonthNoOverflow()->startOfDay(),
+            self::LastMonth => $now->subMonthNoOverflow()->startOfMonth(),
+            self::Year => $now->subYearNoOverflow()->startOfDay(),
+        };
     }
 
     public function getTimestampTo(): CarbonImmutable
     {
+        $now = CarbonImmutable::now();
+
         return match ($this) {
-            self::ThisWeek => now()->next(UnitValue::THURSDAY)->startOfDay(),
-            self::LastWeek => now()->previous(UnitValue::THURSDAY)->startOfDay(),
-            self::Month => now()->endOfDay(),
-            self::LastMonth => now()->subMonthNoOverflow()->endOfMonth()->endOfDay(),
-            self::Year => now()->endOfDay(),
+            self::ThisWeek => $now->endOfWeek(UnitValue::WEDNESDAY),
+            self::LastWeek => $now->subWeek()->endOfWeek(UnitValue::WEDNESDAY),
+            self::LastMonth => $now->subMonthNoOverflow()->endOfMonth(),
+            default => $now->endOfDay(),
         };
     }
 
