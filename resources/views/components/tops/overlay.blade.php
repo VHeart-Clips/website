@@ -1,3 +1,5 @@
+@use(Illuminate\Support\Facades\Vite)
+
 <style>
 
     :root{
@@ -174,7 +176,7 @@
 </style>
 
 <div id="background" style="display: none;">
-    <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/png/top-overlay-bg.png'); }}" alt="">
+    <img src="{{ Vite::asset('resources/images/png/top-overlay-bg.png') }}" alt="">
 </div>
 
 <div id="overlay-topText-wrap">
@@ -185,7 +187,7 @@
     <x-lucide-crown class="icon"/>
     <div class="overlay-avatar-wrap">
         <img class="overlay-avatar-img" alt="" crossorigin="anonymous" />
-        <img src="{{ \Illuminate\Support\Facades\Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
+        <img src="{{ Vite::asset('resources/images/svg/logo-light.svg') }}" alt="" class="overlay-avatar-fallback" />
     </div>
     <div class="overlay-text-container">
         <div class="overlay-user"></div>
