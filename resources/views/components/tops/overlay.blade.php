@@ -123,7 +123,6 @@
         flex-shrink: 0;
         color: #fff;
         filter: drop-shadow(0 0 3px #000) drop-shadow(0 0 3px #000);
-        /* transform: rotate(338deg) translate(-10px, -60px); */
         rotate: 338deg;
         translate: -26px -48px;
     }
