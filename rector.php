@@ -34,11 +34,12 @@ return RectorConfig::configure()
         // Changes the string or class const used for a service container make call.
         // https://laravel.com/docs/13.x/container#the-make-method
         LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME,
+        // Converts uses of things like $app['config'] to $app->make('config').
+        LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL,
 
         // Some Rules we should enable later
         // @see https://github.com/driftingly/rector-laravel/blob/main/README.md#additional-sets
 
-        // LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL,
         // LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
         // LaravelSetList::LARAVEL_CODE_QUALITY
         // LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER
