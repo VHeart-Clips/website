@@ -29,14 +29,15 @@ return RectorConfig::configure()
         LaravelSetList::LARAVEL_TYPE_DECLARATIONS,
         // Makes working with Laravel Factories easier and more IDE friendly.
         LaravelSetList::LARAVEL_FACTORIES,
+        // Improves the usage of Laravel Collections by using simpler, more efficient, or more readable methods.
+        LaravelSetList::LARAVEL_COLLECTION,
 
         // Some Rules we should enable later
         // @see https://github.com/driftingly/rector-laravel/blob/main/README.md#additional-sets
 
         // LaravelSetList::LARAVEL_ARRAYACCESS_TO_METHOD_CALL,
         // LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
-        // LaravelSetList::LARAVEL_CODE_QUALITY,
-        // LaravelSetList::LARAVEL_COLLECTION,
+        // LaravelSetList::LARAVEL_CODE_QUALITY
         // LaravelSetList::LARAVEL_CONTAINER_STRING_TO_FULLY_QUALIFIED_NAME
         // LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER
         // LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES

@@ -72,7 +72,7 @@ class BetterplaceDonationCard extends Component
                             'message' => $donation['message'] ?? null,
                             'amount' => ($donation['donated_amount_in_cents'] ?? $donation['amount_in_cents'] ?? 0) / 100,
                         ])
-                        ->toArray();
+                        ->all();
 
                     return [$event, $donations, null];
                 }

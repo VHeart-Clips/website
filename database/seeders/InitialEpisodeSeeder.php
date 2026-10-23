@@ -914,7 +914,7 @@ class InitialEpisodeSeeder extends Seeder
         $appTwitch = $twitchService->asApp();
 
         $allClips->chunk(100)->each(function ($chunk, $index) use ($appTwitch, &$twitchClips, &$missingClips): void {
-            $requestedIds = $chunk->values()->toArray();
+            $requestedIds = $chunk->values()->all();
             $params = ['id' => $requestedIds];
 
             try {

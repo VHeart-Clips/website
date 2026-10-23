@@ -120,7 +120,7 @@ class Onboarding extends Page implements HasForms
                                     ->mapWithKeys(fn (ClipStatus $status): array => [
                                         $status->value => __('dashboard/onboarding.setup.default_clip_status.options.'.Str::snake($status->name)),
                                     ])
-                                    ->toArray()
+                                    ->all()
                             )
                             ->default(ClipStatus::NeedApproval)
                             ->hiddenLabel()
