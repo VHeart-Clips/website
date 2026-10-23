@@ -39,13 +39,15 @@ return RectorConfig::configure()
         // Converts most string and array helpers into Str and Arr Facades' static calls.
         // https://laravel.com/docs/13.x/facades#facades-vs-helper-functions
         LaravelSetList::LARAVEL_ARRAY_STR_FUNCTION_TO_STATIC_CALL,
+        // Replaces Facade aliases with full Facade names.
+        // https://laravel.com/docs/13.x/facades#facade-class-reference
+        LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
 
         // Some Rules we should enable later
         // @see https://github.com/driftingly/rector-laravel/blob/main/README.md#additional-sets
 
         // LaravelSetList::LARAVEL_CODE_QUALITY
         // LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER
-        // LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES
         // LaravelSetList::LARAVEL_IF_HELPERS
         // LaravelSetList::LARAVEL_TESTING
     ])
