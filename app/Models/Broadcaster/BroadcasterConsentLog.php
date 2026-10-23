@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Encryption\Encrypter;
 use JsonException;
 use LogicException;
 
@@ -29,7 +30,7 @@ class BroadcasterConsentLog extends Model
         try {
             [$version] = explode('.', $this->checksum, 2);
 
-            $key = collect([app('encrypter')->getKey(), ...config('app.previous_keys', [])])
+            $key = collect([app(Encrypter::class)->getKey(), ...config('app.previous_keys', [])])
                 ->map(fn (string $k): string|false => str_starts_with($k, 'base64:') ? base64_decode(mb_substr($k, 7)) : $k)
                 ->first(fn (string $k): bool => str_starts_with(hash('sha256', $k), $version));
 
@@ -58,7 +59,7 @@ class BroadcasterConsentLog extends Model
         static::creating(static function (self $log): void {
             $log->changed_at ??= now();
             $log->changed_by ??= auth()->check() ? auth()->id() : 0;
-            $log->checksum = self::computeChecksum($log, app('encrypter')->getKey());
+            $log->checksum = self::computeChecksum($log, app(Encrypter::class)->getKey());
         });
 
         $immutable = static fn () => throw new LogicException('Consent logs are immutable.');
