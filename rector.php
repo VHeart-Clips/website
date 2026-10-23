@@ -42,6 +42,8 @@ return RectorConfig::configure()
         // Replaces Facade aliases with full Facade names.
         // https://laravel.com/docs/13.x/facades#facade-class-reference
         LaravelSetList::LARAVEL_FACADE_ALIASES_TO_FULL_NAMES,
+        // Improves Laravel testing by converting deprecated methods and adding better assertions.
+        LaravelSetList::LARAVEL_TESTING,
 
         // Some Rules we should enable later
         // @see https://github.com/driftingly/rector-laravel/blob/main/README.md#additional-sets
@@ -49,6 +51,5 @@ return RectorConfig::configure()
         // LaravelSetList::LARAVEL_CODE_QUALITY
         // LaravelSetList::LARAVEL_ELOQUENT_MAGIC_METHOD_TO_QUERY_BUILDER
         // LaravelSetList::LARAVEL_IF_HELPERS
-        // LaravelSetList::LARAVEL_TESTING
     ])
     ->withPhpSets();
