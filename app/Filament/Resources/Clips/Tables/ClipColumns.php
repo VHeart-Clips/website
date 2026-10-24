@@ -11,6 +11,7 @@ use Filament\Support\Enums\TextSize;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\ViteException;
 use Illuminate\Support\Facades\Vite;
 
@@ -118,7 +119,9 @@ class ClipColumns
             ->tooltip(__('admin/resources/clips.table.columns.score'))
             ->size(TextSize::Medium)
             ->icon(LucideIcon::BarChart)
-            ->sortable()
+            ->sortable(query: fn (Builder $query, string $direction): Builder => $query
+                ->orderBy($column, $direction)
+                ->orderBy('clips.id', $direction === 'desc' ? 'asc' : 'desc'))
             ->badge()
             ->color('info');
     }
