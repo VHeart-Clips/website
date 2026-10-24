@@ -6,6 +6,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Casts\TwitchAvatarCast;
+use App\Enums\UserSettings\LanguagePreference;
 use App\Models\Contracts\HasFilamentInfolistEntry;
 use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
@@ -72,6 +73,7 @@ class User extends Authenticatable implements Commentable, Commenter, FilamentUs
         'name',
         'email',
         'avatar_url',
+        'language',
     ];
 
     protected array $auditExcludeEvents = ['created'];
@@ -120,6 +122,7 @@ class User extends Authenticatable implements Commentable, Commenter, FilamentUs
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'twitch_refresh_token' => 'encrypted',
+            'language' => LanguagePreference::class,
         ];
     }
 }
