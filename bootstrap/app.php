@@ -15,6 +15,7 @@ use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 

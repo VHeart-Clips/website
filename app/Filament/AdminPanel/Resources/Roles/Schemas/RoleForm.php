@@ -81,7 +81,7 @@ class RoleForm
 
     private static function loadGroupPermissions(?Role $record, Collection $permissions): array
     {
-        $groupPermissions = $permissions->map(fn (Permission $p) => $p->value)->toArray();
+        $groupPermissions = $permissions->map(fn (Permission $p) => $p->value)->all();
 
         return DB::table('role_permissions')
             ->where('role_id', $record?->id)
@@ -99,7 +99,7 @@ class RoleForm
         $groupPermissions = $permissions->map(fn (Permission $p) => $p->value);
 
         $immutablePermissions = $permissions
-            ->filter(fn (Permission $p): bool => ! $currentUser->can($p->value))
+            ->reject(fn (Permission $p): bool => (bool) $currentUser->can($p->value))
             ->map(fn (Permission $p) => $p->value);
 
         $existingRolePermissions = DB::table('role_permissions')
@@ -114,7 +114,7 @@ class RoleForm
         $rows = $finalPermissions->map(fn (string $permission): array => [
             'role_id' => $record->id,
             'permission' => $permission,
-        ])->toArray();
+        ])->all();
 
         $record->permissions()->whereIn('permission', $groupPermissions)->delete();
 

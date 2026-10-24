@@ -46,7 +46,7 @@ trait UserPermissions
             ->map(fn ($perm) => Permission::tryFrom($perm))
             ->filter()
             ->values()
-            ->toArray();
+            ->all();
     }
 
     /**

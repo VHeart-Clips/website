@@ -58,7 +58,7 @@ class Role extends Model
     public function getExtraAuditData(): array
     {
         return [
-            'permissions' => $this->permissions()->pluck('permission')->map(fn (Permission $permission) => $permission->value)->toArray(),
+            'permissions' => $this->permissions()->pluck('permission')->map(fn (Permission $permission) => $permission->value)->all(),
         ];
     }
 
