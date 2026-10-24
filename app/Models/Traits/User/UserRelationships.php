@@ -9,6 +9,7 @@ use App\Models\Broadcaster\BroadcasterTeamMember;
 use App\Models\Clip;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserPreference;
 use App\Models\Vote;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -26,6 +27,14 @@ trait UserRelationships
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    /**
+     * @return HasOne<UserPreference, $this>
+     */
+    public function preferences(): HasOne
+    {
+        return $this->hasOne(UserPreference::class)->withDefault();
     }
 
     /**
