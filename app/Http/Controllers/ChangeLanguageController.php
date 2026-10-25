@@ -29,7 +29,11 @@ class ChangeLanguageController extends Controller
         }
 
         app()->setLocale($lang->value);
-        session()?->put('locale', $lang->value);
+        $request->session()?->put('locale', $lang->value);
+
+        $request->user()?->update([
+            'language' => $lang,
+        ]);
 
         if ($request->expectsJson()) {
             return new JsonResponse([
