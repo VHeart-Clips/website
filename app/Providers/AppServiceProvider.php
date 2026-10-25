@@ -30,6 +30,7 @@ use App\Support\CookieConsent\CustomCookiesManager;
 use Carbon\CarbonImmutable;
 use Filament\Facades\Filament;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Cache\Repository;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -64,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(CookiesManager::class, CustomCookiesManager::class);
 
-        $this->app->singleton(TailwindMerge::class, fn (Application $app): TailwindMerge => new TailwindMerge(cache: $app->make('cache.store')));
+        $this->app->singleton(TailwindMerge::class, fn (Application $app): TailwindMerge => new TailwindMerge(cache: $app->make(Repository::class)));
     }
 
     /**

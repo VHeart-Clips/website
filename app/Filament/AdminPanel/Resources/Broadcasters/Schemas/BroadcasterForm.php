@@ -156,7 +156,7 @@ class BroadcasterForm
                             ->sortBy(fn (ChannelDto $c): int => levenshtein(mb_strtolower($search), mb_strtolower($c->displayName)))
                             ->take(10)
                             ->mapWithKeys(fn (ChannelDto $c): array => [$c->id => $c->displayName])
-                            ->toArray();
+                            ->all();
                     })
                     ->getOptionLabelUsing(fn (?string $value, TwitchService $twitchService): ?string => User::find($value)?->name ?? self::getUser($value, $twitchService)?->displayName)
                     ->afterStateUpdated(function (?string $state, Set $set, TwitchService $twitchService): void {

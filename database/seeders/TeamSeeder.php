@@ -122,7 +122,7 @@ class TeamSeeder extends Seeder
             'avatar_url' => TwitchAvatarCast::encode($userDto->profileImageUrl),
             'created_at' => $userDto->createdAt,
             'updated_at' => now(),
-        ])->toArray();
+        ])->all();
 
         User::upsert($usersData, ['id'], ['name', 'avatar_url']);
 
@@ -132,7 +132,7 @@ class TeamSeeder extends Seeder
             $userRoles = collect($roleMappings)
                 ->filter(fn ($userIds): bool => in_array($user->id, $userIds, true))
                 ->keys()
-                ->toArray();
+                ->all();
 
             $user->syncRoles($userRoles);
         }
