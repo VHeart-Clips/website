@@ -6,7 +6,7 @@ namespace Database\Factories;
 
 use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 /**
  * @extends Factory<Role>
@@ -23,7 +23,7 @@ class RoleFactory extends Factory
             'weight' => 0,
             'public' => true,
             'created_at' => fake()->dateTime(),
-            'updated_at' => Carbon::now(),
+            'updated_at' => Date::now(),
         ];
     }
 }

@@ -225,7 +225,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      */
     public function compilations(): BelongsToMany
     {
-        return $this->belongsToMany(Compilation::class, 'compilation_clip')
+        return $this->belongsToMany(Compilation::class, CompilationClip::class)
             ->using(CompilationClip::class)
             ->withPivot(CompilationClip::getPivotColumns())
             ->withTimestamps();

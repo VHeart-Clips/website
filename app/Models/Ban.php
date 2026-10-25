@@ -77,7 +77,7 @@ class Ban extends Model
      * @return Builder<static>
      */
     #[Scope]
-    public function wherePermanent(Builder $query): Builder
+    protected function wherePermanent(Builder $query): Builder
     {
         return $query->whereNull('banned_until');
     }
@@ -87,7 +87,7 @@ class Ban extends Model
      * @return Builder<static>
      */
     #[Scope]
-    public function whereTemporary(Builder $query): Builder
+    protected function whereTemporary(Builder $query): Builder
     {
         return $query->whereNotNull('banned_until');
     }

@@ -44,7 +44,7 @@ class StoreReportAction
 
         if ($reason->id === self::CLIP_REMOVED_CATEGORY_ID && $clip instanceof Clip) {
             $report->update(['claimed_by' => 0, 'claimed_at' => now()]);
-            CheckForRemovedClipJob::dispatch($clip, $report);
+            dispatch(new CheckForRemovedClipJob($clip, $report));
         }
 
         return $report;

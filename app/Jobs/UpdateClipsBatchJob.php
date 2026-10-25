@@ -44,7 +44,8 @@ class UpdateClipsBatchJob implements ShouldQueue
     ) {
         throw_if(
             count($this->clipIds) > 100,
-            new InvalidArgumentException('UpdateClipsBatchJob only allows up to 100 clips at once')
+            InvalidArgumentException::class,
+            'UpdateClipsBatchJob only allows up to 100 clips at once'
         );
     }
 

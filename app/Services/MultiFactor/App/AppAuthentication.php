@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\MultiFactor\App;
 
+use App\Services\MultiFactor\App\Actions\DisableAppAuthenticationAction;
+use App\Services\MultiFactor\App\Actions\SetUpAppAuthenticationAction;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Writer;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use App\Services\MultiFactor\App\Actions\DisableAppAuthenticationAction;
-use App\Services\MultiFactor\App\Actions\RegenerateAppAuthenticationRecoveryCodesAction;
-use App\Services\MultiFactor\App\Actions\SetUpAppAuthenticationAction;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\Contracts\MultiFactorAuthenticationProvider;
@@ -53,7 +54,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
 
     public static function make(): static
     {
-        return app(static::class);
+        return resolve(static::class);
     }
 
     public function getId(): string
@@ -69,7 +70,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     public function isEnabled(Authenticatable $user): bool
     {
         if (! ($user instanceof HasAppAuthentication)) {
-            throw new LogicException('The user model must implement the [' . HasAppAuthentication::class . '] interface to use app authentication.');
+            throw new LogicException('The user model must implement the ['.HasAppAuthentication::class.'] interface to use app authentication.');
         }
 
         return filled($user->getAppAuthenticationSecret());
@@ -154,7 +155,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
             && class_exists(ImageRenderer::class)
             && (! extension_loaded('imagick'))
         ) {
-            return 'data:image/svg+xml;base64,' . base64_encode($inlineQrCode);
+            return 'data:image/svg+xml;base64,'.base64_encode($inlineQrCode);
         }
 
         return $inlineQrCode;
@@ -165,7 +166,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
      */
     public function generateRecoveryCodes(): array
     {
-        return Collection::times($this->getRecoveryCodeCount(), fn (): string => Str::random(10) . '-' . Str::random(10))->all();
+        return Collection::times($this->getRecoveryCodeCount(), fn (): string => Str::random(10).'-'.Str::random(10))->all();
     }
 
     public function verifyCode(#[SensitiveParameter] string $code, #[SensitiveParameter] ?string $secret = null, bool $shouldPreventCodeReuse = false): bool
@@ -183,7 +184,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
         // last accepted code rather than a marker for one specific code. RFC 6238 requires that
         // a successful verification rejects that code and every earlier one, not just a repeat
         // of the same code.
-        $cacheKey = 'filament.app_authentication_codes.' . md5($secret);
+        $cacheKey = 'filament.app_authentication_codes.'.md5($secret);
 
         $verifyCode = function () use ($cacheKey, $code, $secret): bool {
             // Passing an initial `$lastAcceptedTimestamp` makes `verifyKeyNewer()` return the
@@ -216,8 +217,8 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
     {
         $user ??= Filament::auth()->user();
 
-        $lockKey = 'filament.app_authentication_recovery_codes.' . md5(
-            $user::class . ':' . (($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user)),
+        $lockKey = 'filament.app_authentication_recovery_codes.'.md5(
+            $user::class.':'.(($user instanceof Authenticatable) ? $user->getAuthIdentifier() : spl_object_id($user)),
         );
 
         return Cache::lock($lockKey, 10)->block(10, fn (): bool => DB::transaction(function () use ($user, $recoveryCode): bool {
@@ -364,7 +365,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                     ->visible(fn (): bool => $isRecoverable && (! $get('useRecoveryCode'))))
                 ->validationAttribute(__('filament-panels::auth/multi-factor/app/provider.login_form.code.validation_attribute'))
                 ->required(fn (Get $get): bool => (! $isRecoverable) || (! $get('useRecoveryCode')) || blank($get('recoveryCode')))
-                ->rule(fn(): Closure => function (string $attribute, #[SensitiveParameter] ?string $value, Closure $fail) use ($user): void {
+                ->rule(fn (): Closure => function (string $attribute, #[SensitiveParameter] ?string $value, Closure $fail) use ($user): void {
                     if ($this->verifyCode($value, $this->getSecret($user), shouldPreventCodeReuse: true)) {
                         return;
                     }
@@ -377,7 +378,7 @@ class AppAuthentication implements MultiFactorAuthenticationProvider
                 ->password()
                 ->revealable(Filament::arePasswordsRevealable())
                 ->autocomplete('one-time-code')
-                ->rule(fn(): Closure => function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
+                ->rule(fn (): Closure => function (string $attribute, #[SensitiveParameter] mixed $value, Closure $fail) use ($user): void {
                     if (blank($value)) {
                         return;
                     }

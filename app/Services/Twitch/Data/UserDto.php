@@ -8,7 +8,7 @@ use App\Services\Twitch\Contracts\TwitchDtoInterface;
 use App\Services\Twitch\Enums\TwitchBroadcasterType;
 use App\Services\Twitch\Enums\TwitchUserType;
 use Carbon\CarbonInterface;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 /* @link https://dev.twitch.tv/docs/api/reference#get-users */
 readonly class UserDto implements TwitchDtoInterface
@@ -38,7 +38,7 @@ readonly class UserDto implements TwitchDtoInterface
             profileImageUrl: $data['profile_image_url'],
             offlineImageUrl: $data['offline_image_url'],
             email: empty($data['email']) ? null : $data['email'],
-            createdAt: Carbon::parse($data['created_at']),
+            createdAt: Date::parse($data['created_at']),
         );
     }
 

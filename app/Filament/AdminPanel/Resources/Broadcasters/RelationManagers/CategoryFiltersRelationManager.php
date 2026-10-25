@@ -72,7 +72,7 @@ class CategoryFiltersRelationManager extends BaseSubmissionFilterRelationManager
                         ->where('broadcaster_submission_filters.filterable_type', $this->getMorphClass())
                         ->where('broadcaster_submission_filters.broadcaster_id', $this->getOwnerRecord()->id);
                 })
-                ->orderBy('created_at', 'desc')
+                ->latest()
                 ->limit(5)
                 ->pluck('title', 'id')
             )

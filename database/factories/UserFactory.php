@@ -39,7 +39,7 @@ class UserFactory extends Factory
     public function withTwoFactor(?string $secret = null): self
     {
         return $this->state(fn (array $attributes): array => [
-            'app_authentication_secret' => $secret ?? app(AppAuthentication::class)->generateSecretKey(),
+            'app_authentication_secret' => $secret ?? resolve(AppAuthentication::class)->generateSecretKey(),
             'app_authentication_recovery_codes' => [],
         ]);
     }
@@ -47,7 +47,7 @@ class UserFactory extends Factory
     public function withTwoFactorRecoveryCodes(?array $recoveryCodes = null): self
     {
         return $this->state(fn (array $attributes): array => [
-            'app_authentication_recovery_codes' => $recoveryCodes ?? app(AppAuthentication::class)->generateRecoveryCodes(),
+            'app_authentication_recovery_codes' => $recoveryCodes ?? resolve(AppAuthentication::class)->generateRecoveryCodes(),
         ]);
     }
 

@@ -167,7 +167,7 @@ class Broadcaster extends Model implements HasAvatar, HasCurrentTenantLabel, Has
             $canAccessBroadcasters = $user->broadcasterTeamMembers()->exists();
 
             if (! $canAccessBroadcasters) {
-                $twitchService = app(TwitchService::class);
+                $twitchService = resolve(TwitchService::class);
 
                 $twitchModChannelsIds = $twitchService
                     ->asSessionUser()

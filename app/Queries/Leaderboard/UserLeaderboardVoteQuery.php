@@ -22,7 +22,7 @@ final readonly class UserLeaderboardVoteQuery
                 'votes' => fn (Builder $q) => $q->whereBetween('created_at', [$from, $to]),
             ], 'created_at')
             ->orderBy('votes_count', 'desc')
-            ->orderBy('votes_max_created_at', 'asc')
+            ->oldest('votes_max_created_at')
             ->orderBy('id')
             ->whereHas('votes', fn (Builder $q): Builder => $q->whereBetween('created_at', [$from, $to]))
             ->limit($limit)

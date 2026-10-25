@@ -340,7 +340,7 @@ class ClipsRelationManager extends RelationManager
                                 'claimed_by' => auth()->id(),
                             ]);
 
-                            CompilationClipClaimed::dispatch($this->getOwnerRecord(), auth()->user(), $clip);
+                            event(new CompilationClipClaimed($this->getOwnerRecord(), auth()->user(), $clip));
 
                             Auditor::make()
                                 ->event('compilation.clip.claimed')
@@ -405,7 +405,7 @@ class ClipsRelationManager extends RelationManager
                                 'file_path' => $data['file_path'] ?? $oldFile,
                             ]);
 
-                            CompilationClipStatusUpdated::dispatch($this->getOwnerRecord(), auth()->user(), $clip, $oldStatus, $data['status']);
+                            event(new CompilationClipStatusUpdated($this->getOwnerRecord(), auth()->user(), $clip, $oldStatus, $data['status']));
 
                             Auditor::make()
                                 ->event('compilation.clip.updated')
@@ -455,7 +455,7 @@ class ClipsRelationManager extends RelationManager
                                 'claimed_by' => null,
                             ]);
 
-                            CompilationClipUnclaimed::dispatch($this->getOwnerRecord(), auth()->user(), $clip);
+                            event(new CompilationClipUnclaimed($this->getOwnerRecord(), auth()->user(), $clip));
 
                             Auditor::make()
                                 ->event('compilation.clip.unclaimed')

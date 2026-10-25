@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Debug;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as RequestFacade;
 
 class IpDebugController extends Controller
 {
@@ -29,11 +30,11 @@ class IpDebugController extends Controller
             'server' => [
                 'remote_addr' => [
                     'laravel' => request()->server('REMOTE_ADDR'),
-                    'php' => $_SERVER['REMOTE_ADDR'] ?? null,
+                    'php' => RequestFacade::server('REMOTE_ADDR'),
                 ],
                 'server_addr' => [
                     'laravel' => request()->server('SERVER_ADDR'),
-                    'php' => $_SERVER['SERVER_ADDR'] ?? null,
+                    'php' => RequestFacade::server('SERVER_ADDR'),
                 ],
             ],
             'proxy' => [

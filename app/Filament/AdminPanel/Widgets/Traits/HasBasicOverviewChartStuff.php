@@ -6,9 +6,9 @@ namespace App\Filament\AdminPanel\Widgets\Traits;
 
 use Carbon\CarbonInterface;
 use Filament\Widgets\ChartWidget;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -84,7 +84,7 @@ trait HasBasicOverviewChartStuff
     protected function getAllTimeStart(?string $table): CarbonInterface
     {
         if ($firstRecord = DB::table($table)->min('created_at')) {
-            return Carbon::parse($firstRecord)->startOfMonth();
+            return Date::parse($firstRecord)->startOfMonth();
         }
 
         return now()->subMonth();
@@ -96,27 +96,27 @@ trait HasBasicOverviewChartStuff
             'day' => [
                 now()->subDay()->startOfHour(),
                 '1 hour',
-                fn (string $d): string => Carbon::parse($d)->format('H:i'),
+                fn (string $d): string => Date::parse($d)->format('H:i'),
             ],
             'month' => [
                 now()->subDays(29)->startOfDay(),
                 '1 day',
-                fn (string $d): string => Carbon::parse($d)->format('d M'),
+                fn (string $d): string => Date::parse($d)->format('d M'),
             ],
             'year' => [
                 now()->subMonths(11)->startOfMonth(),
                 '1 month',
-                fn (string $d): string => Carbon::parse($d)->format('M Y'),
+                fn (string $d): string => Date::parse($d)->format('M Y'),
             ],
             'all' => [
                 $this->getAllTimeStart($table),
                 '1 month',
-                fn (string $d): string => Carbon::parse($d)->format('M Y'),
+                fn (string $d): string => Date::parse($d)->format('M Y'),
             ],
             default => [
                 now()->subDays(6)->startOfDay(),
                 '1 day',
-                fn (string $d): string => Carbon::parse($d)->format('D'),
+                fn (string $d): string => Date::parse($d)->format('D'),
             ],
         };
     }

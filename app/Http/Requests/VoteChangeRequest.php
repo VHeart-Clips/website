@@ -46,7 +46,7 @@ class VoteChangeRequest extends FormRequest
                     ->where('user_id', $this->user()->id)
                     ->where('created_at', '>=', now()->sub(config('vheart.clips.voting.maximum_change_age')))
                     ->has('clip')
-                    ->orderByDesc('created_at')
+                    ->latest()
                     ->orderByDesc('id')
                     ->first() ?? null;
 

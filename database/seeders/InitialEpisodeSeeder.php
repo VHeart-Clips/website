@@ -986,6 +986,6 @@ class InitialEpisodeSeeder extends Seeder
         });
 
         // Force-run the import Job because we are lazy
-        ImportCategoryJob::dispatchSync([]);
+        dispatch_sync(new ImportCategoryJob([]));
     }
 }

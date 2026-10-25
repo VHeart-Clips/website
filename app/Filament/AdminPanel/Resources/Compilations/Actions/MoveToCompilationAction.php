@@ -33,7 +33,7 @@ class MoveToCompilationAction extends Action
                     ->label('Compilation')
                     ->searchable()
                     ->options(fn (Clip $record) => Clip\Compilation::query()
-                        ->orderBy('created_at', 'desc')
+                        ->latest()
                         ->whereNotIn('id', $record->compilations()->pluck('compilations.id'))
                         ->whereNotIn('compilations.status', CompilationStatus::getVoteDisabledCases())
                         ->whereNot(fn (Builder $builder): Builder => $builder->where('compilations.status', CompilationStatus::Internal)

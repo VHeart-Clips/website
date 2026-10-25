@@ -13,7 +13,7 @@ class AboutUsController extends Controller
     public function __invoke(Request $request)
     {
         if (Feature::isActive(FeatureFlag::AboutUsAsIndex)) {
-            return redirect()->route('home');
+            return to_route('home');
         }
 
         return view('about-us');

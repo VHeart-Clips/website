@@ -140,7 +140,7 @@ class ViewReport extends ViewRecord
                                     ->send();
                             }
 
-                            ReportWebhookJob::dispatch($record);
+                            dispatch(new ReportWebhookJob($record));
 
                             Notification::make('discord_notification_scheduled_for_create')
                                 ->title('Notification Scheduled')
@@ -155,7 +155,7 @@ class ViewReport extends ViewRecord
                     Action::make('notification_update')
                         ->visible(fn (Report $record): bool => $record->discord_message_id !== null)
                         ->action(function (Report $record): void {
-                            ReportWebhookJob::dispatch($record);
+                            dispatch(new ReportWebhookJob($record));
 
                             Notification::make('discord_notification_scheduled_for_update')
                                 ->title('Notification Scheduled')
@@ -171,7 +171,7 @@ class ViewReport extends ViewRecord
                         ->requiresConfirmation()
                         ->visible(fn (Report $record): bool => $record->discord_message_id !== null)
                         ->action(function (Report $record): void {
-                            DeleteReportWebhookJob::dispatch($record->discord_message_id, $record);
+                            dispatch(new DeleteReportWebhookJob($record->discord_message_id, $record));
 
                             Notification::make('discord_notification_scheduled_for_removal')
                                 ->title('Removal Scheduled')

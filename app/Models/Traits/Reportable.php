@@ -26,7 +26,7 @@ trait Reportable
     /**
      * Override to return the correct title attribute for this model so we can use it to show a human readable name
      */
-    public function getReportableTitleAttribute(): string
+    protected function getReportableTitleAttribute(): string
     {
         return 'name';
     }

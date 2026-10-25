@@ -47,7 +47,7 @@ class Compilation extends Model implements Commentable, FilamentResourceful
      */
     public function clips(): BelongsToMany
     {
-        return $this->belongsToMany(Clip::class, 'compilation_clip')
+        return $this->belongsToMany(Clip::class, CompilationClip::class)
             ->using(CompilationClip::class)
             ->withPivot(CompilationClip::getPivotColumns())
             ->withTimestamps();

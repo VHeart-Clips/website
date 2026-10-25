@@ -107,7 +107,7 @@ class DashboardPanelProvider extends PanelProvider
                 RequiresBroadcasterProfile::class,
             ])
             ->resolveTenantUsing(function (string $key): Model {
-                $tenant = app(Filament::getTenantModel())
+                $tenant = resolve(Filament::getTenantModel())
                     ->resolveRouteBinding($key);
 
                 if (! $tenant instanceof Model && $key === (string) auth()->id()) {

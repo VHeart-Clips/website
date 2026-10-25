@@ -24,7 +24,7 @@ readonly class BroadcasterDailyLimitSubmissionRule implements ClipSubmissionRule
 
         return Clip::query()
             ->withTrashed()
-            ->whereSubmittedAfter(now()->startOfDay())
+            ->whereSubmittedAfter(today())
             ->whereBroadcastBy($context->clip()->broadcasterId)
             ->whereSubmitterId($context->submitter->id)
             ->count() < config('vheart.clips.submission.limits.per_broadcaster');

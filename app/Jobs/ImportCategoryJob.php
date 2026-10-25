@@ -22,6 +22,7 @@ use Illuminate\Queue\Middleware\ThrottlesExceptions;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Sleep;
 
 #[Tries(254)]
 #[MaxExceptions(3)]
@@ -84,7 +85,7 @@ class ImportCategoryJob implements ShouldDispatchAfterCommit, ShouldQueue
             ]);
 
             // Let twitch breath to prevent 429
-            sleep(1);
+            Sleep::sleep(1);
         });
     }
 }

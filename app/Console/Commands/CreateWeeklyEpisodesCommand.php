@@ -11,7 +11,7 @@ use Carbon\Constants\UnitValue;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 #[Signature('episodes:create-weekly')]
 #[Description('Create episode compilations for current and next week if not exists')]
@@ -27,8 +27,8 @@ class CreateWeeklyEpisodesCommand extends Command
             ->count() + 1;
 
         $weeks = [
-            Carbon::now()->startOfWeek()->next(UnitValue::FRIDAY),
-            Carbon::now()->addWeek()->startOfWeek()->next(UnitValue::FRIDAY),
+            Date::now()->startOfWeek()->next(UnitValue::FRIDAY),
+            Date::now()->addWeek()->startOfWeek()->next(UnitValue::FRIDAY),
         ];
 
         foreach ($weeks as $friday) {
