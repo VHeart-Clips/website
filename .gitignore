@@ -40,6 +40,7 @@ frankenphp-worker.php
 config/psysh
 config/composer
 config/caddy
+config/sentry
 
 _ide_helper_models.php
 _ide_helper.php
