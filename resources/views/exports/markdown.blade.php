@@ -20,6 +20,7 @@ See [our privacy policy]({{ route('privacy') }}) for details on how we use and s
 @foreach ($sections as $section)
     - [{{ $section->title() }}](#{{ Str::slug($section->title(), language: app()->currentLocale()) }})
 @endforeach
+- [Types](#types)
 - [Enums](#enums)
 @if(count($skippedSections) > 0)
 - [Skipped Sections](#skipped-sections)
@@ -28,9 +29,8 @@ See [our privacy policy]({{ route('privacy') }}) for details on how we use and s
 ## How to read this export
 
 - `data/` contains one UTF-8 JSON file per section below.
-- `null` means not set, not applicable, or removed for privacy (e.g. other user data).
+- Field types are explained in [Types](#types).
 - Some enum values have labels. Labels are localized to your language at export time (shown above).
-- Timestamps are ISO 8601 in UTC.
 
 ## Sections
 
@@ -46,6 +46,20 @@ See [our privacy policy]({{ route('privacy') }}) for details on how we use and s
 ])
 
 @endforeach
+
+## Types
+
+| Type | Description |
+|---|---|
+| `string` | Text |
+| `integer` | Whole number |
+| `boolean` | `true` or `false` |
+| `string[]` | List of strings |
+| `datetime` | Date and time in UTC, ISO 8601, e.g. `2026-10-26T12:00:00Z` |
+| `nullable` | The value can be `null`, meaning there is no value or the related data was removed. |
+| `omittable` | The value is `null` when it belongs to another user and was left out for their privacy |
+
+Some fields may be a Enum backed value, if they where used they will link directly to their related documentation.
 
 ## Enums
 
