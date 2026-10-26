@@ -40,6 +40,18 @@ Schedule::command(PruneCommand::class)
     ->onOneServer()
     ->daily();
 
+Schedule::call(static function (): void {
+    $disk = Storage::disk('exports');
+
+    collect($disk->files())
+        ->filter(fn (string $file): bool => str_ends_with($file, '.zip') && $disk->lastModified($file) < now()->addMinutes(5)->getTimestamp())
+        ->each(fn (string $file): bool => $disk->delete($file));
+})
+    ->name('Clean Data Exports')
+    ->description('Cleans orphaned data exports older than one hour on the exports disk.')
+    ->onOneServer()
+    ->everyFifteenMinutes();
+
 Schedule::command(ArchiveClipVotesCommand::class)
     ->skip(fn () => ! Feature::isActive(FeatureFlag::ArchiveClipsSchedule))
     ->runInBackground()
