@@ -9,6 +9,7 @@ use App\Support\Audit\Auditor;
 use App\Support\VHeart\DataExport\DataExporter;
 use App\Support\VHeart\DataExport\ExportSection;
 use App\Support\VHeart\DataExport\Sections\AccountSection;
+use App\Support\VHeart\DataExport\Sections\AuditsSection;
 use Illuminate\Http\Request;
 use JsonException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -19,6 +20,7 @@ class DataExportController extends Controller
     /** @var list<class-string<ExportSection>> */
     public const array SECTIONS = [
         AccountSection::class,
+        AuditsSection::class,
     ];
 
     /**
