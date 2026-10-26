@@ -25,4 +25,5 @@
 @foreach($enum::cases() as $case)
 | {!! collect($columns)->map(fn ($column) => $column($case))->implode(' | ') !!} |
 @endforeach
+
 @endpushonce
