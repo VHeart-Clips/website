@@ -52,7 +52,8 @@ See [our privacy policy]({{ route('privacy') }}) for details on how we use and s
 | Type | Description |
 |---|---|
 | `string` | Text |
-| `integer` | Whole number |
+| `integer` | Whole number (e.g. `3`) |
+| `float` | Floating-point number (e.g. `3.14`) |
 | `boolean` | `true` or `false` |
 | `string[]` | List of strings |
 | `map<K, V>` | Key-value pairs with keys of type `K` and values of type `V` |
