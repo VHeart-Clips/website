@@ -55,6 +55,8 @@ See [our privacy policy]({{ route('privacy') }}) for details on how we use and s
 | `integer` | Whole number |
 | `boolean` | `true` or `false` |
 | `string[]` | List of strings |
+| `map<K, V>` | Key-value pairs with keys of type `K` and values of type `V` |
+| `object` | data with arbitrary structure. fields are described where known. |
 | `datetime` | Date and time in UTC, ISO 8601, e.g. `2026-10-26T12:00:00Z` |
 | `nullable` | The value can be `null`, meaning there is no value or the related data was removed. |
 | `omittable` | The value is `null` when it belongs to another user and was left out for their privacy |
