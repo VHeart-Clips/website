@@ -12,6 +12,7 @@ use App\Support\VHeart\DataExport\Sections\AccountSection;
 use App\Support\VHeart\DataExport\Sections\AuditsSection;
 use App\Support\VHeart\DataExport\Sections\BansSection;
 use App\Support\VHeart\DataExport\Sections\BroadcasterConsentLogsSection;
+use App\Support\VHeart\DataExport\Sections\BroadcasterRemovalRequestSection;
 use App\Support\VHeart\DataExport\Sections\BroadcasterSection;
 use App\Support\VHeart\DataExport\Sections\BroadcasterTeamMembershipsSection;
 use App\Support\VHeart\DataExport\Sections\ClipsSection;
@@ -32,6 +33,7 @@ class DataExportController extends Controller
         BroadcasterTeamMembershipsSection::class,
         ClipsSection::class,
         BroadcasterConsentLogsSection::class,
+        BroadcasterRemovalRequestSection::class,
         ClipVotesSection::class,
     ];
 
