@@ -13,6 +13,7 @@ use App\Support\VHeart\DataExport\Sections\AuditsSection;
 use App\Support\VHeart\DataExport\Sections\BansSection;
 use App\Support\VHeart\DataExport\Sections\BroadcasterSection;
 use App\Support\VHeart\DataExport\Sections\ClipsSection;
+use App\Support\VHeart\DataExport\Sections\ClipVotesSection;
 use Illuminate\Http\Request;
 use JsonException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -27,6 +28,7 @@ class DataExportController extends Controller
         BansSection::class,
         BroadcasterSection::class,
         ClipsSection::class,
+        ClipVotesSection::class,
     ];
 
     /**
