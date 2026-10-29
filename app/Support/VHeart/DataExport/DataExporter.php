@@ -89,6 +89,15 @@ readonly class DataExporter
             ], [new HeadingPermalinkExtension()]),
         ])->render());
 
+        // makes it easier for users to make a custom reader, on any manifest change we need to increase the version though
+        File::put($temporaryDirectory->path('manifest.json'), json_encode([
+            'version' => 1,
+            'sections' => [
+                'included' => array_map(static fn (ExportSection $section) => $section->slug(), $includedSections),
+                'skipped' => array_map(static fn (ExportSection $section) => $section->slug(), $skippedSections),
+            ],
+        ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
+
         return $this->makeZip($temporaryDirectory);
     }
 
