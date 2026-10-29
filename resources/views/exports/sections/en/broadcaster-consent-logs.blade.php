@@ -1,3 +1,4 @@
+@use(App\Enums\Broadcaster\BroadcasterConsent)
 Your Broadcaster consent history.
 
 | Field | Type | Description |
@@ -7,4 +8,4 @@ Your Broadcaster consent history.
 | `reason` | string | Reason for the Consent change |
 | `changed_at` | datetime | When the change happened |
 
-@include('exports.partials.enum', ['enum' => \App\Enums\Broadcaster\BroadcasterConsent::class])
+@include('exports.partials.enum', ['enum' => BroadcasterConsent::class])

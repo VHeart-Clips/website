@@ -1,3 +1,4 @@
+@use(App\Enums\UserSettings\LanguagePreference)
 Your account details.
 
 | Field | Type | Description |
@@ -15,4 +16,4 @@ Your account details.
 | `updated_at` | datetime | When your account was updated |
 | `deleted_at` | datetime, nullable | When the user was removed |
 
-@include('exports.partials.enum', ['enum' => \App\Enums\UserSettings\LanguagePreference::class])
+@include('exports.partials.enum', ['enum' => LanguagePreference::class])

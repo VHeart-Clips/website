@@ -1,3 +1,4 @@
+@use(App\Enums\ClipVoteType)
 Your Votes.
 
 You can view and change your last vote on your [Vote Statistic]({{ route('user.statistics.votes') }}) page.
@@ -10,4 +11,4 @@ You can view and change your last vote on your [Vote Statistic]({{ route('user.s
 | `created_at` | datetime | When the vote was created |
 | `updated_at` | datetime | When the vote was updated |
 
-@include('exports.partials.enum', ['enum' => \App\Enums\ClipVoteType::class])
+@include('exports.partials.enum', ['enum' => ClipVoteType::class])
