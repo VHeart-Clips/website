@@ -12,6 +12,7 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use League\CommonMark\Extension\HeadingPermalink\HeadingPermalinkExtension;
 use League\CommonMark\Normalizer\TextNormalizerInterface;
+use NoDiscard;
 use RuntimeException;
 use SensitiveParameter;
 use Spatie\TemporaryDirectory\TemporaryDirectory;
@@ -34,6 +35,7 @@ readonly class DataExporter
      *
      * @throws Throwable
      */
+    #[NoDiscard('File contains sensitive data, if you dont use it why do you export it lol')]
     public function export(User $user): string
     {
         $temporaryDirectory = TemporaryDirectory::make()
