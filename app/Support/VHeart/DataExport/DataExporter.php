@@ -95,8 +95,8 @@ readonly class DataExporter
         File::put($temporaryDirectory->path('manifest.json'), json_encode([
             'version' => 1,
             'sections' => [
-                'included' => array_map(static fn (ExportSection $section) => $section->slug(), $includedSections),
-                'skipped' => array_map(static fn (ExportSection $section) => $section->slug(), $skippedSections),
+                'included' => array_map(static fn (ExportSection $section): string => $section->slug(), $includedSections),
+                'skipped' => array_map(static fn (ExportSection $section): string => $section->slug(), $skippedSections),
             ],
         ], JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
 
