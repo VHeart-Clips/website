@@ -16,6 +16,7 @@ use App\Filament\AdminPanel\Resources\Clips\Actions\Management\GenerateClipOverl
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\DownloadAction;
+use App\Filament\AdminPanel\Resources\Compilations\Actions\DownloadAllAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\UpdateClaimInfosAction;
 use App\Filament\Forms\Components\CustomFileUpload;
@@ -303,6 +304,7 @@ class ClipsRelationManager extends RelationManager
                             'unique_broadcaster_compilation' => ['compilation_id' => $this->getOwnerRecord()->getKey()],
                         ],
                     ])),
+                $this->makeDownloadAllClipsAction(),
             ])
             ->recordActions([
                 GenerateClipOverlayAction::make()
@@ -536,5 +538,38 @@ class ClipsRelationManager extends RelationManager
             ->disk('compilation_clips_archive')
             ->appendExtension()
             ->iconButton();
+    }
+
+    private function makeDownloadAllClipsAction(): DownloadAllAction
+    {
+        return DownloadAllAction::make()
+            ->disabled(once(fn (): bool => Clip\CompilationClip::query()
+                ->where('compilation_id', $this->getOwnerRecord()->id)
+                ->where('claim_status', CompilationClipClaimStatus::Completed)
+                ->whereNotNull('file_path')
+                ->doesntExist()
+            ))
+            ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
+            ->disk('compilation_clips_archive')
+            ->getFilesUsing(function (ClipsRelationManager $livewire): array {
+                $compilation = $livewire->getOwnerRecord();
+
+                return Clip\CompilationClip::query()
+                    ->where('compilation_id', $compilation->getKey())
+                    ->where('claim_status', CompilationClipClaimStatus::Completed)
+                    ->whereNotNull('file_path')
+                    ->with(['claimer', 'clip.owner', 'clip.creator', 'clip.category'])
+                    ->get()
+                    ->mapWithKeys(function (Clip\CompilationClip $pivot) use ($compilation): array {
+                        $name = Clip\CompilationClip::recommendedFileName($pivot->clip, $compilation, $pivot->claimer);
+
+                        return [$pivot->file_path => $name];
+                    })
+                    ->all();
+            })
+            ->after(fn (ClipsRelationManager $livewire): Audit => Auditor::make()
+                ->event('compilation.clips.download_all')
+                ->on($livewire->getOwnerRecord())
+                ->save());
     }
 }
