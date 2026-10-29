@@ -257,7 +257,7 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
 
         $this->preventFutureAttempts();
 
-        DiscordWebhookDied::dispatch($this->getWebhookId(), $this->getWebhook());
+        event(new DiscordWebhookDied($this->getWebhookId(), $this->getWebhook()));
 
         $this->fail("Webhook '{$this->getWebhookId()}' was not found (404)");
 

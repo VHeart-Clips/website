@@ -27,7 +27,7 @@ class ClipsOverview extends StatsOverviewWidget
         $clipBaseQuery = Clip::whereBroadcasterId($tenantId)->withoutGlobalScope(filament()->getTenancyScopeName());
 
         $totalClips = $clipBaseQuery->clone()->count();
-        $totalClipsToday = $clipBaseQuery->clone()->where('created_at', '>=', now()->startOfDay())->count();
+        $totalClipsToday = $clipBaseQuery->clone()->where('created_at', '>=', today())->count();
         $totalClipsThisWeek = $clipBaseQuery->clone()->where('created_at', '>=', now()->startOfWeek())->count();
         $totalClipsThisMonth = $clipBaseQuery->clone()->where('created_at', '>=', now()->startOfMonth())->count();
 

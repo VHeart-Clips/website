@@ -117,7 +117,7 @@ class DataExportController extends Controller
                 ->where('causer_id', $user->id)
                 ->where('causer_type', (new User)->getMorphClass())
             )
-            ->orderByDesc('created_at')
+            ->latest()
             ->get()
             ->map(fn (Audit $audit): array => [
                 'id' => $audit->id,
@@ -200,7 +200,7 @@ class DataExportController extends Controller
     {
         return BroadcasterConsentLog::query()
             ->where('broadcaster_id', $user->id)
-            ->orderBy('changed_at')
+            ->oldest('changed_at')
             ->get()
             ->map(fn (BroadcasterConsentLog $log): array => [
                 'state' => $log->state->map->name,

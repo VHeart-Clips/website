@@ -8,7 +8,6 @@ use App\Enums\Filament\LucideIcon;
 use App\Enums\Filament\TopOverlayType;
 use App\Enums\Leaderboard\LeaderboardRange;
 use App\Models\User;
-use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -20,6 +19,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
+use Illuminate\Support\Facades\Date;
 use Illuminate\View\View;
 use Livewire\Component;
 use stdClass;
@@ -110,7 +110,7 @@ class GenerateTopOverlayAction extends Action
         return [[
             'type' => $get('type'),
             'show_background' => $get('show_background'),
-            'users' => $this->getUsers($get('type'), Carbon::parse($get('from')), Carbon::parse($get('to'))),
+            'users' => $this->getUsers($get('type'), Date::parse($get('from')), Date::parse($get('to'))),
         ]];
     }
 

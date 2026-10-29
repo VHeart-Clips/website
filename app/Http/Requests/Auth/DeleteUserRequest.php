@@ -29,7 +29,7 @@ class DeleteUserRequest extends FormRequest
                 'required',
                 'string',
                 function (string $attribute, mixed $value, Closure $fail): void {
-                    $mfa = app(AppAuthentication::class);
+                    $mfa = resolve(AppAuthentication::class);
                     $user = auth()->user();
 
                     if (! $mfa->isEnabled($user)) {

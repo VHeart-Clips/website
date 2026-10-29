@@ -35,7 +35,7 @@ class RefreshClipsCommand extends Command
                             'next_refresh_after' => null,
                         ]);
 
-                    UpdateClipsBatchJob::dispatch($ids)
+                    dispatch(new UpdateClipsBatchJob($ids))
                         ->afterCommit();
                 });
 

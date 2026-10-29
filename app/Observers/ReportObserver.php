@@ -13,7 +13,7 @@ class ReportObserver
     public function created(Report $report): void
     {
         // No message id yet, so we just forcefully create one
-        ReportWebhookJob::dispatch($report);
+        dispatch(new ReportWebhookJob($report));
     }
 
     public function updated(Report $report): void
@@ -29,13 +29,13 @@ class ReportObserver
     public function restored(Report $report): void
     {
         // May not have a message id anymore (if removed by scheduler), recreate or update
-        ReportWebhookJob::dispatch($report);
+        dispatch(new ReportWebhookJob($report));
     }
 
     public function forceDeleted(Report $report): void
     {
         if ($report->discord_message_id) {
-            DeleteReportWebhookJob::dispatch($report->discord_message_id, $report);
+            dispatch(new DeleteReportWebhookJob($report->discord_message_id, $report));
         }
     }
 
@@ -49,6 +49,6 @@ class ReportObserver
             return;
         }
 
-        ReportWebhookJob::dispatch($report);
+        dispatch(new ReportWebhookJob($report));
     }
 }

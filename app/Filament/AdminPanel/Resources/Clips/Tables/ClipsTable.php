@@ -233,7 +233,7 @@ class ClipsTable
                     ->label('Unique by Compilation')
                     ->hintIcon(LucideIcon::CircleQuestionMark, 'Hides any broadcaster who is already within the selected Compilation')
                     ->options(fn () => Compilation::query()
-                        ->orderByDesc('created_at')
+                        ->latest()
                         ->pluck('title', 'id'))
                     ->optionsLimit(5)
                     ->searchable()

@@ -25,7 +25,7 @@ class DeleteUserController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        RemoverUserDataJob::dispatch($user->id);
+        dispatch(new RemoverUserDataJob($user->id));
 
         return redirect('/');
     }

@@ -22,15 +22,15 @@ class VotesController extends Controller
             ->where('user_id', $request->user()->id)
             ->where('created_at', '>=', now()->sub(config('vheart.clips.voting.maximum_change_age')))
             ->has('clip')
-            ->orderByDesc('created_at')
+            ->latest()
             ->orderByDesc('id')
-            ->first() ?? null;
+            ->first();
 
         $votedInfos = Vote::query()
             ->where('user_id', $request->user()->id)
             ->has('clip')
             ->with('clip', fn (Relation $relation) => $relation->withAbsoluteVoteCount())
-            ->orderByDesc('created_at')
+            ->latest()
             ->orderByDesc('id')
             ->cursorPaginate(perPage: 32);
 

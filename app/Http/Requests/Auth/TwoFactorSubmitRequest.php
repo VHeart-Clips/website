@@ -49,7 +49,7 @@ class TwoFactorSubmitRequest extends TwoFactorChallengeRequest
      */
     public function ensureCodeIsValid(User $user): void
     {
-        $mfa = app(AppAuthentication::class);
+        $mfa = resolve(AppAuthentication::class);
         $code = $this->input('code', '');
 
         if (

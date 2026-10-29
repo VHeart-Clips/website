@@ -93,7 +93,7 @@ class BroadcasterPolicy implements BannablePolicy
             return false;
         }
 
-        $twitchService = app(TwitchService::class);
+        $twitchService = resolve(TwitchService::class);
 
         return $twitchService->asSessionUser()->isModeratorFor($broadcaster);
     }

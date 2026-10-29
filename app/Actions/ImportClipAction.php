@@ -32,9 +32,9 @@ class ImportClipAction
             $clipModel->tags()->sync($tags);
         }
 
-        ImportCategoryJob::dispatch($clipModel->category_id);
+        dispatch(new ImportCategoryJob($clipModel->category_id));
 
-        ClipSubmitted::dispatch($clipModel, $user, $tags);
+        event(new ClipSubmitted($clipModel, $user, $tags));
 
         return $clipModel;
     }

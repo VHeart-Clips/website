@@ -24,7 +24,7 @@ class DashboardClipsOverview extends StatsOverviewWidget
     protected function getStats(): array
     {
         $totalClips = Clip::count();
-        $totalClipsToday = Clip::where('created_at', '>=', now()->startOfDay())->count();
+        $totalClipsToday = Clip::where('created_at', '>=', today())->count();
         $totalClipsThisWeek = Clip::where('created_at', '>=', now()->startOfWeek())->count();
         $totalClipsThisMonth = Clip::where('created_at', '>=', now()->startOfMonth())->count();
 

@@ -83,11 +83,11 @@ class ClipUploadPresignController
         }
 
         $validator = Validator::make($data, [
-            'user_id' => 'required|integer',
-            'maxSize' => 'nullable|integer|min:1',
-            'acceptedFileTypes' => 'required|array',
-            'acceptedFileTypes.*' => 'string|alpha_dash',
-            'disk' => 'required|string',
+            'user_id' => ['required', 'integer'],
+            'maxSize' => ['nullable', 'integer', 'min:1'],
+            'acceptedFileTypes' => ['required', 'array'],
+            'acceptedFileTypes.*' => ['string', 'alpha_dash'],
+            'disk' => ['required', 'string'],
         ]);
 
         if ($validator->fails()) {

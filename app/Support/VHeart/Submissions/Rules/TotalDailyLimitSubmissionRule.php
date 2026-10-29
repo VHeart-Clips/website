@@ -24,7 +24,7 @@ readonly class TotalDailyLimitSubmissionRule implements ClipSubmissionRule
 
         return Clip::query()
             ->withTrashed()
-            ->whereSubmittedAfter(now()->startOfDay())
+            ->whereSubmittedAfter(today())
             ->whereSubmitterId($context->submitter->id)
             ->count() < config('vheart.clips.submission.limits.total');
     }

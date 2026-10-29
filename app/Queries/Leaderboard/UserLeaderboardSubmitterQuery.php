@@ -22,7 +22,7 @@ final readonly class UserLeaderboardSubmitterQuery
                 'submittedClips' => fn (Builder $q) => $q->whereBetween('created_at', [$from, $to]),
             ], 'created_at')
             ->orderBy('submitted_clips_count', 'desc')
-            ->orderBy('submitted_clips_max_created_at', 'asc')
+            ->oldest('submitted_clips_max_created_at')
             ->orderBy('id')
             ->whereHas('submittedClips', fn (Builder $q): Builder => $q->whereBetween('created_at', [$from, $to]))
             ->limit($limit)

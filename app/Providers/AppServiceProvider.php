@@ -209,7 +209,7 @@ class AppServiceProvider extends ServiceProvider
          * @see https://github.com/tales-from-a-dev/tailwind-merge-php/blob/main/docs/index.md#usage
          */
         ComponentAttributeBag::macro('twMerge', function (...$defaultClasses): ComponentAttributeBag {
-            $mergedClasses = app(TailwindMerge::class)->merge([
+            $mergedClasses = resolve(TailwindMerge::class)->merge([
                 ...$defaultClasses,
                 $this->get('class', ''),
             ]);

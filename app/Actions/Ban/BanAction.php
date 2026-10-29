@@ -11,7 +11,7 @@ use Carbon\Month;
 use Carbon\WeekDay;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class BanAction
 {
@@ -29,7 +29,7 @@ class BanAction
             ->create([
                 'admin_id' => $bannedByUserId,
                 'reason' => $reason,
-                'banned_until' => (is_null($until) || $until instanceof CarbonInterface) ? $until : Carbon::parse($until),
+                'banned_until' => (is_null($until) || $until instanceof CarbonInterface) ? $until : Date::parse($until),
             ]);
     }
 }

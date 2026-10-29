@@ -16,7 +16,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 
 class DateRangeFilter extends Filter
 {
@@ -112,13 +112,13 @@ class DateRangeFilter extends Filter
                 if ($data['from'] ?? null) {
                     $indicators[$this->getName().'_range_from'] = __('filament/filters/date_range.indicators.from', [
                         'name' => $this->indicatorLabel ?? $this->getLabel(),
-                        'value' => Carbon::parse($data['from'])->toFormattedDateString(),
+                        'value' => Date::parse($data['from'])->toFormattedDateString(),
                     ]);
                 }
                 if ($data['to'] ?? null) {
                     $indicators[$this->getName().'_range_to'] = __('filament/filters/date_range.indicators.to', [
                         'name' => $this->indicatorLabel ?? $this->getLabel(),
-                        'value' => Carbon::parse($data['to'])->toFormattedDateString(),
+                        'value' => Date::parse($data['to'])->toFormattedDateString(),
                     ]);
                 }
 
@@ -168,7 +168,7 @@ class DateRangeFilter extends Filter
         return $this->customPresets ?? [
             'today' => [
                 'label' => __('filament/filters/date_range.presets.default_options.today'),
-                'from' => fn () => now()->startOfDay(),
+                'from' => fn (): CarbonInterface => today(),
                 'to' => fn (): null => null,
             ],
             'last_7_days' => [

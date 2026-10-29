@@ -29,7 +29,7 @@ class PruneReportWebhookMessagesCommand extends Command
             ->lazy()
             ->each(function (Report $report) use (&$count, $dryRun): void {
                 if (! $dryRun) {
-                    DeleteReportWebhookJob::dispatch($report->discord_message_id, $report);
+                    dispatch(new DeleteReportWebhookJob($report->discord_message_id, $report));
                 }
 
                 $count++;

@@ -20,7 +20,7 @@ class ChangeLanguageController extends Controller
 
         if ($lang === null) {
             if (! $request->expectsJson()) {
-                return redirect()->back()->withErrors([
+                return back()->withErrors([
                     'locale' => 'Invalid locale selected',
                 ]);
             }
@@ -41,6 +41,6 @@ class ChangeLanguageController extends Controller
             ], 200);
         }
 
-        return redirect()->back();
+        return back();
     }
 }

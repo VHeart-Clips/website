@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Users\Widgets;
 
 use App\Models\Vote;
-use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Date;
 
 class UserVotesWidget extends ChartWidget
 {
@@ -47,27 +47,27 @@ class UserVotesWidget extends ChartWidget
             'week' => [
                 now()->subDays(6)->startOfDay(),
                 'perDay',
-                fn (string $d): string => Carbon::parse($d)->format('D'),
+                fn (string $d): string => Date::parse($d)->format('D'),
             ],
             'month' => [
                 now()->subDays(29)->startOfDay(),
                 'perDay',
-                fn (string $d): string => Carbon::parse($d)->format('d M'),
+                fn (string $d): string => Date::parse($d)->format('d M'),
             ],
             'year' => [
                 now()->subMonths(11)->startOfMonth(),
                 'perMonth',
-                fn (string $d): string => Carbon::parse($d)->format('M Y'),
+                fn (string $d): string => Date::parse($d)->format('M Y'),
             ],
             'all' => [
-                Carbon::parse('01.04.2026'), // we just hardcode the release month for simplicity haha
+                Date::parse('01.04.2026'), // we just hardcode the release month for simplicity haha
                 'perMonth',
-                fn (string $d): string => Carbon::parse($d)->format('M Y'),
+                fn (string $d): string => Date::parse($d)->format('M Y'),
             ],
             default => [
                 now()->subDay()->startOfHour(),
                 'perHour',
-                fn (string $d): string => Carbon::parse($d)->format('H:i'),
+                fn (string $d): string => Date::parse($d)->format('H:i'),
             ]
         };
     }

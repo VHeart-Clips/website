@@ -128,7 +128,7 @@ trait UserFilamentConfiguration
             return false;
         }
 
-        $twitchService = app(TwitchService::class);
+        $twitchService = resolve(TwitchService::class);
 
         return $twitchService
             ->asSessionUser()
@@ -145,7 +145,7 @@ trait UserFilamentConfiguration
         }
 
         $broadcasterIds = $this->broadcasterTeamMembers()->pluck('broadcaster_id');
-        $twitchService = app(TwitchService::class);
+        $twitchService = resolve(TwitchService::class);
 
         $twitchModChannelsIds = $twitchService
             ->asSessionUser()

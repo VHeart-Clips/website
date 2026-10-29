@@ -35,7 +35,7 @@ class AttachToCompilationAction extends Action
                     ->label('Compilation')
                     ->searchable()
                     ->options(fn (Clip $record) => $this->attachableCompilations($record)
-                        ->orderBy('created_at', 'desc')
+                        ->latest()
                         ->pluck('title', 'id'))
                     ->default(function (Page $livewire): ?int {
                         $id = $livewire->tableFilters['unique_broadcaster_compilation']['compilation_id'] ?? null;
