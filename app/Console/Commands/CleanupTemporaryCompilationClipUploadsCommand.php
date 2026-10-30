@@ -14,7 +14,7 @@ use League\Flysystem\FilesystemException;
 
 #[Signature('app:cleanup-temporary-compilation-clip-uploads {--hours=12 : Max age in hours}')]
 #[Description('Cleanup temporary compilation clip uploads')]
-class CleanupTemporaryCompilationClipUploads extends Command
+class CleanupTemporaryCompilationClipUploadsCommand extends Command
 {
     /**
      * @throws FilesystemException
