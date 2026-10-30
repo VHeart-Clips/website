@@ -6,6 +6,7 @@ namespace App\Support\VHeart\DataExport\Sections;
 
 use App\Models\User;
 use App\Support\VHeart\DataExport\BaseSection;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\LazyCollection;
 
 class NotificationsSection extends BaseSection
@@ -24,7 +25,7 @@ class NotificationsSection extends BaseSection
     {
         return $user->notifications()
             ->lazyById(1000, 'id')
-            ->map(fn ($notification): array => [
+            ->map(fn (DatabaseNotification $notification): array => [
                 'id' => $notification->id,
                 'type' => $notification->type,
                 'read_at' => $notification->read_at?->toIso8601ZuluString(),

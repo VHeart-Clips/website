@@ -9,6 +9,7 @@ use App\Models\Scopes\ClipPermissionScope;
 use App\Models\Scopes\ClipWithoutBannedCategoryScope;
 use App\Models\User;
 use App\Support\VHeart\DataExport\BaseSection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\LazyCollection;
 
 class BroadcasterRemovalRequestSection extends BaseSection
@@ -29,7 +30,7 @@ class BroadcasterRemovalRequestSection extends BaseSection
     {
         return RemovalRequest::query()
             ->where('broadcaster_id', $user->getKey())
-            ->with(['clip' => fn ($q) => $q
+            ->with(['clip' => fn (BelongsTo $q): BelongsTo => $q
                 ->withTrashed()
                 ->withoutGlobalScopes([
                     ClipPermissionScope::class,
