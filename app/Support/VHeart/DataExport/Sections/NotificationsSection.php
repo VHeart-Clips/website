@@ -24,7 +24,12 @@ class NotificationsSection extends BaseSection
     public function export(User $user): LazyCollection
     {
         return $user->notifications()
-            ->lazyById(1000, 'id')
+            ->latest()
+            ->orderBy('id')
+            // makes sure lazy() pagination doesnt break if anything new comes it while exporting
+            // lazyById would be better but notifications have uuid4 as primary ids causing them to be ordered randomly
+            ->where('created_at', '<=', now())
+            ->lazy()
             ->map(fn (DatabaseNotification $notification): array => [
                 'id' => $notification->id,
                 'type' => $notification->type,
