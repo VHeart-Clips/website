@@ -36,6 +36,10 @@ class ReportCategory extends Model
         'description',
     ];
 
+    protected $attributes = [
+        'details_type' => ReportCategoryDetailsType::Disabled,
+    ];
+
     /**
      * @return BelongsTo<ReportCategory, $this>
      */
