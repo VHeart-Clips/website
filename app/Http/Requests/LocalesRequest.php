@@ -11,11 +11,6 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LocalesRequest extends FormRequest
 {
-    public function authorize(): bool
-    {
-        return true;
-    }
-
     /**
      * @return array<string, ValidationRule|array|string>
      */
