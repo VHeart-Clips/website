@@ -53,6 +53,7 @@ updates:
         dependency-type: development
         patterns:
           - 'rector/rector'
+          - 'driftingly/rector-laravel'
       composer-dev:
         dependency-type: "development"
         update-types:
