@@ -35,12 +35,12 @@
     "dependencies": {
         "@alpinejs/anchor": "^3.17.5",
         "@alpinejs/intersect": "^3.17.5",
-        "@sentry/browser": "^11.8.0",
-        "@sentry/vite-plugin": "^11.8.0",
+        "@sentry/browser": "^11.9.0",
+        "@sentry/vite-plugin": "^11.9.0",
         "@types/alpinejs": "^3.17.0",
         "alpinejs": "^3.17.5",
         "async-alpine": "^2.0.3",
-        "axios": "^1.20.0",
+        "axios": "^1.21.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "dom-to-image-more": "^3.11.0",
@@ -53,8 +53,8 @@
         "vite": "^8.3.5"
     },
     "optionalDependencies": {
-        "@rollup/rollup-linux-x64-gnu": "4.64.12",
-        "@rollup/rollup-win32-x64-msvc": "4.64.12",
+        "@rollup/rollup-linux-x64-gnu": "4.66.0",
+        "@rollup/rollup-win32-x64-msvc": "4.66.0",
         "@tailwindcss/oxide-linux-x64-gnu": "^4.3.3",
         "@tailwindcss/oxide-win32-x64-msvc": "^4.3.3",
         "lightningcss-linux-x64-gnu": "^1.33.0",
