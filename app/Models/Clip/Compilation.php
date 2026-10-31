@@ -93,7 +93,9 @@ class Compilation extends Model implements Commentable, FilamentResourceful
         return [
             'status' => CompilationStatus::class,
             'type' => CompilationType::class,
+            'processing_status' => CompilationProcessingStatus::class,
             'claimed_at' => 'datetime',
+            'zip_created_at' => 'datetime',
             'removed_at' => 'datetime',
         ];
     }
