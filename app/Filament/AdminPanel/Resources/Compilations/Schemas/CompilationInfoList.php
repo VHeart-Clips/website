@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Resources\Compilations\Schemas;
 
+use App\Models\Clip\Compilation;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -43,6 +44,8 @@ class CompilationInfoList
                         TextEntry::make('type')
                             ->label('admin/resources/compilations.form.type')
                             ->translateLabel(),
+                        TextEntry::make('processing_status')
+                            ->visible(fn (Compilation $compilation): bool => $compilation->processing_status?->isProcessing() ?? false),
                     ]),
             ])->columns(3);
     }
