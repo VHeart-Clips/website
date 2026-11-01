@@ -300,6 +300,7 @@ class ClipsRelationManager extends RelationManager
             ])
             ->filtersFormColumns(2)
             ->headerActions([
+                $this->makeDownloadAllClipsAction(),
                 Action::make('findClips')
                     ->label('Find clips')
                     ->outlined()
@@ -310,7 +311,6 @@ class ClipsRelationManager extends RelationManager
                             'unique_broadcaster_compilation' => ['compilation_id' => $this->getOwnerRecord()->getKey()],
                         ],
                     ])),
-                $this->makeDownloadAllClipsAction(),
                 ActionGroup::make([
                     $this->makeScheduleExportAction(),
                 ]),
