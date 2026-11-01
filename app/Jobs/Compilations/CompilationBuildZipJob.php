@@ -157,7 +157,7 @@ class CompilationBuildZipJob implements ShouldQueueAfterCommit
             'zip_path' => $zipPath,
             'zip_size' => $fileSize,
             'zip_created_at' => ($zipPath && $fileSize) ? now() : null,
-            'processing_status' => CompilationProcessingStatus::Completed,
+            'processing_status' => $zipPath ? CompilationProcessingStatus::Completed : null,
             'processing_batch_id' => null,
         ]);
     }
