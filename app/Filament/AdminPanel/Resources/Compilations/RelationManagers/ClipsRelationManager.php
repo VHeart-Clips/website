@@ -51,6 +51,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Kirschbaum\Commentions\Filament\Actions\CommentsAction;
 use Livewire\Component;
@@ -666,7 +667,12 @@ class ClipsRelationManager extends RelationManager
                     ->on($compilation)
                     ->save();
             })
-            ->label('Download all')
+            ->label(fn (): string => match ($this->getOwnerRecord()->processing_status) {
+                CompilationProcessingStatus::Expired => 'Expired',
+                CompilationProcessingStatus::Processing => 'Processing',
+                CompilationProcessingStatus::Completed => 'Download ('.Number::fileSize($this->getOwnerRecord()->zip_size).')',
+                default => 'Download',
+            })
             ->icon(LucideIcon::Download)
             ->color('info')
             ->rateLimit(5);
