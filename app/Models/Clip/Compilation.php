@@ -7,6 +7,7 @@ namespace App\Models\Clip;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Clips\CompilationType;
 use App\Enums\Compilation\CompilationProcessingStatus;
+use App\Jobs\Compilations\CompilationUpdateClipFilesJob;
 use App\Models\Clip;
 use App\Models\Contracts\FilamentResourceful;
 use App\Models\Traits\Auditable;
@@ -54,6 +55,20 @@ class Compilation extends Model implements Commentable, FilamentResourceful
             ->using(CompilationClip::class)
             ->withPivot(CompilationClip::getPivotColumns())
             ->withTimestamps();
+    }
+
+    /**
+     * Schedules the export process for the zip containing all (completed) clip files.
+     */
+    public function scheduleExport(): self
+    {
+        if (! $this->processing_status->isProcessing()) {
+            $this->update(['processing_status' => CompilationProcessingStatus::Scheduled]);
+        }
+
+        dispatch(new CompilationUpdateClipFilesJob($this));
+
+        return $this;
     }
 
     public function isReadOnly(): bool
