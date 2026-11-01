@@ -8,6 +8,8 @@ use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Clips\CompilationType;
 use App\Models\Clip\Compilation;
+use App\Models\Clip\CompilationClip;
+use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -147,6 +149,8 @@ class CompilationsTable
                 SelectFilter::make('type')
                     ->multiple()
                     ->options(CompilationType::class),
+                self::makeClipPivotUserFilter('claimed_by')->label('Has Clips claimed by'),
+                self::makeClipPivotUserFilter('added_by')->label('Has Clips added By'),
                 Filter::make('created_at')
                     ->columnSpanFull()
                     ->schema([
@@ -202,5 +206,43 @@ class CompilationsTable
                     RestoreBulkAction::make()->authorizeIndividualRecords(),
                 ]),
             ]);
+    }
+
+    private static function makeClipPivotUserFilter(string $column): SelectFilter
+    {
+        return SelectFilter::make('filter_by_'.$column)
+            ->translateLabel()
+            ->options(fn () => User::query()
+                ->whereIn('id', CompilationClip::query()
+                    ->whereNotNull($column)
+                    ->select($column)
+                )
+                ->pluck('name', 'id')
+                ->prepend('None', 'null')
+            )
+            ->query(function (Builder $query, array $data) use ($column): Builder {
+                $values = $data['values'] ?? [];
+
+                if ($values === []) {
+                    return $query;
+                }
+
+                $ids = array_diff($values, ['null']);
+
+                return $query->whereHas('clips', function (Builder $clips) use ($column, $values, $ids): void {
+                    $clips->where(function (Builder $q) use ($column, $values, $ids): void {
+                        if (in_array('null', $values, true)) {
+                            $q->whereNull("compilation_clip.$column");
+                        }
+
+                        if ($ids !== []) {
+                            $q->orWhereIn("compilation_clip.$column", $ids);
+                        }
+                    });
+                });
+            })
+            ->searchable()
+            ->multiple()
+            ->preload();
     }
 }
