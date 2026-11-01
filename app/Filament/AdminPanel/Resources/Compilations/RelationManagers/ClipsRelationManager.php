@@ -556,7 +556,7 @@ class ClipsRelationManager extends RelationManager
         return Action::make('scheduleExport')
             ->disabled(fn (): bool => $this->getOwnerRecord()->processing_status->isProcessing())
             ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
-            ->tooltip(function (): ?string {
+            ->tooltip(function (): string {
                 $compilation = $this->getOwnerRecord();
 
                 if ($compilation->processing_status->isProcessing()) {
