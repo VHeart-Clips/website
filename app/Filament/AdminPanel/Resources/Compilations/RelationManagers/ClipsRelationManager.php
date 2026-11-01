@@ -310,6 +310,9 @@ class ClipsRelationManager extends RelationManager
                         ],
                     ])),
                 $this->makeDownloadAllClipsAction(),
+                ActionGroup::make([
+                    $this->makeScheduleExportAction(),
+                ]),
             ])
             ->recordActions([
                 GenerateClipOverlayAction::make()
@@ -545,6 +548,51 @@ class ClipsRelationManager extends RelationManager
             ->disk('compilation_clips_archive')
             ->appendExtension()
             ->iconButton();
+    }
+
+    private function makeScheduleExportAction(): Action
+    {
+        return Action::make('scheduleExport')
+            ->disabled(fn (): bool => $this->getOwnerRecord()->processing_status->isProcessing())
+            ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
+            ->tooltip(function (): ?string {
+                $compilation = $this->getOwnerRecord();
+
+                if ($compilation->processing_status->isProcessing()) {
+                    return 'Processing, please wait';
+                }
+
+                return 'Schedule Export for this Compilation';
+            })
+            ->action(function (Component $livewire, Action $action): void {
+                $compilation = $this->getOwnerRecord()->refresh();
+
+                if ($compilation->processing_status->isProcessing()) {
+                    Notification::make()
+                        ->title('Compilation already Scheduled for export')
+                        ->warning()
+                        ->send();
+
+                    $action->halt();
+                }
+
+                $compilation->scheduleExport();
+
+                Notification::make()
+                    ->title('Compilation has been Scheduled for Export.')
+                    ->success()
+                    ->send();
+
+                Auditor::make()
+                    ->event('compilation.schedule_export')
+                    ->on($compilation)
+                    ->save();
+            })
+            ->label('Schedule Export')
+            ->icon(LucideIcon::RefreshCcw)
+            ->requiresConfirmation()
+            ->color('info')
+            ->rateLimit(1);
     }
 
     private function makeDownloadAllClipsAction(): Action
