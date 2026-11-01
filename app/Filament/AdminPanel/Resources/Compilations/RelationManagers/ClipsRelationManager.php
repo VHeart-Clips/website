@@ -554,12 +554,12 @@ class ClipsRelationManager extends RelationManager
     private function makeScheduleExportAction(): Action
     {
         return Action::make('scheduleExport')
-            ->disabled(fn (): bool => $this->getOwnerRecord()->processing_status->isProcessing())
+            ->disabled(fn (): bool => $this->getOwnerRecord()->processing_status?->isProcessing() ?? false)
             ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
             ->tooltip(function (): string {
                 $compilation = $this->getOwnerRecord();
 
-                if ($compilation->processing_status->isProcessing()) {
+                if ($compilation->processing_status?->isProcessing()) {
                     return 'Processing, please wait';
                 }
 
@@ -568,7 +568,7 @@ class ClipsRelationManager extends RelationManager
             ->action(function (Component $livewire, Action $action): void {
                 $compilation = $this->getOwnerRecord()->refresh();
 
-                if ($compilation->processing_status->isProcessing()) {
+                if ($compilation->processing_status?->isProcessing()) {
                     Notification::make()
                         ->title('Compilation already Scheduled for export')
                         ->warning()
@@ -604,7 +604,7 @@ class ClipsRelationManager extends RelationManager
             ->tooltip(once(function (): ?string {
                 $compilation = $this->getOwnerRecord();
 
-                if ($compilation->processing_status->isProcessing()) {
+                if ($compilation->processing_status?->isProcessing()) {
                     $batch = Bus::findBatch($compilation->processing_batch_id ?? '');
 
                     if ($batch) {
@@ -628,7 +628,7 @@ class ClipsRelationManager extends RelationManager
                 if ($compilation->processing_status !== CompilationProcessingStatus::Completed) {
                     Notification::make()
                         ->title('Download currently unavailable')
-                        ->body($compilation->processing_status->isProcessing() ? 'The Compilation is currently processing, please try again later.' : null)
+                        ->body($compilation->processing_status?->isProcessing() ? 'The Compilation is currently processing, please try again later.' : null)
                         ->warning()
                         ->send();
 
@@ -670,7 +670,7 @@ class ClipsRelationManager extends RelationManager
             ->label(fn (): string => match ($this->getOwnerRecord()->processing_status) {
                 CompilationProcessingStatus::Expired => 'Expired',
                 CompilationProcessingStatus::Processing => 'Processing',
-                CompilationProcessingStatus::Completed => 'Download ('.Number::fileSize($this->getOwnerRecord()->zip_size).')',
+                CompilationProcessingStatus::Completed => 'Download ('.Number::fileSize($this->getOwnerRecord()->zip_size ?? 0).')',
                 default => 'Download',
             })
             ->icon(LucideIcon::Download)

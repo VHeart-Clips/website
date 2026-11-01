@@ -62,7 +62,7 @@ class Compilation extends Model implements Commentable, FilamentResourceful
      */
     public function scheduleExport(): self
     {
-        if (! $this->processing_status->isProcessing()) {
+        if (! $this->processing_status?->isProcessing()) {
             $this->update(['processing_status' => CompilationProcessingStatus::Scheduled]);
         }
 
