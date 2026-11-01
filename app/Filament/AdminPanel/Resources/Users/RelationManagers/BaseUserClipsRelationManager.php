@@ -137,7 +137,7 @@ abstract class BaseUserClipsRelationManager extends RelationManager
 
                 ]),
             ])
-            ->deferLoading()
+            ->lazyLoaded()
             ->openRecordUrlInNewTab();
     }
 }
