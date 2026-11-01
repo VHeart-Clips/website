@@ -491,18 +491,22 @@ class ClipsRelationManager extends RelationManager
                     MoveToCompilationAction::make(),
                     UpdateClaimInfosAction::make(),
                     DetachAction::make()
-                        ->after(fn (Clip $record, array $data, RelationManager $livewire): Audit => Auditor::make()
-                            ->event('compilation.clip.detached')
-                            ->old(array_filter($record->pivot->getAttributes()))
-                            ->on($livewire->getOwnerRecord())
-                            ->save()
-                        ),
+                        ->after(function (Clip $record, array $data, RelationManager $livewire): void {
+                            $record->pivot->compilation->scheduleExport();
+
+                            Auditor::make()
+                                ->event('compilation.clip.detached')
+                                ->old(array_filter($record->pivot->getAttributes()))
+                                ->on($livewire->getOwnerRecord())
+                                ->save();
+                        }),
                     ViewAction::make(),
                 ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->after(fn (): Clip\Compilation => $this->getOwnerRecord()->scheduleExport()),
                 ]),
             ])
             ->paginated(fn (): bool => $this->getOwnerRecord()->clips()->count() >= 100)
