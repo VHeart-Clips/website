@@ -669,7 +669,7 @@ class ClipsRelationManager extends RelationManager
             })
             ->label(fn (): string => match ($this->getOwnerRecord()->processing_status) {
                 CompilationProcessingStatus::Expired => 'Expired',
-                CompilationProcessingStatus::Processing => 'Processing',
+                CompilationProcessingStatus::Scheduled, CompilationProcessingStatus::Processing => 'Processing',
                 CompilationProcessingStatus::Completed => 'Download ('.Number::fileSize($this->getOwnerRecord()->zip_size ?? 0).')',
                 default => 'Download',
             })
