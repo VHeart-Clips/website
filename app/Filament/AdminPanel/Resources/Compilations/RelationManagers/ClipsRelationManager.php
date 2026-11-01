@@ -409,6 +409,8 @@ class ClipsRelationManager extends RelationManager
 
                             event(new CompilationClipStatusUpdated($this->getOwnerRecord(), auth()->user(), $clip, $oldStatus, $data['status']));
 
+                            $this->getOwnerRecord()->scheduleExport();
+
                             Auditor::make()
                                 ->event('compilation.clip.updated')
                                 ->old([
