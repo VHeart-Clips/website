@@ -26,7 +26,7 @@ use Throwable;
 
 #[Tries(0)]
 #[Backoff(60)]
-#[DebounceFor(5)]
+#[DebounceFor(20)]
 #[WithoutRelations]
 #[MaxExceptions(3)]
 #[DeleteWhenMissingModels]
