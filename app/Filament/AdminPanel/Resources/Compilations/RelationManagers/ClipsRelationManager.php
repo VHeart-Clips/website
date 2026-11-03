@@ -6,6 +6,7 @@ namespace App\Filament\AdminPanel\Resources\Compilations\RelationManagers;
 
 use App\Enums\Clips\ClipStatus;
 use App\Enums\Clips\CompilationClipClaimStatus;
+use App\Enums\Compilation\CompilationProcessingStatus;
 use App\Enums\FeatureFlag;
 use App\Enums\Filament\LucideIcon;
 use App\Enums\Permission;
@@ -16,7 +17,6 @@ use App\Filament\AdminPanel\Resources\Clips\Actions\Management\GenerateClipOverl
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\CopyClipNameAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\DownloadAction;
-use App\Filament\AdminPanel\Resources\Compilations\Actions\DownloadAllAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\MoveToCompilationAction;
 use App\Filament\AdminPanel\Resources\Compilations\Actions\UpdateClaimInfosAction;
 use App\Filament\Forms\Components\CustomFileUpload;
@@ -47,8 +47,14 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Kirschbaum\Commentions\Filament\Actions\CommentsAction;
+use Livewire\Component;
 
 /**
  * @method Clip\Compilation getOwnerRecord
@@ -294,6 +300,7 @@ class ClipsRelationManager extends RelationManager
             ])
             ->filtersFormColumns(2)
             ->headerActions([
+                $this->makeDownloadAllClipsAction(),
                 Action::make('findClips')
                     ->label('Find clips')
                     ->outlined()
@@ -304,7 +311,9 @@ class ClipsRelationManager extends RelationManager
                             'unique_broadcaster_compilation' => ['compilation_id' => $this->getOwnerRecord()->getKey()],
                         ],
                     ])),
-                $this->makeDownloadAllClipsAction(),
+                ActionGroup::make([
+                    $this->makeScheduleExportAction(),
+                ]),
             ])
             ->recordActions([
                 GenerateClipOverlayAction::make()
@@ -409,6 +418,8 @@ class ClipsRelationManager extends RelationManager
 
                             event(new CompilationClipStatusUpdated($this->getOwnerRecord(), auth()->user(), $clip, $oldStatus, $data['status']));
 
+                            $this->getOwnerRecord()->scheduleExport();
+
                             Auditor::make()
                                 ->event('compilation.clip.updated')
                                 ->old([
@@ -480,18 +491,22 @@ class ClipsRelationManager extends RelationManager
                     MoveToCompilationAction::make(),
                     UpdateClaimInfosAction::make(),
                     DetachAction::make()
-                        ->after(fn (Clip $record, array $data, RelationManager $livewire): Audit => Auditor::make()
-                            ->event('compilation.clip.detached')
-                            ->old(array_filter($record->pivot->getAttributes()))
-                            ->on($livewire->getOwnerRecord())
-                            ->save()
-                        ),
+                        ->after(function (Clip $record, array $data, RelationManager $livewire): void {
+                            $record->pivot->compilation->scheduleExport();
+
+                            Auditor::make()
+                                ->event('compilation.clip.detached')
+                                ->old(array_filter($record->pivot->getAttributes()))
+                                ->on($livewire->getOwnerRecord())
+                                ->save();
+                        }),
                     ViewAction::make(),
                 ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DetachBulkAction::make(),
+                    DetachBulkAction::make()
+                        ->after(fn (): Clip\Compilation => $this->getOwnerRecord()->scheduleExport()),
                 ]),
             ])
             ->paginated(fn (): bool => $this->getOwnerRecord()->clips()->count() >= 100)
@@ -540,36 +555,130 @@ class ClipsRelationManager extends RelationManager
             ->iconButton();
     }
 
-    private function makeDownloadAllClipsAction(): DownloadAllAction
+    private function makeScheduleExportAction(): Action
     {
-        return DownloadAllAction::make()
-            ->disabled(once(fn (): bool => Clip\CompilationClip::query()
-                ->where('compilation_id', $this->getOwnerRecord()->id)
-                ->where('claim_status', CompilationClipClaimStatus::Completed)
-                ->whereNotNull('file_path')
-                ->doesntExist()
-            ))
+        return Action::make('scheduleExport')
+            ->disabled(fn (): bool => $this->getOwnerRecord()->processing_status?->isProcessing() ?? false)
             ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
-            ->disk('compilation_clips_archive')
-            ->getFilesUsing(function (ClipsRelationManager $livewire): array {
-                $compilation = $livewire->getOwnerRecord();
+            ->tooltip(function (): string {
+                $compilation = $this->getOwnerRecord();
 
-                return Clip\CompilationClip::query()
-                    ->where('compilation_id', $compilation->getKey())
-                    ->where('claim_status', CompilationClipClaimStatus::Completed)
-                    ->whereNotNull('file_path')
-                    ->with(['claimer', 'clip.owner', 'clip.creator', 'clip.category'])
-                    ->get()
-                    ->mapWithKeys(function (Clip\CompilationClip $pivot) use ($compilation): array {
-                        $name = Clip\CompilationClip::recommendedFileName($pivot->clip, $compilation, $pivot->claimer);
+                if ($compilation->processing_status?->isProcessing()) {
+                    return 'Processing, please wait';
+                }
 
-                        return [$pivot->file_path => $name];
-                    })
-                    ->all();
+                return 'Schedule Export for this Compilation';
             })
-            ->after(fn (ClipsRelationManager $livewire): Audit => Auditor::make()
-                ->event('compilation.clips.download_all')
-                ->on($livewire->getOwnerRecord())
-                ->save());
+            ->action(function (Component $livewire, Action $action): void {
+                $compilation = $this->getOwnerRecord()->refresh();
+
+                if ($compilation->processing_status?->isProcessing()) {
+                    Notification::make()
+                        ->title('Compilation already Scheduled for export')
+                        ->warning()
+                        ->send();
+
+                    $action->halt();
+                }
+
+                $compilation->scheduleExport();
+
+                Notification::make()
+                    ->title('Compilation has been Scheduled for Export.')
+                    ->success()
+                    ->send();
+
+                Auditor::make()
+                    ->event('compilation.schedule_export')
+                    ->on($compilation)
+                    ->save();
+            })
+            ->label('Schedule Export')
+            ->icon(LucideIcon::RefreshCcw)
+            ->requiresConfirmation()
+            ->color('info')
+            ->rateLimit(1);
+    }
+
+    private function makeDownloadAllClipsAction(): Action
+    {
+        return Action::make('downloadAllClips')
+            ->disabled(fn (): bool => $this->getOwnerRecord()->processing_status !== CompilationProcessingStatus::Completed)
+            ->hidden(fn (): bool => ! Feature::isActive(FeatureFlag::ClipUpload))
+            ->tooltip(once(function (): ?string {
+                $compilation = $this->getOwnerRecord();
+
+                if ($compilation->processing_status?->isProcessing()) {
+                    $batch = Bus::findBatch($compilation->processing_batch_id ?? '');
+
+                    if ($batch) {
+                        $progress = clamp($batch->progress(), 0, 99);
+
+                        return "Processing {$batch->processedJobs()}/$batch->totalJobs ($progress%)";
+                    }
+
+                    return 'Processing, please wait';
+                }
+
+                return match ($compilation->processing_status) {
+                    CompilationProcessingStatus::Expired => 'Download Expired',
+                    CompilationProcessingStatus::Failed => 'Something went wrong',
+                    default => null,
+                };
+            }))
+            ->action(function (Component $livewire, Action $action): void {
+                $compilation = $this->getOwnerRecord()->refresh();
+
+                if ($compilation->processing_status !== CompilationProcessingStatus::Completed) {
+                    Notification::make()
+                        ->title('Download currently unavailable')
+                        ->body($compilation->processing_status?->isProcessing() ? 'The Compilation is currently processing, please try again later.' : null)
+                        ->warning()
+                        ->send();
+
+                    $action->halt();
+                }
+
+                $path = $compilation->zip_path;
+                $disk = Storage::disk('compilation_clips_archive');
+
+                if ($path === null || ! $disk->exists($path)) {
+                    Log::debug('File not found', [
+                        'disk' => $disk,
+                        'path' => $path,
+                    ]);
+
+                    Notification::make()->title('File not found')
+                        ->danger()
+                        ->send();
+
+                    $compilation->update([
+                        'processing_status' => CompilationProcessingStatus::Expired,
+                        'zip_path' => null,
+                        'zip_size' => null,
+                        'zip_created_at' => null,
+                    ]);
+
+                    return;
+                }
+
+                $livewire->redirect($disk->temporaryUrl($path, now()->addMinutes(30), [
+                    'ResponseContentDisposition' => 'attachment; filename="'.addcslashes(Str::slug($compilation->title).'.zip', '"\\').'"',
+                ]));
+
+                Auditor::make()
+                    ->event('compilation.clips.download_all')
+                    ->on($compilation)
+                    ->save();
+            })
+            ->label(fn (): string => match ($this->getOwnerRecord()->processing_status) {
+                CompilationProcessingStatus::Expired => 'Expired',
+                CompilationProcessingStatus::Scheduled, CompilationProcessingStatus::Processing => 'Processing',
+                CompilationProcessingStatus::Completed => 'Download ('.Number::fileSize($this->getOwnerRecord()->zip_size ?? 0).')',
+                default => 'Download',
+            })
+            ->icon(LucideIcon::Download)
+            ->color('info')
+            ->rateLimit(5);
     }
 }

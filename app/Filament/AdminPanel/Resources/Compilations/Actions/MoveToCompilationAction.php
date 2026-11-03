@@ -83,6 +83,9 @@ class MoveToCompilationAction extends Action
                         $this->halt();
                     }
 
+                    $livewire->getOwnerRecord()->scheduleExport();
+                    Clip\Compilation::find($data['compilation_id'])?->scheduleExport();
+
                     Auditor::make()
                         ->event('compilation.clip.moved')
                         ->old(['compilation_id' => $livewire->getOwnerRecord()->getKey()])

@@ -6,6 +6,8 @@ namespace App\Models\Clip;
 
 use App\Enums\Clips\CompilationStatus;
 use App\Enums\Clips\CompilationType;
+use App\Enums\Compilation\CompilationProcessingStatus;
+use App\Jobs\Compilations\CompilationUpdateClipFilesJob;
 use App\Models\Clip;
 use App\Models\Contracts\FilamentResourceful;
 use App\Models\Traits\Auditable;
@@ -21,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Filesystem\LocalFilesystemAdapter;
+use Illuminate\Support\Facades\Storage;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
 
@@ -53,6 +57,20 @@ class Compilation extends Model implements Commentable, FilamentResourceful
             ->withTimestamps();
     }
 
+    /**
+     * Schedules the export process for the zip containing all (completed) clip files.
+     */
+    public function scheduleExport(): self
+    {
+        if (! $this->processing_status?->isProcessing()) {
+            $this->update(['processing_status' => CompilationProcessingStatus::Scheduled]);
+        }
+
+        dispatch(new CompilationUpdateClipFilesJob($this));
+
+        return $this;
+    }
+
     public function isReadOnly(): bool
     {
         if ($this->status->isScheduled()) {
@@ -60,6 +78,15 @@ class Compilation extends Model implements Commentable, FilamentResourceful
         }
 
         return $this->status->isPublic();
+    }
+
+    public function getDisk(string $disk = 'local'): LocalFilesystemAdapter
+    {
+        return Storage::build([
+            'driver' => 'scoped',
+            'disk' => $disk,
+            'prefix' => "compilations/$this->id",
+        ]);
     }
 
     /**
@@ -81,7 +108,9 @@ class Compilation extends Model implements Commentable, FilamentResourceful
         return [
             'status' => CompilationStatus::class,
             'type' => CompilationType::class,
+            'processing_status' => CompilationProcessingStatus::class,
             'claimed_at' => 'datetime',
+            'zip_created_at' => 'datetime',
             'removed_at' => 'datetime',
         ];
     }

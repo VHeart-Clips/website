@@ -24,6 +24,7 @@
         "laravel/tinker": "^3.0.0",
         "laravel/wayfinder": "^0.1.15",
         "league/flysystem-aws-s3-v3": "^3.0",
+        "league/flysystem-path-prefixing": "^3.31",
         "mallardduck/blade-lucide-icons": "^2.0",
         "outhebox/blade-flags": "^1.7",
         "sentry/sentry-laravel": "^4.24",

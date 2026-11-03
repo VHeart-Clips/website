@@ -34,6 +34,11 @@ class CompilationFactory extends Factory
             'status' => CompilationStatus::Planned,
             'description' => fake()->paragraph(),
             'youtube_url' => fake()->url(),
+            'processing_status' => null,
+            'processing_batch_id' => null,
+            'zip_path' => null,
+            'zip_size' => null,
+            'zip_created_at' => null,
         ];
     }
 
