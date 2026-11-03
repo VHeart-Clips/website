@@ -56,6 +56,8 @@ class UpdateClaimInfosAction extends Action
                     $updateData,
                 );
 
+                $record->pivot->compilation->scheduleExport();
+
                 Auditor::make()
                     ->event('compilation.clip.updated')
                     ->old(['clip_id' => $record->id, ...$old])

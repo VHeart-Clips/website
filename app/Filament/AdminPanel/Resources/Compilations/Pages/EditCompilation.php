@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
+use App\Models\Clip\Compilation;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -31,5 +32,20 @@ class EditCompilation extends EditRecord
             ForceDeleteAction::make(),
             RestoreAction::make(),
         ];
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Compilation
+    {
+        /** @var Compilation $compilation */
+        $compilation = parent::handleRecordUpdate($record, $data);
+
+        if (
+            $compilation->wasChanged(['status'])
+            && ($compilation->status->isPublic() || $compilation->status->isScheduled())
+        ) {
+            return $compilation->scheduleExport();
+        }
+
+        return $compilation;
     }
 }
