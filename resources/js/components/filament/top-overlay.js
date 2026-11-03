@@ -65,29 +65,27 @@ export default ($initialState, identifier) => ({
         this.identifier = f.type;
 
         if (f.type === 'votes') {
-            el('overlay-topText').textContent = "Top Voter";
+            el('overlay-topText').textContent = 'Top Voter';
             countSuffix = 'Bewertungen';
         } else if (f.type === 'submits') {
-            el('overlay-topText').textContent = "Top Submitter";
+            el('overlay-topText').textContent = 'Top Submitter';
             countSuffix = 'Einsendungen';
         } else {
-            el('overlay-topText').textContent = "";
+            el('overlay-topText').textContent = '';
         }
 
         let userCards = document.querySelectorAll('.overlay-card');
         for (const card of userCards) {
-            await this.setCard(card)
+            await this.setCard(card);
         }
-
 
         for (let index = 0; index < f.users.length; index++) {
             const user = f.users[index];
-            await this.setCard(userCards[index], countSuffix, user)
+            await this.setCard(userCards[index], countSuffix, user);
         }
     },
 
     async setCard(card, countSuffix = '', user = null) {
-
         const userName = card.querySelector('.overlay-user');
         const userDetails = card.querySelector('.overlay-details');
         const avatarImg = card.querySelector('.overlay-avatar-img');
@@ -97,11 +95,11 @@ export default ($initialState, identifier) => ({
             card.style.display = 'none';
             avatarImg.style.display = 'none';
             avatarFallback.style.display = 'block';
-            userName.textContent = ""
-            userDetails.textContent = ""
+            userName.textContent = '';
+            userDetails.textContent = '';
         } else {
             card.style.display = 'flex';
-            if (user.avatar_url && !user.anonym) {
+            if (user.avatar_url && !user.anonymous) {
                 if (avatarImg.getAttribute('src') !== user.avatar_url) {
                     await new Promise((resolve) => {
                         avatarImg.onload = resolve;
@@ -115,8 +113,10 @@ export default ($initialState, identifier) => ({
                 avatarImg.style.display = 'none';
                 avatarFallback.style.display = 'block';
             }
-            userName.textContent = !user.anonym ? user.name : 'Anonymer User '
-            userDetails.textContent = user.count + " " + countSuffix
+            userName.textContent = !user.anonymous
+                ? user.name
+                : 'Anonymer User ';
+            userDetails.textContent = user.count + ' ' + countSuffix;
         }
     },
 
