@@ -41,7 +41,10 @@ class LeaderboardController extends Controller
 
         $ids = $topSubmitters['users']->pluck('id')->merge($topVoters['users']->pluck('id'))->unique()->values();
 
-        $users = User::whereIn('id', $ids)->get(['id', 'name', 'avatar_url']);
+        $users = User::query()
+            ->whereIn('id', $ids)
+            ->with('preferences')
+            ->get(['id', 'name', 'avatar_url']);
 
         $topSubmitters['users'] = $topSubmitters['users']
             ->reject(fn (array $user): bool => ! $users->contains('id', $user['id']))->map(function (array $user) use ($users): stdClass {
