@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Support\VHeart\DataExport\Sections;
 
+use App\Models\Traits\User\HasUserPreferences;
 use App\Models\User;
 use App\Support\VHeart\DataExport\BaseSection;
 
@@ -16,7 +17,7 @@ class AccountSection extends BaseSection
 
     public function export(User $user): array
     {
-        $user->loadMissing('roles');
+        $user->loadMissing(['roles', 'preferences']);
 
         return [
             'id' => $user->id,
@@ -26,6 +27,7 @@ class AccountSection extends BaseSection
             'email_verified_at' => $user->email_verified_at?->toIso8601ZuluString(),
             'roles' => $user->roles->pluck('name')->all(),
             'language' => $user->language,
+            'preferences' => $user->preferences?->toArray(),
             'two_factor' => [
                 'has_email_authentication' => $user->has_email_authentication,
                 'has_app_authentication' => filled($user->app_authentication_secret),
