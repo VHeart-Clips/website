@@ -10,6 +10,25 @@ return [
             'description' => 'Um spezifische Einstellungen für deinen Kanal zu verwalten, wechsle bitte in das Broadcaster Dashboard.',
             'link' => 'Zum Broadcaster Dashboard',
         ],
+        'preferences' => [
+            'heading' => 'Deine Präferenzen',
+            'show_on_leaderboard' => [
+                'label' => 'Auf der Bestenliste anzeigen',
+                'description' => 'Wenn du das deaktivierst, wirst du auf den Bestenlisten ausgeblendet.',
+            ],
+            'avoid_spoilers' => [
+                'label' => 'Spoiler beim Abstimmen vermeiden',
+                'description' => 'Dies ist ein Best-Effort Filter.',
+            ],
+            'avoid_new_games' => [
+                'label' => 'Kürzlich veröffentlichte Spiele verstecken',
+                'description' => 'Verstecke spiele beim Abstimmen, welche in diesem Zeitraum veröffentlicht wurden. Dies ist ein Best-Effort Filter.',
+                'options' => [
+                    'none' => 'Deaktiviert',
+                ],
+            ],
+            'submit' => 'Präferenzen Speichern',
+        ],
         'data-export' => [
             'heading' => 'Deine Daten',
             'subheading' => 'Kopie deiner Daten herunterladen',
