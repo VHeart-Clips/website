@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Enums\UserSettings\NewGameAvoidancePreference;
+use App\Models\Traits\User\HasUserPreferences;
 use Database\Factories\UserPreferenceFactory;
 use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @see HasUserPreferences for defaults and getters on the User model
+ */
 #[WithoutIncrementing]
 class UserPreference extends Model
 {
@@ -26,16 +29,6 @@ class UserPreference extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    protected function showOnLeaderboard(): Attribute
-    {
-        return Attribute::get(static fn (?bool $value): bool => $value ?? true);
-    }
-
-    protected function avoidSpoilers(): Attribute
-    {
-        return Attribute::get(static fn (?bool $value): bool => $value ?? false);
     }
 
     protected function casts(): array
