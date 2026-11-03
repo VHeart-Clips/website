@@ -44,22 +44,24 @@ class LeaderboardController extends Controller
         $users = User::whereIn('id', $ids)->get(['id', 'name', 'avatar_url']);
 
         $topSubmitters['users'] = $topSubmitters['users']
-        ->reject(fn(array $user): bool => !$users->contains('id',$user['id']))->map(function (array $user) use ($users): stdClass {
-            $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
+            ->reject(fn (array $user): bool => ! $users->contains('id', $user['id']))->map(function (array $user) use ($users): stdClass {
+                $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
 
-            $data->count = $user['count'];
+                $data->count = $user['count'];
+                $data->anonymous = ! $data->showsOnLeaderboardPreference();
 
-            return (object) $data->toArray();
-        })->values();
+                return (object) $data->toArray();
+            })->values();
 
         $topVoters['users'] = $topVoters['users']
-        ->reject(fn(array $user): bool => !$users->contains('id',$user['id']))->map(function (array $user) use ($users): stdClass {
-            $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
+            ->reject(fn (array $user): bool => ! $users->contains('id', $user['id']))->map(function (array $user) use ($users): stdClass {
+                $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
 
-            $data->count = $user['count'];
+                $data->count = $user['count'];
+                $data->anonymous = ! $data->showsOnLeaderboardPreference();
 
-            return (object) $data->toArray();
-        })->values();
+                return (object) $data->toArray();
+            })->values();
 
         return view('leaderboard', [
             'ranges' => LeaderboardRange::cases(),
