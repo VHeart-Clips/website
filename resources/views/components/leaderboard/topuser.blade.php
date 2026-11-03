@@ -1,10 +1,10 @@
-@props(['user' => null, 'countLabel' => '','crownColor' => 'text-primary', 'anonym' => false])
+@props(['user' => null, 'countLabel' => '','crownColor' => 'text-primary'])
 <div {{ $attributes->merge(['class' => "flex justify-center mb-1  $crownColor"]) }}>
     <x-lucide-crown class="size-9 lg:size-12 drop-shadow-md drop-shadow-black/42" defer />
 </div>
 <x-ui.card variant="glass">
     <x-ui.card.content class="p-2 md:p-2 xl:p-2 flex flex-col justify-center items-center gap-3 ">
-        @if (isset($user) && !$anonym)
+        @if (isset($user) && !$user->anonymous)
             <x-ui.avatar
                 class="h-14 w-14 shrink-0 border-2 border-white shadow-sm dark:border-white/10"
                 :force="true"
@@ -18,7 +18,7 @@
         <div>
             <div class="text-center">
                 @if(isset($user))
-                    @if($anonym)
+                    @if($user->anonymous)
                         <span class="blur-xs select-none">
                             Unknown User
                         </span>
