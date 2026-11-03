@@ -1,4 +1,4 @@
-@props(['user' => null, 'countLabel' => '','rank' => '-', 'anonym' =>  false])
+@props(['user' => null, 'countLabel' => '','rank' => '-'])
 <div class="py-2">
     <div class="ms-2 p-2 md:p-2 xl:p-2 flex items-center gap-2 ">
 
@@ -6,7 +6,7 @@
                 {{ $rank }}.
             </div>
 
-            @if($anonym)
+            @if($user->anonymous)
                 <x-ui.branding.logo class="h-14 w-14 shrink-0"></x-ui.branding.logo>
             @else
                 <x-ui.avatar
@@ -18,7 +18,7 @@
             @endif
             <div>
                 <div class="font-bold">
-                    @if ($anonym)
+                    @if ($user->anonymous)
                         <span class="blur-xs select-none">
                             Unknown User
                         </span>

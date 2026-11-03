@@ -12,6 +12,7 @@ use App\Models\Contracts\HasFilamentTableColumn;
 use App\Models\Traits\Auditable;
 use App\Models\Traits\Bannable;
 use App\Models\Traits\Reportable;
+use App\Models\Traits\User\HasUserPreferences;
 use App\Models\Traits\User\UserFilamentConfiguration;
 use App\Models\Traits\User\UserPermissions;
 use App\Models\Traits\User\UserRelationships;
@@ -60,6 +61,7 @@ class User extends Authenticatable implements Commentable, Commenter, FilamentUs
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
+    use HasUserPreferences;
     use InteractsWithAppAuthentication;
     use InteractsWithAppAuthenticationRecovery;
     use Notifiable;

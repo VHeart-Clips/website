@@ -10,6 +10,25 @@ return [
             'description' => 'To manage specific settings for your channel, please switch to the Broadcaster Dashboard.',
             'link' => 'Go to Broadcaster Dashboard',
         ],
+        'preferences' => [
+            'heading' => 'Your Preferences',
+            'show_on_leaderboard' => [
+                'label' => 'Show me on the Leaderboard',
+                'description' => 'You will be hidden from leaderboards if this is disabled.',
+            ],
+            'avoid_spoilers' => [
+                'label' => 'Avoid Spoilers when I Vote',
+                'description' => 'This is a best-effort filter.',
+            ],
+            'avoid_new_games' => [
+                'label' => 'Hide recently released games',
+                'description' => 'Filter out games released within this timeframe when you vote. This is a best-effort filter.',
+                'options' => [
+                    'none' => 'Disabled',
+                ],
+            ],
+            'submit' => 'Save Preferences',
+        ],
         'data-export' => [
             'heading' => 'Your Data',
             'subheading' => 'Download a copy of your data',

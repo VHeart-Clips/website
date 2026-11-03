@@ -118,14 +118,14 @@ class GenerateTopOverlayAction extends Action
     {
         $queryClass = $type->getQueryClass();
         $leaderBoardUsers = new $queryClass()->handle($start, $end, 5);
-        $users = User::whereIn('id', $leaderBoardUsers->pluck('id'))->get(['id', 'name', 'avatar_url']);
+        $users = User::whereIn('id', $leaderBoardUsers->pluck('id'))->with('preferences')->get(['id', 'name', 'avatar_url']);
 
         $leaderBoardUsers = $leaderBoardUsers->reject(fn (array $user): bool => ! $users->contains('id', $user['id']))
             ->map(function (array $user) use ($users): stdClass {
                 $data = $users->first(fn (User $item): bool => $item->id === $user['id']);
 
                 $data->count = $user['count'];
-                $data->anonym = false; // TODO:need to be replaced later with the user setting if we can show the user or not
+                $data->anonymous = ! $data->showsOnLeaderboardPreference();
 
                 return (object) $data->toArray();
             })->values();
