@@ -62,7 +62,7 @@ class BroadcasterConsentLog extends Model
             $log->checksum = self::computeChecksum($log, resolve(Encrypter::class)->getKey());
         });
 
-        $immutable = static fn () => throw new LogicException('Consent logs are immutable.');
+        $immutable = static fn (): never => throw new LogicException('Consent logs are immutable.');
 
         static::updating($immutable);
         static::deleting($immutable);
