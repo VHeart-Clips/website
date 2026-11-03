@@ -10,6 +10,7 @@ use App\Filament\Resources\Clips\Tables\ClipColumns;
 use App\Models\Clip;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ViewAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Layout\Split;
@@ -131,13 +132,14 @@ abstract class BaseUserClipsRelationManager extends RelationManager
                     ->perPage(4)
                     ->loadMoreIncrementsBy(8)
                     ->modalWidth(Width::SevenExtraLarge),
+                ViewAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
 
                 ]),
             ])
-            ->deferLoading()
+            ->lazyLoaded()
             ->openRecordUrlInNewTab();
     }
 }
