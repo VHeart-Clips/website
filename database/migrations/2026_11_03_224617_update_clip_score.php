@@ -17,10 +17,10 @@ return new class extends Migration
             $table->dropColumn('final_impressions');
 
             $table->unsignedBigInteger('score')->default(0)->index();
-            $table->unsignedBigInteger('total_jury_votes')->default(0)->index();
-            $table->unsignedBigInteger('total_public_votes')->default(0)->index();
-            $table->unsignedBigInteger('total_votes')->default(0)->index();
-            $table->unsignedBigInteger('total_impressions')->default(0)->index();
+            $table->unsignedBigInteger('total_jury_votes')->default(0);
+            $table->unsignedBigInteger('total_public_votes')->default(0);
+            $table->unsignedBigInteger('total_votes')->default(0);
+            $table->unsignedBigInteger('total_impressions')->default(0);
         });
     }
 };
