@@ -18,6 +18,7 @@ data
 # application stuff we dont need in a image
 vendor
 frankenphp
+public/frankenphp-worker.php
 _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
