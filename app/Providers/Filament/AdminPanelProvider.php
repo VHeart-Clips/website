@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Providers\Filament;
 
 use App\Enums\Filament\LucideIcon;
+use App\Enums\NavigationGroup;
 use App\Filament\Pages\Auth\EditProfile;
 use App\Http\Middleware\StagingGateMiddleware;
 use App\Services\MultiFactor\App\AppAuthentication;
@@ -14,6 +15,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -73,6 +75,14 @@ class AdminPanelProvider extends PanelProvider
                     ->translateLabel()
                     ->url(fn (): string => Filament::getPanel('dashboard')->getUrl())
                     ->icon(LucideIcon::LayoutDashboard)
+                    ->sort(100),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Horizon (Queues)')
+                    ->url(fn (): string => route('horizon.index'), shouldOpenInNewTab: true)
+                    ->visible(fn (): bool => auth()->user()?->isSuperAdmin())
+                    ->icon(LucideIcon::ListChecks)
+                    ->group(NavigationGroup::Administration)
                     ->sort(100),
             ])
             ->sidebarCollapsibleOnDesktop()

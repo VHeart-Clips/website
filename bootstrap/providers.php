@@ -6,6 +6,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\CookiesServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\DashboardPanelProvider;
+use App\Providers\HorizonServiceProvider;
 use App\Providers\Support\FeatureFlagServiceProvider;
 use App\Providers\Support\FilamentIconServiceProvider;
 use App\Providers\TwitchServiceProvider;
@@ -17,6 +18,7 @@ return [
     FilamentIconServiceProvider::class,
     AdminPanelProvider::class,
     DashboardPanelProvider::class,
+    HorizonServiceProvider::class,
     FeatureFlagServiceProvider::class,
     SocialiteServiceProvider::class,
     TwitchServiceProvider::class,
