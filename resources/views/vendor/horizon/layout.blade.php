@@ -38,6 +38,10 @@
             </router-link>
 
             <div class="ms-auto">
+                <a class="btn btn-muted me-2" href="{{ Filament::getPanel('admin')->getUrl() }}">
+                    Admin Dashboard
+                </a>
+
                 <scheme-toggler></scheme-toggler>
 
                 <button class="btn btn-muted ms-2" :class="{active: autoLoadsNewEntries}" v-on:click.prevent="autoLoadNewEntries" title="Auto Load New Entries">
