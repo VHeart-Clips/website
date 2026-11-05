@@ -51,8 +51,8 @@ class UpdateAllClipsStatsCommand extends Command
 
         } else {
             $this->info('Running Async');
-            DB::transaction(function (): void {
-                $this->withProgressBar(Clip::lazyByIdDesc(100), function (Clip $clip): void {
+            DB::transaction(function () use ($query): void {
+                $this->withProgressBar($query->clone()->lazyByIdDesc(100), function (Clip $clip): void {
                     dispatch(new ClipStatsUpdateJob($clip->id)->afterCommit());
                 });
             });
