@@ -11,11 +11,13 @@ use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\FlagClipAction;
 use App\Filament\AdminPanel\Resources\Clips\Actions\Moderation\UnflagClipAction;
 use App\Filament\AdminPanel\Resources\Clips\ClipResource;
 use App\Filament\Resources\Clips\ClipActions;
+use App\Jobs\ClipStatsUpdateJob;
 use App\Models\Clip;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
@@ -37,6 +39,7 @@ class ViewClip extends ViewRecord
             ActionGroup::make([
                 AttachToCompilationAction::make(),
                 ClipFeedbackAction::make(),
+                $this->makeDispatchClipStatsUpdateAction(),
             ])
                 ->label('Management')
                 ->button(),
@@ -59,5 +62,23 @@ class ViewClip extends ViewRecord
 
             ClipActions::reportableActionGroup(),
         ];
+    }
+
+    private function makeDispatchClipStatsUpdateAction(): Action
+    {
+        return Action::make('dispatchClipStatsUpdate')
+            ->label('Schedule Stats Update')
+            ->authorize('superadmin')
+            ->icon(LucideIcon::RefreshCcw)
+            ->color('info')
+            ->requiresConfirmation()
+            ->action(function (Clip $clip): void {
+                dispatch(new ClipStatsUpdateJob($clip->id));
+
+                Notification::make()
+                    ->title('Clip has been Scheduled for Stats update.')
+                    ->success()
+                    ->send();
+            });
     }
 }
