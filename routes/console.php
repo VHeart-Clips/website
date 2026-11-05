@@ -2,16 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Console\Commands\ArchiveClipVotesCommand;
 use App\Console\Commands\CleanupTemporaryCompilationClipUploadsCommand;
 use App\Console\Commands\CreateWeeklyEpisodesCommand;
 use App\Console\Commands\PruneReportWebhookMessagesCommand;
 use App\Console\Commands\RefreshClipsCommand;
 use App\Console\Commands\ReleaseStaleReportsCommand;
 use App\Console\Commands\SyncTopGamesCommand;
-use App\Enums\FeatureFlag;
 use App\Models\Audit;
-use App\Support\FeatureFlag\Feature;
 use Illuminate\Database\Console\PruneCommand;
 use Illuminate\Support\Facades\Schedule;
 use Spatie\Backup\Commands\BackupCommand;
@@ -52,12 +49,6 @@ Schedule::call(static function (): void {
     ->description('Cleans orphaned data exports older than 5 minutes on the export disk')
     ->onOneServer()
     ->everyFifteenMinutes();
-
-Schedule::command(ArchiveClipVotesCommand::class)
-    ->skip(fn () => ! Feature::isActive(FeatureFlag::ArchiveClipsSchedule))
-    ->runInBackground()
-    ->onOneServer()
-    ->daily();
 
 Schedule::command(BackupCommand::class)->runInBackground()->onOneServer()->hourly();
 Schedule::command(CleanupCommand::class)->runInBackground()->onOneServer()->daily()->at('00:15');
