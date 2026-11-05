@@ -20,7 +20,7 @@ return [
     'collect_jobs' => env('DEBUGBAR_COLLECT_JOBS', true),
     'except' => [
         'telescope*',
-        'horizon*',
+        'admin/horizon*',
         '_boost/browser-logs',
         'up',
         'cookie-consent/*',

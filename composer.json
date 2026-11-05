@@ -20,6 +20,7 @@
         "kirschbaum-development/commentions": "^1.0",
         "lara-zeus/spatie-translatable": "^2.0",
         "laravel/framework": "^13.3",
+        "laravel/horizon": "^5.50",
         "laravel/octane": "^2.17",
         "laravel/tinker": "^3.0.0",
         "laravel/wayfinder": "^0.1.15",
