@@ -182,9 +182,7 @@ class AppServiceProvider extends ServiceProvider
         JsonResource::withoutWrapping();
 
         DevCommands::except('server', 'queue');
-        DevCommands::register('php artisan queue:listen --tries=1 --timeout=0 --queue=moderation', 'queue-moderation');
-        DevCommands::register('php artisan queue:listen --tries=1 --timeout=0 --queue=default', 'queue-default');
-        DevCommands::register('php artisan queue:listen --tries=1 --timeout=0 --queue=discord-webhooks', 'queue-webhooks');
+        DevCommands::register('php artisan horizon:listen', 'horizon');
 
         Config::resolveCommentUrlUsing(function (Comment $comment) {
             $record = $comment->commentable;
