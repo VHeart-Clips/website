@@ -13,6 +13,8 @@ use App\Enums\FeatureFlag;
 use App\Models\Audit;
 use App\Support\FeatureFlag\Feature;
 use Illuminate\Database\Console\PruneCommand;
+use Illuminate\Queue\Console\PruneBatchesCommand;
+use Illuminate\Queue\Console\PruneFailedJobsCommand;
 use Illuminate\Support\Facades\Schedule;
 use Laravel\Horizon\Console\SnapshotCommand as HorizonSnapshotCommand;
 use Spatie\Backup\Commands\BackupCommand;
@@ -71,3 +73,5 @@ Schedule::command(CleanupTemporaryCompilationClipUploadsCommand::class)->onOneSe
 Schedule::command(RefreshClipsCommand::class)->runInBackground()->onOneServer()->everyFiveMinutes();
 Schedule::command(PruneReportWebhookMessagesCommand::class)->runInBackground()->onOneServer()->everyFifteenMinutes();
 Schedule::command(HorizonSnapshotCommand::class)->everyFiveMinutes()->onOneServer();
+Schedule::command(PruneFailedJobsCommand::class, ['--hours' => 168])->daily()->onOneServer();
+Schedule::command(PruneBatchesCommand::class, ['--hours' => 48, '--unfinished' => 72, '--cancelled' => 72])->daily()->onOneServer();
