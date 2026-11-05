@@ -62,20 +62,14 @@ if [ "$INSTANCE" = "web" ]; then
 
 elif [ "$INSTANCE" = "worker" ]; then
     echo "[Entrypoint] Starting Laravel Worker..."
-    exec /app/artisan queue:work \
-        --name=queue-worker \
-        --queue=moderation,default,discord-webhooks \
-        --sleep=3 \
-        --tries=3 \
-        --max-time=3600 \
-        --json
+    exec /app/artisan horizon
 
 elif [ "$INSTANCE" = "scheduler" ]; then
     echo "[Entrypoint] Running migrations (isolated)..."
     php /app/artisan migrate --isolated --force
 
     echo "[Entrypoint] Restarting queue workers..."
-    php /app/artisan queue:restart
+    php /app/artisan horizon:terminate
 
     echo "[Entrypoint] Starting Laravel Scheduler..."
     exec /app/artisan schedule:work --whisper
