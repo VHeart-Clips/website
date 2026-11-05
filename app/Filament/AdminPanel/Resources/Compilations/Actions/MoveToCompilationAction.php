@@ -9,6 +9,7 @@ use App\Enums\Clips\CompilationStatus;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\AdminPanel\Resources\Compilations\RelationManagers\ClipsRelationManager;
 use App\Models\Clip;
+use App\Models\Clip\CompilationClip;
 use App\Support\Audit\Auditor;
 use Exception;
 use Filament\Actions\Action;
@@ -16,7 +17,10 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MoveToCompilationAction extends Action
 {
@@ -43,7 +47,8 @@ class MoveToCompilationAction extends Action
                     ->required(),
             ])
             ->action(function (Clip $record, array $data, ClipsRelationManager $livewire): void {
-                $pivotAlreadyExists = Clip\CompilationClip::query()
+
+                $pivotAlreadyExists = CompilationClip::query()
                     ->where('compilation_id', $data['compilation_id'])
                     ->where('clip_id', $record->id)
                     ->exists();
@@ -58,53 +63,86 @@ class MoveToCompilationAction extends Action
                     $this->halt();
                 }
 
-                try {
-                    $updatedCount = Clip\CompilationClip::query()
-                        ->where('compilation_id', $livewire->getOwnerRecord()->getKey())
-                        ->where('clip_id', $record->id)
-                        ->update([
-                            'compilation_id' => $data['compilation_id'],
-                        ]);
+                DB::transaction(function () use ($record, $data, $livewire): void {
 
-                    if ($updatedCount === 0) {
-                        Notification::make('did-not-update-properly')
+                    $oldFilePath = $record->pivot->file_path;
+                    $newFilePath = $data['compilation_id'].'/'.Str::after($oldFilePath, '/');
+
+                    $disk = Storage::disk('compilation_clips_archive');
+
+                    $fileExists = $disk->fileExists($oldFilePath);
+
+                    $newStatus = $record->pivot->claim_status;
+
+                    if (
+                        ! $fileExists
+                        && $record->pivot->claim_status === CompilationClipClaimStatus::Completed
+                    ) {
+                        $newStatus = CompilationClipClaimStatus::InProgress;
+
+                        Notification::make('clip-file-missing')
+                            ->title('Clip File was missing')
+                            ->body('The Clip Status was set to '.CompilationClipClaimStatus::InProgress->getLabel())
+                            ->warning()
+                            ->send();
+                    }
+
+                    try {
+                        $updatedCount = CompilationClip::query()
+                            ->where('compilation_id', $livewire->getOwnerRecord()->getKey())
+                            ->where('clip_id', $record->id)
+                            ->update([
+                                'compilation_id' => $data['compilation_id'],
+                                'file_path' => $fileExists ? $newFilePath : null,
+                                'claim_status' => $newStatus,
+                            ]);
+
+                        if ($updatedCount === 0) {
+                            Notification::make('did-not-update-properly')
+                                ->title('Could not move Clip')
+                                ->body('There was an error while moving clip, please contact IT if the issue persists')
+                                ->danger()
+                                ->send();
+
+                            Log::warning('Did not update CompilationClip properly', [
+                                'clip_id' => $record->id,
+                                'current_compilation_id' => $livewire->getOwnerRecord()->getKey(),
+                                'target_compilation_id' => $data['compilation_id'],
+                                'user_id' => auth()->id(),
+                            ]);
+
+                            $this->halt();
+                        }
+
+                        if ($fileExists) {
+                            $disk->move($oldFilePath, $newFilePath);
+                        }
+
+                        $livewire->getOwnerRecord()->scheduleExport();
+                        Clip\Compilation::find($data['compilation_id'])?->scheduleExport();
+
+                        Auditor::make()
+                            ->event('compilation.clip.moved')
+                            ->old(['compilation_id' => $livewire->getOwnerRecord()->getKey()])
+                            ->new(['compilation_id' => (int) $data['compilation_id']])
+                            ->on($livewire->getOwnerRecord())
+                            ->save();
+
+                    } catch (Halt $e) {
+                        throw $e;
+                    } catch (Exception $e) {
+                        report($e);
+
+                        Notification::make('unknown-error-while-moving')
                             ->title('Could not move Clip')
                             ->body('There was an error while moving clip, please contact IT if the issue persists')
                             ->danger()
                             ->send();
 
-                        Log::warning('Did not update CompilationClip properly', [
-                            'clip_id' => $record->id,
-                            'current_compilation_id' => $livewire->getOwnerRecord()->getKey(),
-                            'target_compilation_id' => $data['compilation_id'],
-                            'user_id' => auth()->id(),
-                        ]);
-
                         $this->halt();
                     }
 
-                    $livewire->getOwnerRecord()->scheduleExport();
-                    Clip\Compilation::find($data['compilation_id'])?->scheduleExport();
-
-                    Auditor::make()
-                        ->event('compilation.clip.moved')
-                        ->old(['compilation_id' => $livewire->getOwnerRecord()->getKey()])
-                        ->new(['compilation_id' => (int) $data['compilation_id']])
-                        ->on($livewire->getOwnerRecord())
-                        ->save();
-                } catch (Halt $e) {
-                    throw $e;
-                } catch (Exception $e) {
-                    report($e);
-
-                    Notification::make('unknown-error-while-moving')
-                        ->title('Could not move Clip')
-                        ->body('There was an error while moving clip, please contact IT if the issue persists')
-                        ->danger()
-                        ->send();
-
-                    $this->halt();
-                }
+                });
             })
             ->successNotificationTitle(__('admin/resources/compilations.relation_managers.clips.notifications.moved_to_compilation'));
     }
