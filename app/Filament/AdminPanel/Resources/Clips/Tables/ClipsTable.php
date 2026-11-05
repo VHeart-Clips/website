@@ -207,7 +207,7 @@ class ClipsTable
                     ->translateLabel(),
             ], layout: FiltersLayout::Modal)
             ->filtersFormColumns(4)
-            ->defaultSort('score', 'desc')
+            ->defaultSort('ranking_score', 'desc')
             ->recordActions([
                 ClipActions::reportableActionGroup(),
                 ActionGroup::make([
