@@ -48,29 +48,29 @@ class MoveToCompilationAction extends Action
             ])
             ->action(function (Clip $record, array $data, ClipsRelationManager $livewire): void {
 
-                $pivotAlreadyExists = CompilationClip::query()
-                    ->where('compilation_id', $data['compilation_id'])
-                    ->where('clip_id', $record->id)
-                    ->exists();
-
-                if ($pivotAlreadyExists) {
-                    Notification::make('already-in-compilation')
-                        ->title('Could not move Clip')
-                        ->body('Clip is already in the selected Compilation')
-                        ->warning()
-                        ->send();
-
-                    $this->halt();
-                }
-
                 DB::transaction(function () use ($record, $data, $livewire): void {
+
+                    $pivotAlreadyExists = CompilationClip::query()
+                        ->where('compilation_id', $data['compilation_id'])
+                        ->where('clip_id', $record->id)
+                        ->exists();
+
+                    if ($pivotAlreadyExists) {
+                        Notification::make('already-in-compilation')
+                            ->title('Could not move Clip')
+                            ->body('Clip is already in the selected Compilation')
+                            ->warning()
+                            ->send();
+
+                        $this->halt();
+                    }
 
                     $oldFilePath = $record->pivot->file_path;
                     $newFilePath = $data['compilation_id'].'/'.Str::after($oldFilePath, '/');
 
                     $disk = Storage::disk('compilation_clips_archive');
 
-                    $fileExists = $disk->fileExists($oldFilePath);
+                    $fileExists = filled($oldFilePath) && $disk->fileExists($oldFilePath) ?? false;
 
                     $newStatus = $record->pivot->claim_status;
 
@@ -113,13 +113,12 @@ class MoveToCompilationAction extends Action
 
                             $this->halt();
                         }
+                        $livewire->getOwnerRecord()->scheduleExport();
+                        Clip\Compilation::find($data['compilation_id'])?->scheduleExport();
 
                         if ($fileExists) {
                             $disk->move($oldFilePath, $newFilePath);
                         }
-
-                        $livewire->getOwnerRecord()->scheduleExport();
-                        Clip\Compilation::find($data['compilation_id'])?->scheduleExport();
 
                         Auditor::make()
                             ->event('compilation.clip.moved')
