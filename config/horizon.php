@@ -199,9 +199,9 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        'supervisor-default' => [
             'connection' => 'redis',
-            'queue' => ['moderation', 'default', 'discord-webhooks'],
+            'queue' => ['default'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
@@ -212,21 +212,57 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+
+        'supervisor-moderation' => [
+            'connection' => 'redis',
+            'queue' => ['moderation'],
+            'balance' => 'false',
+            'maxProcesses' => 1,
+            'maxTime' => 3600,
+            'maxJobs' => 0,
+            'memory' => 256,
+            'tries' => 255,
+            'timeout' => 30,
+            'nice' => 0,
+        ],
+
+        'supervisor-webhooks' => [
+            'connection' => 'redis',
+            'queue' => ['discord-webhooks'],
+            'balance' => 'false',
+            'maxProcesses' => 1,
+            'maxTime' => 3600,
+            'maxJobs' => 0,
+            'memory' => 256,
+            'tries' => 5,
+            'timeout' => 30,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 3,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
+            'supervisor-moderation' => [
+                'maxProcesses' => 2,
+            ],
+            'supervisor-default' => [
+                'maxProcesses' => 6,
+                'balanceMaxShift' => 2,
+                'balanceCooldown' => 10,
+            ],
+            'supervisor-webhooks' => [
+                'maxProcesses' => 2,
             ],
         ],
 
         'local' => [
-            'supervisor-1' => [
-                'maxProcesses' => 1,
+            'supervisor-moderation' => [],
+            'supervisor-default' => [
+                'maxProcesses' => 3,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 5,
             ],
+            'supervisor-webhooks' => [],
         ],
     ],
 
