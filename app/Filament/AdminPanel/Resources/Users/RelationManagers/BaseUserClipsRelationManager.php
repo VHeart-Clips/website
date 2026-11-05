@@ -44,9 +44,7 @@ abstract class BaseUserClipsRelationManager extends RelationManager
                 'creator',
                 'submitter',
             ])
-                ->withScore()
-                ->withPublicVoteCount()
-                ->withJuryVoteCount()
+                ->withDecayingScore()
             )
             ->recordTitleAttribute('title')
             ->columns([

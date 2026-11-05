@@ -64,7 +64,7 @@ class ClipColumns
             ->color('gray');
     }
 
-    public static function juryVotes(string $column = 'jury_votes'): TextColumn
+    public static function juryVotes(string $column = 'total_jury_votes'): TextColumn
     {
         return TextColumn::make($column)
             ->tooltip(__('admin/resources/clips.table.columns.jury_votes'))
@@ -76,7 +76,7 @@ class ClipColumns
             ->color('warning');
     }
 
-    public static function publicVotes(string $column = 'public_votes'): TextColumn
+    public static function publicVotes(string $column = 'total_public_votes'): TextColumn
     {
         return TextColumn::make($column)
             ->label(__('admin/resources/clips.table.columns.public_votes'))
@@ -88,7 +88,7 @@ class ClipColumns
             ->color('success');
     }
 
-    public static function absoluteVotes(string $column = 'absolute_votes'): TextColumn
+    public static function absoluteVotes(string $column = 'total_votes'): TextColumn
     {
         return TextColumn::make($column)
             ->label(__('admin/resources/clips.table.columns.absolute_votes'))
@@ -100,7 +100,7 @@ class ClipColumns
             ->color('success');
     }
 
-    public static function impressions(string $column = 'absolute_impressions'): TextColumn
+    public static function impressions(string $column = 'total_impressions'): TextColumn
     {
         return TextColumn::make($column)
             ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
@@ -112,7 +112,7 @@ class ClipColumns
             ->color('info');
     }
 
-    public static function score(string $column = 'score'): TextColumn
+    public static function score(string $column = 'ranking_score'): TextColumn
     {
         return TextColumn::make($column)
             ->label(__('admin/resources/clips.table.columns.score'))

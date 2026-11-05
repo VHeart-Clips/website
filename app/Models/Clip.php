@@ -57,6 +57,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
+use Schema;
 
 #[ScopedBy(ClipPermissionScope::class)]
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
@@ -66,6 +67,14 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 {
     /** @use HasFactory<ClipFactory> */
     use Auditable, HasComments, HasFactory, Reportable, SoftDeletes;
+
+    protected array $auditExclude = [
+        'score',
+        'total_jury_votes',
+        'total_public_votes',
+        'total_votes',
+        'total_impressions',
+    ];
 
     public static function getFilamentTableColumn(string $name): FilamentTableComponent|FilamentTableColumn
     {
@@ -293,7 +302,6 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
         // Make sure to sort the rules in a way that allows the biggest scope to filter the most first
         return $query
-            ->whereNotArchived()
             ->whereSubmittedAfter(now()->sub($maxAge))
             ->whereBroadcasterGavePermission()
             ->whereBroadcasterHasNoActiveBans()
@@ -312,29 +320,9 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      * @return Builder<static>
      */
     #[Scope]
-    protected function whereArchived(Builder $query): Builder
-    {
-        return $query->whereNotNull(['final_jury_votes', 'final_public_votes', 'final_score']);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
     protected function whereNotBlocked(Builder $query): Builder
     {
         return $query->whereNot('status', ClipStatus::Blocked);
-    }
-
-    /**
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function whereNotArchived(Builder $query): Builder
-    {
-        return $query->whereNull(['final_jury_votes', 'final_public_votes', 'final_score']);
     }
 
     /**
@@ -347,33 +335,6 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         return $query
             ->whereNotNull('next_refresh_after')
             ->whereNowOrPast('next_refresh_after');
-    }
-
-    /**
-     * Get Clips that should be archived
-     *
-     * We will allow a 1 week buffer before we permanently archive clips though, just in case something changes
-     *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function whereEligibleForArchival(Builder $query): Builder
-    {
-        /** @var CarbonInterval $maxAge */
-        $maxAge = config('vheart.clips.voting.maximum_age');
-
-        return $query
-            ->whereNotArchived()
-            ->where(function (Builder $query) use ($maxAge): void {
-                $query
-                    ->where('created_at', '<', now()->sub($maxAge)->subWeek())
-                    ->orWhereHas('compilations',
-                        fn (Builder $q) => $q
-                            ->whereIn('compilations.status', CompilationStatus::getVoteDisabledCases())
-                            ->where('compilations.updated_at', '<', now()->subWeek())
-                    );
-            });
     }
 
     /**
@@ -564,46 +525,42 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     }
 
     /**
-     * Counts absolute votes as `absolute_votes`
+     * Calculates the Clip Score with decaying as 'ranking_score'
      *
      * @param  Builder<static>  $query
      * @return Builder<static>
      */
     #[Scope]
-    protected function withAbsoluteVoteCount(Builder $query): Builder
+    protected function withDecayingScore(Builder $query): Builder
     {
+        if (! Feature::isActive(FeatureFlag::ClipScoreTimeDecay)) {
+            return $query;
+        }
+
         if (empty($query->getQuery()->columns)) {
             $query->addSelect($query->getModel()->getTable().'.*');
         }
 
-        return $query->selectSub(
-            Vote::query()
-                ->selectRaw('COALESCE(final_jury_votes + final_public_votes,COUNT(*), 0)')
-                ->whereColumn('clip_id', 'clips.id')
-                ->where('voted', true),
-            'absolute_votes'
-        );
-    }
+        $sql = '
+        (
+            SELECT ROUND(
+                s.base * GREATEST(
+                    POWER(0.5, EXTRACT(EPOCH FROM (NOW() - s.ref)) / 86400.0 / ?),
+                    ?
+                )
+            )::integer
+            FROM (
+                SELECT clips.score AS base,
+                    COALESCE(MAX(votes.created_at) FILTER (WHERE voted = true), clips.created_at) AS ref
+                FROM votes
+                WHERE votes.clip_id = clips.id
+            ) s
+        ) AS ranking_score';
 
-    /**
-     * Counts absolute impressions as `absolute_impressions`
-     *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function withAbsoluteImpressionCount(Builder $query): Builder
-    {
-        if (empty($query->getQuery()->columns)) {
-            $query->addSelect($query->getModel()->getTable().'.*');
-        }
-
-        return $query->selectSub(
-            Vote::query()
-                ->selectRaw('COALESCE(final_impressions,COUNT(*), 0)')
-                ->whereColumn('clip_id', 'clips.id'),
-            'absolute_impressions'
-        );
+        return $query->selectRaw($sql, [
+            max(0.1, (float) config('vheart.clips.scoring.decay.half_life_days', 60)),
+            clamp((float) config('vheart.clips.scoring.decay.floor_ratio', 0.1), 0.0, 1.0),
+        ]);
     }
 
     /**
@@ -611,6 +568,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      *
      * @param  Builder<static>  $query
      * @return Builder<static>
+     * @deprecated use withDecayingScore
      */
     #[Scope]
     protected function withScore(Builder $query): Builder
@@ -629,7 +587,6 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
 
         $base = '
             COALESCE(
-                final_score,
                 ROUND(
                     POWER(
                         COUNT(*) FILTER (WHERE voted = true)::float
@@ -669,68 +626,6 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             clamp((float) config('vheart.clips.scoring.decay.floor_ratio', 0.1), 0.0, 1.0),
             ...$baseBindings,
         ]);
-    }
-
-    /**
-     * Counts public votes as `public_votes`.
-     *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function withPublicVoteCount(Builder $query): Builder
-    {
-        if (empty($query->getQuery()->columns)) {
-            $query->addSelect($query->getModel()->getTable().'.*');
-        }
-
-        return $query->selectSub(
-            Vote::query()
-                ->selectRaw('COALESCE(final_public_votes,COUNT(*), 0)')
-                ->whereColumn('clip_id', 'clips.id')
-                ->where('type', ClipVoteType::Public)
-                ->where('voted', true),
-            'public_votes'
-        );
-    }
-
-    /**
-     * Counts jury votes as `jury_votes`.
-     *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function withJuryVoteCount(Builder $query): Builder
-    {
-        if (empty($query->getQuery()->columns)) {
-            $query->addSelect($query->getModel()->getTable().'.*');
-        }
-
-        return $query->selectSub(
-            Vote::query()
-                ->selectRaw('COALESCE(final_jury_votes,COUNT(*), 0)')
-                ->whereColumn('clip_id', 'clips.id')
-                ->where('type', ClipVoteType::Jury)
-                ->where('voted', true),
-            'jury_votes'
-        );
-    }
-
-    /**
-     * Counts Votes
-     * - Jury votes as `jury_votes`
-     * - Public votes as `public_votes`
-     *
-     * @param  Builder<static>  $query
-     * @return Builder<static>
-     */
-    #[Scope]
-    protected function withVoteCount(Builder $query): Builder
-    {
-        return $query
-            ->withJuryVoteCount()
-            ->withPublicVoteCount();
     }
 
     private function extractUserIdFromParameter(User|int $userOrId): int

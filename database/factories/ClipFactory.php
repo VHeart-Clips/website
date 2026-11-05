@@ -33,9 +33,11 @@ class ClipFactory extends Factory
             'date' => fake()->dateTimeBetween('-1 year'),
             'thumbnail_url' => fake()->imageUrl(),
             'status' => ClipStatus::Unknown,
-            'final_jury_votes' => null,
-            'final_public_votes' => null,
-            'final_score' => null,
+            'total_jury_votes' => 0,
+            'total_public_votes' => 0,
+            'total_votes' => 0,
+            'total_impressions' => 0,
+            'score' => 0,
         ];
     }
 }

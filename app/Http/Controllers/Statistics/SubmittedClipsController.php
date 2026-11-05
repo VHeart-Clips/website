@@ -19,8 +19,7 @@ class SubmittedClipsController extends Controller
     {
         $submittedClips = Clip::query()
             ->where('submitter_id', $request->user()->id)
-            ->withAbsoluteVoteCount()
-            ->orderByDesc('created_at')
+            ->latest()
             ->orderByDesc('id')
             ->cursorPaginate(perPage: 32);
 

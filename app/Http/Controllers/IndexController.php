@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Enums\FeatureFlag;
 use App\Models\Clip;
 use App\Support\FeatureFlag\Feature;
-use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,18 +26,14 @@ class IndexController extends Controller
         $bestRated = Clip::query()
             ->where('created_at', '>', now()->subDays(30))
             ->whereNotBlocked()
-            ->where(fn (Builder $builder) => $builder->whereHas('votes', fn (Builder $q) => $q->where('voted', true))
-                ->whereNotNull(['final_jury_votes', 'final_public_votes', 'final_score'], 'or'))
             ->with('tags')
-            ->withAbsoluteVoteCount()
-            ->orderByDesc('absolute_votes')
+            ->orderByDesc('total_votes')
             ->limit(10)
             ->get();
 
         $discover = Clip::query()
             ->with('tags')
             ->whereNotBlocked()
-            ->withAbsoluteVoteCount()
             ->orderByDesc('created_at')
             ->orderByDesc('id')
             ->cursorPaginate(perPage: 42);

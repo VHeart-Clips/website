@@ -15,6 +15,7 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         AddOverrideAttributeToOverriddenPropertiesRector::class,
+        __DIR__.'/public/frankenphp-worker.php',
     ])
     ->withPreparedSets(
         deadCode: true,

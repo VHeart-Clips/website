@@ -79,33 +79,30 @@ class ClipInfolist
                                     ->badge()
                                     ->color('gray'),
 
-                                TextEntry::make('score')
+                                TextEntry::make('ranking_score')
                                     ->label(__('admin/resources/clips.table.columns.score'))
-                                    ->state(fn (Clip $record) => $record->score ?? 0)
+                                    ->tooltip(fn (Clip $record): string => "Base Score: ".$record->score)
                                     ->icon(LucideIcon::BarChart)
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('info'),
 
-                                TextEntry::make('absolute_impressions')
+                                TextEntry::make('total_impressions')
                                     ->label(__('admin/resources/clips.table.columns.absolute_impressions'))
-                                    ->state(fn (Clip $record) => $record->absolute_impressions ?? 0)
                                     ->icon(LucideIcon::Eye)
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('info'),
 
-                                TextEntry::make('jury_votes')
+                                TextEntry::make('total_jury_votes')
                                     ->label(__('admin/resources/clips.table.columns.jury_votes'))
-                                    ->state(fn (Clip $record) => $record->jury_votes ?? 0)
                                     ->icon(LucideIcon::Star)
                                     ->size(TextSize::Medium)
                                     ->badge()
                                     ->color('warning'),
 
-                                TextEntry::make('public_votes')
+                                TextEntry::make('total_public_votes')
                                     ->label(__('admin/resources/clips.table.columns.public_votes'))
-                                    ->state(fn (Clip $record) => $record->public_votes ?? 0)
                                     ->icon(LucideIcon::Users)
                                     ->size(TextSize::Medium)
                                     ->badge()

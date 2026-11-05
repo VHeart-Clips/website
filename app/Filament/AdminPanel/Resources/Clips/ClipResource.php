@@ -67,10 +67,7 @@ class ClipResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withScore()
-            ->withAbsoluteImpressionCount()
-            ->withPublicVoteCount()
-            ->withJuryVoteCount();
+            ->withDecayingScore();
     }
 
     public static function getRecordRouteBindingEloquentQuery(): Builder

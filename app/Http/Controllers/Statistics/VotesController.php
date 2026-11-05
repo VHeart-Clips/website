@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Statistics;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vote;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -29,7 +28,7 @@ class VotesController extends Controller
         $votedInfos = Vote::query()
             ->where('user_id', $request->user()->id)
             ->has('clip')
-            ->with('clip', fn (Relation $relation) => $relation->withAbsoluteVoteCount())
+            ->with('clip')
             ->latest()
             ->orderByDesc('id')
             ->cursorPaginate(perPage: 32);
