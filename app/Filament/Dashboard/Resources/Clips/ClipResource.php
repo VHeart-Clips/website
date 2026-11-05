@@ -20,7 +20,6 @@ use Filament\Facades\Filament;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 
 class ClipResource extends Resource
@@ -67,12 +66,5 @@ class ClipResource extends Resource
             'view' => ViewClip::route('/{record}'),
             'edit' => EditClip::route('/{record}/edit'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withAbsoluteVoteCount()
-            ->withAbsoluteImpressionCount();
     }
 }

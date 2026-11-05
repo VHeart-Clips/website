@@ -49,7 +49,7 @@ class ClipsTable
                             ClipColumns::duration()
                                 ->label(__('dashboard/resources/clips.table.columns.duration'))
                                 ->tooltip(__('dashboard/resources/clips.table.columns.duration')),
-                            ClipColumns::publicVotes('absolute_votes')
+                            ClipColumns::absoluteVotes()
                                 ->label(__('dashboard/resources/clips.table.columns.votes'))
                                 ->tooltip(__('dashboard/resources/clips.table.columns.votes')),
                             ClipColumns::impressions()

@@ -76,10 +76,7 @@ class ClipsRelationManager extends RelationManager
                 'claimer',
             ])
                 ->withCount('comments')
-                ->withScore()
-                ->withAbsoluteImpressionCount()
-                ->withPublicVoteCount()
-                ->withJuryVoteCount()
+                ->withDecayingScore()
             )
             ->groups([
                 Group::make('status')

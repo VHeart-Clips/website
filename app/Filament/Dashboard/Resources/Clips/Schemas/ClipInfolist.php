@@ -82,14 +82,14 @@ class ClipInfolist
                                     ->icon(LucideIcon::Clipboard)
                                     ->badge()
                                     ->translateLabel(),
-                                TextEntry::make('absolute_votes')
+                                TextEntry::make('total_votes')
                                     ->label(__('dashboard/resources/clips.table.columns.votes'))
                                     ->icon(LucideIcon::Users)
                                     ->size(TextSize::Medium)
                                     ->default(0)
                                     ->badge()
                                     ->color('success'),
-                                TextEntry::make('absolute_impressions')
+                                TextEntry::make('total_impressions')
                                     ->label(__('dashboard/resources/clips.table.columns.impressions'))
                                     ->icon(LucideIcon::Eye)
                                     ->size(TextSize::Medium)
