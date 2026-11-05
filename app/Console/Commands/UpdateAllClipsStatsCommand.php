@@ -6,6 +6,8 @@ namespace App\Console\Commands;
 
 use App\Jobs\ClipStatsUpdateJob;
 use App\Models\Clip;
+use App\Models\Scopes\ClipPermissionScope;
+use App\Models\Scopes\ClipWithoutBannedCategoryScope;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
@@ -18,7 +20,13 @@ class UpdateAllClipsStatsCommand extends Command
 {
     public function handle(): int
     {
-        $total = Clip::count('id');
+        $query = Clip::query()
+            ->withoutGlobalScopes([
+                ClipPermissionScope::class,
+                ClipWithoutBannedCategoryScope::class
+            ]);
+
+        $total = $query->clone()->count('id');
 
         if ($total === 0) {
             $this->info('No clips to start Job for');
@@ -37,7 +45,7 @@ class UpdateAllClipsStatsCommand extends Command
         if ($isSync) {
             $this->info('Running Sync');
 
-            $this->withProgressBar(Clip::lazyByIdDesc(100), function (Clip $clip): void {
+            $this->withProgressBar($query->clone()->lazyByIdDesc(100), function (Clip $clip): void {
                 dispatch_sync(new ClipStatsUpdateJob($clip->id));
             });
 
