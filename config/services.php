@@ -47,6 +47,7 @@ return [
             'default' => env('DISCORD_ALERT_WEBHOOK'),
             'issues' => env('VHEART_IT_ISSUES_WEBHOOK'),
             'moderation' => env('VHEART_DISCORD_MODERATION_WEBHOOK'),
+            'compilation' => env('VHEART_DISCORD_COMPILATION_WEBHOOK'),
         ],
     ],
 ];
