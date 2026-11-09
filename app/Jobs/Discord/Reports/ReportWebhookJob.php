@@ -69,7 +69,7 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
             return parent::getRequest();
         }
 
-        return Http::timeout(5)->patch($this->getWebhook(), $this->getPayload());
+        return Http::timeout(5)->patch($this->getWebhook(), $this->resolvePayload());
     }
 
     protected function getPayload(): Webhook

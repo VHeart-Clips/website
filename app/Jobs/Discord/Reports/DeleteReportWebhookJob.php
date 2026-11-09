@@ -34,7 +34,7 @@ class DeleteReportWebhookJob extends BaseDiscordWebhookJob implements ShouldBeUn
 
     protected function getRequest(): PendingRequest|Response
     {
-        return Http::timeout(5)->delete($this->getWebhook(), $this->getPayload());
+        return Http::timeout(5)->delete($this->getWebhook(), $this->resolvePayload());
     }
 
     protected function getPayload(): Webhook
