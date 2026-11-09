@@ -11,13 +11,11 @@ use App\Models\User;
 use Carbon\CarbonInterface;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Queue\Attributes\DebounceFor;
 use Illuminate\Queue\Attributes\DeleteWhenMissingModels;
 use Illuminate\Queue\Attributes\Queue;
 use Illuminate\Queue\Attributes\WithoutRelations;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use JustinKluever\DiscordWebhookBuilder\Components\ActionRow;
@@ -61,15 +59,6 @@ class ReportWebhookJob extends BaseDiscordWebhookJob
         }
 
         return true;
-    }
-
-    protected function getRequest(): PendingRequest|Response
-    {
-        if ($this->report->discord_message_id === null) {
-            return parent::getRequest();
-        }
-
-        return Http::timeout(5)->patch($this->getWebhook(), $this->resolvePayload());
     }
 
     protected function getPayload(): Webhook

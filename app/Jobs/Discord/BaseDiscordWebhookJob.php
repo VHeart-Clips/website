@@ -112,7 +112,12 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
      */
     protected function getRequest(): PendingRequest|Response
     {
-        return Http::timeout(5)->post($this->getWebhook(), $this->resolvePayload());
+        $request = Http::timeout(5)
+            ->connectTimeout(2);
+
+        return filled($this->getWebhookMessageId())
+            ? $request->patch($this->getWebhook(), $this->resolvePayload())
+            : $request->post($this->getWebhook(), $this->resolvePayload());
     }
 
     /**
