@@ -39,4 +39,16 @@ trait DeletesDiscordWebhookMessage
     {
         return Webhook::make();
     }
+
+    protected function handleResponse(Response $response): void
+    {
+        $this->preventFutureAttempts();
+    }
+
+    protected function handleWebhookNotFound(Response $response): ?bool
+    {
+        $this->preventFutureAttempts();
+
+        return true;
+    }
 }
