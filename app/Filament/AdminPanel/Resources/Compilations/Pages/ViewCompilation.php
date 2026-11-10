@@ -7,6 +7,7 @@ namespace App\Filament\AdminPanel\Resources\Compilations\Pages;
 use App\Enums\Filament\LucideIcon;
 use App\Filament\AdminPanel\Actions\Management\GenerateTopOverlayAction;
 use App\Filament\AdminPanel\Resources\Compilations\CompilationResource;
+use App\Jobs\Discord\Compilation\Status\DeleteCompilationStatusWebhookJob;
 use App\Models\Clip;
 use App\Models\Clip\Compilation;
 use App\Models\User;
@@ -66,10 +67,57 @@ class ViewCompilation extends ViewRecord
                 ->button()
                 ->label('Für Yura'),
             ActionGroup::make([
+                ActionGroup::make([
+                    $this->makeUpdateWebhookMessageAction(),
+                    $this->makeCreateWebhookMessageAction(),
+                    $this->makeDeleteWebhookMessageAction(),
+                ])
+                    ->label('Discord'),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
             ]),
         ];
+    }
+
+    private function makeUpdateWebhookMessageAction(): Action
+    {
+        return Action::make('updateWebhook')
+            ->visible(fn (Compilation $record): bool => filled($record->discord_message_id))
+            ->action(fn (Compilation $record): bool => $record->dispatchUpdateWebhook())
+            ->successNotificationTitle('Update has been scheduled')
+            ->authorize('superadmin')
+            ->label('Update Status')
+            ->icon(LucideIcon::MessageSquareReply)
+            ->rateLimit(1)
+            ->color('info');
+    }
+
+    private function makeCreateWebhookMessageAction(): Action
+    {
+        return Action::make('createWebhook')
+            ->visible(fn (Compilation $record): bool => blank($record->discord_message_id))
+            ->action(fn (Compilation $record): bool => $record->dispatchUpdateWebhook(force: true))
+            ->successNotificationTitle('status message has been scheduled')
+            ->authorize('superadmin')
+            ->label('Create Status')
+            ->icon(LucideIcon::MessageSquarePlus)
+            ->rateLimit(1)
+            ->requiresConfirmation()
+            ->color('info');
+    }
+
+    private function makeDeleteWebhookMessageAction(): Action
+    {
+        return Action::make('deleteWebhook')
+            ->visible(fn (Compilation $record): bool => filled($record->discord_message_id))
+            ->action(fn (Compilation $record): bool => (bool) dispatch(new DeleteCompilationStatusWebhookJob($record->discord_message_id)))
+            ->successNotificationTitle('status message will be removed')
+            ->authorize('superadmin')
+            ->label('Delete Status')
+            ->icon(LucideIcon::MessageSquareOff)
+            ->rateLimit(1)
+            ->requiresConfirmation()
+            ->color('danger');
     }
 }
