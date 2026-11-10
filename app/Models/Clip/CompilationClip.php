@@ -7,7 +7,9 @@ namespace App\Models\Clip;
 use App\Enums\Clips\CompilationClipClaimStatus;
 use App\Models\Clip;
 use App\Models\User;
+use App\Observers\CompilationClipObserver;
 use Database\Factories\Clip\CompilationClipFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -17,6 +19,7 @@ use Illuminate\Support\Str;
 // e.g. for casts on a pivot or for adding relationships that are stored on the pivot
 // basically stuff that does not belong to any of the "actual" models as they may require
 // pivot data, this is usually accessible via $model->pivot->stuff()
+#[ObservedBy(CompilationClipObserver::class)]
 class CompilationClip extends Pivot
 {
     /** @use HasFactory<CompilationClipFactory> */
