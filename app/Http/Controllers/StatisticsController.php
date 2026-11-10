@@ -36,7 +36,6 @@ class StatisticsController extends Controller
             now()->addMinute(),
             fn () => $user
                 ->votes()
-                ->whereConsideredStable()
                 ->count()
         );
 
@@ -45,7 +44,6 @@ class StatisticsController extends Controller
             now()->addMinute(),
             fn () => $user
                 ->votes()
-                ->whereConsideredStable()
                 ->where('created_at', '>=', now()->startOfWeek())
                 ->count()
         );
@@ -55,7 +53,6 @@ class StatisticsController extends Controller
             now()->addMinute(),
             fn () => $user
                 ->votes()
-                ->whereConsideredStable()
                 ->where('created_at', '>=', now()->subDays(30))
                 ->count()
         );
