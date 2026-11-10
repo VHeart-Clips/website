@@ -8,6 +8,7 @@ use App\Enums\Clips\CompilationStatus;
 use App\Enums\Clips\CompilationType;
 use App\Enums\Compilation\CompilationProcessingStatus;
 use App\Jobs\Compilations\CompilationUpdateClipFilesJob;
+use App\Jobs\Discord\Compilation\Status\CompilationStatusWebhookJob;
 use App\Models\Clip;
 use App\Models\Contracts\FilamentResourceful;
 use App\Models\Traits\Auditable;
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Filesystem\LocalFilesystemAdapter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
@@ -44,6 +46,48 @@ class Compilation extends Model implements Commentable, FilamentResourceful
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function dispatchUpdateWebhook(bool $force = false): bool
+    {
+        if (blank(config('services.discord.webhooks.compilation'))) {
+            Log::warning('Compilation Webhook has not been configured');
+
+            return false;
+        }
+
+        if (
+            ! $force
+            && ($this->user_id !== 0 || $this->status === CompilationStatus::Internal)
+            && blank($this->discord_message_id)
+        ) {
+            return false;
+        }
+
+        if (! $force && $this->wasChanged()) {
+            $changes = array_keys($this->getChanges());
+            $changesWeCareAbout = array_diff($changes, [
+                'slug',
+                'type',
+                'description',
+                'youtube_url',
+                'discord_message_id',
+                'updated_at',
+                'processing_status',
+                'processing_batch_id',
+                'zip_path',
+                'zip_size',
+                'zip_created_at',
+            ]);
+
+            if ($changesWeCareAbout === []) {
+                return false;
+            }
+        }
+
+        dispatch(new CompilationStatusWebhookJob($this));
+
+        return true;
     }
 
     /**
