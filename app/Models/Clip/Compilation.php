@@ -13,8 +13,10 @@ use App\Models\Clip;
 use App\Models\Contracts\FilamentResourceful;
 use App\Models\Traits\Auditable;
 use App\Models\User;
+use App\Observers\CompilationObserver;
 use App\Policies\CompilationPolicy;
 use Database\Factories\Clip\CompilationFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,6 +33,7 @@ use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
 
 #[UsePolicy(CompilationPolicy::class)]
+#[ObservedBy(CompilationObserver::class)]
 class Compilation extends Model implements Commentable, FilamentResourceful
 {
     /** @use HasFactory<CompilationFactory> */
