@@ -30,8 +30,12 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
 {
     use Queueable;
 
+    protected Webhook $cachedPayload;
+
     /**
      * The Webhook Payload we should send to discord
+     *
+     * Use `resolvePayload()` if you need to access the payload to avoid running it twice
      */
     abstract protected function getPayload(): Webhook;
 
@@ -62,13 +66,13 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
         try {
             Log::debug("Sending to Discord Webhook {$this->getWebhookId()}", [
                 'webhook_id' => $this->getWebhookId(),
-                'payload' => $this->getPayload(),
+                'payload' => $this->resolvePayload(),
             ]);
 
             $response = $this->getRequest();
 
             if ($response instanceof PendingRequest) {
-                $response = $response->post($this->getWebhook(), $this->getPayload());
+                $response = $response->post($this->getWebhook(), $this->resolvePayload());
             }
         } catch (ConnectionException) {
             $this->release(30);
@@ -108,7 +112,12 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
      */
     protected function getRequest(): PendingRequest|Response
     {
-        return Http::timeout(5)->post($this->getWebhook(), $this->getPayload());
+        $request = Http::timeout(5)
+            ->connectTimeout(2);
+
+        return filled($this->getWebhookMessageId())
+            ? $request->patch($this->getWebhook(), $this->resolvePayload())
+            : $request->post($this->getWebhook(), $this->resolvePayload());
     }
 
     /**
@@ -262,5 +271,13 @@ abstract class BaseDiscordWebhookJob implements ShouldBeEncrypted, ShouldQueue
         $this->fail("Webhook '{$this->getWebhookId()}' was not found (404)");
 
         return true;
+    }
+
+    /**
+     * Resolves and caches the payload
+     */
+    protected function resolvePayload(): Webhook
+    {
+        return $this->cachedPayload ??= $this->getPayload();
     }
 }

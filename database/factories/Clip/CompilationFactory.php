@@ -39,6 +39,7 @@ class CompilationFactory extends Factory
             'zip_path' => null,
             'zip_size' => null,
             'zip_created_at' => null,
+            'discord_message_id' => null,
         ];
     }
 
