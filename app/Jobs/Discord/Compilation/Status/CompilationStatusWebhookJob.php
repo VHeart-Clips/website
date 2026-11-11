@@ -168,6 +168,14 @@ class CompilationStatusWebhookJob extends BaseDiscordWebhookJob
             : "$base?with_components=true&wait=true";
     }
 
+    /**
+     * Twitch allows `_` in the name which will be parsed as markdown in discord
+     */
+    private function escapeTwitchName(string $name): string
+    {
+        return str_replace('_', '\_', $name);
+    }
+
     private function getDurationText(int $seconds): string
     {
         return sprintf('%02d:%02d', intdiv($seconds, 60), $seconds % 60);
@@ -214,7 +222,7 @@ class CompilationStatusWebhookJob extends BaseDiscordWebhookJob
             ->limit(5)
             ->get()
             ->map(function (Audit $audit): string {
-                $causer = $audit->causer?->name ?? 'Unbekannt';
+                $causer = $this->escapeTwitchName($audit->causer?->name ?? 'Unbekannt');
                 $event = self::EVENT_LABELS[$audit->event] ?? $audit->event;
 
                 return "-# _{$causer}_: $event {$this->getDiscordTimestamp($audit->created_at)}";
@@ -242,7 +250,9 @@ class CompilationStatusWebhookJob extends BaseDiscordWebhookJob
             return '-# Es gibt keine Kontributoren die ich nennen kann :(';
         }
 
-        return '-# Danke an '.$contributors->implode(', ');
+        return '-# Danke an '.$contributors
+            ->map($this->escapeTwitchName(...))
+            ->implode(', ');
     }
 
     private function getDiscordTimestamp(CarbonInterface $dateTime): string
