@@ -250,7 +250,9 @@ class CompilationStatusWebhookJob extends BaseDiscordWebhookJob
             return '-# Es gibt keine Kontributoren die ich nennen kann :(';
         }
 
-        return '-# Danke an '.$contributors->implode(', ');
+        return '-# Danke an '.$contributors
+            ->map($this->escapeTwitchName(...))
+            ->implode(', ');
     }
 
     private function getDiscordTimestamp(CarbonInterface $dateTime): string
