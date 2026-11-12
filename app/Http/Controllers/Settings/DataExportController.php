@@ -17,6 +17,7 @@ use App\Support\VHeart\DataExport\Sections\BroadcasterSection;
 use App\Support\VHeart\DataExport\Sections\BroadcasterTeamMembershipsSection;
 use App\Support\VHeart\DataExport\Sections\ClipsSection;
 use App\Support\VHeart\DataExport\Sections\ClipVotesSection;
+use App\Support\VHeart\DataExport\Sections\IgnoredClipsSection;
 use App\Support\VHeart\DataExport\Sections\NotificationsSection;
 use App\Support\VHeart\DataExport\Sections\ReportsSection;
 use Illuminate\Http\Request;
@@ -37,6 +38,7 @@ class DataExportController extends Controller
         BroadcasterConsentLogsSection::class,
         BroadcasterRemovalRequestSection::class,
         ClipVotesSection::class,
+        IgnoredClipsSection::class,
         NotificationsSection::class,
         ReportsSection::class,
     ];
