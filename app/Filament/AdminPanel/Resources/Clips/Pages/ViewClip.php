@@ -27,6 +27,8 @@ class ViewClip extends ViewRecord
 {
     protected static string $resource = ClipResource::class;
 
+    private ?bool $ignoredCache = null;
+
     protected function getHeaderActions(): array
     {
         return [
@@ -60,8 +62,34 @@ class ViewClip extends ViewRecord
 
             EditAction::make(),
 
+            $this->makeIgnoreClipAction(),
             ClipActions::reportableActionGroup(),
         ];
+    }
+
+    private function makeIgnoreClipAction(): Action
+    {
+        return Action::make('toggleIgnore')
+            ->iconButton()
+            ->icon(fn (): LucideIcon => $this->resolveIgnored() ? LucideIcon::EyeDashed : LucideIcon::Eye)
+            ->tooltip(fn (): string => $this->resolveIgnored() ? 'Unignore' : 'Ignore')
+            ->successNotificationTitle(fn (): string => ! $this->resolveIgnored() ? 'Clip has been Unignored' : 'Clip has been Ignored')
+            ->action(function (Action $action, Clip $clip): void {
+                $clip->ignoredByUsers()->toggle(auth()->id());
+
+                $this->ignoredCache = null;
+            });
+    }
+
+    private function resolveIgnored(): bool
+    {
+        /** @var Clip $clip */
+        $clip = $this->getRecord();
+
+        return $this->ignoredCache ??= $clip
+            ->ignoredByUsers()
+            ->whereKey(auth()->id())
+            ->exists();
     }
 
     private function makeDispatchClipStatsUpdateAction(): Action
