@@ -17,7 +17,9 @@ use App\Filament\AdminPanel\Resources\Clips\Pages\ListClips;
 use App\Filament\Filters\DateRangeFilter;
 use App\Filament\Resources\Clips\ClipActions;
 use App\Filament\Resources\Clips\Tables\ClipColumns;
+use App\Models\Clip;
 use App\Models\Clip\Compilation;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
@@ -38,12 +40,17 @@ class ClipsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with([
-                'category',
-                'broadcaster',
-                'creator',
-                'submitter',
-            ]))
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->with([
+                    'category',
+                    'broadcaster',
+                    'creator',
+                    'submitter',
+                ])
+                ->withExists([
+                    'ignoredByUsers as is_ignored' => fn (Builder $q) => $q->whereKey(auth()->id()),
+                ])
+            )
             ->columns([
                 Split::make([
                     Stack::make([
@@ -87,6 +94,7 @@ class ClipsTable
             ])
             ->filters([
                 self::makeCompilationUniqueBroadcasterFilter(),
+                self::makeIgnoredByUsFilter(),
 
                 SelectFilter::make('broadcaster')
                     ->relationship('owner', 'name', fn (Builder $query): Builder => $query->whereHas('broadcastedClips'))
@@ -210,6 +218,8 @@ class ClipsTable
             ->defaultSort('ranking_score', 'desc')
             ->recordActions([
                 ClipActions::reportableActionGroup(),
+                self::makeIgnoreClipAction(),
+
                 ActionGroup::make([
                     UpdateClipStatusAction::make()->moderation(),
                     ClipFeedbackAction::make(),
@@ -220,6 +230,30 @@ class ClipsTable
                     EditAction::make(),
                 ]),
             ]);
+    }
+
+    private static function makeIgnoreClipAction(): Action
+    {
+        return Action::make('toggleIgnore')
+            ->iconButton()
+            ->icon(fn (Clip $record): LucideIcon => $record->getAttribute('is_ignored') ? LucideIcon::EyeDashed : LucideIcon::Eye)
+            ->tooltip(fn (Clip $record): string => $record->getAttribute('is_ignored') ? 'Unignore' : 'Ignore')
+            ->successNotificationTitle(fn (Clip $record): string => $record->getAttribute('is_ignored') ? 'Clip has been Unignored' : 'Clip has been Ignored')
+            ->action(fn (Clip $record) => $record->ignoredByUsers()->toggle(auth()->id()));
+    }
+
+    private static function makeIgnoredByUsFilter(): TernaryFilter
+    {
+        return TernaryFilter::make('ignored')
+            ->label('Ignored Clips')
+            ->placeholder('Hide ignored Clips')
+            ->trueLabel('Only ignored Clips')
+            ->falseLabel('Include ignored Clips')
+            ->queries(
+                true: fn (Builder $query) => $query->whereIgnoredBy(auth()->id()),
+                false: fn (Builder $query): Builder => $query,
+                blank: fn (Builder $query) => $query->whereNotIgnoredBy(auth()->id()),
+            );
     }
 
     /**
