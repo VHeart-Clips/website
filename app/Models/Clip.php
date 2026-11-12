@@ -277,6 +277,32 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
         return $this->belongsTo(User::class, 'added_by');
     }
 
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function whereIgnoredBy(Builder $query, User|Broadcaster|int $user): Builder
+    {
+        return $query->whereHas('ignoredByUsers',
+            fn (Builder $q) => $q
+                ->whereKey($user instanceof Model ? $user->getKey() : $user)
+        );
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function whereNotIgnoredBy(Builder $query, User|Broadcaster|int $user): Builder
+    {
+        return $query->whereDoesntHave('ignoredByUsers',
+            fn (Builder $q) => $q
+                ->whereKey($user instanceof Model ? $user->getKey() : $user)
+        );
+    }
+
     protected function reportableTitle(): Attribute
     {
         return Attribute::make(get: static fn (): string => 'title');
