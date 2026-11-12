@@ -57,7 +57,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
-use Schema;
 
 #[ScopedBy(ClipPermissionScope::class)]
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
@@ -161,6 +160,16 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
             $age->lessThanOrEqualTo(CarbonInterval::year()) => now()->addMonth(),
             default => now()->addYear(),
         };
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, Pivot>
+     */
+    public function ignoredByUsers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, UserClipIgnore::class)
+            ->using(UserClipIgnore::class);
     }
 
     /**
@@ -568,6 +577,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      *
      * @param  Builder<static>  $query
      * @return Builder<static>
+     *
      * @deprecated use withDecayingScore
      */
     #[Scope]
