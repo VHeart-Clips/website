@@ -236,6 +236,7 @@ class ClipsTable
     {
         return Action::make('toggleIgnore')
             ->iconButton()
+            ->rateLimit(2)
             ->icon(fn (Clip $record): LucideIcon => $record->getAttribute('is_ignored') ? LucideIcon::EyeDashed : LucideIcon::Eye)
             ->tooltip(fn (Clip $record): string => $record->getAttribute('is_ignored') ? 'Unignore' : 'Ignore')
             ->successNotificationTitle(fn (Clip $record): string => $record->getAttribute('is_ignored') ? 'Clip has been Unignored' : 'Clip has been Ignored')

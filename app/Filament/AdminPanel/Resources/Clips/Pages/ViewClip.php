@@ -71,6 +71,7 @@ class ViewClip extends ViewRecord
     {
         return Action::make('toggleIgnore')
             ->iconButton()
+            ->rateLimit(2)
             ->icon(fn (): LucideIcon => $this->resolveIgnored() ? LucideIcon::EyeDashed : LucideIcon::Eye)
             ->tooltip(fn (): string => $this->resolveIgnored() ? 'Unignore' : 'Ignore')
             ->successNotificationTitle(fn (): string => ! $this->resolveIgnored() ? 'Clip has been Unignored' : 'Clip has been Ignored')
