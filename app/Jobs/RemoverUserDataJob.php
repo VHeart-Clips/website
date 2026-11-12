@@ -69,7 +69,7 @@ class RemoverUserDataJob implements ShouldQueue
         $user->broadcasterTeamMembers()->delete();
         $user->notifications()->delete();
         $user->preferences()->delete();
-        $user->ignoredClips()->delete();
+        $user->ignoredClips()->detach();
 
         CommentSubscription::query()
             ->where('subscriber_id', $this->userId)
