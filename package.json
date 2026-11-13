@@ -18,19 +18,19 @@
         "@eslint/js": "^9.39.5",
         "@laravel/vite-plugin-wayfinder": "^0.1.11",
         "@tailwindcss/typography": "^0.5.20",
-        "@tailwindcss/vite": "^4.3.3",
+        "@tailwindcss/vite": "^4.3.5",
         "@types/alpinejs__anchor": "^3.13.1",
         "@types/alpinejs__intersect": "^3.13.4",
         "@types/async-alpine": "^2.0.0",
         "@types/node": "^25.9.3",
-        "concurrently": "^10.0.6",
+        "concurrently": "^10.0.7",
         "eslint": "^9.39.4",
         "eslint-config-prettier": "^10.1.8",
         "prettier": "^3.9.10",
         "prettier-plugin-organize-imports": "^4.3.0",
         "prettier-plugin-tailwindcss": "^0.8.1",
         "tailwindcss": "^4.1.18",
-        "typescript-eslint": "^8.72.1"
+        "typescript-eslint": "^8.72.2"
     },
     "dependencies": {
         "@alpinejs/anchor": "^3.17.5",
