@@ -9,6 +9,7 @@ use App\Models\Broadcaster\BroadcasterTeamMember;
 use App\Models\Clip;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\UserClipIgnore;
 use App\Models\Vote;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -34,6 +35,16 @@ trait UserRelationships
     public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);
+    }
+
+    /**
+     * @return BelongsToMany<Clip, $this, Pivot>
+     */
+    public function ignoredClips(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(Clip::class, UserClipIgnore::class)
+            ->using(UserClipIgnore::class);
     }
 
     /**

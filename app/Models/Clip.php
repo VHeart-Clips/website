@@ -57,7 +57,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Kirschbaum\Commentions\Contracts\Commentable;
 use Kirschbaum\Commentions\HasComments;
-use Schema;
 
 #[ScopedBy(ClipPermissionScope::class)]
 #[ScopedBy(ClipWithoutBannedCategoryScope::class)]
@@ -164,6 +163,16 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     }
 
     /**
+     * @return BelongsToMany<User, $this, Pivot>
+     */
+    public function ignoredByUsers(): BelongsToMany
+    {
+        return $this
+            ->belongsToMany(User::class, UserClipIgnore::class)
+            ->using(UserClipIgnore::class);
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function owner(): BelongsTo
@@ -266,6 +275,32 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
     public function adder(): BelongsTo
     {
         return $this->belongsTo(User::class, 'added_by');
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function whereIgnoredBy(Builder $query, User|Broadcaster|int $user): Builder
+    {
+        return $query->whereHas('ignoredByUsers',
+            fn (Builder $q) => $q
+                ->whereKey($user instanceof Model ? $user->getKey() : $user)
+        );
+    }
+
+    /**
+     * @param  Builder<static>  $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function whereNotIgnoredBy(Builder $query, User|Broadcaster|int $user): Builder
+    {
+        return $query->whereDoesntHave('ignoredByUsers',
+            fn (Builder $q) => $q
+                ->whereKey($user instanceof Model ? $user->getKey() : $user)
+        );
     }
 
     protected function reportableTitle(): Attribute
@@ -568,6 +603,7 @@ class Clip extends Model implements Commentable, HasFilamentInfolistEntry, HasFi
      *
      * @param  Builder<static>  $query
      * @return Builder<static>
+     *
      * @deprecated use withDecayingScore
      */
     #[Scope]
