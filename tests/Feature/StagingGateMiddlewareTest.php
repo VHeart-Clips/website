@@ -30,6 +30,7 @@ it('passes through when access cookie set', function () {
 });
 
 it('passes through when session cookie user has role', function () {
+    DB::shouldReceive('getConnections')->andReturn([]);
     DB::shouldReceive('table')->with('user_roles')->andReturnSelf();
     DB::shouldReceive('where')->with('user_id', '42')->andReturnSelf();
     DB::shouldReceive('exists')->andReturn(true);
@@ -46,6 +47,7 @@ it('passes through when session cookie user has role', function () {
 });
 
 it('aborts 403 when session cookie user has no role', function () {
+    DB::shouldReceive('getConnections')->andReturn([]);
     DB::shouldReceive('table')->with('user_roles')->andReturnSelf();
     DB::shouldReceive('where')->with('user_id', '42')->andReturnSelf();
     DB::shouldReceive('exists')->andReturn(false);
@@ -57,6 +59,7 @@ it('aborts 403 when session cookie user has no role', function () {
 })->throws(HttpException::class);
 
 it('does not query db when access cookie set', function () {
+    DB::shouldReceive('getConnections')->andReturn([]);
     DB::shouldReceive('table')->never();
 
     $request = Request::create('/');
