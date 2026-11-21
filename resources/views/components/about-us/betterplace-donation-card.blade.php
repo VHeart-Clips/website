@@ -14,12 +14,12 @@
                     <div class="space-y-6">
                         <h2
                             class="bg-linear-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl dark:from-purple-300 dark:via-white dark:to-cyan-300">
-                            {{ $projectTitle }}
+                            {{ $details->title }}
                         </h2>
 
-                        @if ($projectDescription)
+                        @if ($details->description)
                             <div class="text-sm md:text-base prose dark:prose-invert">
-                                {!! $projectDescription !!}
+                                {!! $details->description !!}
                             </div>
                         @endif
 
@@ -35,7 +35,7 @@
                             </div>
                             <div
                                 class="bg-linear-to-r from-purple-700 via-gray-900 to-cyan-700 bg-clip-text text-center text-3xl font-bold text-transparent sm:text-4xl md:text-5xl dark:from-purple-300 dark:via-white dark:to-cyan-300">
-                                {{ $projectAmount }}
+                                {{ $details->getDonatedAmountInEuro() }}
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                             {{ $error }}
                         </p>
                     </div>
-                @elseif($donations === [])
+                @elseif($opinions === [])
                     <div class="flex flex-1 items-center justify-center">
                         <p class="text-gray-800 dark:text-white/90">
                             {{ __('betterplace.no_donations_yet') }}
@@ -91,32 +91,22 @@
                         </style>
 
                         <div class="custom-scrollbar h-full max-h-120 overflow-y-auto pr-2 lg:max-h-none">
-                            @foreach ($donations as $donation)
+                            @foreach ($opinions as $opinion)
                                 <div class="border-b border-gray-300/80 py-4 last:border-b-0 dark:border-white/15">
                                     <div class="flex items-start gap-4">
                                         <div
                                             class="w-20 shrink-0 bg-linear-to-r from-purple-700 to-cyan-700 bg-clip-text text-base font-bold text-transparent dark:from-purple-300 dark:to-cyan-300">
-                                            {{ Number::currency($donation['amount'], 'EUR', app()->getLocale(), 2) }}
+                                            {{ $opinion->getDonatedAmountInEuro() }}
                                         </div>
-                                        {{--
-                                            <div class="shrink-0">
-                                                @if ($donation['image'])
-                                                    <img src="{{ $donation['image'] }}" alt="{{ $donation['name'] }}"
-                                                        class="size-9 rounded-full border border-gray-300/80 object-cover dark:border-white/20" />
-                                                @else
-                                                    <div class="size-9 rounded-full bg-emerald-400/80"></div>
-                                                @endif
-                                            </div>
-                                        --}}
 
                                         <div class="min-w-0 flex-1">
                                             <div
                                                 class="truncate text-sm font-semibold text-gray-900 dark:text-white/90">
-                                                {{ $donation['name'] }}
+                                                {{ $opinion->isAnonymous() ? __('betterplace.anonymous') : $opinion->author->name }}
                                             </div>
-                                            @if ($donation['message'])
+                                            @if ($opinion->message)
                                                 <div class="mt-1 line-clamp-3 text-xs wrap-break-word text-[#8ea0ff]">
-                                                    {{ $donation['message'] }}
+                                                    {{ $opinion->message  }}
                                                 </div>
                                             @endif
                                         </div>
