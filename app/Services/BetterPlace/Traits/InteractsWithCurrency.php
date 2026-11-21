@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Services\BetterPlace\Data\Traits;
+namespace App\Services\BetterPlace\Traits;
 
 use Illuminate\Support\Number;
 

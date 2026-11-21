@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\BetterPlace\Data;
 
-use App\Services\BetterPlace\Data\Traits\InteractsWithCurrency;
+use App\Services\BetterPlace\Traits\InteractsWithCurrency;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterface;
 
