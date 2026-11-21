@@ -50,4 +50,9 @@ return [
             'compilation' => env('VHEART_DISCORD_COMPILATION_WEBHOOK'),
         ],
     ],
+
+    'betterplace' => [
+        'project' => 148667,
+        'fundraising' => 55712,
+    ],
 ];

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\AdminPanel\Widgets\BetterPlace;
 
+use App\Services\BetterPlace\BetterPlaceService;
 use Carbon\CarbonPeriod;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
@@ -11,7 +12,6 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Http;
 
 class MonthlyDonationChart extends ChartWidget
 {
@@ -95,46 +95,36 @@ class MonthlyDonationChart extends ChartWidget
      */
     private function getMonthlyDonationData(): array
     {
-        // this api is deprecated and may break in the future
-        // https://github.com/betterplace/betterplace_apidocs/blob/master/api_v4_readme.md#public-api
-        $url = 'https://api.betterplace.org/de/api_v4/fundraising_events/'.self::EVENT_ID.'/opinions.json';
         $now = Date::now();
         $cutoff = $now->copy()->subMonths(11)->startOfMonth();
         $sums = [];
         $page = 1;
 
         do {
-            $response = Http::retry(3, 500)
-                ->timeout(15)
-                ->get($url, [
-                    'facets' => 'has_amount:true',
-                    'order' => 'confirmed_at:DESC',
-                    'per_page' => 200,
-                    'page' => $page,
-                ])
-                ->throw()
-                ->json();
+            $response = BetterPlaceService::getFundraisingOpinions(
+                facets: ['has_amount:true'],
+                page: $page,
+                perPage: 200,
+            );
 
-            foreach ($response['data'] ?? [] as $opinion) {
-                $cents = $opinion['donated_amount_in_cents'] ?? 0;
+            foreach ($response->opinions as $opinion) {
+                $cents = $opinion->donatedAmountInCents;
 
-                if ($cents <= 0 || empty($opinion['confirmed_at'])) {
+                if ($cents <= 0 || empty($opinion->confirmedAt)) {
                     continue;
                 }
 
-                $date = Date::parse($opinion['confirmed_at']);
-
-                if ($date->lessThan($cutoff)) {
+                if ($opinion->confirmedAt->lessThan($cutoff)) {
                     break 2;
                 }
 
-                $key = $date->format('Y-m');
+                $key = $opinion->confirmedAt->format('Y-m');
                 $sums[$key]['cents'] = ($sums[$key]['cents'] ?? 0) + $cents;
                 $sums[$key]['count'] = ($sums[$key]['count'] ?? 0) + 1;
             }
 
             $page++;
-        } while ($page < ($response['total_pages'] ?? 1));
+        } while ($page < ($response->totalPages));
 
         if ($sums === []) {
             return [];
