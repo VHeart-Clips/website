@@ -2825,16 +2825,16 @@
         },
         {
             "name": "lara-zeus/spatie-translatable",
-            "version": "2.0.1",
+            "version": "2.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lara-zeus/spatie-translatable.git",
-                "reference": "4583205ade3270a9b4c3293cab102f8b2d772523"
+                "reference": "e8c75a7f03a061e12f97fb60552d41ee5b295a86"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lara-zeus/spatie-translatable/zipball/4583205ade3270a9b4c3293cab102f8b2d772523",
-                "reference": "4583205ade3270a9b4c3293cab102f8b2d772523",
+                "url": "https://api.github.com/repos/lara-zeus/spatie-translatable/zipball/e8c75a7f03a061e12f97fb60552d41ee5b295a86",
+                "reference": "e8c75a7f03a061e12f97fb60552d41ee5b295a86",
                 "shasum": ""
             },
             "require": {
@@ -2846,7 +2846,10 @@
             "require-dev": {
                 "larastan/larastan": "^3.4",
                 "laravel/pint": "^1.0",
-                "orchestra/testbench": "^10.2",
+                "orchestra/testbench": "^11.3",
+                "pestphp/pest": "*",
+                "pestphp/pest-plugin-laravel": "*",
+                "pestphp/pest-plugin-livewire": "*",
                 "phpstan/extension-installer": "^1.4",
                 "roave/security-advisories": "dev-latest"
             },
@@ -2879,7 +2882,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-23T17:31:05+00:00"
+            "time": "2026-11-19T16:00:45+00:00"
         },
         {
             "name": "laravel/framework",
@@ -3116,37 +3119,37 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v5.51.0",
+            "version": "v5.52.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "e168e56b97a4a4bb2b7481c1ad01b1be1e49963e"
+                "reference": "8ea23ed9a48a0c08962314761dbd91cdd57fee7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/e168e56b97a4a4bb2b7481c1ad01b1be1e49963e",
-                "reference": "e168e56b97a4a4bb2b7481c1ad01b1be1e49963e",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/8ea23ed9a48a0c08962314761dbd91cdd57fee7e",
+                "reference": "8ea23ed9a48a0c08962314761dbd91cdd57fee7e",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-pcntl": "*",
                 "ext-posix": "*",
-                "illuminate/contracts": "^9.21|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/queue": "^9.21|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/support": "^9.21|^10.0|^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^12.0|^13.0",
+                "illuminate/queue": "^12.0|^13.0",
+                "illuminate/support": "^12.0|^13.0",
                 "laravel/sentinel": "^1.0",
-                "nesbot/carbon": "^2.17|^3.0",
-                "php": "^8.0",
+                "nesbot/carbon": "^3.0",
+                "php": "^8.2",
                 "ramsey/uuid": "^4.0",
-                "symfony/console": "^6.0|^7.0|^8.0",
-                "symfony/error-handler": "^6.0|^7.0|^8.0",
+                "symfony/console": "^7.0|^8.0",
+                "symfony/error-handler": "^7.0|^8.0",
                 "symfony/polyfill-php83": "^1.28",
-                "symfony/process": "^6.0|^7.0|^8.0"
+                "symfony/process": "^7.4.5|^8.0.5"
             },
             "require-dev": {
                 "mockery/mockery": "^1.0",
-                "orchestra/testbench": "^7.56|^8.37|^9.16|^10.9|^11.0",
+                "orchestra/testbench": "^10.9|^11.0",
                 "phpstan/phpstan": "^1.10|^2.0",
                 "predis/predis": "^1.1|^2.0|^3.0"
             },
@@ -3190,9 +3193,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/horizon/issues",
-                "source": "https://github.com/laravel/horizon/tree/v5.51.0"
+                "source": "https://github.com/laravel/horizon/tree/v5.52.0"
             },
-            "time": "2026-11-02T15:26:17+00:00"
+            "time": "2026-11-16T15:32:25+00:00"
         },
         {
             "name": "laravel/octane",
@@ -4749,16 +4752,16 @@
         },
         {
             "name": "mallardduck/blade-lucide-icons",
-            "version": "2.0.43",
+            "version": "2.0.49",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mallardduck/blade-lucide-icons.git",
-                "reference": "bbcdf156ed89ec302812c807d41ff6f01303c26b"
+                "reference": "fba8a006cc84c2e4020380ae191062f273cce6c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/bbcdf156ed89ec302812c807d41ff6f01303c26b",
-                "reference": "bbcdf156ed89ec302812c807d41ff6f01303c26b",
+                "url": "https://api.github.com/repos/mallardduck/blade-lucide-icons/zipball/fba8a006cc84c2e4020380ae191062f273cce6c8",
+                "reference": "fba8a006cc84c2e4020380ae191062f273cce6c8",
                 "shasum": ""
             },
             "require": {
@@ -4803,9 +4806,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mallardduck/blade-lucide-icons/issues",
-                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.43"
+                "source": "https://github.com/mallardduck/blade-lucide-icons/tree/2.0.49"
             },
-            "time": "2026-11-11T04:29:36+00:00"
+            "time": "2026-11-20T05:32:01+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -6938,16 +6941,16 @@
         },
         {
             "name": "sentry/sentry",
-            "version": "4.35.0",
+            "version": "4.38.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-php.git",
-                "reference": "8247f5411fd98d98183366f001278ce3591eda20"
+                "reference": "9e5f09ccb8f741dde2717f48b1c6df820f95b7c5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/8247f5411fd98d98183366f001278ce3591eda20",
-                "reference": "8247f5411fd98d98183366f001278ce3591eda20",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/9e5f09ccb8f741dde2717f48b1c6df820f95b7c5",
+                "reference": "9e5f09ccb8f741dde2717f48b1c6df820f95b7c5",
                 "shasum": ""
             },
             "require": {
@@ -6964,7 +6967,7 @@
                 "raven/raven": "*"
             },
             "require-dev": {
-                "carthage-software/mago": "1.30.0",
+                "carthage-software/mago": "1.60.2",
                 "friendsofphp/php-cs-fixer": "^3.4",
                 "guzzlehttp/guzzle": "^7.0|^8.0",
                 "guzzlehttp/promises": "^2.0.3|^3.0.0",
@@ -7019,7 +7022,7 @@
             ],
             "support": {
                 "issues": "https://github.com/getsentry/sentry-php/issues",
-                "source": "https://github.com/getsentry/sentry-php/tree/4.35.0"
+                "source": "https://github.com/getsentry/sentry-php/tree/4.38.0"
             },
             "funding": [
                 {
@@ -7031,27 +7034,27 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-10-29T16:02:44+00:00"
+            "time": "2026-11-19T10:49:48+00:00"
         },
         {
             "name": "sentry/sentry-laravel",
-            "version": "4.29.0",
+            "version": "4.31.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/getsentry/sentry-laravel.git",
-                "reference": "4b3deab3d8818490220e1da8e2d7cca971f74410"
+                "reference": "f40666aad6261a7cbc94bca061b3514ba09eeaa1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/4b3deab3d8818490220e1da8e2d7cca971f74410",
-                "reference": "4b3deab3d8818490220e1da8e2d7cca971f74410",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/f40666aad6261a7cbc94bca061b3514ba09eeaa1",
+                "reference": "f40666aad6261a7cbc94bca061b3514ba09eeaa1",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "^6.0 | ^7.0 | ^8.0 | ^9.0 | ^10.0 | ^11.0 | ^12.0 | ^13.0",
                 "nyholm/psr7": "^1.0",
                 "php": "^7.2 | ^8.0",
-                "sentry/sentry": "^4.34.0",
+                "sentry/sentry": "^4.38.0",
                 "symfony/psr-http-message-bridge": "^1.0 | ^2.0 | ^6.0 | ^7.0 | ^8.0"
             },
             "require-dev": {
@@ -7111,7 +7114,7 @@
             ],
             "support": {
                 "issues": "https://github.com/getsentry/sentry-laravel/issues",
-                "source": "https://github.com/getsentry/sentry-laravel/tree/4.29.0"
+                "source": "https://github.com/getsentry/sentry-laravel/tree/4.31.0"
             },
             "funding": [
                 {
@@ -7123,7 +7126,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2026-10-08T12:31:48+00:00"
+            "time": "2026-11-19T14:23:20+00:00"
         },
         {
             "name": "socialiteproviders/manager",
@@ -7251,24 +7254,24 @@
         },
         {
             "name": "spatie/db-dumper",
-            "version": "4.1.1",
+            "version": "4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/db-dumper.git",
-                "reference": "f8f2785574de84aa4642a4df8b59a6dd578dd5d3"
+                "reference": "df4ae7947ff972602088d01d5c55d9abaa8d345e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/f8f2785574de84aa4642a4df8b59a6dd578dd5d3",
-                "reference": "f8f2785574de84aa4642a4df8b59a6dd578dd5d3",
+                "url": "https://api.github.com/repos/spatie/db-dumper/zipball/df4ae7947ff972602088d01d5c55d9abaa8d345e",
+                "reference": "df4ae7947ff972602088d01d5c55d9abaa8d345e",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.3",
+                "php": "^8.4",
                 "symfony/process": "^7.0|^8.0"
             },
             "require-dev": {
-                "pestphp/pest": "^4.0",
+                "pestphp/pest": "^5.3.5",
                 "phpstan/phpstan": "^2.1"
             },
             "type": "library",
@@ -7299,7 +7302,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/db-dumper/tree/4.1.1"
+                "source": "https://github.com/spatie/db-dumper/tree/4.2.0"
             },
             "funding": [
                 {
@@ -7311,7 +7314,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-05-04T11:43:33+00:00"
+            "time": "2026-11-23T14:48:58+00:00"
         },
         {
             "name": "spatie/invade",
@@ -7382,16 +7385,16 @@
         },
         {
             "name": "spatie/laravel-backup",
-            "version": "10.4.0",
+            "version": "10.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-backup.git",
-                "reference": "f5622c47d8aada2542c28a7612d832357d2e8979"
+                "reference": "bfec9d8a6d07ec11694b17c593ee2375b8a53245"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-backup/zipball/f5622c47d8aada2542c28a7612d832357d2e8979",
-                "reference": "f5622c47d8aada2542c28a7612d832357d2e8979",
+                "url": "https://api.github.com/repos/spatie/laravel-backup/zipball/bfec9d8a6d07ec11694b17c593ee2375b8a53245",
+                "reference": "bfec9d8a6d07ec11694b17c593ee2375b8a53245",
                 "shasum": ""
             },
             "require": {
@@ -7466,7 +7469,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-backup/issues",
-                "source": "https://github.com/spatie/laravel-backup/tree/10.4.0"
+                "source": "https://github.com/spatie/laravel-backup/tree/10.5.0"
             },
             "funding": [
                 {
@@ -7478,7 +7481,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-11-06T11:04:53+00:00"
+            "time": "2026-11-18T16:20:46+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
