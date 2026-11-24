@@ -3,6 +3,7 @@ import { PublicUser } from '@/types';
 import { AlpineComponent } from 'alpinejs';
 
 const MINIMUM_RATE_LIMIT = 6;
+const MAXIMUM_RATE_LIMIT = 20;
 const INTERACTION_ARM_TIMEOUT = 3000;
 const MAX_VOTE_RETRIES = 3;
 const VOTE_RETRY_DELAY_MS = 1500;
@@ -131,6 +132,10 @@ export default (config: ClipVoteConfig): AlpineComponent<ClipVoteData> => ({
             !seconds || seconds < MINIMUM_RATE_LIMIT
                 ? MINIMUM_RATE_LIMIT
                 : Math.round(seconds);
+
+        if(this.timeLeft > MAXIMUM_RATE_LIMIT) {
+            this.timeLeft = MAXIMUM_RATE_LIMIT;
+        }
 
         if (this.timer) clearInterval(this.timer);
         this.timer = setInterval(() => {
